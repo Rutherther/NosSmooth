@@ -25,6 +25,7 @@ namespace NosSmooth.LocalClient;
 public class NostaleLocalClient : BaseNostaleClient
 {
     private readonly IPacketSerializer _packetSerializer;
+    private readonly PacketSerializerProvider _packetSerializerProvider;
     private readonly IPacketHandler _packetHandler;
     private readonly ILogger _logger;
     private readonly NosClient _client;
@@ -36,6 +37,7 @@ public class NostaleLocalClient : BaseNostaleClient
     /// </summary>
     /// <param name="commandProcessor">The command processor.</param>
     /// <param name="packetSerializer">The packet serializer.</param>
+    /// <param name="packetSerializerProvider">The packet serializer provider.</param>
     /// <param name="packetHandler">The packet handler.</param>
     /// <param name="logger">The logger.</param>
     /// <param name="options">The options for the client.</param>
@@ -45,6 +47,7 @@ public class NostaleLocalClient : BaseNostaleClient
     (
         CommandProcessor commandProcessor,
         IPacketSerializer packetSerializer,
+        PacketSerializerProvider packetSerializerProvider,
         IPacketHandler packetHandler,
         ILogger<NostaleLocalClient> logger,
         IOptions<LocalClientOptions> options,
@@ -55,6 +58,7 @@ public class NostaleLocalClient : BaseNostaleClient
     {
         _options = options.Value;
         _packetSerializer = packetSerializer;
+        _packetSerializerProvider = packetSerializerProvider;
         _packetHandler = packetHandler;
         _logger = logger;
         _client = client;
@@ -115,9 +119,8 @@ public class NostaleLocalClient : BaseNostaleClient
             return _interceptor.InterceptReceive(ref packet);
         }
 
-        // TODO: handlers
+        Task.Run(async () => await ProcessPacketAsync(PacketType.Received, packet));
 
-        _logger.LogInformation($"Received packet {packet}");
         return true;
     }
 
@@ -133,19 +136,61 @@ public class NostaleLocalClient : BaseNostaleClient
             return _interceptor.InterceptSend(ref packet);
         }
 
-        // TODO: handlers
+        Task.Run(async () => await ProcessPacketAsync(PacketType.Sent, packet));
 
-        _logger.LogInformation($"Sent packet {packet}");
         return true;
     }
 
     private void SendPacket(string packetString)
     {
         _client.GetNetwork().SendPacket(packetString);
+        _logger.LogDebug($"Sending client packet {packetString}");
     }
 
     private void ReceivePacket(string packetString)
     {
         _client.GetNetwork().ReceivePacket(packetString);
+        _logger.LogDebug($"Receiving client packet {packetString}");
+    }
+
+    private async Task ProcessPacketAsync(PacketType type, string packetString)
+    {
+        IPacketSerializer serializer;
+        if (type == PacketType.Received)
+        {
+            serializer = _packetSerializerProvider.ServerSerializer;
+        }
+        else
+        {
+            serializer = _packetSerializerProvider.ClientSerializer;
+        }
+
+        var packet = serializer.Deserialize(packetString);
+        if (!packet.IsSuccess)
+        {
+            _logger.LogWarning($"Could not parse {packetString}. Reason: {packet.Error.Message}");
+            return;
+        }
+
+        Result result;
+        if (type == PacketType.Received)
+        {
+            result = await _packetHandler.HandleReceivedPacketAsync(packet.Entity);
+        }
+        else
+        {
+            result = await _packetHandler.HandleSentPacketAsync(packet.Entity);
+        }
+
+        if (!result.IsSuccess)
+        {
+            _logger.LogWarning($"There was an error whilst handling packet {packetString}. Error: {result.Error.Message}");
+        }
+    }
+
+    private enum PacketType
+    {
+        Sent,
+        Received,
     }
 }
