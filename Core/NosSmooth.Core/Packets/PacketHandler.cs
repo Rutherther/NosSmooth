@@ -1,4 +1,10 @@
-﻿using System;
+﻿//
+//  PacketHandler.cs
+//
+//  Copyright (c) František Boháček. All rights reserved.
+//  Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -15,6 +21,10 @@ public class PacketHandler : IPacketHandler
 {
     private readonly IServiceProvider _provider;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PacketHandler"/> class.
+    /// </summary>
+    /// <param name="provider">The dependency injection provider.</param>
     public PacketHandler(IServiceProvider provider)
     {
         _provider = provider;
@@ -52,9 +62,9 @@ public class PacketHandler : IPacketHandler
 
         var tasks = packetResponders.Select(responder => responder.Respond(packet, ct)).ToList();
         tasks.AddRange(genericPacketResponders.Select(responder => responder.Respond(packet, ct)));
-        
+
         var results = await Task.WhenAll(tasks);
-        
+
         var errors = new List<Result>();
         foreach (var result in results)
         {

@@ -24,17 +24,12 @@ void PacketSendDetour()
         mov packet, edx
     }
 
-    bool isAccepted = NetworkUnmanaged::GetInstance()->ExecuteSendCallback(packet);
+    NetworkUnmanaged::GetInstance()->ExecuteSendCallback(packet);
 
     __asm
     {
         popfd
         popad
-    }
-
-    if (isAccepted)
-    {
-        NetworkUnmanaged::GetInstance()->SendPacket(packet);
     }
 }
 
@@ -50,17 +45,12 @@ void PacketReceiveDetour()
         mov packet, edx
     }
 
-    bool isAccepted = NetworkUnmanaged::GetInstance()->ExecuteReceiveCallback(packet);
+    NetworkUnmanaged::GetInstance()->ExecuteReceiveCallback(packet);
 
     __asm
     {
         popfd
         popad
-    }
-
-    if (isAccepted)
-    {
-        NetworkUnmanaged::GetInstance()->ReceivePacket(packet);
     }
 }
 
@@ -68,7 +58,7 @@ void NetworkUnmanaged::Setup(ModuleHook moduleHook)
 {
     auto sendFunction = moduleHook.FindPattern(SEND_PATTERN, SEND_MASK);
     auto receiveFunction = moduleHook.FindPattern(RECV_PATTERN, RECV_MASK);
-    auto callerObject = *reinterpret_cast<unsigned int*>(moduleHook.FindPattern(PACKET_CALLER_PATTERN, PACKET_CALLER_MASK) + 1);
+    auto callerObject = *reinterpret_cast<unsigned int*>((DWORD_PTR)moduleHook.FindPattern(PACKET_CALLER_PATTERN, PACKET_CALLER_MASK) + 1);
 
     if (sendFunction == 0)
     {

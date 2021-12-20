@@ -1,4 +1,10 @@
-﻿using System;
+﻿//
+//  ServiceCollectionExtensions.cs
+//
+//  Copyright (c) František Boháček. All rights reserved.
+//  Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +19,9 @@ using NosSmooth.Core.Packets;
 
 namespace NosSmooth.Core.Extensions;
 
+/// <summary>
+/// Contains extension methods for <see cref="IServiceCollection"/>.
+/// </summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>
@@ -21,8 +30,11 @@ public static class ServiceCollectionExtensions
     /// <param name="serviceCollection">The service collection to register the responder to.</param>
     /// <param name="additionalPacketTypes">Custom types of packets to serialize and deserialize.</param>
     /// <returns>The collection.</returns>
-    public static IServiceCollection AddNostaleCore(this IServiceCollection serviceCollection,
-        params Type[] additionalPacketTypes)
+    public static IServiceCollection AddNostaleCore
+    (
+        this IServiceCollection serviceCollection,
+        params Type[] additionalPacketTypes
+    )
     {
         serviceCollection
             .TryAddSingleton<IPacketHandler, PacketHandler>();
@@ -39,7 +51,7 @@ public static class ServiceCollectionExtensions
 
         serviceCollection.AddSingleton(_ =>
             new PacketSerializerProvider(clientPacketTypes, serverPacketTypes));
-        serviceCollection.AddSingleton(p => p.GetRequiredService<PacketSerializerProvider>().GetServerSerializer());
+        serviceCollection.AddSingleton(p => p.GetRequiredService<PacketSerializerProvider>().ServerSerializer);
 
         serviceCollection.AddSingleton<CommandProcessor>();
 
@@ -53,8 +65,10 @@ public static class ServiceCollectionExtensions
     /// <typeparam name="TPacketResponder">The type of the responder.</typeparam>
     /// <exception cref="ArgumentException">Thrown if the type of the responder is incorrect.</exception>
     /// <returns>The collection.</returns>
-    public static IServiceCollection AddPacketResponder<TPacketResponder>(
-        this IServiceCollection serviceCollection)
+    public static IServiceCollection AddPacketResponder<TPacketResponder>
+    (
+        this IServiceCollection serviceCollection
+    )
         where TPacketResponder : class, IPacketResponder
     {
         return serviceCollection.AddPacketResponder(typeof(TPacketResponder));
@@ -67,13 +81,17 @@ public static class ServiceCollectionExtensions
     /// <param name="responderType">The type of the responder.</param>
     /// <returns>The collection.</returns>
     /// <exception cref="ArgumentException">Thrown if the type of the responder is incorrect.</exception>
-    public static IServiceCollection AddPacketResponder(this IServiceCollection serviceCollection, Type responderType)
+    public static IServiceCollection AddPacketResponder
+    (
+        this IServiceCollection serviceCollection,
+        Type responderType
+    )
     {
         if (responderType.GetInterfaces().Any(i => i == typeof(IEveryPacketResponder)))
         {
             return serviceCollection.AddScoped(typeof(IEveryPacketResponder), responderType);
         }
-        
+
         if (!responderType.GetInterfaces().Any(
                 i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IPacketResponder<>)
             ))
@@ -96,7 +114,7 @@ public static class ServiceCollectionExtensions
 
         return serviceCollection;
     }
-    
+
     /// <summary>
     /// Adds the specified command handler.
     /// </summary>
@@ -104,8 +122,10 @@ public static class ServiceCollectionExtensions
     /// <typeparam name="TCommandHandler">The type of the command.</typeparam>
     /// <exception cref="ArgumentException">Thrown if the type of the responder is incorrect.</exception>
     /// <returns>The collection.</returns>
-    public static IServiceCollection AddCommandHandler<TCommandHandler>(
-        this IServiceCollection serviceCollection)
+    public static IServiceCollection AddCommandHandler<TCommandHandler>
+    (
+        this IServiceCollection serviceCollection
+    )
         where TCommandHandler : class, ICommandHandler
     {
         return serviceCollection.AddCommandHandler(typeof(TCommandHandler));
@@ -118,7 +138,11 @@ public static class ServiceCollectionExtensions
     /// <param name="commandHandlerType">The type of the command handler.</param>
     /// <returns>The collection.</returns>
     /// <exception cref="ArgumentException">Thrown if the type of the responder is incorrect.</exception>
-    public static IServiceCollection AddCommandHandler(this IServiceCollection serviceCollection, Type commandHandlerType)
+    public static IServiceCollection AddCommandHandler
+    (
+        this IServiceCollection serviceCollection,
+        Type commandHandlerType
+    )
     {
         if (!commandHandlerType.GetInterfaces().Any(
                 i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICommandHandler<>)

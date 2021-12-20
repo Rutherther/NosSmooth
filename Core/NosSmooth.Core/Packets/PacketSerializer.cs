@@ -1,4 +1,10 @@
-﻿using System;
+﻿//
+//  PacketSerializer.cs
+//
+//  Copyright (c) František Boháček. All rights reserved.
+//  Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Threading.Tasks;
 using NosCore.Packets;
 using NosCore.Packets.Interfaces;
@@ -6,17 +12,24 @@ using Remora.Results;
 
 namespace NosSmooth.Core.Packets;
 
+/// <inheritdoc />
 public class PacketSerializer : IPacketSerializer
 {
     private readonly Serializer _serializer;
     private readonly Deserializer _deserializer;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PacketSerializer"/> class.
+    /// </summary>
+    /// <param name="serializer">The NosCore serializer.</param>
+    /// <param name="deserializer">The NosCore deserializer.</param>
     public PacketSerializer(Serializer serializer, Deserializer deserializer)
     {
         _serializer = serializer;
         _deserializer = deserializer;
     }
 
+    /// <inheritdoc />
     public Result<string> Serialize(IPacket packet)
     {
         try
@@ -29,6 +42,7 @@ public class PacketSerializer : IPacketSerializer
         }
     }
 
+    /// <inheritdoc />
     public Result<IPacket> Deserialize(string packetString)
     {
         try

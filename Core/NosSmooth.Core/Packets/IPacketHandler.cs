@@ -1,4 +1,10 @@
-﻿using System.Threading;
+﻿//
+//  IPacketHandler.cs
+//
+//  Copyright (c) František Boháček. All rights reserved.
+//  Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System.Threading;
 using System.Threading.Tasks;
 using NosCore.Packets.Interfaces;
 using Remora.Results;

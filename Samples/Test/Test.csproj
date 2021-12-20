@@ -45,9 +45,6 @@
     <ProjectReference Include="..\..\Local\NosSmooth.LocalClient\NosSmooth.LocalClient.csproj" />
     <ProjectReference Include="..\..\Local\NosSmooth.LocalCore\NosSmooth.LocalCore.vcxproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
   <ImportGroup Label=".NET DllExport">
     <Import Project="$(SolutionDir)packages\DllExport.1.7.4\tools\net.r_eg.DllExport.targets" Condition="Exists($([MSBuild]::Escape('$(SolutionDir)packages\DllExport.1.7.4\tools\net.r_eg.DllExport.targets')))" Label="8337224c9ad9e356" />
   </ImportGroup>

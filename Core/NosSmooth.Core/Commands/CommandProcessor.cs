@@ -1,4 +1,10 @@
-﻿using System;
+﻿//
+//  CommandProcessor.cs
+//
+//  Copyright (c) František Boháček. All rights reserved.
+//  Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,15 +14,30 @@ using Remora.Results;
 
 namespace NosSmooth.Core.Commands;
 
+/// <summary>
+/// Calls <see cref="ICommandHandler"/> for the executing command
+/// by using <see cref="IServiceProvider"/> dependency injection.
+/// </summary>
 public class CommandProcessor
 {
     private readonly IServiceProvider _provider;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CommandProcessor"/> class.
+    /// </summary>
+    /// <param name="provider">The dependency injection provider.</param>
     public CommandProcessor(IServiceProvider provider)
     {
         _provider = provider;
     }
 
+    /// <summary>
+    /// Processes the given command, calling its handler or returning error.
+    /// </summary>
+    /// <param name="command">The command to process.</param>
+    /// <param name="ct">The cancellation token for cancelling the operation.</param>
+    /// <returns>A result that may or may not have succeeded.</returns>
+    /// <exception cref="InvalidOperationException">Thrown on critical error.</exception>
     public Task<Result> ProcessCommand(ICommand command, CancellationToken ct = default)
     {
         var processMethod = GetType().GetMethod
