@@ -112,15 +112,7 @@ public class NostaleLocalClient : BaseNostaleClient
                 throw new InvalidOperationException("The interceptor cannot be null if interception is allowed.");
             }
 
-            var process = _interceptor.InterceptReceive(ref packet);
-            if (process)
-            {
-                ReceivePacket(packet);
-            }
-        }
-        else
-        {
-            ReceivePacket(packet);
+            return _interceptor.InterceptReceive(ref packet);
         }
 
         // TODO: handlers
@@ -138,15 +130,7 @@ public class NostaleLocalClient : BaseNostaleClient
                 throw new InvalidOperationException("The interceptor cannot be null if interception is allowed.");
             }
 
-            var process = _interceptor.InterceptSend(ref packet);
-            if (process)
-            {
-                SendPacket(packet);
-            }
-        }
-        else
-        {
-            SendPacket(packet);
+            return _interceptor.InterceptSend(ref packet);
         }
 
         // TODO: handlers

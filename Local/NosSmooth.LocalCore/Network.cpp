@@ -7,7 +7,8 @@ using namespace System;
 
 Network::Network(ModuleHook moduleHook)
 {
-    NetworkUnmanaged::GetInstance()->Setup(moduleHook);
+    _networkUnmanaged = NetworkUnmanaged::GetInstance();
+    _networkUnmanaged->Setup(moduleHook);
 }
 
 void Network::ResetHooks()

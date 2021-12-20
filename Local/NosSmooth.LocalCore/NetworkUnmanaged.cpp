@@ -28,12 +28,16 @@ void PacketSendDetour()
         mov packet, edx
     }
 
-    NetworkUnmanaged::GetInstance()->ExecuteSendCallback(packet);
+    bool isAccepted = NetworkUnmanaged::GetInstance()->ExecuteSendCallback(packet);
 
     __asm
     {
         popfd
         popad
+    }
+
+    if (isAccepted) {
+        NetworkUnmanaged::GetInstance()->SendPacket(packet);
     }
 }
 
@@ -49,12 +53,16 @@ void PacketReceiveDetour()
         mov packet, edx
     }
 
-    NetworkUnmanaged::GetInstance()->ExecuteReceiveCallback(packet);
+    bool isAccepted = NetworkUnmanaged::GetInstance()->ExecuteReceiveCallback(packet);
 
     __asm
     {
         popfd
         popad
+    }
+
+    if (isAccepted) {
+        NetworkUnmanaged::GetInstance()->ReceivePacket(packet);
     }
 }
 

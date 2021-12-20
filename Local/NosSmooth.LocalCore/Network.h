@@ -37,6 +37,8 @@ namespace NosSmoothCore
 		/// Resets all the function hooks.
 		/// </summary>
 		void ResetHooks();
+	private:
+		NetworkUnmanaged* _networkUnmanaged;
 	};
 }
 
