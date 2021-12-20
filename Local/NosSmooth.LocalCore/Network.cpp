@@ -31,11 +31,13 @@ void Network::ReceivePacket(System::String^ packet)
 void Network::SetReceiveCallback(NetworkCallback^ callback)
 {
     IntPtr functionPointer = Marshal::GetFunctionPointerForDelegate(callback);
+    _receiveCallback = callback;
     NetworkUnmanaged::GetInstance()->SetReceiveCallback(static_cast<PacketCallback>(functionPointer.ToPointer()));
 }
 
 void Network::SetSendCallback(NetworkCallback^ callback)
 {
     IntPtr functionPointer = Marshal::GetFunctionPointerForDelegate(callback);
+    _sendCallback = callback;
     NetworkUnmanaged::GetInstance()->SetSendCallback(static_cast<PacketCallback>(functionPointer.ToPointer()));
 }

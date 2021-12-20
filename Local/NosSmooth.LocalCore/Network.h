@@ -39,6 +39,8 @@ namespace NosSmoothCore
 		void ResetHooks();
 	private:
 		NetworkUnmanaged* _networkUnmanaged;
+		NetworkCallback^ _sendCallback;
+		NetworkCallback^ _receiveCallback;
 	};
 }
 
