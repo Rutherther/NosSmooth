@@ -50,6 +50,7 @@ namespace NosSmoothCore
 			return reinterpret_cast<NetworkUnmanaged*>(&instance);
 		}
 	private:
+		NetworkUnmanaged();
 		unsigned int _callerObject;
 		unsigned int _receivePacketAddress;
 		unsigned int _sendPacketAddress;

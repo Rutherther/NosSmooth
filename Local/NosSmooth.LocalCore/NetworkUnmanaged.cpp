@@ -81,8 +81,8 @@ void NetworkUnmanaged::Setup(ModuleHook moduleHook)
 
     DetourTransactionBegin();
     DetourUpdateThread(GetCurrentThread());
-    DetourAttach(&reinterpret_cast<void*&>(sendFunction), PacketSendDetour);
-    DetourAttach(&reinterpret_cast<void*&>(receiveFunction), PacketReceiveDetour);
+    DetourAttach(&reinterpret_cast<void*&>(_sendPacketAddress), PacketSendDetour);
+    DetourAttach(&(PVOID&)_receivePacketAddress, PacketReceiveDetour);
     DetourTransactionCommit();
 }
 
@@ -91,7 +91,7 @@ void NetworkUnmanaged::SendPacket(const char *packet)
     __asm
     {
         mov esi, this
-        mov eax, [esi]._callerObject
+        mov eax, dword ptr ds : [esi]._callerObject
         mov eax, dword ptr ds : [eax]
         mov eax, dword ptr ds : [eax]
         mov edx, packet
@@ -104,10 +104,10 @@ void NetworkUnmanaged::ReceivePacket(const char* packet)
     __asm
     {
         mov esi, this
-        mov eax, [esi]._callerObject
+        mov eax, dword ptr ds : [esi]._callerObject
         mov eax, dword ptr ds : [eax]
         mov eax, dword ptr ds : [eax]
-        mov eax, dword ptr ds : [eax + 34h]
+        mov eax, dword ptr ds : [eax + 0x34]
         mov edx, packet
         call[esi]._receivePacketAddress
     }
@@ -118,7 +118,7 @@ void NetworkUnmanaged::ResetHooks()
     DetourTransactionBegin();
     DetourUpdateThread(GetCurrentThread());
     DetourDetach(&reinterpret_cast<void*&>(_sendPacketAddress), PacketSendDetour);
-    DetourDetach(&reinterpret_cast<void*&>(_receivePacketAddress), PacketReceiveDetour);
+    DetourDetach(&(PVOID&)_receivePacketAddress, PacketReceiveDetour);
     DetourTransactionCommit();
 }
 
@@ -134,10 +134,18 @@ void NetworkUnmanaged::SetSendCallback(PacketCallback callback)
 
 bool NetworkUnmanaged::ExecuteReceiveCallback(const char *packet)
 {
-    return _receiveCallback(packet);
+    if (_receiveCallback != nullptr) {
+        return _receiveCallback(packet);
+    }
+
+    return true;
 }
 
 bool NetworkUnmanaged::ExecuteSendCallback(const char* packet)
 {
-    return _sendCallback(packet);
+    if (_sendCallback != nullptr) {
+        return _sendCallback(packet);
+    }
+
+    return true;
 }
