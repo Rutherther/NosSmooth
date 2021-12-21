@@ -24,13 +24,13 @@ namespace NosSmooth.LocalClient;
 /// </remarks>
 public class NostaleLocalClient : BaseNostaleClient
 {
-    private readonly IPacketSerializer _packetSerializer;
     private readonly PacketSerializerProvider _packetSerializerProvider;
     private readonly IPacketHandler _packetHandler;
     private readonly ILogger _logger;
+    private readonly IServiceProvider _provider;
     private readonly NosClient _client;
     private readonly LocalClientOptions _options;
-    private readonly IPacketInterceptor? _interceptor;
+    private IPacketInterceptor? _interceptor;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NostaleLocalClient"/> class.
@@ -57,16 +57,11 @@ public class NostaleLocalClient : BaseNostaleClient
         : base(commandProcessor, packetSerializer)
     {
         _options = options.Value;
-        _packetSerializer = packetSerializer;
         _packetSerializerProvider = packetSerializerProvider;
         _packetHandler = packetHandler;
         _logger = logger;
+        _provider = provider;
         _client = client;
-
-        if (_options.AllowIntercept)
-        {
-            _interceptor = provider.GetRequiredService<IPacketInterceptor>();
-        }
     }
 
     /// <inheritdoc />
@@ -113,7 +108,7 @@ public class NostaleLocalClient : BaseNostaleClient
         {
             if (_interceptor is null)
             {
-                throw new InvalidOperationException("The interceptor cannot be null if interception is allowed.");
+                _interceptor = _provider.GetRequiredService<IPacketInterceptor>();
             }
 
             return _interceptor.InterceptReceive(ref packet);
@@ -130,7 +125,7 @@ public class NostaleLocalClient : BaseNostaleClient
         {
             if (_interceptor is null)
             {
-                throw new InvalidOperationException("The interceptor cannot be null if interception is allowed.");
+                _interceptor = _provider.GetRequiredService<IPacketInterceptor>();
             }
 
             return _interceptor.InterceptSend(ref packet);
