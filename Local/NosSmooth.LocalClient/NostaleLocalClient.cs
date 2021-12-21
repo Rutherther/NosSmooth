@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands;
+using NosSmooth.Core.Extensions;
 using NosSmooth.Core.Packets;
 using NosSmoothCore;
 using Remora.Results;
@@ -170,22 +171,17 @@ public class NostaleLocalClient : BaseNostaleClient
         Result result;
         if (type == PacketType.Received)
         {
-            result = await _packetHandler.HandleReceivedPacketAsync(packet.Entity);
+            result = await _packetHandler.HandleReceivedPacketAsync(packet.Entity, packetString);
         }
         else
         {
-            result = await _packetHandler.HandleSentPacketAsync(packet.Entity);
+            result = await _packetHandler.HandleSentPacketAsync(packet.Entity, packetString);
         }
 
         if (!result.IsSuccess)
         {
-            _logger.LogWarning($"There was an error whilst handling packet {packetString}. Error: {result.Error.Message}");
+            _logger.LogError("There was an error whilst handling packet");
+            _logger.LogResultError(result);
         }
-    }
-
-    private enum PacketType
-    {
-        Sent,
-        Received,
     }
 }

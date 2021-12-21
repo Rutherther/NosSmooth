@@ -31,7 +31,7 @@ public class SayResponder : IPacketResponder<SayPacket>, IPacketResponder<MsgPac
     }
 
     /// <inheritdoc />
-    public Task<Result> Respond(SayPacket packet, CancellationToken ct = default)
+    public Task<Result> Respond(PacketEventArgs<SayPacket> packet, CancellationToken ct = default)
     {
         return _client.ReceivePacketAsync(
             new SayPacket()
@@ -41,8 +41,8 @@ public class SayResponder : IPacketResponder<SayPacket>, IPacketResponder<MsgPac
             ct);
     }
 
-    /// <inheritdoc/>
-    public Task<Result> Respond(MsgPacket packet, CancellationToken ct = default)
+    /// <inheritdoc />
+    public Task<Result> Respond(PacketEventArgs<MsgPacket> packet, CancellationToken ct = default)
     {
         return _client.ReceivePacketAsync(
             new SayPacket()

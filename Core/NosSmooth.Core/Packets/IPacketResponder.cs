@@ -32,7 +32,7 @@ public interface IPacketResponder<TPacket> : IPacketResponder
     /// <param name="packet">The packet to respond to.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Task<Result> Respond(TPacket packet, CancellationToken ct = default);
+    public Task<Result> Respond(PacketEventArgs<TPacket> packet, CancellationToken ct = default);
 }
 
 /// <summary>
@@ -47,6 +47,6 @@ public interface IEveryPacketResponder : IPacketResponder
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <typeparam name="TPacket">The type of the packet.</typeparam>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Task<Result> Respond<TPacket>(TPacket packet, CancellationToken ct = default)
+    public Task<Result> Respond<TPacket>(PacketEventArgs<TPacket> packet, CancellationToken ct = default)
         where TPacket : IPacket;
 }

@@ -31,12 +31,20 @@ public class PacketHandler : IPacketHandler
     }
 
     /// <inheritdoc />
-    public Task<Result> HandleReceivedPacketAsync(IPacket packet, CancellationToken ct) => HandlePacketAsync(packet, ct);
+    public Task<Result> HandleReceivedPacketAsync(IPacket packet, string packetString, CancellationToken ct)
+        => HandlePacketAsync(PacketType.Received, packet, packetString, ct);
 
     /// <inheritdoc />
-    public Task<Result> HandleSentPacketAsync(IPacket packet, CancellationToken ct) => HandlePacketAsync(packet, ct);
+    public Task<Result> HandleSentPacketAsync(IPacket packet, string packetString, CancellationToken ct)
+        => HandlePacketAsync(PacketType.Sent, packet, packetString, ct);
 
-    private Task<Result> HandlePacketAsync(IPacket packet, CancellationToken ct = default)
+    private Task<Result> HandlePacketAsync
+    (
+        PacketType packetType,
+        IPacket packet,
+        string packetString,
+        CancellationToken ct = default
+    )
     {
         var processMethod = GetType().GetMethod
         (
@@ -50,18 +58,30 @@ public class PacketHandler : IPacketHandler
         }
 
         var boundProcessMethod = processMethod.MakeGenericMethod(packet.GetType());
-        return (Task<Result>)boundProcessMethod.Invoke(this, new object[] { packet, ct })!;
+        return (Task<Result>)boundProcessMethod.Invoke(this, new object[]
+        {
+            packetType,
+            packet,
+            packetString,
+            ct
+        })!;
     }
 
-    private async Task<Result> DispatchResponder<TPacket>(TPacket packet, CancellationToken ct)
+    private async Task<Result> DispatchResponder<TPacket>(
+        PacketType packetType,
+        TPacket packet,
+        string packetString,
+        CancellationToken ct
+    )
         where TPacket : class, IPacket
     {
         using var scope = _provider.CreateScope();
         var packetResponders = scope.ServiceProvider.GetServices<IPacketResponder<TPacket>>();
         var genericPacketResponders = scope.ServiceProvider.GetServices<IEveryPacketResponder>();
 
-        var tasks = packetResponders.Select(responder => responder.Respond(packet, ct)).ToList();
-        tasks.AddRange(genericPacketResponders.Select(responder => responder.Respond(packet, ct)));
+        var packetEventArgs = new PacketEventArgs<TPacket>(packetType, packet, packetString);
+        var tasks = packetResponders.Select(responder => responder.Respond(packetEventArgs, ct)).ToList();
+        tasks.AddRange(genericPacketResponders.Select(responder => responder.Respond(packetEventArgs, ct)));
 
         var results = await Task.WhenAll(tasks);
 
@@ -78,7 +98,7 @@ public class PacketHandler : IPacketHandler
         {
             0 => Result.FromSuccess(),
             1 => errors[0],
-            _ => new AggregateError(errors.Cast<IResult>().ToList())
+            _ => new AggregateError(errors.Cast<IResult>().ToArray())
         };
     }
 }
