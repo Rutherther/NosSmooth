@@ -3,6 +3,18 @@
     /// Adds the given game event responder.
     /// </summary>
     /// <param name="serviceCollection">The service collection.</param>
+    /// <typeparam name="TGameResponder">The responder to add.</typeparam>
+    /// <returns>The collection.</returns>
+    public static IServiceCollection AddGameResponder<TGameResponder>(this IServiceCollection serviceCollection)
+        where TGameResponder : IGameResponder
+    {
+        return serviceCollection.AddGameResponder(typeof(TGameResponder));
+    }
+
+    /// <summary>
+    /// Adds the given game event responder.
+    /// </summary>
+    /// <param name="serviceCollection">The service collection.</param>
     /// <param name="gameResponder">The type of the event responder.</param>
     /// <returns>The collection.</returns>
     public static IServiceCollection AddGameResponder(this IServiceCollection serviceCollection, Type gameResponder)
