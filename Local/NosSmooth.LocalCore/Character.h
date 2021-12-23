@@ -1,5 +1,6 @@
 #pragma once
 #include "ModuleHook.h"
+#include "CharacterUnmanaged.h"
 
 namespace NosSmoothCore
 {
@@ -18,9 +19,19 @@ namespace NosSmoothCore
 		/// <param name="x">The x coordinate to walk to.</param>
 		/// <param name="y">The y coordinate to walk to.</param>
 		void Walk(int x, int y);
+
+		/// <summary>
+		/// Registers the callback for walk function.
+		/// </summary>
+		/// <param name="walkCallback">The callback to call.</param>
+		void SetWalkCallback(WalkCallback^ walkCallback);
+
+		/// <summary>
+		/// Reset the registered hooks.
+		/// </summary>
+		void ResetHooks();
 	private:
-		unsigned int _playerObject;
-		unsigned int _walkFunction;
+		WalkCallback^ _walkCallback;
 	};
 }
 

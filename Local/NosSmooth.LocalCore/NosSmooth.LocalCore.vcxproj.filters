@@ -33,6 +33,9 @@
     <ClInclude Include="NetworkUnmanaged.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CharacterUnmanaged.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NosSmoothCore.cpp">
@@ -50,8 +53,12 @@
     <ClCompile Include="NetworkUnmanaged.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CharacterUnmanaged.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="..\..\stylecop.json" />
   </ItemGroup>
 </Project>

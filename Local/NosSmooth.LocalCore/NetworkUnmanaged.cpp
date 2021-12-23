@@ -1,6 +1,8 @@
 #include "NetworkUnmanaged.h"
 #include <detours.h>
 #include <windows.h>
+#include <chrono>
+#include <iostream>
 
 using namespace NosSmoothCore;
 
@@ -35,7 +37,7 @@ void PacketSendDetour()
         popfd
         popad
     }
-
+    
     if (isAccepted) {
         NetworkUnmanaged::GetInstance()->SendPacket(packet);
     }
@@ -93,8 +95,8 @@ void NetworkUnmanaged::Setup(ModuleHook moduleHook)
 
     DetourTransactionBegin();
     DetourUpdateThread(GetCurrentThread());
-    DetourAttach(&reinterpret_cast<void*&>(_sendPacketAddress), PacketSendDetour);
     DetourAttach(&(PVOID&)_receivePacketAddress, PacketReceiveDetour);
+    DetourAttach(&reinterpret_cast<void*&>(_sendPacketAddress), PacketSendDetour);
     DetourTransactionCommit();
 }
 
@@ -129,8 +131,14 @@ void NetworkUnmanaged::ResetHooks()
 {
     DetourTransactionBegin();
     DetourUpdateThread(GetCurrentThread());
-    DetourDetach(&reinterpret_cast<void*&>(_sendPacketAddress), PacketSendDetour);
+    if (_sendCallback != nullptr) {
+        DetourDetach(&reinterpret_cast<void*&>(_sendPacketAddress), PacketSendDetour);
+    }
+
+    if (_receiveCallback != nullptr) {
     DetourDetach(&(PVOID&)_receivePacketAddress, PacketReceiveDetour);
+    }
+
     DetourTransactionCommit();
 }
 

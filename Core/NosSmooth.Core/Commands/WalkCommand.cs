@@ -12,4 +12,5 @@ namespace NosSmooth.Core.Commands;
 /// </summary>
 /// <param name="TargetX">The x coordinate of the target position to move to.</param>
 /// <param name="TargetY">The y coordinate of the target position to move to.</param>
-public record WalkCommand(int TargetX, int TargetY) : ICommand;
+/// <param name="CancelOnUserMove">Whether to cancel the walk when the user clicks to move somewhere.</param>
+public record WalkCommand(int TargetX, int TargetY, bool CancelOnUserMove = true) : ICommand;

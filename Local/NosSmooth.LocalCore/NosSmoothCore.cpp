@@ -30,4 +30,5 @@ Network^ NosClient::GetNetwork()
 void NosClient::ResetHooks() 
 {
 	_network->ResetHooks();
+	_character->ResetHooks();
 }
