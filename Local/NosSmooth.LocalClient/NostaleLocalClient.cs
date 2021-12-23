@@ -7,10 +7,12 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NosCore.Packets;
 using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands;
 using NosSmooth.Core.Extensions;
 using NosSmooth.Core.Packets;
+using NosSmooth.LocalClient.Hooks;
 using NosSmoothCore;
 using Remora.Results;
 
@@ -26,11 +28,13 @@ namespace NosSmooth.LocalClient;
 public class NostaleLocalClient : BaseNostaleClient
 {
     private readonly PacketSerializerProvider _packetSerializerProvider;
+    private readonly NostaleHookManager _hookManager;
     private readonly IPacketHandler _packetHandler;
     private readonly ILogger _logger;
     private readonly IServiceProvider _provider;
     private readonly NosClient _client;
     private readonly LocalClientOptions _options;
+    private CancellationToken? _stopRequested;
     private IPacketInterceptor? _interceptor;
 
     /// <summary>
@@ -39,6 +43,7 @@ public class NostaleLocalClient : BaseNostaleClient
     /// <param name="commandProcessor">The command processor.</param>
     /// <param name="packetSerializer">The packet serializer.</param>
     /// <param name="packetSerializerProvider">The packet serializer provider.</param>
+    /// <param name="hookManager">The hooking manager.</param>
     /// <param name="packetHandler">The packet handler.</param>
     /// <param name="logger">The logger.</param>
     /// <param name="options">The options for the client.</param>
@@ -49,6 +54,7 @@ public class NostaleLocalClient : BaseNostaleClient
         CommandProcessor commandProcessor,
         IPacketSerializer packetSerializer,
         PacketSerializerProvider packetSerializerProvider,
+        NostaleHookManager hookManager,
         IPacketHandler packetHandler,
         ILogger<NostaleLocalClient> logger,
         IOptions<LocalClientOptions> options,
@@ -59,6 +65,7 @@ public class NostaleLocalClient : BaseNostaleClient
     {
         _options = options.Value;
         _packetSerializerProvider = packetSerializerProvider;
+        _hookManager = hookManager;
         _packetHandler = packetHandler;
         _logger = logger;
         _provider = provider;
@@ -120,6 +127,7 @@ public class NostaleLocalClient : BaseNostaleClient
 
     private bool ReceiveCallback(string packet)
     {
+        bool accepted = true;
         if (_options.AllowIntercept)
         {
             if (_interceptor is null)
@@ -127,16 +135,17 @@ public class NostaleLocalClient : BaseNostaleClient
                 _interceptor = _provider.GetRequiredService<IPacketInterceptor>();
             }
 
-            return _interceptor.InterceptReceive(ref packet);
+            accepted = _interceptor.InterceptReceive(ref packet);
         }
 
         Task.Run(async () => await ProcessPacketAsync(PacketType.Received, packet));
 
-        return true;
+        return accepted;
     }
 
     private bool SendCallback(string packet)
     {
+        bool accepted = true;
         if (_options.AllowIntercept)
         {
             if (_interceptor is null)
@@ -144,12 +153,12 @@ public class NostaleLocalClient : BaseNostaleClient
                 _interceptor = _provider.GetRequiredService<IPacketInterceptor>();
             }
 
-            return _interceptor.InterceptSend(ref packet);
+            accepted = _interceptor.InterceptSend(ref packet);
         }
 
         Task.Run(async () => await ProcessPacketAsync(PacketType.Sent, packet));
 
-        return true;
+        return accepted;
     }
 
     private void SendPacket(string packetString)
