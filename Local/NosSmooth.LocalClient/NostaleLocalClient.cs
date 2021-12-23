@@ -164,18 +164,19 @@ public class NostaleLocalClient : BaseNostaleClient
         var packet = serializer.Deserialize(packetString);
         if (!packet.IsSuccess)
         {
-            _logger.LogWarning($"Could not parse {packetString}. Reason: {packet.Error.Message}");
-            return;
+            _logger.LogWarning("Could not parse {Packet}. Reason:", packetString);
+            _logger.LogResultError(packet);
+            packet = new ParsingFailedPacket(packet, packetString);
         }
 
         Result result;
         if (type == PacketType.Received)
         {
-            result = await _packetHandler.HandleReceivedPacketAsync(packet.Entity, packetString);
+            result = await _packetHandler.HandleReceivedPacketAsync(packet.Entity, packetString, _stopRequested ?? default);
         }
         else
         {
-            result = await _packetHandler.HandleSentPacketAsync(packet.Entity, packetString);
+            result = await _packetHandler.HandleSentPacketAsync(packet.Entity, packetString, _stopRequested ?? default);
         }
 
         if (!result.IsSuccess)
