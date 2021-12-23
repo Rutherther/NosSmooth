@@ -85,6 +85,7 @@ public class WalkCommandHandler : ICommandHandler<WalkCommand>
 
             if ((DateTimeOffset.Now - _walkStatus.LastWalkTime).TotalMilliseconds > _options.NotWalkingTooLongTrigger)
             {
+                await _walkStatus.CancelWalkingAsync(WalkCancelReason.NotWalkingTooLong);
                 return new WalkNotFinishedError(_walkStatus.CurrentX, _walkStatus.CurrentY, WalkCancelReason.NotWalkingTooLong);
             }
         }
