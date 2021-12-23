@@ -68,12 +68,26 @@ public class NostaleLocalClient : BaseNostaleClient
     /// <inheritdoc />
     public override async Task<Result> RunAsync(CancellationToken stopRequested = default)
     {
+        _stopRequested = stopRequested;
         _logger.LogInformation("Starting local client");
         NetworkCallback receiveCallback = ReceiveCallback;
         NetworkCallback sendCallback = SendCallback;
 
-        _client.GetNetwork().SetReceiveCallback(receiveCallback);
-        _client.GetNetwork().SetSendCallback(sendCallback);
+        if (_options.HookPacketReceive)
+        {
+            _client.GetNetwork().SetReceiveCallback(receiveCallback);
+        }
+
+        if (_options.HookPacketSend)
+        {
+            _client.GetNetwork().SetSendCallback(sendCallback);
+        }
+
+        if (_options.HookCharacterWalk)
+        {
+            _hookManager.HookCharacterWalk();
+        }
+
         _logger.LogInformation("Packet methods hooked successfully");
 
         try
@@ -82,6 +96,7 @@ public class NostaleLocalClient : BaseNostaleClient
         }
         catch
         {
+            // ignored
         }
 
         _client.ResetHooks();
