@@ -5,12 +5,9 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Primitives;
-using NosSmooth.Game.Data.Chat;
-using NosSmooth.Game.Data.Inventory;
+using NosSmooth.Game.Data.Characters;
+using NosSmooth.Game.Data.Maps;
 using NosSmooth.Game.Data.Raids;
-using NosSmooth.Game.Entities;
-using NosSmooth.Game.Maps;
 
 namespace NosSmooth.Game;
 
@@ -19,8 +16,8 @@ namespace NosSmooth.Game;
 /// </summary>
 public class Game
 {
-    private Map? _currentMap;
     private readonly GameOptions _options;
+    private Map? _currentMap;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Game"/> class.
@@ -53,11 +50,6 @@ public class Game
     }
 
     /// <summary>
-    /// Gets the friends list of the current client.
-    /// </summary>
-    public IReadOnlyList<Friend>? Friends { get; internal set; }
-
-    /// <summary>
     /// Gets the active raid the client is currently on.
     /// </summary>
     /// <remarks>
@@ -66,12 +58,35 @@ public class Game
     public Raid? CurrentRaid { get; internal set; }
 
     /// <summary>
-    /// Gets the inventory of the client character.
-    /// </summary>
-    public Inventory Inventory { get; internal set; }
-
-    /// <summary>
     /// Cancellation token for changing the map to use in memory cache.
     /// </summary>
     internal CancellationTokenSource? MapChanged { get; private set; }
+
+    /// <summary>
+    /// Gets the set semaphore used for changing internal fields.
+    /// </summary>
+    internal SemaphoreSlim SetSemaphore { get; } = new SemaphoreSlim(1, 1);
+
+    /// <summary>
+    /// Ensures that Character is not null.
+    /// </summary>
+    /// <param name="releaseSemaphore">Whether to release the semaphore.</param>
+    /// <param name="ct">The cancellation token for cancelling the operation.</param>
+    /// <returns>A Task that may or may not have succeeded.</returns>
+    internal async Task<Character> EnsureCharacterCreatedAsync(bool releaseSemaphore, CancellationToken ct = default)
+    {
+        await SetSemaphore.WaitAsync(ct);
+        Character? character = Character;
+        if (Character is null)
+        {
+            Character = character = new Character();
+        }
+
+        if (releaseSemaphore)
+        {
+            SetSemaphore.Release();
+        }
+
+        return character!;
+    }
 }
