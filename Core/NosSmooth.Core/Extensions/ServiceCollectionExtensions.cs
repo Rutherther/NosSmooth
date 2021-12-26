@@ -49,8 +49,8 @@ public static class ServiceCollectionExtensions
             clientPacketTypes.AddRange(additionalPacketTypes);
         }
 
-        serviceCollection.AddSingleton(_ =>
-            new PacketSerializerProvider(clientPacketTypes, serverPacketTypes));
+        serviceCollection.AddSingleton(p =>
+            new PacketSerializerProvider(clientPacketTypes, serverPacketTypes, p));
         serviceCollection.AddSingleton(p => p.GetRequiredService<PacketSerializerProvider>().ServerSerializer);
 
         serviceCollection.AddSingleton<CommandProcessor>();
