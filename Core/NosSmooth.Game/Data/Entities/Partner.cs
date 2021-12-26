@@ -1,12 +1,12 @@
-﻿// 
-// Partner.cs
-// 
-// Copyright (c) Christofel authors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+﻿//
+//  Partner.cs
+//
+//  Copyright (c) František Boháček. All rights reserved.
+//  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace NosSmooth.Game.Entities;
+namespace NosSmooth.Game.Data.Entities;
 
-public class Partner
-{
-    
-}
+/// <summary>
+/// Represents Partner of the Character.
+/// </summary>
+public record Partner() : IPet;

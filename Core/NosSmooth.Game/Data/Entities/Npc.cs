@@ -1,12 +1,12 @@
-﻿// 
-// Npc.cs
-// 
-// Copyright (c) Christofel authors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+﻿//
+//  Npc.cs
+//
+//  Copyright (c) František Boháček. All rights reserved.
+//  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace NosSmooth.Game.Entities;
+namespace NosSmooth.Game.Data.Entities;
 
-public class Npc
-{
-    
-}
+/// <summary>
+/// Represents nostale npc entity.
+/// </summary>
+public record Npc();
