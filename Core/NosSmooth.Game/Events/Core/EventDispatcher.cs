@@ -7,7 +7,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Remora.Results;
 
-namespace NosSmooth.Game.Events.Handlers;
+namespace NosSmooth.Game.Events.Core;
 
 /// <summary>
 /// Dispatches <see cref="IGameResponder"/> with <see cref="IGameEvent"/>.
@@ -35,8 +35,9 @@ public class EventDispatcher
     public async Task<Result> DispatchEvent<TEvent>(TEvent @event, CancellationToken ct = default)
         where TEvent : IGameEvent
     {
+        using var scope = _provider.CreateScope();
         var results = await Task.WhenAll(
-            _provider
+            scope.ServiceProvider
                 .GetServices<IGameResponder<TEvent>>()
                 .Select(responder => responder.Respond(@event, ct))
         );
