@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using NosSmooth.Core.Commands;
 using NosSmooth.Core.Extensions;
 using NosSmooth.Game.Events.Handlers;
+using NosSmooth.Game.Apis;
 
 namespace NosSmooth.Game.Extensions;
 
@@ -31,6 +32,10 @@ public static class ServiceCollectionExtensions
         serviceCollection.TryAddSingleton<Game>();
 
         // TODO: add events
+
+        serviceCollection
+            .AddTransient<NostaleChatPacketApi>()
+            .AddTransient<NostaleSkillsPacketApi>();
         return serviceCollection;
     }
 
