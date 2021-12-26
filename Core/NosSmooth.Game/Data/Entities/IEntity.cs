@@ -5,9 +5,9 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using NosCore.Shared.Enumerations;
-using NosSmooth.Game.Data;
+using NosSmooth.Game.Data.Info;
 
-namespace NosSmooth.Game.Entities;
+namespace NosSmooth.Game.Data.Entities;
 
 /// <summary>
 /// Base type for entities.
@@ -27,7 +27,7 @@ public interface IEntity
     /// <summary>
     /// Gets the position of the entity.
     /// </summary>
-    public Position Position { get; }
+    public Position? Position { get; }
 
     /// <summary>
     /// Gets the type of the entity.
