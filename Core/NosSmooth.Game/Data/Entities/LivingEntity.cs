@@ -5,10 +5,9 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using NosCore.Packets.Enumerations;
-using NosCore.Shared.Enumerations;
-using NosSmooth.Game.Data;
+using NosSmooth.Game.Data.Info;
 
-namespace NosSmooth.Game.Entities;
+namespace NosSmooth.Game.Data.Entities;
 
 /// <summary>
 /// Represents any nostale living entity such as monster, npc, player.
@@ -33,15 +32,20 @@ public interface ILivingEntity : IEntity
     /// <summary>
     /// Gets the percentage of the health points of the entity. May be null if unknown.
     /// </summary>
-    public byte? HpPercentage { get; }
+    public Health? Hp { get; }
 
     /// <summary>
     /// Gets the percentage of the mana points of the entity. May be null if unknown.
     /// </summary>
-    public byte? MpPercentage { get; }
+    public Health? Mp { get; }
 
     /// <summary>
     /// Gets the faction of the entity. May be null if unknown.
     /// </summary>
     public FactionType? Faction { get; }
+
+    /// <summary>
+    /// Gets the size of the entity.
+    /// </summary>
+    public short Size { get; }
 }
