@@ -4,6 +4,8 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
+using NosCore.Packets;
 using NosCore.Packets.Interfaces;
 using Remora.Results;
 
@@ -27,4 +29,16 @@ public interface IPacketSerializer
     /// <param name="packetString">The packet to deserialize.</param>
     /// <returns>The deserialized packet.</returns>
     public Result<IPacket> Deserialize(string packetString);
+
+    /// <summary>
+    /// Gets the inner serializer from NosCore.
+    /// </summary>
+    [Obsolete("May be removed anytime.")]
+    public Serializer Serializer { get; }
+
+    /// <summary>
+    /// Gets the inner deserializer from NosCore.
+    /// </summary>
+    [Obsolete("May be removed anytime.")]
+    public Deserializer Deserializer { get; }
 }

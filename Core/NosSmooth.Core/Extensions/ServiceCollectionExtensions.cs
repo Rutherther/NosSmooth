@@ -166,4 +166,17 @@ public static class ServiceCollectionExtensions
 
         return serviceCollection;
     }
+
+    /// <summary>
+    /// Adds the specified packet converter.
+    /// </summary>
+    /// <param name="serviceCollection">The service collection to register the responder to.</param>
+    /// <typeparam name="TPacketConverter">The type of the packet.</typeparam>
+    /// <exception cref="ArgumentException">Thrown if the type of the responder is incorrect.</exception>
+    /// <returns>The collection.</returns>
+    public static IServiceCollection AddSpecificPacketConverter<TPacketConverter>(this IServiceCollection serviceCollection)
+        where TPacketConverter : class, ISpecificPacketSerializer
+    {
+        return serviceCollection.AddSingleton<ISpecificPacketSerializer, TPacketConverter>();
+    }
 }
