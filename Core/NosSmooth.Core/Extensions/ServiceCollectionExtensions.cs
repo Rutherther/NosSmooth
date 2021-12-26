@@ -16,6 +16,7 @@ using NosCore.Packets.Interfaces;
 using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands;
 using NosSmooth.Core.Packets;
+using NosSmooth.Core.Packets.Converters;
 
 namespace NosSmooth.Core.Extensions;
 
@@ -54,6 +55,8 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddSingleton(p => p.GetRequiredService<PacketSerializerProvider>().ServerSerializer);
 
         serviceCollection.AddSingleton<CommandProcessor>();
+
+        serviceCollection.AddSpecificPacketConverter<InPacketSerializer>();
 
         return serviceCollection;
     }
