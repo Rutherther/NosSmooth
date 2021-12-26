@@ -1,12 +1,13 @@
-﻿// 
-// Miniland.cs
-// 
-// Copyright (c) Christofel authors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+﻿//
+//  Miniland.cs
+//
+//  Copyright (c) František Boháček. All rights reserved.
+//  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace NosSmooth.Game.Maps;
+namespace NosSmooth.Game.Data.Maps;
 
-public class Miniland
-{
-    
-}
+/// <summary>
+/// Represents Miniland map that can contain miniland objects.
+/// </summary>
+/// <param name="Objects">The objects in the miniland.</param>
+public record Miniland(IReadOnlyList<MinilandObject>? Objects) : Map;

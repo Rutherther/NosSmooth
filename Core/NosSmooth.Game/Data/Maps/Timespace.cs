@@ -1,9 +1,9 @@
-﻿// 
-// Timespace.cs
-// 
-// Copyright (c) Christofel authors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+﻿//
+//  Timespace.cs
+//
+//  Copyright (c) František Boháček. All rights reserved.
+//  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace NosSmooth.Game.Maps;
+namespace NosSmooth.Game.Data.Maps;
 
 public record Timespace();
