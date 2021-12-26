@@ -1,12 +1,12 @@
-﻿// 
-// Pet.cs
-// 
-// Copyright (c) Christofel authors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+﻿//
+//  Pet.cs
+//
+//  Copyright (c) František Boháček. All rights reserved.
+//  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace NosSmooth.Game.Entities;
+namespace NosSmooth.Game.Data.Entities;
 
-public class Pet
-{
-    
-}
+/// <summary>
+/// Represents pet of the character.
+/// </summary>
+public record Pet() : IPet;

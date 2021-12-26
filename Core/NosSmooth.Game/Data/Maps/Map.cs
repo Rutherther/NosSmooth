@@ -1,12 +1,12 @@
-﻿// 
-// Map.cs
-// 
-// Copyright (c) Christofel authors. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+﻿//
+//  Map.cs
+//
+//  Copyright (c) František Boháček. All rights reserved.
+//  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace NosSmooth.Game.Maps;
+namespace NosSmooth.Game.Data.Maps;
 
-public class Map
-{
-    
-}
+/// <summary>
+/// Represents nostale map.
+/// </summary>
+public record Map();

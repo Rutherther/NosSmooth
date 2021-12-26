@@ -15,4 +15,9 @@ namespace NosSmooth.Game.Data.Dialogs;
 /// <param name="AcceptCommand"></param>
 /// <param name="Message"></param>
 /// <param name="Parameters"></param>
-public record Dialog(string AcceptCommand, OneOf<Game18NConstString, string> Message, IReadOnlyList<string> Parameters);
+public record Dialog
+(
+    string AcceptCommand,
+    OneOf<Game18NConstString, string> Message,
+    IReadOnlyList<string> Parameters
+);
