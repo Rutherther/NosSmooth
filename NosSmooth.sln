@@ -36,7 +36,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".metadata", ".metadata", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleChat", "Samples\SimpleChat\SimpleChat.csproj", "{4017A4F4-5E59-48AA-A7D0-A8518148933A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tets", "Tets", "{C6A8760D-92CB-4307-88A7-36CCAEBA4AD1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C6A8760D-92CB-4307-88A7-36CCAEBA4AD1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NosCore.Packets.Tests", "libs\NosCore.Packets\test\NosCore.Packets.Tests\NosCore.Packets.Tests.csproj", "{726188BA-F0EA-4ECA-ACF4-CCC066464FF0}"
 EndProject
@@ -45,6 +45,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LowLevel", "LowLevel", "{9025731C-084E-4E82-8CD4-0F52D3AA1F54}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WalkCommands", "Samples\WalkCommands\WalkCommands.csproj", "{18A62EF6-ADDA-4224-90AB-2D5DCFC95D3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NosSmooth.Core.Tests", "Tests\NosSmooth.Core.Tests\NosSmooth.Core.Tests.csproj", "{1A10C624-48E5-425D-938E-31A4CC7AC687}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -210,6 +212,18 @@ Global
 		{18A62EF6-ADDA-4224-90AB-2D5DCFC95D3E}.Release|x64.Build.0 = Release|Any CPU
 		{18A62EF6-ADDA-4224-90AB-2D5DCFC95D3E}.Release|x86.ActiveCfg = Release|Any CPU
 		{18A62EF6-ADDA-4224-90AB-2D5DCFC95D3E}.Release|x86.Build.0 = Release|Any CPU
+		{1A10C624-48E5-425D-938E-31A4CC7AC687}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A10C624-48E5-425D-938E-31A4CC7AC687}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A10C624-48E5-425D-938E-31A4CC7AC687}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1A10C624-48E5-425D-938E-31A4CC7AC687}.Debug|x64.Build.0 = Debug|Any CPU
+		{1A10C624-48E5-425D-938E-31A4CC7AC687}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1A10C624-48E5-425D-938E-31A4CC7AC687}.Debug|x86.Build.0 = Debug|Any CPU
+		{1A10C624-48E5-425D-938E-31A4CC7AC687}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A10C624-48E5-425D-938E-31A4CC7AC687}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A10C624-48E5-425D-938E-31A4CC7AC687}.Release|x64.ActiveCfg = Release|Any CPU
+		{1A10C624-48E5-425D-938E-31A4CC7AC687}.Release|x64.Build.0 = Release|Any CPU
+		{1A10C624-48E5-425D-938E-31A4CC7AC687}.Release|x86.ActiveCfg = Release|Any CPU
+		{1A10C624-48E5-425D-938E-31A4CC7AC687}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -227,6 +241,7 @@ Global
 		{9025731C-084E-4E82-8CD4-0F52D3AA1F54} = {F20FE754-FDEA-4F3A-93D4-0750CB9EBB33}
 		{F96F3AA0-131E-4B6B-AB21-BBE2DEBCEF3A} = {9025731C-084E-4E82-8CD4-0F52D3AA1F54}
 		{4017A4F4-5E59-48AA-A7D0-A8518148933A} = {9025731C-084E-4E82-8CD4-0F52D3AA1F54}
+		{1A10C624-48E5-425D-938E-31A4CC7AC687} = {C6A8760D-92CB-4307-88A7-36CCAEBA4AD1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5F46653-4DEC-429B-8580-4ED18ED9B4CA}
