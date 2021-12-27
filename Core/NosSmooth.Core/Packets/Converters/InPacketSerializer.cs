@@ -5,6 +5,7 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Linq;
 using NosCore.Packets.ServerPackets.Visibility;
 using NosCore.Shared.Enumerations;
 using Remora.Results;
@@ -45,9 +46,25 @@ public class InPacketSerializer : SpecificPacketSerializer<InPacket>
         try
         {
             var deserializer = _packetSerializerProvider.ServerSerializer.Deserializer;
-            var inPacket = (InPacket)deserializer.Deserialize(packetString);
+            var splitted = packetString.Split(new char[] { ' ' }, 9).Skip(1).ToArray();
 
-            var splitted = packetString.Split(new char[] { ' ' }, 8);
+            if (!Enum.TryParse(splitted[0], out VisualType type))
+            {
+                return new ArgumentInvalidError(nameof(packetString), "The visual type is incorrect.");
+            }
+
+            var startAddress = type == VisualType.Player ? 3 : 2;
+            var inPacket = new InPacket
+            {
+                VisualType = type,
+                VNum = type != VisualType.Player ? long.Parse(splitted[1]) : null,
+                Name = type == VisualType.Player ? splitted[1] : null,
+                VisualId = long.Parse(splitted[startAddress]),
+                PositionX = short.Parse(splitted[startAddress + 1]),
+                PositionY = short.Parse(splitted[startAddress + 2]),
+                Direction = byte.Parse(splitted[startAddress + 3])
+            };
+
             switch (inPacket.VisualType)
             {
                 case VisualType.Player:
@@ -56,11 +73,11 @@ public class InPacketSerializer : SpecificPacketSerializer<InPacket>
                     break;
                 case VisualType.Object:
                     inPacket.InItemSubPacket = (InItemSubPacket?)deserializer
-                        .DeserializeHeaderlessIPacket(typeof(InItemSubPacket), splitted[7]);
+                        .DeserializeHeaderlessIPacket(typeof(InItemSubPacket), splitted[6] + " " + splitted[7]);
                     break;
                 default:
                     inPacket.InNonPlayerSubPacket = (InNonPlayerSubPacket?)deserializer
-                        .DeserializeHeaderlessIPacket(typeof(InNonPlayerSubPacket), splitted[7]);
+                        .DeserializeHeaderlessIPacket(typeof(InNonPlayerSubPacket), splitted[6] + " " + splitted[7]);
                     break;
             }
 
