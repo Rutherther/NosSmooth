@@ -43,7 +43,7 @@ public class PacketTypesRepository : IPacketTypesRepository
     /// <returns>A result that may or may not have succeeded.</returns>
     public Result AddPacketType(Type type)
     {
-        if (typeof(IPacket).IsAssignableFrom(type))
+        if (!typeof(IPacket).IsAssignableFrom(type))
         {
             return new ArgumentInvalidError(nameof(type), "The type has to be assignable to IPacket.");
         }
@@ -74,6 +74,11 @@ public class PacketTypesRepository : IPacketTypesRepository
 
         if (header.Identifier is not null)
         {
+            if (!_headerToPacket.ContainsKey(header.Source))
+            {
+                _headerToPacket[header.Source] = new Dictionary<string, PacketInfo>();
+            }
+
             if (_headerToPacket[header.Source].ContainsKey(header.Identifier))
             {
                 return new AmbiguousHeaderError
