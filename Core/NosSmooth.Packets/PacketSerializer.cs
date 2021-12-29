@@ -18,13 +18,13 @@ namespace NosSmooth.Packets;
 /// </summary>
 public class PacketSerializer : IPacketSerializer
 {
-    private readonly PacketTypesRepository _packetTypesRepository;
+    private readonly IPacketTypesRepository _packetTypesRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PacketSerializer"/> class.
     /// </summary>
     /// <param name="packetTypesRepository">The repository of packet types.</param>
-    public PacketSerializer(PacketTypesRepository packetTypesRepository)
+    public PacketSerializer(IPacketTypesRepository packetTypesRepository)
     {
         _packetTypesRepository = packetTypesRepository;
     }
