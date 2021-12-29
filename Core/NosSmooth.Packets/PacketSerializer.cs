@@ -7,6 +7,7 @@
 using System;
 using NosSmooth.Packets.Attributes;
 using NosSmooth.Packets.Converters;
+using NosSmooth.Packets.Errors;
 using NosSmooth.Packets.Packets;
 using Remora.Results;
 
@@ -17,24 +18,73 @@ namespace NosSmooth.Packets;
 /// </summary>
 public class PacketSerializer : IPacketSerializer
 {
-    /// <summary>
-    /// Serializes the given object to string by appending to the packet string builder.
-    /// </summary>
-    /// <param name="obj">The packet to serialize.</param>
-    /// <returns>A result that may or may not have succeeded.</returns>
-    public Result<string> Serialize(IPacket obj)
-    {
-        return Result<string>.FromSuccess("as");
-    }
+    private readonly PacketTypesRepository _packetTypesRepository;
 
     /// <summary>
-    /// Convert the data from the enumerator to the given type.
+    /// Initializes a new instance of the <see cref="PacketSerializer"/> class.
     /// </summary>
-    /// <param name="packetString">The packet string to deserialize.</param>
-    /// <param name="preferredSource">The preferred source to check first. If packet with the given header is not found there, other sources will be checked as well.</param>
-    /// <returns>The parsed object or an error.</returns>
+    /// <param name="packetTypesRepository">The repository of packet types.</param>
+    public PacketSerializer(PacketTypesRepository packetTypesRepository)
+    {
+        _packetTypesRepository = packetTypesRepository;
+    }
+
+    /// <inheritdoc/>
+    public Result<string> Serialize(IPacket obj)
+    {
+        var stringBuilder = new PacketStringBuilder();
+        var infoResult = _packetTypesRepository.FindPacketInfo(obj.GetType());
+        if (!infoResult.IsSuccess)
+        {
+            return Result<string>.FromError(infoResult);
+        }
+
+        var info = infoResult.Entity;
+        if (info.Header is null)
+        {
+            return new PacketMissingHeaderError(obj);
+        }
+
+        stringBuilder.Append(info.Header);
+        var serializeResult = info.PacketConverter.Serialize(obj, stringBuilder);
+        if (!serializeResult.IsSuccess)
+        {
+            return Result<string>.FromError(serializeResult);
+        }
+
+        return stringBuilder.ToString();
+    }
+
+    /// <inheritdoc/>
     public Result<IPacket> Deserialize(string packetString, PacketSource preferredSource)
     {
-        return Result<IPacket>.FromError(new ArgumentInvalidError("asdf", "asdf"));
+        var packetStringEnumerator = new PacketStringEnumerator(packetString);
+        var headerTokenResult = packetStringEnumerator.GetNextToken();
+        if (!headerTokenResult.IsSuccess)
+        {
+            return Result<IPacket>.FromError(headerTokenResult);
+        }
+
+        var packetInfoResult = _packetTypesRepository.FindPacketInfo(headerTokenResult.Entity.Token, preferredSource);
+        if (!packetInfoResult.IsSuccess)
+        {
+            return Result<IPacket>.FromError(packetInfoResult);
+        }
+
+        var packetInfo = packetInfoResult.Entity;
+        var deserializedResult = packetInfo.PacketConverter.Deserialize(packetStringEnumerator);
+        if (!deserializedResult.IsSuccess)
+        {
+            return Result<IPacket>.FromError(deserializedResult);
+        }
+
+        var packet = deserializedResult.Entity as IPacket;
+
+        if (packet is null)
+        {
+            return new DeserializedValueNullError(packetInfo.PacketType);
+        }
+
+        return Result<IPacket>.FromSuccess(packet);
     }
 }
