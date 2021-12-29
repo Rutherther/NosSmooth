@@ -21,7 +21,7 @@ namespace NosSmooth.Packets.Packets;
 /// </summary>
 public class PacketTypesRepository : IPacketTypesRepository
 {
-    private readonly TypeConverterRepository _typeConverterRepository;
+    private readonly ITypeConverterRepository _typeConverterRepository;
     private readonly Dictionary<PacketSource, Dictionary<string, PacketInfo>> _headerToPacket;
     private readonly Dictionary<string, PacketInfo> _typeToPacket;
 
@@ -29,7 +29,7 @@ public class PacketTypesRepository : IPacketTypesRepository
     /// Initializes a new instance of the <see cref="PacketTypesRepository"/> class.
     /// </summary>
     /// <param name="typeConverterRepository">The type converter repository.</param>
-    public PacketTypesRepository(TypeConverterRepository typeConverterRepository)
+    public PacketTypesRepository(ITypeConverterRepository typeConverterRepository)
     {
         _typeConverterRepository = typeConverterRepository;
         _headerToPacket = new Dictionary<PacketSource, Dictionary<string, PacketInfo>>();
