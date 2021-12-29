@@ -87,6 +87,7 @@ public static class ServiceCollectionExtensions
     {
         return serviceCollection
             .AddSpecialConverter<ListTypeConverter>()
+            .AddSpecialConverter<NullableTypeConverter>()
             .AddSpecialConverter<EnumTypeConverter>()
             .AddTypeConverter<IntTypeConverter>()
             .AddTypeConverter<UIntTypeConverter>()
