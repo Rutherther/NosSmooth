@@ -62,7 +62,7 @@ public class PacketTypesRepository : IPacketTypesRepository
 
         var info = new PacketInfo(header.Identifier, type, converterResult.Entity);
 
-        if (_headerToPacket.ContainsKey(header.Source))
+        if (!_headerToPacket.ContainsKey(header.Source))
         {
             _headerToPacket[header.Source] = new Dictionary<string, PacketInfo>();
         }
@@ -74,11 +74,6 @@ public class PacketTypesRepository : IPacketTypesRepository
 
         if (header.Identifier is not null)
         {
-            if (!_headerToPacket.ContainsKey(header.Source))
-            {
-                _headerToPacket[header.Source] = new Dictionary<string, PacketInfo>();
-            }
-
             if (_headerToPacket[header.Source].ContainsKey(header.Identifier))
             {
                 return new AmbiguousHeaderError
