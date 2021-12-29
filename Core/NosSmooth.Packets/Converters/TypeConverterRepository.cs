@@ -15,7 +15,7 @@ namespace NosSmooth.Packets.Converters;
 /// <summary>
 /// Repository for <see cref="ITypeConverter"/>.
 /// </summary>
-public class TypeConverterRepository
+public class TypeConverterRepository : ITypeConverterRepository
 {
     private readonly IServiceProvider _serviceProvider;
 

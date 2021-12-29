@@ -19,7 +19,7 @@ namespace NosSmooth.Packets.Packets;
 /// <summary>
 /// Repository of packet types for finding information about packets.
 /// </summary>
-public class PacketTypesRepository
+public class PacketTypesRepository : IPacketTypesRepository
 {
     private readonly TypeConverterRepository _typeConverterRepository;
     private readonly Dictionary<PacketSource, Dictionary<string, PacketInfo>> _headerToPacket;
