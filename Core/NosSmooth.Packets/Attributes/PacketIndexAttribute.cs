@@ -11,7 +11,7 @@ namespace NosSmooth.Packets.Attributes;
 /// <summary>
 /// Attribute for marking properties in packets with their position in the packet.
 /// </summary>
-[AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
+[AttributeUsage(AttributeTargets.Parameter)]
 public class PacketIndexAttribute : Attribute
 {
     /// <summary>
