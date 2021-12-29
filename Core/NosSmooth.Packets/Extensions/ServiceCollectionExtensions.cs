@@ -46,7 +46,17 @@ public static class ServiceCollectionExtensions
     /// <returns>The collection.</returns>
     public static IServiceCollection AddGeneratedSerializers(this IServiceCollection serviceCollection, Assembly assembly)
     {
-        throw new NotImplementedException();
+        var types = assembly.GetExportedTypes()
+            .Where(x => x.Namespace?.Contains("Generated") ?? false)
+            .Where(x => x.GetInterfaces().Any(
+                i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ITypeConverter<>)
+            ));
+        foreach (var type in types)
+        {
+            serviceCollection.AddTypeConverter(type);
+        }
+
+        return serviceCollection;
     }
 
     /// <summary>
