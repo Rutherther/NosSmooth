@@ -90,6 +90,7 @@ public static class ServiceCollectionExtensions
             .AddSpecialConverter<NullableTypeConverter>()
             .AddSpecialConverter<EnumTypeConverter>()
             .AddTypeConverter<IntTypeConverter>()
+            .AddTypeConverter<BoolTypeConverter>()
             .AddTypeConverter<UIntTypeConverter>()
             .AddTypeConverter<ShortTypeConverter>()
             .AddTypeConverter<UShortTypeConverter>()
