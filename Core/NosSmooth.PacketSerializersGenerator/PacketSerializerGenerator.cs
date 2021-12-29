@@ -302,7 +302,7 @@ private IResultError? CheckDeserializationResult<T>(Result<T> result, string pro
 
     private IError? GenerateDeserializer(IndentedTextWriter textWriter, RecordDeclarationSyntax packetClass, List<ParameterInfo> parameters)
     {
-        var lastIndex = parameters.FirstOrDefault()?.PacketIndex ?? 0;
+        var lastIndex = (parameters.FirstOrDefault()?.PacketIndex ?? 0) - 1;
         bool skipped = false;
         foreach (var parameter in parameters)
         {
@@ -320,6 +320,23 @@ private IResultError? CheckDeserializationResult<T>(Result<T> result, string pro
                 textWriter.WriteLine($@"if (skipError is not null) {{
     return Result<{packetClass.Identifier.NormalizeWhitespace().ToFullString()}>.FromError(skipError, skipResult);
 }}");
+            }
+            else if (skip < 0)
+            {
+                return new DiagnosticError
+                (
+                    "SG0004",
+                    "Same packet index",
+                    "There were two parameters of the same packet index {0} on property {1} in packet {2}, that is not supported.",
+                    parameter.Attribute.SyntaxTree,
+                    parameter.Attribute.FullSpan,
+                    new List<object?>(new[]
+                    {
+                        parameter.PacketIndex.ToString(),
+                        parameter.Name,
+                        packetClass.Identifier.NormalizeWhitespace().ToFullString()
+                    })
+                );
             }
 
             bool handled = false;
