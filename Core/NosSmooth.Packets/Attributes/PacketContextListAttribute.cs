@@ -14,7 +14,7 @@ namespace NosSmooth.Packets.Attributes;
 /// <remarks>
 /// Contextual list gets its length from another property that was already set.
 /// </remarks>
-[AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
+[AttributeUsage(AttributeTargets.Parameter)]
 public class PacketContextListAttribute : PacketListIndexAttribute
 {
     /// <summary>
