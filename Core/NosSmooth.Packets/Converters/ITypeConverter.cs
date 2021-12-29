@@ -18,7 +18,7 @@ public interface ITypeConverter
     /// </summary>
     /// <param name="stringEnumerator">The packet string enumerator with the current position.</param>
     /// <returns>The parsed object or an error.</returns>
-    public Result<object> Deserialize(PacketStringEnumerator stringEnumerator);
+    public Result<object?> Deserialize(PacketStringEnumerator stringEnumerator);
 
     /// <summary>
     /// Serializes the given object to string by appending to the packet string builder.
@@ -26,7 +26,7 @@ public interface ITypeConverter
     /// <param name="obj">The object to serialize.</param>
     /// <param name="builder">The string builder to append to.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Result Serialize(object obj, PacketStringBuilder builder);
+    public Result Serialize(object? obj, PacketStringBuilder builder);
 }
 
 /// <summary>
@@ -43,7 +43,7 @@ public interface ITypeConverter<TParseType> : ITypeConverter
     /// </summary>
     /// <param name="stringEnumerator">The packet string enumerator with the current position.</param>
     /// <returns>The parsed object or an error.</returns>
-    public new Result<TParseType> Deserialize(PacketStringEnumerator stringEnumerator);
+    public new Result<TParseType?> Deserialize(PacketStringEnumerator stringEnumerator);
 
     /// <summary>
     /// Serializes the given object to string by appending to the packet string builder.
@@ -51,5 +51,5 @@ public interface ITypeConverter<TParseType> : ITypeConverter
     /// <param name="obj">The object to serialize.</param>
     /// <param name="builder">The string builder to append to.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Result Serialize(TParseType obj, PacketStringBuilder builder);
+    public Result Serialize(TParseType? obj, PacketStringBuilder builder);
 }

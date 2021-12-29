@@ -15,13 +15,13 @@ namespace NosSmooth.Packets.Converters.Packets;
 public class InPacketConverter : BaseTypeConverter<InPacket>
 {
     /// <inheritdoc />
-    public override Result Serialize(InPacket obj, PacketStringBuilder builder)
+    public override Result Serialize(InPacket? obj, PacketStringBuilder builder)
     {
         throw new System.NotImplementedException();
     }
 
     /// <inheritdoc />
-    public override Result<InPacket> Deserialize(PacketStringEnumerator stringEnumerator)
+    public override Result<InPacket?> Deserialize(PacketStringEnumerator stringEnumerator)
     {
         throw new System.NotImplementedException();
     }

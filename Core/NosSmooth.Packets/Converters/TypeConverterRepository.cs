@@ -138,7 +138,7 @@ public class TypeConverterRepository : ITypeConverterRepository
     /// <param name="stringEnumerator">The packet string enumerator with the current position.</param>
     /// <typeparam name="TParseType">The type of the object to serialize.</typeparam>
     /// <returns>The parsed object or an error.</returns>
-    public Result<TParseType> Deserialize<TParseType>(PacketStringEnumerator stringEnumerator)
+    public Result<TParseType?> Deserialize<TParseType>(PacketStringEnumerator stringEnumerator)
     {
         var specialConverter = GetSpecialConverter(typeof(TParseType));
         if (specialConverter is not null)
@@ -146,7 +146,7 @@ public class TypeConverterRepository : ITypeConverterRepository
             var deserializeResult = specialConverter.Deserialize(typeof(TParseType), stringEnumerator);
             if (!deserializeResult.IsSuccess)
             {
-                return Result<TParseType>.FromError(deserializeResult);
+                return Result<TParseType?>.FromError(deserializeResult);
             }
 
             if (deserializeResult.Entity is null)
@@ -156,7 +156,7 @@ public class TypeConverterRepository : ITypeConverterRepository
                     return default;
                 }
 
-                return Result<TParseType>.FromError(new DeserializedValueNullError(typeof(TParseType)));
+                return Result<TParseType?>.FromError(new DeserializedValueNullError(typeof(TParseType)));
             }
 
             return (TParseType)deserializeResult.Entity;
@@ -165,7 +165,7 @@ public class TypeConverterRepository : ITypeConverterRepository
         var converterResult = GetTypeConverter<TParseType>();
         if (!converterResult.IsSuccess)
         {
-            return Result<TParseType>.FromError(converterResult);
+            return Result<TParseType?>.FromError(converterResult);
         }
 
         return converterResult.Entity.Deserialize(stringEnumerator);
