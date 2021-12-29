@@ -16,17 +16,17 @@ namespace NosSmooth.Packets.Converters;
 public abstract class BaseTypeConverter<TParseType> : ITypeConverter<TParseType>
 {
     /// <inheritdoc />
-    public abstract Result Serialize(TParseType obj, PacketStringBuilder builder);
+    public abstract Result Serialize(TParseType? obj, PacketStringBuilder builder);
 
     /// <inheritdoc />
-    public abstract Result<TParseType> Deserialize(PacketStringEnumerator stringEnumerator);
+    public abstract Result<TParseType?> Deserialize(PacketStringEnumerator stringEnumerator);
 
     /// <inheritdoc/>
-    Result<object> ITypeConverter.Deserialize(PacketStringEnumerator stringEnumerator)
+    Result<object?> ITypeConverter.Deserialize(PacketStringEnumerator stringEnumerator)
         => Deserialize(stringEnumerator);
 
     /// <inheritdoc/>
-    Result ITypeConverter.Serialize(object obj, PacketStringBuilder builder)
+    Result ITypeConverter.Serialize(object? obj, PacketStringBuilder builder)
     {
         if (!(obj is TParseType parseType))
         {

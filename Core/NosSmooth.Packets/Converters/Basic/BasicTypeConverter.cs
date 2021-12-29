@@ -16,19 +16,24 @@ namespace NosSmooth.Packets.Converters.Basic;
 public abstract class BasicTypeConverter<TBasicType> : BaseTypeConverter<TBasicType>
 {
     /// <inheritdoc />
-    public override Result Serialize(TBasicType obj, PacketStringBuilder builder)
+    public override Result Serialize(TBasicType? obj, PacketStringBuilder builder)
     {
         builder.Append(obj?.ToString() ?? "-");
         return Result.FromSuccess();
     }
 
     /// <inheritdoc />
-    public override Result<TBasicType> Deserialize(PacketStringEnumerator stringEnumerator)
+    public override Result<TBasicType?> Deserialize(PacketStringEnumerator stringEnumerator)
     {
         var nextTokenResult = stringEnumerator.GetNextToken();
         if (!nextTokenResult.IsSuccess)
         {
-            return Result<TBasicType>.FromError(nextTokenResult);
+            return Result<TBasicType?>.FromError(nextTokenResult);
+        }
+
+        if (nextTokenResult.Entity.Token == "-")
+        {
+            return Result<TBasicType?>.FromSuccess(default);
         }
 
         return Deserialize(nextTokenResult.Entity.Token);
@@ -39,5 +44,5 @@ public abstract class BasicTypeConverter<TBasicType> : BaseTypeConverter<TBasicT
     /// </summary>
     /// <param name="value">The value to deserialize.</param>
     /// <returns>The deserialized value or an error.</returns>
-    protected abstract Result<TBasicType> Deserialize(string value);
+    protected abstract Result<TBasicType?> Deserialize(string value);
 }
