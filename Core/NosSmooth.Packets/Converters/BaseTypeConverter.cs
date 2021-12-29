@@ -23,7 +23,15 @@ public abstract class BaseTypeConverter<TParseType> : ITypeConverter<TParseType>
 
     /// <inheritdoc/>
     Result<object?> ITypeConverter.Deserialize(PacketStringEnumerator stringEnumerator)
-        => Deserialize(stringEnumerator);
+    {
+        var result = Deserialize(stringEnumerator);
+        if (!result.IsSuccess)
+        {
+            return Result<object?>.FromError(result);
+        }
+
+        return Result<object?>.FromSuccess(result.Entity);
+    }
 
     /// <inheritdoc/>
     Result ITypeConverter.Serialize(object? obj, PacketStringBuilder builder)
