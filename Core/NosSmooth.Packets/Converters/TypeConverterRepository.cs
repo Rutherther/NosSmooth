@@ -105,7 +105,7 @@ public class TypeConverterRepository : ITypeConverterRepository
             return Result<object?>.FromError(deserializedResult);
         }
 
-        return Result<object?>.FromSuccess(deserializedResult);
+        return Result<object?>.FromSuccess(deserializedResult.Entity);
     }
 
     /// <summary>
@@ -115,7 +115,7 @@ public class TypeConverterRepository : ITypeConverterRepository
     /// <param name="obj">The object to serialize.</param>
     /// <param name="builder">The string builder to append to.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Result Serialize(Type parseType, object obj, PacketStringBuilder builder)
+    public Result Serialize(Type parseType, object? obj, PacketStringBuilder builder)
     {
         var specialConverter = GetSpecialConverter(parseType);
         if (specialConverter is not null)
@@ -159,7 +159,7 @@ public class TypeConverterRepository : ITypeConverterRepository
                 return Result<TParseType?>.FromError(new DeserializedValueNullError(typeof(TParseType)));
             }
 
-            return (TParseType)deserializeResult.Entity;
+            return (TParseType?)deserializeResult.Entity;
         }
 
         var converterResult = GetTypeConverter<TParseType>();
