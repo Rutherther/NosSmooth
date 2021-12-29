@@ -30,7 +30,12 @@ public class PacketSerializerGenerator : ISourceGenerator
     /// </summary>
     public PacketSerializerGenerator()
     {
-        _generators = new List<IParameterGenerator>(new[] { new PacketIndexAttributeGenerator() });
+        _generators = new List<IParameterGenerator>(new IParameterGenerator[]
+        {
+            new PacketIndexAttributeGenerator(),
+            new PacketListIndexAttributeGenerator(),
+            new PacketContextListAttributeGenerator(),
+        });
     }
 
     private readonly List<IParameterGenerator> _generators;
@@ -51,7 +56,7 @@ public class PacketSerializerGenerator : ISourceGenerator
             if (packetClass is not null)
             {
                 using var stringWriter = new StringWriter();
-                var writer = new IndentedTextWriter(stringWriter, "    ");
+                using var writer = new IndentedTextWriter(stringWriter, "    ");
                 var generatedResult = GeneratePacketSerializer(writer, context.Compilation, packetClass);
                 if (generatedResult is not null)
                 {
