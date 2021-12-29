@@ -31,10 +31,10 @@ public class PacketIndexAttribute : Attribute
     /// <summary>
     /// Gets the inner separator used for complex types such as sub packets.
     /// </summary>
-    public char? InnerSeparator { get; set; }
+    public char InnerSeparator { get; set; } = (char)0xFF;
 
     /// <summary>
     /// Gets the separator after this field.
     /// </summary>
-    public char? AfterSeparator { get; set; }
+    public char AfterSeparator { get; set; } = (char)0xFF;
 }
