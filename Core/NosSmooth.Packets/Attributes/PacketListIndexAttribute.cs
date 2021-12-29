@@ -27,4 +27,9 @@ public class PacketListIndexAttribute : PacketIndexAttribute
     /// Gets or sets the separator of the items in the array.
     /// </summary>
     public string ListSeparator { get; set; } = "|";
+
+    /// <summary>
+    /// Gets or sets the length of the array.
+    /// </summary>
+    public uint Length { get; set; } = 0;
 }
