@@ -39,7 +39,7 @@ public class EnumTypeConverter : ISpecialTypeConverter
             return Result.FromSuccess();
         }
 
-        builder.Append(((int)obj).ToString());
+        builder.Append(Convert.ToInt64(obj).ToString());
         return Result.FromSuccess();
     }
 }
