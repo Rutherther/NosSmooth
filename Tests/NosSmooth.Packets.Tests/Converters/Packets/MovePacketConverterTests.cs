@@ -8,10 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using NosCore.Shared.Enumerations;
 using NosSmooth.Packets.Attributes;
 using NosSmooth.Packets.Converters;
-using NosSmooth.Packets.Converters.Packets;
 using NosSmooth.Packets.Extensions;
 using NosSmooth.Packets.Packets.Server.Map;
-using NosSmooth.Packets.Packets.Server.Map.Generated;
 using Xunit;
 
 namespace NosSmooth.Packets.Tests.Converters.Packets;
