@@ -39,7 +39,7 @@ public class PacketContextListAttributeGenerator : IParameterGenerator
         if (parameterInfo.NamedAttributeArguments.ContainsKey("InnerSeparator") && parameterInfo.NamedAttributeArguments["InnerSeparator"] is not null)
         {
             innerSeparator = parameterInfo.NamedAttributeArguments["InnerSeparator"]!.ToString()[0];
-            textWriter.WriteLine($"stringEnumerator.PushLevel('{parameterInfo.NamedAttributeArguments["InnerSeparator"]}');");
+            textWriter.WriteLine($"builder.PushLevel('{parameterInfo.NamedAttributeArguments["InnerSeparator"]}');");
         }
 
         textWriter.WriteLine($"builder.PrepareLevel('{innerSeparator}')");
@@ -74,18 +74,17 @@ builder.PopLevel();
             listSeparator = parameterInfo.NamedAttributeArguments["ListSeparator"]!.ToString()[0];
         }
 
-        textWriter.WriteLine($"stringEnumerator.PushLevel('{listSeparator}')");
+        textWriter.WriteLine($"stringEnumerator.PushLevel('{listSeparator}');");
 
         var innerSeparator = '.';
         if (parameterInfo.NamedAttributeArguments.ContainsKey("InnerSeparator") && parameterInfo.NamedAttributeArguments["InnerSeparator"] is not null)
         {
             innerSeparator = parameterInfo.NamedAttributeArguments["InnerSeparator"]!.ToString()[0];
-            textWriter.WriteLine($"stringEnumerator.PushLevel('{parameterInfo.NamedAttributeArguments["InnerSeparator"]}');");
         }
 
         var maxTokensVariable = parameterInfo.IndexedAttributeArguments[1]!.ToString();
 
-        textWriter.WriteLine($"stringEnumerator.PrepareLevel('{innerSeparator}', {maxTokensVariable})");
+        textWriter.WriteLine($"stringEnumerator.PrepareLevel('{innerSeparator}', {maxTokensVariable});");
 
         var semanticModel = parameterInfo.Compilation.GetSemanticModel(recordDeclarationSyntax.SyntaxTree);
         var type = semanticModel.GetTypeInfo(parameterInfo.Parameter.Type!).Type;
