@@ -191,7 +191,7 @@ public class TypeConverterRepository : ITypeConverterRepository
     /// <param name="builder">The string builder to append to.</param>
     /// <typeparam name="TParseType">The type of the object to deserialize.</typeparam>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Result Serialize<TParseType>(TParseType obj, PacketStringBuilder builder)
+    public Result Serialize<TParseType>(TParseType? obj, PacketStringBuilder builder)
     {
         if (obj is null)
         {
