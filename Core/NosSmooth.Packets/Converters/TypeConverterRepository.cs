@@ -5,6 +5,9 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using NosSmooth.Packets.Converters.Special;
 using NosSmooth.Packets.Errors;
@@ -18,6 +21,8 @@ namespace NosSmooth.Packets.Converters;
 public class TypeConverterRepository : ITypeConverterRepository
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly ConcurrentDictionary<Type, ITypeConverter?> _typeConverters;
+    private IReadOnlyList<ISpecialTypeConverter>? _specialTypeConverters;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TypeConverterRepository"/> class.
@@ -25,6 +30,8 @@ public class TypeConverterRepository : ITypeConverterRepository
     /// <param name="serviceProvider">The dependency injection service provider.</param>
     public TypeConverterRepository(IServiceProvider serviceProvider)
     {
+        _typeConverters = new ConcurrentDictionary<Type, ITypeConverter?>();
+        _specialTypeConverters = null;
         _serviceProvider = serviceProvider;
     }
 
@@ -35,8 +42,11 @@ public class TypeConverterRepository : ITypeConverterRepository
     /// <returns>The type converter or an error.</returns>
     public Result<ITypeConverter> GetTypeConverter(Type type)
     {
-        var converterType = typeof(ITypeConverter<>).MakeGenericType(type);
-        var typeConverter = (ITypeConverter?)_serviceProvider.GetService(converterType);
+        var typeConverter = _typeConverters.GetOrAdd(type, (getType) =>
+        {
+            var converterType = typeof(ITypeConverter<>).MakeGenericType(type);
+            return (ITypeConverter?)_serviceProvider.GetService(converterType);
+        });
 
         if (typeConverter is null)
         {
@@ -53,14 +63,17 @@ public class TypeConverterRepository : ITypeConverterRepository
     /// <returns>The type converter or an error.</returns>
     public Result<ITypeConverter<TParseType>> GetTypeConverter<TParseType>()
     {
-        var typeConverter = _serviceProvider.GetService<ITypeConverter<TParseType>>();
+        var typeConverter = _typeConverters.GetOrAdd(
+            typeof(TParseType),
+            _ => _serviceProvider.GetService<ITypeConverter<TParseType>>()
+        );
 
         if (typeConverter is null)
         {
             return new TypeConverterNotFoundError(typeof(TParseType));
         }
 
-        return Result<ITypeConverter<TParseType>>.FromSuccess(typeConverter);
+        return Result<ITypeConverter<TParseType>>.FromSuccess((ITypeConverter<TParseType>)typeConverter);
     }
 
     /// <summary>
@@ -203,8 +216,12 @@ public class TypeConverterRepository : ITypeConverterRepository
 
     private ISpecialTypeConverter? GetSpecialConverter(Type type)
     {
-        var specialConverters = _serviceProvider.GetServices<ISpecialTypeConverter>();
-        foreach (var specialConverter in specialConverters)
+        if (_specialTypeConverters is null)
+        {
+            _specialTypeConverters = _serviceProvider.GetServices<ISpecialTypeConverter>().ToList();
+        }
+
+        foreach (var specialConverter in _specialTypeConverters)
         {
             if (specialConverter.ShouldHandle(type))
             {
