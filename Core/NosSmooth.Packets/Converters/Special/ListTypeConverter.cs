@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -22,6 +23,7 @@ namespace NosSmooth.Packets.Converters.Special;
 public class ListTypeConverter : ISpecialTypeConverter
 {
     private readonly TypeConverterRepository _typeConverterRepository;
+    private readonly ConcurrentDictionary<Type, Func<IEnumerable<object?>, object>> _fillFunctions;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ListTypeConverter"/> class.
@@ -30,11 +32,12 @@ public class ListTypeConverter : ISpecialTypeConverter
     public ListTypeConverter(TypeConverterRepository typeConverterRepository)
     {
         _typeConverterRepository = typeConverterRepository;
+        _fillFunctions = new ConcurrentDictionary<Type, Func<IEnumerable<object?>, object>>();
     }
 
     /// <inheritdoc />
     public bool ShouldHandle(Type type)
-        => typeof(IEnumerable).IsAssignableFrom(type);
+        => type.IsGenericType && typeof(IEnumerable).IsAssignableFrom(type);
 
     /// <inheritdoc />
     public Result<object?> Deserialize(Type type, PacketStringEnumerator stringEnumerator)
@@ -44,7 +47,7 @@ public class ListTypeConverter : ISpecialTypeConverter
 
         do
         {
-            if (stringEnumerator.PushPreparedLevel())
+            if (!stringEnumerator.PushPreparedLevel())
             {
                 return new ArgumentInvalidError(nameof(stringEnumerator), "The string enumerator has to have a prepared level for all lists.");
             }
@@ -60,7 +63,7 @@ public class ListTypeConverter : ISpecialTypeConverter
         }
         while (!(stringEnumerator.IsOnLastToken() ?? false));
 
-        return GetAndFillListMethod(genericType)(data);
+        return _fillFunctions.GetOrAdd(genericType, GetAndFillListMethod)(data);
     }
 
     /// <inheritdoc />
