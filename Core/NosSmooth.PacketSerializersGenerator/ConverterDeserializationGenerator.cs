@@ -33,7 +33,7 @@ public class ConverterDeserializationGenerator
     /// <param name="separator">The separator.</param>
     public void SetAfterSeparatorOnce(char separator)
     {
-        _textWriter.WriteLine(@$"{_stringEnumeratorVariable}.SetAfterSeparatorOnce(""{separator}"");");
+        _textWriter.WriteLine(@$"{_stringEnumeratorVariable}.SetAfterSeparatorOnce('{separator}');");
     }
 
     /// <summary>
@@ -43,7 +43,7 @@ public class ConverterDeserializationGenerator
     /// <param name="maxTokens">The maximum number of tokens to read.</param>
     public void PushLevel(char separator, uint? maxTokens = default)
     {
-        _textWriter.WriteLine(@$"{_stringEnumeratorVariable}.PushLevel(""{separator}"", {maxTokens?.ToString() ?? "null"});");
+        _textWriter.WriteLine(@$"{_stringEnumeratorVariable}.PushLevel('{separator}', {maxTokens?.ToString() ?? "null"});");
     }
 
     /// <summary>
@@ -61,7 +61,7 @@ public class ConverterDeserializationGenerator
     /// <param name="maxTokens">The maximum number of tokens to read.</param>
     public void PrepareLevel(char separator, uint? maxTokens = default)
     {
-        _textWriter.WriteLine($@"{_stringEnumeratorVariable}.PrepareLevel(""{separator}"", {maxTokens?.ToString() ?? "null"});");
+        _textWriter.WriteLine($@"{_stringEnumeratorVariable}.PrepareLevel('{separator}', {maxTokens?.ToString() ?? "null"});");
     }
 
     /// <summary>

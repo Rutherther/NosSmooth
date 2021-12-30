@@ -33,7 +33,7 @@ public class ConverterSerializationGenerator
     /// <param name="separator">The separator.</param>
     public void SetAfterSeparatorOnce(char separator)
     {
-        _textWriter.WriteLine(@$"{_builderVariable}.SetAfterSeparatorOnce(""{separator}"");");
+        _textWriter.WriteLine(@$"{_builderVariable}.SetAfterSeparatorOnce('{separator}');");
     }
 
     /// <summary>
@@ -43,7 +43,7 @@ public class ConverterSerializationGenerator
     public void PushLevel(char separator)
     {
         _textWriter.WriteLine
-            (@$"{_builderVariable}.PushLevel(""{separator}"");");
+            (@$"{_builderVariable}.PushLevel('{separator}');");
     }
 
     /// <summary>
@@ -58,11 +58,10 @@ public class ConverterSerializationGenerator
     /// Prepare the level to the string enumerator.
     /// </summary>
     /// <param name="separator">The separator.</param>
-    /// <param name="maxTokens">The maximum number of tokens to read.</param>
-    public void PrepareLevel(char separator, uint? maxTokens = default)
+    public void PrepareLevel(char separator)
     {
         _textWriter.WriteLine
-            ($@"{_builderVariable}.PrepareLevel(""{separator}"", {maxTokens?.ToString() ?? "null"});");
+            ($@"{_builderVariable}.PrepareLevel('{separator}');");
     }
 
     /// <summary>

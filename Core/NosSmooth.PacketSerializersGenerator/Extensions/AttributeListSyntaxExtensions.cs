@@ -24,6 +24,6 @@ public static class AttributeListSyntaxExtensions
     /// <returns>Whether the attribute is present.</returns>
     public static bool ContainsAttribute(this AttributeListSyntax attributeList, SemanticModel semanticModel, string attributeFullName)
     {
-        return attributeList.Attributes.Any(x => Regex.IsMatch(attributeFullName, semanticModel.GetTypeInfo(x).Type?.ToString()!));
+        return attributeList.Attributes.Any(x => Regex.IsMatch(semanticModel.GetTypeInfo(x).Type?.ToString()!, attributeFullName));
     }
 }

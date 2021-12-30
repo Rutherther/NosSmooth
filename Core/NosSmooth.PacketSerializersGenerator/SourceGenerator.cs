@@ -6,6 +6,7 @@
 
 using System.CodeDom.Compiler;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -204,7 +205,15 @@ public class SourceGenerator : ISourceGenerator
         parameterInfo = null;
         var attributes = parameter.AttributeLists
             .Where(x => x.ContainsAttribute(semanticModel, Constants.PacketAttributesClassRegex))
-            .SelectMany(x => x.Attributes)
+            .SelectMany
+            (
+                x
+                    => x.Attributes.Where
+                    (
+                        y => Regex.IsMatch
+                            (semanticModel.GetTypeInfo(y).Type?.ToString()!, Constants.PacketAttributesClassRegex)
+                    )
+            )
             .ToList();
 
         if (attributes.Count == 0)
