@@ -95,6 +95,15 @@ if ({parameterInfo.Name}Result.Entity is null) {{
 
         if (pushedLevel)
         {
+            // If we know that we are not on the last token in the item level, just skip to the end of the item.
+            // Note that if this is the case, then that means the converter is either corrupted
+            // or the packet has more fields.
+            textWriter.WriteLine($@"
+while (stringEnumerator.IsOnLastToken() == false)
+{{
+    stringEnumerator.GetNextToken();
+}}
+");
             textWriter.WriteLine("stringEnumerator.PopLevel();");
         }
 
