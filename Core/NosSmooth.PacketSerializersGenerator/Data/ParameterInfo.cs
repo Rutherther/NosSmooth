@@ -7,33 +7,25 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace NosSmooth.PacketSerializersGenerator;
+namespace NosSmooth.PacketSerializersGenerator.Data;
 
 /// <summary>
 /// Information about a parameter of a packet constructor.
 /// </summary>
-/// <param name="Compilation"></param>
-/// <param name="Parameter"></param>
-/// <param name="Attribute"></param>
-/// <param name="IndexedAttributeArguments"></param>
-/// <param name="NamedAttributeArguments"></param>
+/// <param name="Parameter">The parameter's syntax.</param>
+/// <param name="Type">The type of the parameter.</param>
+/// <param name="Nullable">Whether the parameter type is nullable.</param>
+/// <param name="Attributes">The list of all of the attribute on the parameter that are used for the generation of serializers.</param>
 /// <param name="Name"></param>
 /// <param name="ConstructorIndex"></param>
 /// <param name="PacketIndex"></param>
 public record ParameterInfo
 (
-    Compilation Compilation,
     ParameterSyntax Parameter,
-    AttributeSyntax Attribute,
-    IReadOnlyList<object?> IndexedAttributeArguments,
-    IReadOnlyDictionary<string, object?> NamedAttributeArguments,
+    ITypeSymbol Type,
+    bool Nullable,
+    IReadOnlyList<AttributeInfo> Attributes,
     string Name,
     int ConstructorIndex,
     int PacketIndex
-)
-{
-    /// <summary>
-    /// Gets or sets if this parameter is the last one.
-    /// </summary>
-    public bool IsLast { get; set; }
-}
+);

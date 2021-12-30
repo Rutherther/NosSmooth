@@ -8,108 +8,80 @@ using System.CodeDom.Compiler;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using NosSmooth.PacketSerializersGenerator.Data;
 using NosSmooth.PacketSerializersGenerator.Errors;
+using NosSmooth.PacketSerializersGenerator.Extensions;
 
 namespace NosSmooth.PacketSerializersGenerator.AttributeGenerators;
 
 /// <inheritdoc />
 public class PacketContextListAttributeGenerator : IParameterGenerator
 {
-    /// <inheritdoc />
-    public bool ShouldHandle(AttributeSyntax attribute)
-        => attribute.Name.NormalizeWhitespace().ToFullString() == "PacketContextList";
+    /// <summary>
+    /// Gets the full name of the packet index attribute.
+    /// </summary>
+    public static string PacketListIndexAttributeFullName => "NosSmooth.Packets.Attributes.PacketContextListAttribute";
 
     /// <inheritdoc />
-    public IError? GenerateSerializerPart(IndentedTextWriter textWriter, RecordDeclarationSyntax recordDeclarationSyntax, ParameterInfo parameterInfo)
+    public bool ShouldHandle(ParameterInfo parameter)
+        => parameter.Attributes.Any(x => x.FullName == PacketListIndexAttributeFullName);
+
+    /// <inheritdoc />
+    public IError? GenerateSerializerPart(IndentedTextWriter textWriter, PacketInfo packetInfo)
     {
-        if (parameterInfo.NamedAttributeArguments.ContainsKey("AfterSeparator") && parameterInfo.NamedAttributeArguments["AfterSeparator"] is not null)
+        var generator = new ConverterSerializationGenerator(textWriter);
+        var parameter = packetInfo.Parameters.Current;
+        var attribute = parameter.Attributes.First(x => x.FullName == PacketListIndexAttributeFullName);
+
+        var afterSeparator = attribute.GetNamedValue<char?>("AfterSeparator", null);
+        if (afterSeparator is not null)
         {
-            textWriter.WriteLine($"builder.SetAfterSeparatorOnce('{parameterInfo.NamedAttributeArguments["AfterSeparator"]}');");
+            generator.SetAfterSeparatorOnce((char)afterSeparator);
         }
 
-        var listSeparator = '|';
-        if (parameterInfo.NamedAttributeArguments.ContainsKey("ListSeparator") && parameterInfo.NamedAttributeArguments["ListSeparator"] is not null)
-        {
-            listSeparator = parameterInfo.NamedAttributeArguments["ListSeparator"]!.ToString()[0];
-        }
+        var listSeparator = attribute.GetNamedValue<char>("ListSeparator", '|');
+        generator.PushLevel(listSeparator);
 
-        textWriter.WriteLine($"builder.PushLevel('{listSeparator}')");
+        var innerSeparator = attribute.GetNamedValue<char>("InnerSeparator", '.');
+        generator.PrepareLevel(innerSeparator);
 
-        var innerSeparator = '.';
-        if (parameterInfo.NamedAttributeArguments.ContainsKey("InnerSeparator") && parameterInfo.NamedAttributeArguments["InnerSeparator"] is not null)
-        {
-            innerSeparator = parameterInfo.NamedAttributeArguments["InnerSeparator"]!.ToString()[0];
-            textWriter.WriteLine($"builder.PushLevel('{parameterInfo.NamedAttributeArguments["InnerSeparator"]}');");
-        }
-
-        textWriter.WriteLine($"builder.PrepareLevel('{innerSeparator}')");
-
-        textWriter.WriteLine($@"
-var {parameterInfo.Name}Result = _typeConverterRepository.Serialize(obj.{parameterInfo.Name}, builder);
-if (!{parameterInfo.Name}Result.IsSuccess)
-{{
-    return Result.FromError(new PacketParameterSerializerError(this, ""{parameterInfo.Name}"", {parameterInfo.Name}Result), {parameterInfo.Name}Result);
-}}
-
-builder.RemovePreparedLevel();
-builder.PopLevel();
-");
+        generator.SerializeAndCheck(parameter);
+        generator.RemovePreparedLevel();
+        generator.PopLevel();
 
         return null;
     }
 
     /// <inheritdoc />
-    public IError? GenerateDeserializerPart(IndentedTextWriter textWriter, RecordDeclarationSyntax recordDeclarationSyntax, ParameterInfo parameterInfo)
+    public IError? GenerateDeserializerPart(IndentedTextWriter textWriter, PacketInfo packetInfo)
     {
-        bool nullable = parameterInfo.Parameter.Type is NullableTypeSyntax;
+        var generator = new ConverterDeserializationGenerator(textWriter);
+        var parameter = packetInfo.Parameters.Current;
+        var attribute = parameter.Attributes.First(x => x.FullName == PacketListIndexAttributeFullName);
 
-        if (parameterInfo.NamedAttributeArguments.ContainsKey("AfterSeparator") && parameterInfo.NamedAttributeArguments["AfterSeparator"] is not null)
+        var afterSeparator = attribute.GetNamedValue<char?>("AfterSeparator", null);
+        if (afterSeparator is not null)
         {
-            textWriter.WriteLine($"stringEnumerator.SetAfterSeparatorOnce('{parameterInfo.NamedAttributeArguments["AfterSeparator"]}');");
+            generator.SetAfterSeparatorOnce((char)afterSeparator);
         }
 
-        var listSeparator = '|';
-        if (parameterInfo.NamedAttributeArguments.ContainsKey("ListSeparator") && parameterInfo.NamedAttributeArguments["ListSeparator"] is not null)
+        var listSeparator = attribute.GetNamedValue<char>("ListSeparator", '|');
+        var lengthVariable = attribute.GetIndexedValue<string>(1);
+        textWriter.WriteLine(@$"stringEnumerator.PushLevel(""{listSeparator}"", {lengthVariable});");
+
+        var innerSeparator = attribute.GetNamedValue<char>("InnerSeparator", '.');
+        generator.PrepareLevel(innerSeparator);
+
+        generator.DeserializeAndCheck($"{packetInfo.Namespace}.{packetInfo.Name}", parameter, packetInfo.Parameters.IsLast);
+        generator.RemovePreparedLevel();
+        generator.PopLevel();
+        if (!parameter.Nullable)
         {
-            listSeparator = parameterInfo.NamedAttributeArguments["ListSeparator"]!.ToString()[0];
+            generator.CheckNullError(parameter.GetResultVariableName(), parameter.Name);
         }
 
-        textWriter.WriteLine($"stringEnumerator.PushLevel('{listSeparator}');");
+        generator.AssignLocalVariable(parameter);
 
-        var innerSeparator = '.';
-        if (parameterInfo.NamedAttributeArguments.ContainsKey("InnerSeparator") && parameterInfo.NamedAttributeArguments["InnerSeparator"] is not null)
-        {
-            innerSeparator = parameterInfo.NamedAttributeArguments["InnerSeparator"]!.ToString()[0];
-        }
-
-        var maxTokensVariable = parameterInfo.IndexedAttributeArguments[1]!.ToString();
-
-        textWriter.WriteLine($"stringEnumerator.PrepareLevel('{innerSeparator}', {maxTokensVariable});");
-
-        var semanticModel = parameterInfo.Compilation.GetSemanticModel(recordDeclarationSyntax.SyntaxTree);
-        var type = semanticModel.GetTypeInfo(parameterInfo.Parameter.Type!).Type;
-        string last = parameterInfo.IsLast ? "true" : "false";
-        textWriter.WriteLine($@"
-var {parameterInfo.Name}Result = _typeConverterRepository.Deserialize<{type!.ToString()}{(nullable ? string.Empty : "?")}>(stringEnumerator);
-var {parameterInfo.Name}Error = CheckDeserializationResult({parameterInfo.Name}Result, ""{parameterInfo.Name}"", stringEnumerator, {last});
-if ({parameterInfo.Name}Error is not null)
-{{
-        return Result<{recordDeclarationSyntax.Identifier.NormalizeWhitespace().ToFullString()}?>.FromError({parameterInfo.Name}Error, {parameterInfo.Name}Result);
-}}
-
-stringEnumerator.RemovePreparedLevel();
-stringEnumerator.PopLevel();
-");
-        if (!nullable)
-        {
-            textWriter.WriteLine($@"
-if ({parameterInfo.Name}Result.Entity is null) {{
-  return new PacketParameterSerializerError(this, ""{parameterInfo.Name}"", {parameterInfo.Name}Result, ""The converter has returned null even though it was not expected."");
-}}
-");
-        }
-
-        textWriter.WriteLine($"var {parameterInfo.Name} = ({type.ToString()}){parameterInfo.Name}Result.Entity;");
         return null;
     }
 }
