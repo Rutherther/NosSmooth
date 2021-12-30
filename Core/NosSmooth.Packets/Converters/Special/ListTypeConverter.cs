@@ -53,6 +53,15 @@ public class ListTypeConverter : ISpecialTypeConverter
             }
 
             var result = _typeConverterRepository.Deserialize(genericType, stringEnumerator);
+
+            // If we know that we are not on the last token in the item level, just skip to the end of the item.
+            // Note that if this is the case, then that means the converter is either corrupted
+            // or the packet has more fields.
+            while (stringEnumerator.IsOnLastToken() == false)
+            {
+                stringEnumerator.GetNextToken();
+            }
+
             stringEnumerator.PopLevel();
             if (!result.IsSuccess)
             {
