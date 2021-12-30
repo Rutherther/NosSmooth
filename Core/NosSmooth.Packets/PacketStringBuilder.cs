@@ -104,7 +104,6 @@ public class PacketStringBuilder
             return new InvalidOperationError("The level cannot be popped, the stack is already at the top level.");
         }
 
-        _preparedLevelSeparator = null;
         _currentLevel = _currentLevel.Parent;
 
         return Result.FromSuccess();
