@@ -28,6 +28,6 @@ public static class AttributeArgumentSyntaxExtensions
             return null;
         }
 
-        return value;
+        return value.Value;
     }
 }

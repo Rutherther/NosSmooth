@@ -22,7 +22,7 @@ public class PacketListIndexAttributeGenerator : IParameterGenerator
     /// <summary>
     /// Gets the full name of the packet index attribute.
     /// </summary>
-    public static string PacketListIndexAttributeFullName => "NosSmooth.Packets.Attributes.PacketListIndex";
+    public static string PacketListIndexAttributeFullName => "NosSmooth.Packets.Attributes.PacketListIndexAttribute";
 
     /// <inheritdoc />
     public bool ShouldHandle(ParameterInfo parameter)
