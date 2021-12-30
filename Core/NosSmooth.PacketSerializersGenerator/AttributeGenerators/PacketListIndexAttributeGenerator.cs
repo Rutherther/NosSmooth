@@ -34,16 +34,15 @@ public class PacketListIndexAttributeGenerator : IParameterGenerator
             listSeparator = parameterInfo.NamedAttributeArguments["ListSeparator"]!.ToString()[0];
         }
 
-        textWriter.WriteLine($"builder.PushLevel('{listSeparator}')");
+        textWriter.WriteLine($"builder.PushLevel('{listSeparator}');");
 
         var innerSeparator = '.';
         if (parameterInfo.NamedAttributeArguments.ContainsKey("InnerSeparator") && parameterInfo.NamedAttributeArguments["InnerSeparator"] is not null)
         {
             innerSeparator = parameterInfo.NamedAttributeArguments["InnerSeparator"]!.ToString()[0];
-            textWriter.WriteLine($"stringEnumerator.PushLevel('{parameterInfo.NamedAttributeArguments["InnerSeparator"]}');");
         }
 
-        textWriter.WriteLine($"builder.PrepareLevel('{innerSeparator}')");
+        textWriter.WriteLine($"builder.PrepareLevel('{innerSeparator}');");
 
         textWriter.WriteLine($@"
 var {parameterInfo.Name}Result = _typeConverterRepository.Serialize(obj.{parameterInfo.Name}, builder);
@@ -75,13 +74,12 @@ builder.PopLevel();
             listSeparator = parameterInfo.NamedAttributeArguments["ListSeparator"]!.ToString()[0];
         }
 
-        textWriter.WriteLine($"stringEnumerator.PushLevel('{listSeparator}')");
+        textWriter.WriteLine($"stringEnumerator.PushLevel('{listSeparator}');");
 
         var innerSeparator = '.';
         if (parameterInfo.NamedAttributeArguments.ContainsKey("InnerSeparator") && parameterInfo.NamedAttributeArguments["InnerSeparator"] is not null)
         {
             innerSeparator = parameterInfo.NamedAttributeArguments["InnerSeparator"]!.ToString()[0];
-            textWriter.WriteLine($"stringEnumerator.PushLevel('{parameterInfo.NamedAttributeArguments["InnerSeparator"]}');");
         }
 
         var maxTokens = "null";
@@ -90,7 +88,7 @@ builder.PopLevel();
             maxTokens = parameterInfo.NamedAttributeArguments["Length"]!.ToString();
         }
 
-        textWriter.WriteLine($"stringEnumerator.PrepareLevel('{innerSeparator}', {maxTokens ?? "null"})");
+        textWriter.WriteLine($"stringEnumerator.PrepareLevel('{innerSeparator}', {maxTokens ?? "null"});");
 
         var semanticModel = parameterInfo.Compilation.GetSemanticModel(recordDeclarationSyntax.SyntaxTree);
         var type = semanticModel.GetTypeInfo(parameterInfo.Parameter.Type!).Type;
