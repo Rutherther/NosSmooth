@@ -180,7 +180,6 @@ public struct PacketStringEnumerator
             return new InvalidOperationError("The level cannot be popped, the stack is already at the top level.");
         }
 
-        _preparedLevel = null;
         _numberOfSeparators[_currentLevel.Separator]--;
         _currentLevel = _currentLevel.Parent;
         return Result.FromSuccess();
