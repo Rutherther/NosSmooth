@@ -208,9 +208,9 @@ public struct PacketStringEnumerator
             return cachedToken;
         }
 
-        if (_data.ReachedEnd || _currentLevel.ReachedEnd)
+        if (_data.ReachedEnd || (_currentLevel.ReachedEnd ?? false))
         {
-            return new PacketEndReachedError(_data.Data, _currentLevel.ReachedEnd);
+            return new PacketEndReachedError(_data.Data, _currentLevel.ReachedEnd ?? false);
         }
 
         var currentIndex = _data.Cursor;
@@ -259,9 +259,9 @@ public struct PacketStringEnumerator
     private void UpdateCurrentAndParentLevels(PacketToken token)
     {
         // If the token is last in the current level, then set reached end of the current level.
-        if (token.IsLast ?? false)
+        if (_currentLevel.ReachedEnd != true)
         {
-            _currentLevel.ReachedEnd = true;
+            _currentLevel.ReachedEnd = token.IsLast;
         }
 
         // IsLast is set if parent separator was encountered. The parent needs to be updated.
@@ -298,7 +298,14 @@ public struct PacketStringEnumerator
     /// </summary>
     /// <returns>Whether the last token was read. Null if cannot determine (ie. there are multiple levels with the same separator.)</returns>
     public bool? IsOnLastToken()
-        => _data.ReachedEnd || _currentLevel.ReachedEnd;
+    {
+        if (_data.ReachedEnd)
+        {
+            return true;
+        }
+
+        return _currentLevel.ReachedEnd;
+    }
 
     /// <summary>
     /// Checks if the given character is a separator.
@@ -393,6 +400,6 @@ public struct PacketStringEnumerator
 
         public uint TokensRead { get; set; }
 
-        public bool ReachedEnd { get; set; }
+        public bool? ReachedEnd { get; set; }
     }
 }
