@@ -34,9 +34,11 @@ public class PacketIndexAttributeGenerator : IParameterGenerator
             pushedLevel = true;
             textWriter.WriteLine($"builder.PushLevel('{parameterInfo.NamedAttributeArguments["InnerSeparator"]}');");
         }
+        var semanticModel = parameterInfo.Compilation.GetSemanticModel(recordDeclarationSyntax.SyntaxTree);
+        var type = semanticModel.GetTypeInfo(parameterInfo.Parameter.Type!).Type;
 
         textWriter.WriteLine($@"
-var {parameterInfo.Name}Result = _typeConverterRepository.Serialize(obj.{parameterInfo.Name}, builder);
+var {parameterInfo.Name}Result = _typeConverterRepository.Serialize<{type}>(obj.{parameterInfo.Name}, builder);
 if (!{parameterInfo.Name}Result.IsSuccess)
 {{
     return Result.FromError(new PacketParameterSerializerError(this, ""{parameterInfo.Name}"", {parameterInfo.Name}Result), {parameterInfo.Name}Result);
@@ -72,7 +74,7 @@ if (!{parameterInfo.Name}Result.IsSuccess)
         var type = semanticModel.GetTypeInfo(parameterInfo.Parameter.Type!).Type;
         string last = parameterInfo.IsLast ? "true" : "false";
         textWriter.WriteLine($@"
-var {parameterInfo.Name}Result = _typeConverterRepository.Deserialize<{type!.ToString()}{(nullable ? string.Empty : "?")}>(stringEnumerator);
+var {parameterInfo.Name}Result = _typeConverterRepository.Deserialize<{type!.ToString().TrimEnd('?')}?>(stringEnumerator);
 var {parameterInfo.Name}Error = CheckDeserializationResult({parameterInfo.Name}Result, ""{parameterInfo.Name}"", stringEnumerator, {last});
 if ({parameterInfo.Name}Error is not null)
 {{
@@ -89,7 +91,7 @@ if ({parameterInfo.Name}Result.Entity is null) {{
 ");
         }
 
-        textWriter.WriteLine($"var {parameterInfo.Name} = ({type!.ToString()}){parameterInfo.Name}Result.Entity;");
+        textWriter.WriteLine($"var {parameterInfo.Name} = ({type!.ToString().TrimEnd('?')}{(nullable ? "?" : string.Empty)}){parameterInfo.Name}Result.Entity;");
 
         if (pushedLevel)
         {
