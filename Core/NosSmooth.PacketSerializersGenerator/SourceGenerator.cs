@@ -47,7 +47,6 @@ public class SourceGenerator : ISourceGenerator
     /// <inheritdoc />
     public void Initialize(GeneratorInitializationContext context)
     {
-        SpinWait.SpinUntil(() => Debugger.IsAttached);
     }
 
     private IEnumerable<RecordDeclarationSyntax> GetPacketRecords(Compilation compilation, SyntaxTree tree)
