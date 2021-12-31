@@ -100,4 +100,10 @@ public class NameString
 
         return Name.Equals(nameString.Name);
     }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        return Name.GetHashCode();
+    }
 }
