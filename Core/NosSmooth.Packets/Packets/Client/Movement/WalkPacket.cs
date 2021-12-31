@@ -28,10 +28,10 @@ public record WalkPacket
 (
     [PacketIndex(0)]
     short PositionX,
-    [PacketIndex(2)]
+    [PacketIndex(1)]
     short PositionY,
-    [PacketIndex(3)]
+    [PacketIndex(2)]
     byte CheckSum,
-    [PacketIndex(4)]
+    [PacketIndex(3)]
     short Speed
 ) : IPacket;
