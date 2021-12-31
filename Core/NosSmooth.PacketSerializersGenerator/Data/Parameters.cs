@@ -4,6 +4,8 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using NosSmooth.PacketSerializersGenerator.Extensions;
+
 namespace NosSmooth.PacketSerializersGenerator.Data;
 
 /// <summary>
@@ -38,20 +40,33 @@ public class Parameters
     /// <summary>
     /// Gets the next processing parameter.
     /// </summary>
-    public ParameterInfo Next => List[CurrentIndex];
+    public ParameterInfo? Next => CurrentIndex < List.Count - 1 ? List[CurrentIndex + 1] : null;
 
     /// <summary>
     /// Gets the previous processing parameter.
     /// </summary>
-    public ParameterInfo Previous => List[CurrentIndex];
+    public ParameterInfo? Previous => CurrentIndex > 0 ? List[CurrentIndex - 1] : null;
 
     /// <summary>
     /// Gets whether the current parameter is the last one.
     /// </summary>
-    public bool IsLast => CurrentIndex == List.Count - 1;
+    public bool IsLast => CurrentIndex == List.Count - 1 || IsRestOptionals();
 
     /// <summary>
     /// Gets whether the current parameter is the first one.
     /// </summary>
     public bool IsFirst => CurrentIndex == 0;
+
+    private bool IsRestOptionals()
+    {
+        for (int i = CurrentIndex + 1; i < List.Count - 1; i++)
+        {
+            if (!List[i].IsOptional())
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
