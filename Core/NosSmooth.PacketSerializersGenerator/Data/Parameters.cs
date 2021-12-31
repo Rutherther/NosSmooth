@@ -59,7 +59,7 @@ public class Parameters
 
     private bool IsRestOptionals()
     {
-        for (int i = CurrentIndex + 1; i < List.Count - 1; i++)
+        for (int i = CurrentIndex + 1; i < List.Count; i++)
         {
             if (!List[i].IsOptional())
             {
