@@ -196,7 +196,7 @@ private IResultError? CheckDeserializationResult<T>(Result<T> result, string pro
                 textWriter.WriteMultiline
                 (
                     $@"if (skipError is not null) {{
-    return Result<{_packetInfo.Name}>.FromError(skipError, skipResult);
+    return Result<{_packetInfo.Name}?>.FromError(skipError, skipResult);
 }}"
                 );
             }
