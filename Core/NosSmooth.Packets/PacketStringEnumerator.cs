@@ -21,6 +21,7 @@ public struct PacketStringEnumerator
     private EnumeratorLevel _currentLevel;
     private (char Separator, uint? MaxTokens)? _preparedLevel;
     private PacketToken? _currentToken;
+    private bool _readToLast;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PacketStringEnumerator"/> struct.
@@ -35,6 +36,7 @@ public struct PacketStringEnumerator
         _numberOfSeparators.Add(separator, 1);
         _currentToken = null;
         _preparedLevel = null;
+        _readToLast = false;
     }
 
     /// <summary>
@@ -52,6 +54,7 @@ public struct PacketStringEnumerator
         _numberOfSeparators = new Dictionary<char, ushort>(numberOfSeparators);
         _currentToken = null;
         _preparedLevel = null;
+        _readToLast = false;
     }
 
     /// <summary>
@@ -65,6 +68,14 @@ public struct PacketStringEnumerator
     {
         _currentToken = null;
         _currentLevel.SeparatorOnce = separator;
+    }
+
+    /// <summary>
+    /// Sets that the next token should be read to the last entry in the level.
+    /// </summary>
+    public void SetReadToLast()
+    {
+        _readToLast = true;
     }
 
     /// <summary>
@@ -220,7 +231,8 @@ public struct PacketStringEnumerator
         bool? isLast, encounteredUpperLevel;
 
         // If the current character is a separator, stop, else, add it to the builder.
-        while (!IsSeparator(currentCharacter, out isLast, out encounteredUpperLevel))
+        // If should read to last, then read until isLast is null or true.
+        while (!IsSeparator(currentCharacter, out isLast, out encounteredUpperLevel) || (_readToLast && !(isLast ?? true)))
         {
             tokenString.Append(currentCharacter);
             currentIndex++;
@@ -235,6 +247,7 @@ public struct PacketStringEnumerator
             currentCharacter = _data.Data[currentIndex];
         }
 
+        _readToLast = false;
         currentIndex++;
 
         var token = new PacketToken(tokenString.ToString(), isLast, encounteredUpperLevel, _data.ReachedEnd);

@@ -31,12 +31,21 @@ public class PacketIndexAttributeGenerator : IParameterGenerator
         var parameter = packetInfo.Parameters.Current;
         var attribute = parameter.Attributes.First(x => x.FullName == PacketIndexAttributeFullName);
 
+        if (parameter.IsOptional())
+        {
+            textWriter.WriteLine($"if (obj.{parameter.GetVariableName()} is not null)");
+            textWriter.WriteLine("{");
+            textWriter.Indent++;
+        }
+
+        // register after separator
         var afterSeparator = attribute.GetNamedValue<char?>("AfterSeparator", null);
         if (afterSeparator is not null)
         {
             generator.SetAfterSeparatorOnce((char)afterSeparator);
         }
 
+        // push inner separator level
         var innerSeparator = attribute.GetNamedValue<char?>("InnerSeparator", null);
         if (innerSeparator is not null)
         {
@@ -44,11 +53,20 @@ public class PacketIndexAttributeGenerator : IParameterGenerator
             pushedLevel = true;
         }
 
+        // serialize, check the error.
         generator.SerializeAndCheck(parameter);
 
+        // pop inner separator level
         if (pushedLevel)
         {
             generator.PopLevel();
+        }
+
+        // end optional if
+        if (parameter.IsOptional())
+        {
+            textWriter.Indent--;
+            textWriter.WriteLine("}");
         }
 
         return null;
@@ -62,6 +80,18 @@ public class PacketIndexAttributeGenerator : IParameterGenerator
         var parameter = packetInfo.Parameters.Current;
         var attribute = parameter.Attributes.First();
 
+        generator.DeclareLocalVariable(parameter);
+
+        // add optional if
+        if (parameter.IsOptional())
+        {
+            var error = generator.StartOptionalCheck(parameter, packetInfo.Name);
+            if (error is not null)
+            {
+                return error;
+            }
+        }
+
         var afterSeparator = attribute.GetNamedValue<char?>("AfterSeparator", null);
         if (afterSeparator is not null)
         {
@@ -75,19 +105,26 @@ public class PacketIndexAttributeGenerator : IParameterGenerator
             pushedLevel = true;
         }
 
-        generator.DeserializeAndCheck($"{packetInfo.Namespace}.{packetInfo.Name}", parameter, packetInfo.Parameters.IsLast);
+        generator.DeserializeAndCheck
+            ($"{packetInfo.Namespace}.{packetInfo.Name}", parameter, packetInfo.Parameters.IsLast);
 
         if (!parameter.Nullable)
         {
             generator.CheckNullError(parameter.GetResultVariableName(), parameter.Name);
         }
 
-        generator.AssignLocalVariable(parameter);
+        generator.AssignLocalVariable(parameter, false);
 
         if (pushedLevel)
         {
             generator.ReadToLastToken();
             generator.PopLevel();
+        }
+
+        // end is last token if body
+        if (parameter.IsOptional())
+        {
+            generator.EndOptionalCheck(parameter);
         }
 
         return null;

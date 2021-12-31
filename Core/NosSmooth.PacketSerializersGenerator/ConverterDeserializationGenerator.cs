@@ -6,6 +6,7 @@
 
 using System.CodeDom.Compiler;
 using NosSmooth.PacketSerializersGenerator.Data;
+using NosSmooth.PacketSerializersGenerator.Errors;
 using NosSmooth.PacketSerializersGenerator.Extensions;
 
 namespace NosSmooth.PacketSerializersGenerator;
@@ -34,6 +35,14 @@ public class ConverterDeserializationGenerator
     public void SetAfterSeparatorOnce(char separator)
     {
         _textWriter.WriteLine(@$"{_stringEnumeratorVariable}.SetAfterSeparatorOnce('{separator}');");
+    }
+
+    /// <summary>
+    /// Sets that the next token should be read to the last entry in the level.
+    /// </summary>
+    public void SetReadToLast()
+    {
+        _textWriter.WriteLine(@$"{_stringEnumeratorVariable}.SetReadToLast();");
     }
 
     /// <summary>
@@ -128,8 +137,64 @@ if ({resultVariableName}.Entity is null) {{
     /// Assign local variable with the result of the parameter deserialization.
     /// </summary>
     /// <param name="parameter">The parameter.</param>
-    public void AssignLocalVariable(ParameterInfo parameter)
+    public void DeclareLocalVariable(ParameterInfo parameter)
     {
-        _textWriter.WriteLine($"var {parameter.Name} = ({parameter.GetActualType()}){parameter.GetResultVariableName()}.Entity;");
+        _textWriter.WriteLine($"{parameter.GetActualType()} {parameter.GetVariableName()};");
+    }
+
+    /// <summary>
+    /// Assign local variable with the result of the parameter deserialization.
+    /// </summary>
+    /// <param name="parameter">The parameter.</param>
+    /// <param name="declare">Whether to also declare the local variable.</param>
+    public void AssignLocalVariable(ParameterInfo parameter, bool declare = true)
+    {
+        _textWriter.WriteLine($"{(declare ? "var " : string.Empty)}{parameter.Name} = ({parameter.GetActualType()}){parameter.GetResultVariableName()}.Entity;");
+    }
+
+    /// <summary>
+    /// Begins the if for optionals, check if the parameter is not nullable.
+    /// </summary>
+    /// <param name="parameter">The parameter information.</param>
+    /// <param name="packetName">The name of the packet.</param>
+    /// <returns>An error, if any.</returns>
+    public IError? StartOptionalCheck(ParameterInfo parameter, string packetName)
+    {
+        if (!parameter.Nullable)
+        {
+            return new DiagnosticError
+            (
+                "SG0006",
+                "Optional parameters must be nullable",
+                "The parameter {0} in {1} has to be nullable, because it is optional.",
+                parameter.Parameter.SyntaxTree,
+                parameter.Parameter.FullSpan,
+                new List<object?>(new[] { parameter.Name, packetName })
+            );
+        }
+
+        // serialize this parameter only if we are not on the last token.
+        _textWriter.WriteLine($"if (!(stringEnumerator.IsOnLastToken() ?? true))");
+        _textWriter.WriteLine("{");
+        _textWriter.Indent++;
+        return null;
+    }
+
+    /// <summary>
+    /// Ends the if for optionals.
+    /// </summary>
+    /// <param name="parameter">The parameter information.</param>
+    public void EndOptionalCheck(ParameterInfo parameter)
+    {
+        _textWriter.Indent--;
+        _textWriter.WriteLine("}");
+        _textWriter.WriteLine("else");
+        _textWriter.WriteLine("{");
+        _textWriter.Indent++;
+
+        _textWriter.WriteLine($"{parameter.GetVariableName()} = null;");
+
+        _textWriter.Indent--;
+        _textWriter.WriteLine("}");
     }
 }
