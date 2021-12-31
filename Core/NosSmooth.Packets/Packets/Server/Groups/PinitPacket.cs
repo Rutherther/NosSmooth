@@ -15,8 +15,8 @@ namespace NosSmooth.Packets.Packets.Server.Groups;
 /// <remarks>
 /// Contains pet and group information.
 /// </remarks>
-/// <param name="GroupSize"></param>
-/// <param name="PinitSubPackets"></param>
+/// <param name="GroupSize">The size of the group.</param>
+/// <param name="PinitSubPackets">The members of the group. (including pet and partner, if any)</param>
 [GenerateSerializer]
 [PacketHeader("pinit", PacketSource.Server)]
 public record PinitPacket

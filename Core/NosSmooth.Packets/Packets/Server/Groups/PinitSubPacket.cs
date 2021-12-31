@@ -4,9 +4,9 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosCore.Shared.Enumerations;
 using NosSmooth.Packets.Attributes;
 using NosSmooth.Packets.Common;
+using NosSmooth.Packets.Enums;
 
 namespace NosSmooth.Packets.Packets.Server.Groups;
 
@@ -29,7 +29,7 @@ namespace NosSmooth.Packets.Packets.Server.Groups;
 public record PinitSubPacket
 (
     [PacketIndex(0)]
-    VisualType EntityType,
+    EntityType EntityType,
     [PacketIndex(1)]
     long EntityId,
     [PacketIndex(2)]
@@ -46,10 +46,10 @@ public record PinitSubPacket
     short Race,
     [PacketIndex(8)]
     short Morph,
-    [PacketConditionalIndex(9, "EntityType", false, VisualType.Player)]
+    [PacketConditionalIndex(9, "EntityType", false, EntityType.Player)]
     byte? HeroLevel,
-    [PacketConditionalIndex(10, "EntityType", false, VisualType.Player)]
+    [PacketConditionalIndex(10, "EntityType", false, EntityType.Player)]
     int? Unknown1,
-    [PacketConditionalIndex(11, "EntityType", false, VisualType.Player)]
+    [PacketConditionalIndex(11, "EntityType", false, EntityType.Player)]
     int? Unknown2
 ) : IPacket;

@@ -4,8 +4,8 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosCore.Shared.Enumerations;
 using NosSmooth.Packets.Attributes;
+using NosSmooth.Packets.Enums;
 
 namespace NosSmooth.Packets.Packets.Server.Entities;
 
@@ -22,7 +22,7 @@ namespace NosSmooth.Packets.Packets.Server.Entities;
 public record MovePacket
 (
     [PacketIndex(0)]
-    VisualType EntityType,
+    EntityType EntityType,
     [PacketIndex(1)]
     long EntityId,
     [PacketIndex(2)]

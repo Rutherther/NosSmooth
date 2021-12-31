@@ -5,9 +5,9 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Extensions.DependencyInjection;
-using NosCore.Shared.Enumerations;
 using NosSmooth.Packets.Attributes;
 using NosSmooth.Packets.Converters;
+using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Extensions;
 using NosSmooth.Packets.Packets.Server.Entities;
 using Xunit;
@@ -40,7 +40,7 @@ public class MovePacketConverterTests
     [Fact]
     public void Converter_Serialization_SerializesCorrectly()
     {
-        MovePacket packet = new MovePacket(VisualType.Monster, 122, 15, 20, 10);
+        MovePacket packet = new MovePacket(EntityType.Monster, 122, 15, 20, 10);
         var result = _packetSerializer.Serialize(packet);
         Assert.True(result.IsSuccess);
 
@@ -57,7 +57,7 @@ public class MovePacketConverterTests
         var result = _packetSerializer.Deserialize(packetString, PacketSource.Server);
         Assert.True(result.IsSuccess);
 
-        MovePacket actualPacket = new MovePacket(VisualType.Monster, 122, 15, 20, 10);
+        MovePacket actualPacket = new MovePacket(EntityType.Monster, 122, 15, 20, 10);
         Assert.Equal(result.Entity, actualPacket);
     }
 }
