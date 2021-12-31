@@ -16,6 +16,5 @@ namespace NosSmooth.Packets.Errors;
 /// <param name="Converter">The converter that failed the parsing.</param>
 /// <param name="Value">The value that failed to parse.</param>
 /// <param name="Reason">The reason for the error.</param>
-/// <param name="Exception">The underlying exception, if any.</param>
-public record CouldNotConvertError(ITypeConverter Converter, string Value, string Reason, Exception? Exception = default)
-    : ResultError($"Converter {Converter.GetType().FullName} could not convert {Value} due to {Reason}.");
+public record CouldNotConvertError(ITypeConverter Converter, string Value, string Reason)
+    : ResultError($"Converter {Converter.GetType().FullName} could not convert value \"{Value}\" due to {Reason}.");

@@ -65,7 +65,7 @@ public class ListTypeConverter : ISpecialTypeConverter
             stringEnumerator.PopLevel();
             if (!result.IsSuccess)
             {
-                return Result<object?>.FromError(new ListSerializerError(result, data.Count));
+                return Result<object?>.FromError(new ListSerializerError(result, data.Count), result);
             }
 
             data.Add(result.Entity);
