@@ -19,7 +19,7 @@ public class LongTypeConverter : BasicTypeConverter<long>
     {
         if (!long.TryParse(value, out var parsed))
         {
-            return new CouldNotConvertError(this, value, "Could not parse as an long.");
+            return new CouldNotConvertError(this, value, "Could not parse as a long.");
         }
 
         return parsed;

@@ -19,7 +19,7 @@ public class UIntTypeConverter : BasicTypeConverter<uint>
     {
         if (!uint.TryParse(value, out var parsed))
         {
-            return new CouldNotConvertError(this, value, "Could not parse as uint.");
+            return new CouldNotConvertError(this, value, "Could not parse as uint");
         }
 
         return parsed;
