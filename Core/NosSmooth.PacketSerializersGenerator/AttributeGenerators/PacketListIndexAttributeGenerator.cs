@@ -35,6 +35,13 @@ public class PacketListIndexAttributeGenerator : IParameterGenerator
         var parameter = packetInfo.Parameters.Current;
         var attribute = parameter.Attributes.First(x => x.FullName == PacketListIndexAttributeFullName);
 
+        if (parameter.IsOptional())
+        {
+            textWriter.WriteLine($"if (obj.{parameter.GetVariableName()} is not null)");
+            textWriter.WriteLine("{");
+            textWriter.Indent++;
+        }
+
         var afterSeparator = attribute.GetNamedValue<char?>("AfterSeparator", null);
         if (afterSeparator is not null)
         {
@@ -51,6 +58,13 @@ public class PacketListIndexAttributeGenerator : IParameterGenerator
         generator.RemovePreparedLevel();
         generator.PopLevel();
 
+        // end optional if
+        if (parameter.IsOptional())
+        {
+            textWriter.Indent--;
+            textWriter.WriteLine("}");
+        }
+
         return null;
     }
 
@@ -60,6 +74,18 @@ public class PacketListIndexAttributeGenerator : IParameterGenerator
         var generator = new ConverterDeserializationGenerator(textWriter);
         var parameter = packetInfo.Parameters.Current;
         var attribute = parameter.Attributes.First(x => x.FullName == PacketListIndexAttributeFullName);
+
+        generator.DeclareLocalVariable(parameter);
+
+        // add optional if
+        if (parameter.IsOptional())
+        {
+            var error = generator.StartOptionalCheck(parameter, packetInfo.Name);
+            if (error is not null)
+            {
+                return error;
+            }
+        }
 
         var afterSeparator = attribute.GetNamedValue<char?>("AfterSeparator", null);
         if (afterSeparator is not null)
@@ -82,7 +108,13 @@ public class PacketListIndexAttributeGenerator : IParameterGenerator
             generator.CheckNullError(parameter.GetResultVariableName(), parameter.Name);
         }
 
-        generator.AssignLocalVariable(parameter);
+        generator.AssignLocalVariable(parameter, false);
+
+        // end is last token if body
+        if (parameter.IsOptional())
+        {
+            generator.EndOptionalCheck(parameter);
+        }
 
         return null;
     }

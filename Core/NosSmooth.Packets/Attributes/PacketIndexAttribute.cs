@@ -37,4 +37,18 @@ public class PacketIndexAttribute : Attribute
     /// Gets the separator after this field.
     /// </summary>
     public char AfterSeparator { get; set; } = (char)0xFF;
+
+    /// <summary>
+    /// Gets or sets whether this parameter is optional.
+    /// </summary>
+    /// <remarks>
+    /// Optional attributes have to be nullable,
+    /// if the attribute is not in the string,
+    /// it will be set to null. For serializer,
+    /// if the parameter is null, it will be omitted.
+    ///
+    /// See <see cref="PacketConditionalIndexAttribute"/> for
+    /// more complex decision making about using parameters.
+    /// </remarks>
+    public bool IsOptional { get; set; } = false;
 }
