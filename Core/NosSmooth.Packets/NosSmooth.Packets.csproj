@@ -15,10 +15,6 @@
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
       <PackageReference Include="Remora.Results" Version="7.1.0" />
     </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\libs\NosCore.Shared\src\NosCore.Shared\NosCore.Shared.csproj" />
-    </ItemGroup>
     
     <ItemGroup>
         <ProjectReference Include="..\NosSmooth.PacketSerializersGenerator\NosSmooth.PacketSerializersGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
