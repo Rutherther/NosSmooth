@@ -7,7 +7,6 @@
 using System;
 using System.CodeDom.Compiler;
 using System.IO;
-using System.Text;
 using Microsoft.Extensions.Logging;
 using Remora.Results;
 

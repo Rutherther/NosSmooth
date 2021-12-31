@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\libs\NosCore.Packets\src\NosCore.Packets\NosCore.Packets.csproj" />
+      <ProjectReference Include="..\NosSmooth.Packets\NosSmooth.Packets.csproj" />
     </ItemGroup>
 
 </Project>

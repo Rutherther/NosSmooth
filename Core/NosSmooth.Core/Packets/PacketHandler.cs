@@ -11,7 +11,8 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using NosCore.Packets.Interfaces;
+using NosSmooth.Packets.Attributes;
+using NosSmooth.Packets.Packets;
 using Remora.Results;
 
 namespace NosSmooth.Core.Packets;
@@ -32,15 +33,15 @@ public class PacketHandler : IPacketHandler
 
     /// <inheritdoc />
     public Task<Result> HandleReceivedPacketAsync(IPacket packet, string packetString, CancellationToken ct)
-        => HandlePacketAsync(PacketType.Received, packet, packetString, ct);
+        => HandlePacketAsync(PacketSource.Server, packet, packetString, ct);
 
     /// <inheritdoc />
     public Task<Result> HandleSentPacketAsync(IPacket packet, string packetString, CancellationToken ct)
-        => HandlePacketAsync(PacketType.Sent, packet, packetString, ct);
+        => HandlePacketAsync(PacketSource.Client, packet, packetString, ct);
 
     private Task<Result> HandlePacketAsync
     (
-        PacketType packetType,
+        PacketSource packetType,
         IPacket packet,
         string packetString,
         CancellationToken ct = default
@@ -68,7 +69,7 @@ public class PacketHandler : IPacketHandler
     }
 
     private async Task<Result> DispatchResponder<TPacket>(
-        PacketType packetType,
+        PacketSource packetType,
         TPacket packet,
         string packetString,
         CancellationToken ct

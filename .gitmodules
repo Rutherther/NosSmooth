@@ -1,6 +1,0 @@
-[submodule "libs/NosCore.Packets"]
-	path = libs/NosCore.Packets
-	url = https://github.com/Rutherther/NosCore.Packets.git
-[submodule "libs/NosCore.Shared"]
-	path = libs/NosCore.Shared
-	url = https://github.com/Rutherther/NosCore.Shared.git

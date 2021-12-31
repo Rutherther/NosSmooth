@@ -4,7 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosCore.Packets;
+using NosSmooth.Packets.Packets;
 using Remora.Results;
 
 namespace NosSmooth.Core.Packets;
@@ -12,7 +12,7 @@ namespace NosSmooth.Core.Packets;
 /// <summary>
 /// Represents packet that failed to parse correctly.
 /// </summary>
-public class ParsingFailedPacket : PacketBase
+public class ParsingFailedPacket : IPacket
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ParsingFailedPacket"/> class.

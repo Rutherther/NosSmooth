@@ -43,7 +43,7 @@ public record InPacket
     [PacketIndex(6)]
     short PositionY,
     [PacketConditionalIndex(7, "EntityType", true, EntityType.Object)]
-    byte Direction,
+    byte? Direction,
     [PacketConditionalIndex(8, "EntityType", false, EntityType.Player, InnerSeparator = ' ')]
     InPlayerSubPacket? PlayerSubPacket,
     [PacketConditionalIndex(9, "EntityType", false, EntityType.Object, InnerSeparator = ' ')]
