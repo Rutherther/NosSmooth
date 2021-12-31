@@ -37,6 +37,11 @@ public class NameStringConverter : BaseTypeConverter<NameString>
             return Result<NameString?>.FromError(tokenResult);
         }
 
+        if (tokenResult.Entity.Token == "-")
+        {
+            return Result<NameString?>.FromSuccess(null);
+        }
+
         return NameString.FromPacket(tokenResult.Entity.Token);
     }
 }
