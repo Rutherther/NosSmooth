@@ -7,7 +7,7 @@
 using NosCore.Shared.Enumerations;
 using NosSmooth.Packets.Attributes;
 
-namespace NosSmooth.Packets.Packets.Server.Map;
+namespace NosSmooth.Packets.Packets.Server.Entities;
 
 /// <summary>
 /// The entity has moved to the given position.
