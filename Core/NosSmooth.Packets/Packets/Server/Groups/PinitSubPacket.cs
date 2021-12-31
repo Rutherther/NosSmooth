@@ -6,6 +6,7 @@
 
 using NosCore.Shared.Enumerations;
 using NosSmooth.Packets.Attributes;
+using NosSmooth.Packets.Common;
 
 namespace NosSmooth.Packets.Packets.Server.Groups;
 
@@ -36,7 +37,7 @@ public record PinitSubPacket
     [PacketIndex(3)]
     byte Level,
     [PacketIndex(4)]
-    string? Name,
+    NameString? Name,
     [PacketIndex(5)]
     int Unknown,
     [PacketIndex(6)]
@@ -44,5 +45,11 @@ public record PinitSubPacket
     [PacketIndex(7)]
     short Race,
     [PacketIndex(8)]
-    short Morph
+    short Morph,
+    [PacketConditionalIndex(9, "EntityType", false, VisualType.Player)]
+    byte? HeroLevel,
+    [PacketConditionalIndex(10, "EntityType", false, VisualType.Player)]
+    int? Unknown1,
+    [PacketConditionalIndex(11, "EntityType", false, VisualType.Player)]
+    int? Unknown2
 ) : IPacket;
