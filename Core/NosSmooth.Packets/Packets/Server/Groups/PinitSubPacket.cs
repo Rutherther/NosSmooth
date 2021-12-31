@@ -24,6 +24,8 @@ namespace NosSmooth.Packets.Packets.Server.Groups;
 /// <param name="Race">The race of the entity.</param>
 /// <param name="Morph">The morph of the entity.</param>
 /// <param name="HeroLevel">The hero level of the entity.</param>
+/// <param name="Unknown1">Unknown.</param>
+/// <param name="Unknown2">Unknown.</param>
 [GenerateSerializer]
 [PacketHeader(null, PacketSource.Server)]
 public record PinitSubPacket
