@@ -10,6 +10,7 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using NosSmooth.Packets.Converters;
 using NosSmooth.Packets.Converters.Basic;
+using NosSmooth.Packets.Converters.Common;
 using NosSmooth.Packets.Converters.Special;
 using NosSmooth.Packets.Packets;
 
@@ -98,6 +99,7 @@ public static class ServiceCollectionExtensions
             .AddTypeConverter<ULongTypeConverter>()
             .AddTypeConverter<LongTypeConverter>()
             .AddTypeConverter<StringTypeConverter>()
+            .AddTypeConverter<NameStringConverter>()
             .AddTypeConverter<CharTypeConverter>();
     }
 

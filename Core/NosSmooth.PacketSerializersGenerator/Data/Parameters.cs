@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using NosSmooth.PacketSerializersGenerator.AttributeGenerators;
 using NosSmooth.PacketSerializersGenerator.Extensions;
 
 namespace NosSmooth.PacketSerializersGenerator.Data;
@@ -61,7 +62,7 @@ public class Parameters
     {
         for (int i = CurrentIndex + 1; i < List.Count; i++)
         {
-            if (!List[i].IsOptional())
+            if (!List[i].IsOptional() && List[i].Attributes.All(x => x.FullName != PacketConditionalIndexAttributeGenerator.PacketConditionalIndexAttributeFullName))
             {
                 return false;
             }

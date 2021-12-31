@@ -36,8 +36,10 @@ public class SourceGenerator : ISourceGenerator
             new IParameterGenerator[]
             {
                 new PacketIndexAttributeGenerator(),
+                new PacketGreedyIndexAttributeGenerator(),
                 new PacketListIndexAttributeGenerator(),
                 new PacketContextListAttributeGenerator(),
+                new PacketConditionalIndexAttributeGenerator(),
             }
         );
     }
@@ -47,6 +49,7 @@ public class SourceGenerator : ISourceGenerator
     /// <inheritdoc />
     public void Initialize(GeneratorInitializationContext context)
     {
+        // SpinWait.SpinUntil(() => Debugger.IsAttached);
     }
 
     private IEnumerable<RecordDeclarationSyntax> GetPacketRecords(Compilation compilation, SyntaxTree tree)
@@ -257,21 +260,22 @@ public class SourceGenerator : ISourceGenerator
 
     private AttributeInfo CreateAttributeInfo(AttributeSyntax attribute, SemanticModel semanticModel)
     {
-        var namedArguments = new Dictionary<string, object?>();
-        var arguments = new List<object?>();
+        var namedArguments = new Dictionary<string, AttributeArgumentInfo>();
+        var arguments = new List<AttributeArgumentInfo>();
 
         foreach (var argument in attribute.ArgumentList!.Arguments)
         {
             var argumentName = argument.NameEquals?.Name.Identifier.NormalizeWhitespace().ToFullString();
             var value = argument.GetValue(semanticModel);
+            bool isArray = argument.Expression is ArrayCreationExpressionSyntax;
 
             if (argumentName is not null)
             {
-                namedArguments.Add(argumentName, value);
+                namedArguments.Add(argumentName, new AttributeArgumentInfo(argument, isArray, value, argument.ToString()));
             }
             else
             {
-                arguments.Add(value);
+                arguments.Add(new AttributeArgumentInfo(argument, isArray, value, argument.ToString()));
             }
         }
 

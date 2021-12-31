@@ -19,6 +19,15 @@ public record AttributeInfo
 (
     AttributeSyntax Attribute,
     string FullName,
-    IReadOnlyList<object?> IndexedAttributeArguments,
-    IReadOnlyDictionary<string, object?> NamedAttributeArguments
+    IReadOnlyList<AttributeArgumentInfo> IndexedAttributeArguments,
+    IReadOnlyDictionary<string, AttributeArgumentInfo> NamedAttributeArguments
 );
+
+/// <summary>
+/// The attribute argument information.
+/// </summary>
+/// <param name="Argument">The argument syntax.</param>
+/// <param name="IsArray">Whether the attribute argument is an array.</param>
+/// <param name="RealValue">The real parsed value of the argument.</param>
+/// <param name="VisualValue">The visual value of the argument.</param>
+public record AttributeArgumentInfo(AttributeArgumentSyntax Argument, bool IsArray, object? RealValue, string VisualValue);
