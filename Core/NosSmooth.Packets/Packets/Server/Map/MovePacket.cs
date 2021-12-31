@@ -12,11 +12,11 @@ namespace NosSmooth.Packets.Packets.Server.Map;
 /// <summary>
 /// The entity has moved to the given position.
 /// </summary>
-/// <param name="EntityType"></param>
-/// <param name="EntityId"></param>
-/// <param name="MapX"></param>
-/// <param name="MapY"></param>
-/// <param name="Speed"></param>
+/// <param name="EntityType">The type of the entity that has moved.</param>
+/// <param name="EntityId">The id of the entity.</param>
+/// <param name="MapX">The x coordinate the entity has moved to.</param>
+/// <param name="MapY">The y coordinate the entity has moved to.</param>
+/// <param name="Speed">The speed of the entity.</param>
 [PacketHeader("mv", PacketSource.Server)]
 [GenerateSerializer]
 public record MovePacket
