@@ -131,7 +131,7 @@ public class SourceGenerator : ISourceGenerator
         {
             return new DiagnosticError
             (
-                "SG0001",
+                "SGConst",
                 "Packet without constructor",
                 "The packet class {0} does not have any constructors to use for packet serializer.",
                 packetClass.SyntaxTree,
@@ -219,7 +219,7 @@ public class SourceGenerator : ISourceGenerator
         {
             return new DiagnosticError
             (
-                "SG0003",
+                "SGAttr",
                 "Packet constructor parameter without packet attribute",
                 "Could not find PacketIndexAttribute on {0} parameter in class {1}. Parameters without PacketIndexAttribute aren't allowed.",
                 parameter.SyntaxTree,

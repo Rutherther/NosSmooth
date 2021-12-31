@@ -29,6 +29,18 @@ public class PacketListIndexAttributeGenerator : IParameterGenerator
         => parameter.Attributes.Any(x => x.FullName == PacketListIndexAttributeFullName);
 
     /// <inheritdoc />
+    public IError? CheckParameter(PacketInfo packet, ParameterInfo parameter)
+    {
+        var error = ParameterChecker.CheckHasOneAttribute(packet, parameter);
+        if (error is not null)
+        {
+            return error;
+        }
+
+        return ParameterChecker.CheckOptionalIsNullable(packet, parameter);
+    }
+
+    /// <inheritdoc />
     public IError? GenerateSerializerPart(IndentedTextWriter textWriter, PacketInfo packetInfo)
     {
         var generator = new ConverterSerializationGenerator(textWriter);
@@ -80,11 +92,7 @@ public class PacketListIndexAttributeGenerator : IParameterGenerator
         // add optional if
         if (parameter.IsOptional())
         {
-            var error = generator.StartOptionalCheck(parameter, packetInfo.Name);
-            if (error is not null)
-            {
-                return error;
-            }
+            generator.StartOptionalCheck(parameter, packetInfo.Name);
         }
 
         var afterSeparator = attribute.GetNamedValue<char?>("AfterSeparator", null);

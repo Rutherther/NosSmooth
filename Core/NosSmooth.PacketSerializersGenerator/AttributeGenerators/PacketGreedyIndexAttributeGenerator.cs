@@ -34,6 +34,18 @@ public class PacketGreedyIndexAttributeGenerator : IParameterGenerator
         => parameter.Attributes.Any(x => x.FullName == PacketIndexAttributeFullName);
 
     /// <inheritdoc />
+    public IError? CheckParameter(PacketInfo packet, ParameterInfo parameter)
+    {
+        var error = ParameterChecker.CheckHasOneAttribute(packet, parameter);
+        if (error is not null)
+        {
+            return error;
+        }
+
+        return ParameterChecker.CheckOptionalIsNullable(packet, parameter);
+    }
+
+    /// <inheritdoc />
     public IError? GenerateSerializerPart(IndentedTextWriter textWriter, PacketInfo packetInfo)
         => _basicAttributeGenerator.GenerateSerializerPart(textWriter, packetInfo);
 
@@ -50,11 +62,7 @@ public class PacketGreedyIndexAttributeGenerator : IParameterGenerator
         // add optional if
         if (parameter.IsOptional())
         {
-            var error = generator.StartOptionalCheck(parameter, packetInfo.Name);
-            if (error is not null)
-            {
-                return error;
-            }
+            generator.StartOptionalCheck(parameter, packetInfo.Name);
         }
 
         var afterSeparator = attribute.GetNamedValue<char?>("AfterSeparator", null);

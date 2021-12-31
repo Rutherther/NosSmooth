@@ -136,10 +136,16 @@ private IResultError? CheckDeserializationResult<T>(Result<T> result, string pro
             {
                 if (generator.ShouldHandle(parameter))
                 {
-                    var result = generator.GenerateSerializerPart(textWriter, _packetInfo);
-                    if (result is not null)
+                    var checkError = generator.CheckParameter(_packetInfo, parameter);
+                    if (checkError is not null)
                     {
-                        return result;
+                        return checkError;
+                    }
+
+                    var serializerError = generator.GenerateSerializerPart(textWriter, _packetInfo);
+                    if (serializerError is not null)
+                    {
+                        return serializerError;
                     }
 
                     handled = true;
@@ -192,7 +198,7 @@ private IResultError? CheckDeserializationResult<T>(Result<T> result, string pro
             {
                 return new DiagnosticError
                 (
-                    "SG0004",
+                    "SGInd",
                     "Same packet index",
                     "There were two parameters of the same packet index {0} on property {1} in packet {2}, that is not supported.",
                     parameter.Attributes.First().Attribute.SyntaxTree,
@@ -214,6 +220,12 @@ private IResultError? CheckDeserializationResult<T>(Result<T> result, string pro
             {
                 if (generator.ShouldHandle(parameter))
                 {
+                    var checkError = generator.CheckParameter(_packetInfo, parameter);
+                    if (checkError is not null)
+                    {
+                        return checkError;
+                    }
+
                     var result = generator.GenerateDeserializerPart(textWriter, _packetInfo);
                     if (result is not null)
                     {

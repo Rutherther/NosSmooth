@@ -24,6 +24,14 @@ namespace NosSmooth.PacketSerializersGenerator.AttributeGenerators
         public bool ShouldHandle(ParameterInfo parameter);
 
         /// <summary>
+        /// Checks the given parameter, returns an error if the parameter cannot be processed.
+        /// </summary>
+        /// <param name="packet">The packet.</param>
+        /// <param name="parameter">The parameter.</param>
+        /// <returns>An error, if any.</returns>
+        public IError? CheckParameter(PacketInfo packet, ParameterInfo parameter);
+
+        /// <summary>
         /// Generate part for the Serializer method to serialize the given parameter.
         /// </summary>
         /// <param name="textWriter">The text writer to write the code to.</param>

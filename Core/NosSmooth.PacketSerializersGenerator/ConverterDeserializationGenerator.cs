@@ -157,27 +157,12 @@ if ({resultVariableName}.Entity is null) {{
     /// </summary>
     /// <param name="parameter">The parameter information.</param>
     /// <param name="packetName">The name of the packet.</param>
-    /// <returns>An error, if any.</returns>
-    public IError? StartOptionalCheck(ParameterInfo parameter, string packetName)
+    public void StartOptionalCheck(ParameterInfo parameter, string packetName)
     {
-        if (!parameter.Nullable)
-        {
-            return new DiagnosticError
-            (
-                "SG0006",
-                "Optional parameters must be nullable",
-                "The parameter {0} in {1} has to be nullable, because it is optional.",
-                parameter.Parameter.SyntaxTree,
-                parameter.Parameter.FullSpan,
-                new List<object?>(new[] { parameter.Name, packetName })
-            );
-        }
-
         // serialize this parameter only if we are not on the last token.
         _textWriter.WriteLine($"if (!(stringEnumerator.IsOnLastToken() ?? true))");
         _textWriter.WriteLine("{");
         _textWriter.Indent++;
-        return null;
     }
 
     /// <summary>
