@@ -33,7 +33,8 @@ public static class ResultExtensions
 
         using StringWriter stringWriter = new StringWriter();
         using IndentedTextWriter logTextWriter = new IndentedTextWriter(stringWriter, " ");
-        logTextWriter.Write("Encountered an error: ");
+        logTextWriter.WriteLine("Encountered an error");
+        logTextWriter.Indent++;
 
         LogResultError(logTextWriter, result);
         logger.LogError(stringWriter.ToString());
@@ -67,8 +68,9 @@ public static class ResultExtensions
             throw new InvalidOperationException("The result was successful, it has to be unsuccessful to log it.");
         }
 
-        logTextWriter.WriteLine(result.Error.Message);
+        AppendErrorMessage(logTextWriter, result.Error);
         IResultError? lastError = result.Error;
+        logTextWriter.Indent++;
         while ((result = result?.Inner) is not null && result.Error is not null)
         {
             // ReSharper disable once PossibleUnintendedReferenceComparison
@@ -78,9 +80,14 @@ public static class ResultExtensions
             }
             lastError = result.Error;
 
-            logTextWriter.WriteLine("--- See the inner error ---");
-            logTextWriter.Indent++;
-            logTextWriter.WriteLine(result.Error.Message);
+            // logTextWriter.Indent++;
+            logTextWriter.Write("---> ");
+            AppendErrorMessage(logTextWriter, result.Error);
         }
+    }
+
+    private static void AppendErrorMessage(IndentedTextWriter indentedTextWriter, IResultError error)
+    {
+        indentedTextWriter.WriteLine($"{error.GetType().FullName}: {error.Message}");
     }
 }
