@@ -10,6 +10,8 @@ using NosCore.Packets.ClientPackets.Movement;
 using NosCore.Packets.ServerPackets.MiniMap;
 using NosSmooth.Core.Commands;
 using NosSmooth.Core.Packets;
+using NosSmooth.Packets.Packets.Client.Movement;
+using NosSmooth.Packets.Packets.Server.Maps;
 using Remora.Results;
 
 namespace NosSmooth.LocalClient.CommandHandlers.Walk;
@@ -35,8 +37,8 @@ public class WalkPacketResponder : IPacketResponder<WalkPacket>, IPacketResponde
     {
         if (_walkStatus.IsWalking)
         {
-            _walkStatus.UpdateWalkTime(packet.Packet.XCoordinate, packet.Packet.YCoordinate);
-            if (packet.Packet.XCoordinate == _walkStatus.TargetX && packet.Packet.YCoordinate == _walkStatus.TargetY)
+            _walkStatus.UpdateWalkTime(packet.Packet.PositionX, packet.Packet.PositionY);
+            if (packet.Packet.PositionX == _walkStatus.TargetX && packet.Packet.PositionY == _walkStatus.TargetY)
             {
                 await _walkStatus.FinishWalkingAsync(ct);
             }
