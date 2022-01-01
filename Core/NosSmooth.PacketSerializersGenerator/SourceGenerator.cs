@@ -14,6 +14,7 @@ using NosSmooth.PacketSerializersGenerator.AttributeGenerators;
 using NosSmooth.PacketSerializersGenerator.Data;
 using NosSmooth.PacketSerializersGenerator.Errors;
 using NosSmooth.PacketSerializersGenerator.Extensions;
+using NosSmooth.PacketSerializersGenerator.TypeGenerators;
 
 namespace NosSmooth.PacketSerializersGenerator;
 
@@ -31,15 +32,28 @@ public class SourceGenerator : ISourceGenerator
     /// </summary>
     public SourceGenerator()
     {
+        var typeGenerators = new List<IInlineConverterGenerator>
+        (
+            new IInlineConverterGenerator[]
+            {
+                new StringInlineConverterGenerator(),
+                new BasicTypeGenerator(),
+                new EnumTypeGenerator(),
+                new BoolTypeGenerator(),
+            }
+        );
+
+        var inlineTypeConverter = new InlineTypeConverterGenerator(typeGenerators);
+
         _generators = new List<IParameterGenerator>
         (
             new IParameterGenerator[]
             {
-                new PacketIndexAttributeGenerator(),
-                new PacketGreedyIndexAttributeGenerator(),
-                new PacketListIndexAttributeGenerator(),
-                new PacketContextListAttributeGenerator(),
-                new PacketConditionalIndexAttributeGenerator(),
+                new PacketIndexAttributeGenerator(inlineTypeConverter),
+                new PacketGreedyIndexAttributeGenerator(inlineTypeConverter),
+                new PacketListIndexAttributeGenerator(inlineTypeConverter),
+                new PacketContextListAttributeGenerator(inlineTypeConverter),
+                new PacketConditionalIndexAttributeGenerator(inlineTypeConverter),
             }
         );
     }
@@ -115,6 +129,11 @@ public class SourceGenerator : ISourceGenerator
                     $"{packetRecord.Identifier.NormalizeWhitespace().ToFullString()}Converter.g.cs",
                     stringWriter.GetStringBuilder().ToString()
                 );
+                File.WriteAllText
+                (
+                    $"/tmp/{packetRecord.Identifier.NormalizeWhitespace().ToFullString()}Converter.g.cs",
+                    stringWriter.GetStringBuilder().ToString()
+                );
             }
         }
     }
@@ -177,9 +196,19 @@ public class SourceGenerator : ISourceGenerator
         }
 
         orderedParameters = orderedParameters.OrderBy(x => x.PacketIndex).ToList();
+        var generatorAttribute = packetClass.AttributeLists.Where
+                (x => x.ContainsAttribute(semanticModel, Constants.GenerateSourceAttributeClass))
+            .Select
+            (
+                x => x.Attributes.First
+                    (x => semanticModel.GetTypeInfo(x).Type!.ToString() == Constants.GenerateSourceAttributeClass)
+            )
+            .First();
+
         var packetInfo = new PacketInfo
         (
             compilation,
+            CreateAttributeInfo(generatorAttribute, semanticModel),
             packetClass,
             semanticModel,
             new Parameters(orderedParameters),
@@ -271,7 +300,8 @@ public class SourceGenerator : ISourceGenerator
 
             if (argumentName is not null)
             {
-                namedArguments.Add(argumentName, new AttributeArgumentInfo(argument, isArray, value, argument.ToString()));
+                namedArguments.Add
+                    (argumentName, new AttributeArgumentInfo(argument, isArray, value, argument.ToString()));
             }
             else
             {

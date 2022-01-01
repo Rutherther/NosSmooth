@@ -100,34 +100,16 @@ public class ConverterDeserializationGenerator
     }
 
     /// <summary>
-    /// Deserialize the given parameter and check the result.
-    /// </summary>
-    /// <param name="packetFullName">The full name of the packet.</param>
-    /// <param name="parameter">The parameter to deserialize.</param>
-    /// <param name="isLast">Whether the token is the last one.</param>
-    public void DeserializeAndCheck(string packetFullName, ParameterInfo parameter, bool isLast)
-    {
-        string isLastString = isLast ? "true" : "false";
-        _textWriter.WriteMultiline($@"
-var {parameter.GetResultVariableName()} = _typeConverterRepository.Deserialize<{parameter.GetNullableType()}>({_stringEnumeratorVariable});
-var {parameter.GetErrorVariableName()} = CheckDeserializationResult({parameter.GetResultVariableName()}, ""{parameter.Name}"", {_stringEnumeratorVariable}, {isLastString});
-if ({parameter.GetErrorVariableName()} is not null)
-{{
-    return Result<{packetFullName}?>.FromError({parameter.GetErrorVariableName()}, {parameter.GetResultVariableName()});
-}}
-");
-    }
-
-    /// <summary>
     /// Check taht the given variable is not null, if it is, return an error.
     /// </summary>
-    /// <param name="resultVariableName">The result variable to check for null.</param>
+    /// <param name="nullableVariableName">The variable to check for null.</param>
+    /// <param name="resultVariableName">The result variable to use for the error.</param>
     /// <param name="parameterName">The parameter that is being parsed.</param>
     /// <param name="reason">The reason for the error.</param>
-    public void CheckNullError(string resultVariableName, string parameterName, string reason = "The converter has returned null even though it was not expected.")
+    public void CheckNullError(string nullableVariableName, string resultVariableName, string parameterName, string reason = "The converter has returned null even though it was not expected.")
     {
         _textWriter.WriteMultiline($@"
-if ({resultVariableName}.Entity is null) {{
+if ({nullableVariableName} is null) {{
     return new PacketParameterSerializerError(this, ""{parameterName}"", {resultVariableName}, ""{reason}"");
 }}
 ");
@@ -149,7 +131,7 @@ if ({resultVariableName}.Entity is null) {{
     /// <param name="declare">Whether to also declare the local variable.</param>
     public void AssignLocalVariable(ParameterInfo parameter, bool declare = true)
     {
-        _textWriter.WriteLine($"{(declare ? "var " : string.Empty)}{parameter.Name} = ({parameter.GetActualType()}){parameter.GetResultVariableName()}.Entity;");
+        _textWriter.WriteLine($"{(declare ? "var " : string.Empty)}{parameter.Name} = ({parameter.GetActualType()}){parameter.GetNullableVariableName()};");
     }
 
     /// <summary>

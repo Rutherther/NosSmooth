@@ -8,12 +8,24 @@ using System.CodeDom.Compiler;
 using NosSmooth.PacketSerializersGenerator.Data;
 using NosSmooth.PacketSerializersGenerator.Errors;
 using NosSmooth.PacketSerializersGenerator.Extensions;
+using NosSmooth.PacketSerializersGenerator.TypeGenerators;
 
 namespace NosSmooth.PacketSerializersGenerator.AttributeGenerators;
 
 /// <inheritdoc />
 public class PacketIndexAttributeGenerator : IParameterGenerator
 {
+    private readonly InlineTypeConverterGenerator _inlineTypeConverterGenerators;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PacketIndexAttributeGenerator"/> class.
+    /// </summary>
+    /// <param name="inlineTypeConverterGenerators">The generator for types.</param>
+    public PacketIndexAttributeGenerator(InlineTypeConverterGenerator inlineTypeConverterGenerators)
+    {
+        _inlineTypeConverterGenerators = inlineTypeConverterGenerators;
+    }
+
     /// <summary>
     /// Gets the full name of the packet index attribute.
     /// </summary>
@@ -41,7 +53,7 @@ public class PacketIndexAttributeGenerator : IParameterGenerator
         bool pushedLevel = false;
         var generator = new ConverterSerializationGenerator(textWriter);
         var parameter = packetInfo.Parameters.Current;
-        var attribute = parameter.Attributes.First(x => x.FullName == PacketIndexAttributeFullName);
+        var attribute = parameter.Attributes.First();
 
         if (parameter.IsOptional())
         {
@@ -66,7 +78,7 @@ public class PacketIndexAttributeGenerator : IParameterGenerator
         }
 
         // serialize, check the error.
-        generator.SerializeAndCheck(parameter);
+        _inlineTypeConverterGenerators.SerializeAndCheck(textWriter, packetInfo);
 
         // pop inner separator level
         if (pushedLevel)
@@ -113,12 +125,11 @@ public class PacketIndexAttributeGenerator : IParameterGenerator
             pushedLevel = true;
         }
 
-        generator.DeserializeAndCheck
-            ($"{packetInfo.Namespace}.{packetInfo.Name}", parameter, packetInfo.Parameters.IsLast);
+        _inlineTypeConverterGenerators.DeserializeAndCheck(textWriter, packetInfo);
 
         if (!parameter.Nullable)
         {
-            generator.CheckNullError(parameter.GetResultVariableName(), parameter.Name);
+            generator.CheckNullError(parameter.GetNullableVariableName(), parameter.GetResultVariableName(), parameter.Name);
         }
 
         generator.AssignLocalVariable(parameter, false);

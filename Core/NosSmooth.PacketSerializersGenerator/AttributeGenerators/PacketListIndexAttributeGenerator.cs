@@ -19,6 +19,17 @@ namespace NosSmooth.PacketSerializersGenerator.AttributeGenerators;
 /// <inheritdoc />
 public class PacketListIndexAttributeGenerator : IParameterGenerator
 {
+    private readonly InlineTypeConverterGenerator _inlineTypeConverterGenerators;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PacketListIndexAttributeGenerator"/> class.
+    /// </summary>
+    /// <param name="inlineTypeConverterGenerators">The generator for types.</param>
+    public PacketListIndexAttributeGenerator(InlineTypeConverterGenerator inlineTypeConverterGenerators)
+    {
+        _inlineTypeConverterGenerators = inlineTypeConverterGenerators;
+    }
+
     /// <summary>
     /// Gets the full name of the packet index attribute.
     /// </summary>
@@ -66,7 +77,7 @@ public class PacketListIndexAttributeGenerator : IParameterGenerator
         var innerSeparator = attribute.GetNamedValue<char>("InnerSeparator", '.');
         generator.PrepareLevel(innerSeparator);
 
-        generator.SerializeAndCheck(parameter);
+        _inlineTypeConverterGenerators.SerializeAndCheck(textWriter, packetInfo);
         generator.RemovePreparedLevel();
         generator.PopLevel();
 
@@ -108,12 +119,12 @@ public class PacketListIndexAttributeGenerator : IParameterGenerator
         var innerSeparator = attribute.GetNamedValue<char>("InnerSeparator", '.');
         generator.PrepareLevel(innerSeparator);
 
-        generator.DeserializeAndCheck($"{packetInfo.Namespace}.{packetInfo.Name}", parameter, packetInfo.Parameters.IsLast);
+        _inlineTypeConverterGenerators.DeserializeAndCheck(textWriter, packetInfo);
         generator.RemovePreparedLevel();
         generator.PopLevel();
         if (!parameter.Nullable)
         {
-            generator.CheckNullError(parameter.GetResultVariableName(), parameter.Name);
+            generator.CheckNullError(parameter.GetNullableVariableName(), parameter.GetResultVariableName(), parameter.Name);
         }
 
         generator.AssignLocalVariable(parameter, false);

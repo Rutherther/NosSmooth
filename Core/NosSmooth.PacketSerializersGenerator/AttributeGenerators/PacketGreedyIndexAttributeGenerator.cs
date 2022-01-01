@@ -14,14 +14,17 @@ namespace NosSmooth.PacketSerializersGenerator.AttributeGenerators;
 /// <inheritdoc/>
 public class PacketGreedyIndexAttributeGenerator : IParameterGenerator
 {
-    private PacketIndexAttributeGenerator _basicAttributeGenerator;
+    private readonly PacketIndexAttributeGenerator _basicAttributeGenerator;
+    private readonly InlineTypeConverterGenerator _inlineTypeConverterGenerators;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PacketGreedyIndexAttributeGenerator"/> class.
     /// </summary>
-    public PacketGreedyIndexAttributeGenerator()
+    /// <param name="inlineTypeConverterGenerators">The generator for types.</param>
+    public PacketGreedyIndexAttributeGenerator(InlineTypeConverterGenerator inlineTypeConverterGenerators)
     {
-        _basicAttributeGenerator = new PacketIndexAttributeGenerator();
+        _basicAttributeGenerator = new PacketIndexAttributeGenerator(inlineTypeConverterGenerators);
+        _inlineTypeConverterGenerators = inlineTypeConverterGenerators;
     }
 
     /// <summary>
@@ -79,12 +82,11 @@ public class PacketGreedyIndexAttributeGenerator : IParameterGenerator
         }
 
         generator.SetReadToLast(); // Greedy
-        generator.DeserializeAndCheck
-            ($"{packetInfo.Namespace}.{packetInfo.Name}", parameter, packetInfo.Parameters.IsLast);
+        _inlineTypeConverterGenerators.DeserializeAndCheck(textWriter, packetInfo);
 
         if (!parameter.Nullable)
         {
-            generator.CheckNullError(parameter.GetResultVariableName(), parameter.Name);
+            generator.CheckNullError(parameter.GetNullableVariableName(), parameter.GetResultVariableName(), parameter.Name);
         }
 
         generator.AssignLocalVariable(parameter, false);

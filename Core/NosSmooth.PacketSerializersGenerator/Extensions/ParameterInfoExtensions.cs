@@ -48,6 +48,16 @@ public static class ParameterInfoExtensions
     }
 
     /// <summary>
+    /// Gets the name of the nullable variable.
+    /// </summary>
+    /// <param name="parameterInfo">The parameter.</param>
+    /// <returns>The name of the nullable variable.</returns>
+    public static string GetNullableVariableName(this ParameterInfo parameterInfo)
+    {
+        return $"{parameterInfo.Name}Nullable";
+    }
+
+    /// <summary>
     /// Gets the type of the parameter as nullable.
     /// </summary>
     /// <param name="parameterInfo">The parameter.</param>

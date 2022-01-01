@@ -71,22 +71,4 @@ public class ConverterSerializationGenerator
     {
         _textWriter.WriteLine($@"{_builderVariable}.RemovePreparedLevel();");
     }
-
-    /// <summary>
-    /// Deserialize the given parameter and check the result.
-    /// </summary>
-    /// <param name="parameter">The parameter to deserialize.</param>
-    public void SerializeAndCheck(ParameterInfo parameter)
-    {
-        _textWriter.WriteMultiline
-        (
-            $@"
-var {parameter.GetResultVariableName()} = _typeConverterRepository.Serialize<{parameter.GetActualType()}>(obj.{parameter.Name}, {_builderVariable});
-if (!{parameter.GetResultVariableName()}.IsSuccess)
-{{
-    return Result.FromError(new PacketParameterSerializerError(this, ""{parameter.Name}"", {parameter.GetResultVariableName()}), {parameter.GetResultVariableName()});
-}}
-"
-        );
-    }
 }

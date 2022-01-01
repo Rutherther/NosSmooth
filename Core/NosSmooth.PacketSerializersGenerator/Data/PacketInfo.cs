@@ -21,6 +21,7 @@ namespace NosSmooth.PacketSerializersGenerator.Data;
 public record PacketInfo
 (
     Compilation Compilation,
+    AttributeInfo GenerateAttribute,
     RecordDeclarationSyntax PacketRecord,
     SemanticModel SemanticModel,
     Parameters Parameters,

@@ -16,6 +16,17 @@ namespace NosSmooth.PacketSerializersGenerator.AttributeGenerators;
 /// <inheritdoc />
 public class PacketConditionalIndexAttributeGenerator : IParameterGenerator
 {
+    private readonly InlineTypeConverterGenerator _inlineTypeConverterGenerators;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PacketConditionalIndexAttributeGenerator"/> class.
+    /// </summary>
+    /// <param name="inlineTypeConverterGenerators">The generator for types.</param>
+    public PacketConditionalIndexAttributeGenerator(InlineTypeConverterGenerator inlineTypeConverterGenerators)
+    {
+        _inlineTypeConverterGenerators = inlineTypeConverterGenerators;
+    }
+
     /// <summary>
     /// Gets the full name of the packet index attribute.
     /// </summary>
@@ -207,7 +218,7 @@ public class PacketConditionalIndexAttributeGenerator : IParameterGenerator
         }
 
         // serialize, check the error.
-        generator.SerializeAndCheck(parameter);
+        _inlineTypeConverterGenerators.SerializeAndCheck(textWriter, packetInfo);
 
         // pop inner separator level
         if (pushedLevel)
@@ -263,12 +274,11 @@ public class PacketConditionalIndexAttributeGenerator : IParameterGenerator
             pushedLevel = true;
         }
 
-        generator.DeserializeAndCheck
-            ($"{packetInfo.Namespace}.{packetInfo.Name}", parameter, packetInfo.Parameters.IsLast);
+        _inlineTypeConverterGenerators.DeserializeAndCheck(textWriter, packetInfo);
 
         if (!parameter.Nullable)
         {
-            generator.CheckNullError(parameter.GetResultVariableName(), parameter.Name);
+            generator.CheckNullError(parameter.GetNullableVariableName(), parameter.GetResultVariableName(), parameter.Name);
         }
 
         generator.AssignLocalVariable(parameter, false);
