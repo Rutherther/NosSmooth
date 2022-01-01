@@ -5,10 +5,11 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Extensions.Logging;
-using NosCore.Packets.Enumerations;
-using NosCore.Packets.ServerPackets.Chats;
 using NosSmooth.Core.Client;
 using NosSmooth.LocalClient;
+using NosSmooth.Packets.Enums;
+using NosSmooth.Packets.Enums.Chat;
+using NosSmooth.Packets.Packets.Server.Chat;
 
 namespace InterceptNameChanger
 {
@@ -39,11 +40,18 @@ namespace InterceptNameChanger
             {
                 _name = packet.Substring(5).Replace(" ", "⠀"); // Mind the symbols!
                 _logger.LogInformation("Name changed to {Name}", _name);
-                _client.ReceivePacketAsync(new SayPacket()
-                {
-                    Message = $"Name changed to {_name}, change map for it to take effect.",
-                    Type = SayColorType.Red
-                }).GetAwaiter().GetResult();
+                _client.ReceivePacketAsync
+                    (
+                        new SayPacket
+                        (
+                            EntityType.Map,
+                            1,
+                            SayColor.Red,
+                            $"Name changed to {_name}, change map for it to take effect."
+                        )
+                    )
+                    .GetAwaiter()
+                    .GetResult();
                 return false;
             }
 

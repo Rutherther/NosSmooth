@@ -7,12 +7,14 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using NosCore.Packets;
 using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands;
 using NosSmooth.Core.Extensions;
 using NosSmooth.Core.Packets;
 using NosSmooth.LocalClient.Hooks;
+using NosSmooth.Packets;
+using NosSmooth.Packets.Attributes;
+using NosSmooth.Packets.Errors;
 using NosSmoothCore;
 using Remora.Results;
 
@@ -27,7 +29,7 @@ namespace NosSmooth.LocalClient;
 /// </remarks>
 public class NostaleLocalClient : BaseNostaleClient
 {
-    private readonly PacketSerializerProvider _packetSerializerProvider;
+    private readonly IPacketSerializer _packetSerializer;
     private readonly NostaleHookManager _hookManager;
     private readonly IPacketHandler _packetHandler;
     private readonly ILogger _logger;
@@ -42,7 +44,6 @@ public class NostaleLocalClient : BaseNostaleClient
     /// </summary>
     /// <param name="commandProcessor">The command processor.</param>
     /// <param name="packetSerializer">The packet serializer.</param>
-    /// <param name="packetSerializerProvider">The packet serializer provider.</param>
     /// <param name="hookManager">The hooking manager.</param>
     /// <param name="packetHandler">The packet handler.</param>
     /// <param name="logger">The logger.</param>
@@ -53,7 +54,6 @@ public class NostaleLocalClient : BaseNostaleClient
     (
         CommandProcessor commandProcessor,
         IPacketSerializer packetSerializer,
-        PacketSerializerProvider packetSerializerProvider,
         NostaleHookManager hookManager,
         IPacketHandler packetHandler,
         ILogger<NostaleLocalClient> logger,
@@ -64,7 +64,7 @@ public class NostaleLocalClient : BaseNostaleClient
         : base(commandProcessor, packetSerializer)
     {
         _options = options.Value;
-        _packetSerializerProvider = packetSerializerProvider;
+        _packetSerializer = packetSerializer;
         _hookManager = hookManager;
         _packetHandler = packetHandler;
         _logger = logger;
@@ -138,7 +138,7 @@ public class NostaleLocalClient : BaseNostaleClient
             accepted = _interceptor.InterceptReceive(ref packet);
         }
 
-        Task.Run(async () => await ProcessPacketAsync(PacketType.Received, packet));
+        Task.Run(async () => await ProcessPacketAsync(PacketSource.Server, packet));
 
         return accepted;
     }
@@ -156,7 +156,7 @@ public class NostaleLocalClient : BaseNostaleClient
             accepted = _interceptor.InterceptSend(ref packet);
         }
 
-        Task.Run(async () => await ProcessPacketAsync(PacketType.Sent, packet));
+        Task.Run(async () => await ProcessPacketAsync(PacketSource.Client, packet));
 
         return accepted;
     }
@@ -173,30 +173,25 @@ public class NostaleLocalClient : BaseNostaleClient
         _logger.LogDebug($"Receiving client packet {packetString}");
     }
 
-    private async Task ProcessPacketAsync(PacketType type, string packetString)
+    private async Task ProcessPacketAsync(PacketSource type, string packetString)
     {
-        IPacketSerializer serializer;
-        if (type == PacketType.Received)
-        {
-            serializer = _packetSerializerProvider.ServerSerializer;
-        }
-        else
-        {
-            serializer = _packetSerializerProvider.ClientSerializer;
-        }
-
-        var packet = serializer.Deserialize(packetString);
+        var packet = _packetSerializer.Deserialize(packetString, type);
         if (!packet.IsSuccess)
         {
-            _logger.LogWarning("Could not parse {Packet}. Reason:", packetString);
-            _logger.LogResultError(packet);
+            if (packet.Error is not PacketConverterNotFoundError)
+            {
+                _logger.LogWarning("Could not parse {Packet}. Reason:", packetString);
+                _logger.LogResultError(packet);
+            }
+
             packet = new ParsingFailedPacket(packet, packetString);
         }
 
         Result result;
-        if (type == PacketType.Received)
+        if (type == PacketSource.Server)
         {
-            result = await _packetHandler.HandleReceivedPacketAsync(packet.Entity, packetString, _stopRequested ?? default);
+            result = await _packetHandler.HandleReceivedPacketAsync
+                (packet.Entity, packetString, _stopRequested ?? default);
         }
         else
         {

@@ -6,7 +6,7 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using NosCore.Packets.Interfaces;
+using NosSmooth.Packets.Packets;
 using Remora.Results;
 
 namespace NosSmooth.Core.Packets;

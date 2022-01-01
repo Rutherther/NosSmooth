@@ -6,12 +6,12 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NosCore.Packets.Enumerations;
-using NosCore.Packets.ServerPackets.Chats;
-using NosCore.Shared.Enumerations;
 using NosSmooth.Core.Client;
-using NosSmooth.Core.Packets;
+using NosSmooth.Core.Extensions;
 using NosSmooth.LocalClient.Extensions;
+using NosSmooth.Packets.Enums;
+using NosSmooth.Packets.Enums.Chat;
+using NosSmooth.Packets.Packets.Server.Chat;
 
 namespace SimpleChat;
 
@@ -28,31 +28,27 @@ public class SimpleChat
     {
         var provider = new ServiceCollection()
             .AddLocalClient()
-
-            // .AddPacketResponder<SayResponder>()
-            .AddLogging(b =>
-            {
-                b.ClearProviders();
-                b.AddConsole();
-                b.SetMinimumLevel(LogLevel.Debug);
-            })
+            .AddPacketResponder<SayResponder>()
+            .AddLogging
+            (
+                b =>
+                {
+                    b.ClearProviders();
+                    b.AddConsole();
+                    b.SetMinimumLevel(LogLevel.Debug);
+                }
+            )
             .BuildServiceProvider();
-
-        var dummy1 = provider.GetRequiredService<PacketSerializerProvider>().ServerSerializer;
-        var dummy2 = provider.GetRequiredService<PacketSerializerProvider>().ClientSerializer;
 
         var logger = provider.GetRequiredService<ILogger<SimpleChat>>();
         logger.LogInformation("Hello world from SimpleChat!");
 
         var client = provider.GetRequiredService<INostaleClient>();
 
-        await client.ReceivePacketAsync(new SayPacket()
-        {
-            Message = "Hello world from NosSmooth!",
-            VisualType = VisualType.Player,
-            Type = SayColorType.Red,
-            VisualId = 1,
-        });
+        await client.ReceivePacketAsync
+        (
+            new SayPacket(EntityType.Map, 1, SayColor.Red, "Hello world from NosSmooth!")
+        );
 
         await client.RunAsync();
     }

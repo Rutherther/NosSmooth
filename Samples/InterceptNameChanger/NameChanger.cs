@@ -7,13 +7,12 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NosCore.Packets.Enumerations;
-using NosCore.Packets.ServerPackets.Chats;
-using NosCore.Shared.Enumerations;
 using NosSmooth.Core.Client;
-using NosSmooth.Core.Packets;
 using NosSmooth.LocalClient;
 using NosSmooth.LocalClient.Extensions;
+using NosSmooth.Packets.Enums;
+using NosSmooth.Packets.Enums.Chat;
+using NosSmooth.Packets.Packets.Server.Chat;
 
 namespace InterceptNameChanger
 {
@@ -32,31 +31,29 @@ namespace InterceptNameChanger
                 .AddLocalClient()
 
                 // .AddPacketResponder<SayResponder>()
-                .AddLogging(b =>
-                {
-                    b.ClearProviders();
-                    b.AddConsole();
-                    b.SetMinimumLevel(LogLevel.Debug);
-                })
+                .AddLogging
+                (
+                    b =>
+                    {
+                        b.ClearProviders();
+                        b.AddConsole();
+                        b.SetMinimumLevel(LogLevel.Debug);
+                    }
+                )
                 .Configure<LocalClientOptions>(o => o.AllowIntercept = true)
                 .AddSingleton<IPacketInterceptor, NameChangeInterceptor>()
                 .BuildServiceProvider();
-
-            var dummy1 = provider.GetRequiredService<PacketSerializerProvider>().ServerSerializer;
-            var dummy2 = provider.GetRequiredService<PacketSerializerProvider>().ClientSerializer;
 
             var logger = provider.GetRequiredService<ILogger<NameChanger>>();
             logger.LogInformation("Hello world from NameChanger!");
 
             var client = provider.GetRequiredService<INostaleClient>();
 
-            var sayResult = await client.ReceivePacketAsync(new SayPacket()
-            {
-                Message = "The name may be changed by typing #{NewName} into the chat.",
-                VisualType = VisualType.Map,
-                Type = SayColorType.Red,
-                VisualId = 1,
-            });
+            var sayResult = await client.ReceivePacketAsync
+            (
+                new SayPacket
+                    (EntityType.Map, 1, SayColor.Red, "The name may be changed by typing #{NewName} into the chat.")
+            );
 
             if (!sayResult.IsSuccess)
             {

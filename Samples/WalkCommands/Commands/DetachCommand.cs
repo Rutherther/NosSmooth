@@ -4,9 +4,10 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosCore.Packets.Enumerations;
-using NosCore.Packets.ServerPackets.Chats;
 using NosSmooth.Core.Client;
+using NosSmooth.Packets.Enums;
+using NosSmooth.Packets.Enums.Chat;
+using NosSmooth.Packets.Packets.Server.Chat;
 using Remora.Results;
 
 namespace WalkCommands.Commands;
@@ -36,11 +37,8 @@ public class DetachCommand
     /// <returns>A result that may or may not have succeeded.</returns>
     public async Task<Result> HandleDetach()
     {
-        var receiveResult = await _client.ReceivePacketAsync(new SayPacket
-        {
-            Message = "Going to detach!",
-            Type = SayColorType.Green
-        });
+        var receiveResult = await _client.ReceivePacketAsync
+            (new SayPacket(EntityType.Map, 1, SayColor.Green, "Going to detach!"));
 
         if (!receiveResult.IsSuccess)
         {

@@ -4,10 +4,11 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosCore.Packets.Enumerations;
-using NosCore.Packets.ServerPackets.Chats;
 using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands;
+using NosSmooth.Packets.Enums;
+using NosSmooth.Packets.Enums.Chat;
+using NosSmooth.Packets.Packets.Server.Chat;
 using Remora.Results;
 
 namespace WalkCommands.Commands;
@@ -46,10 +47,7 @@ public class WalkCommands
     {
         var receiveResult = await _client.ReceivePacketAsync
         (
-            new SayPacket
-            {
-                Type = SayColorType.Red, Message = $"Going to walk to {x} {y}"
-            },
+            new SayPacket(EntityType.Map, 1, SayColor.Red, $"Going to walk to {x} {y}."),
             ct
         );
 
@@ -62,15 +60,17 @@ public class WalkCommands
         var walkResult = await _client.SendCommandAsync(command, ct);
         if (!walkResult.IsSuccess)
         {
+            await _client.ReceivePacketAsync
+            (
+                new SayPacket(EntityType.Map, 1, SayColor.Red, "Could not finish walking."),
+                ct
+            );
             return walkResult;
         }
 
         return await _client.ReceivePacketAsync
         (
-            new SayPacket
-            {
-                Type = SayColorType.Red, Message = "Walk has finished successfully."
-            },
+            new SayPacket(EntityType.Map, 1, SayColor.Red, "Walk has finished successfully."),
             ct
         );
     }

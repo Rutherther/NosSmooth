@@ -6,17 +6,11 @@
 
 using System;
 using System.Linq;
-using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using NosCore.Packets;
-using NosCore.Packets.Attributes;
-using NosCore.Packets.Enumerations;
-using NosCore.Packets.Interfaces;
-using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands;
 using NosSmooth.Core.Packets;
-using NosSmooth.Core.Packets.Converters;
+using NosSmooth.Packets.Extensions;
 
 namespace NosSmooth.Core.Extensions;
 
@@ -40,23 +34,8 @@ public static class ServiceCollectionExtensions
         serviceCollection
             .TryAddSingleton<IPacketHandler, PacketHandler>();
 
-        var clientPacketTypes = typeof(IPacket).Assembly.GetTypes()
-            .Where(p => (p.Namespace?.Contains("Client") ?? false) && p.GetInterfaces().Contains(typeof(IPacket)) && p.IsClass && !p.IsAbstract).ToList();
-        var serverPacketTypes = typeof(IPacket).Assembly.GetTypes()
-            .Where(p => (p.Namespace?.Contains("Server") ?? false) && p.GetInterfaces().Contains(typeof(IPacket)) && p.IsClass && !p.IsAbstract).ToList();
-
-        if (additionalPacketTypes.Length != 0)
-        {
-            clientPacketTypes.AddRange(additionalPacketTypes);
-        }
-
-        serviceCollection.AddSingleton(p =>
-            new PacketSerializerProvider(clientPacketTypes, serverPacketTypes, p));
-        serviceCollection.AddSingleton(p => p.GetRequiredService<PacketSerializerProvider>().ServerSerializer);
-
+        serviceCollection.AddPacketSerialization();
         serviceCollection.AddSingleton<CommandProcessor>();
-
-        serviceCollection.AddSpecificPacketConverter<InPacketSerializer>();
 
         return serviceCollection;
     }
@@ -168,18 +147,5 @@ public static class ServiceCollectionExtensions
         }
 
         return serviceCollection;
-    }
-
-    /// <summary>
-    /// Adds the specified packet converter.
-    /// </summary>
-    /// <param name="serviceCollection">The service collection to register the responder to.</param>
-    /// <typeparam name="TPacketConverter">The type of the packet.</typeparam>
-    /// <exception cref="ArgumentException">Thrown if the type of the responder is incorrect.</exception>
-    /// <returns>The collection.</returns>
-    public static IServiceCollection AddSpecificPacketConverter<TPacketConverter>(this IServiceCollection serviceCollection)
-        where TPacketConverter : class, ISpecificPacketSerializer
-    {
-        return serviceCollection.AddSingleton<ISpecificPacketSerializer, TPacketConverter>();
     }
 }

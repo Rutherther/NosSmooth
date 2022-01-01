@@ -7,12 +7,13 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using NosCore.Packets.Enumerations;
-using NosCore.Packets.ServerPackets.Chats;
 using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands;
 using NosSmooth.Core.Extensions;
 using NosSmooth.LocalClient;
+using NosSmooth.Packets.Enums;
+using NosSmooth.Packets.Enums.Chat;
+using NosSmooth.Packets.Packets.Server.Chat;
 using Remora.Results;
 using WalkCommands.Commands;
 
@@ -33,7 +34,8 @@ public class ChatPacketInterceptor : IPacketInterceptor
     /// <param name="provider">The service provider.</param>
     /// <param name="logger">The logger.</param>
     /// <param name="client">The nostale client.</param>
-    public ChatPacketInterceptor(IServiceProvider provider, ILogger<ChatPacketInterceptor> logger, INostaleClient client)
+    public ChatPacketInterceptor
+        (IServiceProvider provider, ILogger<ChatPacketInterceptor> logger, INostaleClient client)
     {
         _provider = provider;
         _logger = logger;
@@ -46,17 +48,20 @@ public class ChatPacketInterceptor : IPacketInterceptor
         if (packet.StartsWith($"say #"))
         {
             var packetString = packet;
-            Task.Run(async () =>
-            {
-                try
+            Task.Run
+            (
+                async () =>
                 {
-                    await ExecuteCommand(packetString.Substring(5));
+                    try
+                    {
+                        await ExecuteCommand(packetString.Substring(5));
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Could not execute command.");
+                    }
                 }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Could not execute command.");
-                }
-            });
+            );
             return false;
         }
 
@@ -71,10 +76,8 @@ public class ChatPacketInterceptor : IPacketInterceptor
 
     private async Task ExecuteCommand(string command)
     {
-        await _client.ReceivePacketAsync(new SayPacket
-        {
-            Type = SayColorType.Green, Message = $"Handling a command {command}."
-        });
+        await _client.ReceivePacketAsync
+            (new SayPacket(EntityType.Map, 1, SayColor.Green, $"Handling a command {command}."));
 
         var splitted = command.Split(new[] { ' ' });
         using var scope = _provider.CreateScope();
@@ -83,17 +86,22 @@ public class ChatPacketInterceptor : IPacketInterceptor
         {
             case "walk":
                 var walkCommand = scope.ServiceProvider.GetRequiredService<Commands.WalkCommands>();
-                result = await walkCommand.HandleWalkToAsync(int.Parse(splitted[1]), int.Parse(splitted[2]), splitted.Length > 3 ? bool.Parse(splitted[3]) : true);
+                result = await walkCommand.HandleWalkToAsync
+                (
+                    int.Parse(splitted[1]),
+                    int.Parse(splitted[2]),
+                    splitted.Length > 3 ? bool.Parse(splitted[3]) : true
+                );
                 break;
             case "detach":
                 var detachCommand = scope.ServiceProvider.GetRequiredService<DetachCommand>();
                 result = await detachCommand.HandleDetach();
                 break;
             default:
-                await _client.ReceivePacketAsync(new SayPacket
-                {
-                    Type = SayColorType.Red, Message = $"The command {splitted[0]} was not found."
-                });
+                await _client.ReceivePacketAsync
+                (
+                    new SayPacket(EntityType.Map, 1, SayColor.Green, $"The command {splitted[0]} was not found.")
+                );
                 return;
         }
 
