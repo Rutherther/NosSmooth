@@ -37,13 +37,13 @@ public class UpgradeRareSubPacketConverter : BaseTypeConverter<UpgradeRareSubPac
         }
 
         var token = tokenResult.Entity.Token;
-        if (token.Length != 2)
+        if (token.Length > 3)
         {
-            return new CouldNotConvertError(this, token, "The string is not two characters long.");
+            return new CouldNotConvertError(this, token, "The string is not two/three characters long.");
         }
 
-        var upgradeString = token[0].ToString();
-        var rareString = token[1].ToString();
+        var upgradeString = token.Substring(0, token.Length - 1);
+        var rareString = token[token.Length - 1].ToString();
 
         if (!byte.TryParse(upgradeString, out var upgrade))
         {
