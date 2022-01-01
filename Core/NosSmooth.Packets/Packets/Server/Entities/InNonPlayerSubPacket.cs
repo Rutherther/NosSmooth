@@ -58,7 +58,7 @@ public record InNonPlayerSubPacket
     [PacketIndex(7)]
     bool IsSitting,
     [PacketIndex(8)]
-    long Morph,
+    long MorphVNum,
     [PacketIndex(9)]
     NameString? Name,
     [PacketIndex(10)]

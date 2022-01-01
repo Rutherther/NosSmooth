@@ -44,7 +44,7 @@ public record InPlayerSubPacket
     [PacketIndex(12)]
     byte Unknown,
     [PacketIndex(13)]
-    long Morph,
+    long MorphVNum,
     [PacketIndex(14)]
     byte Unknown2,
     [PacketIndex(15)]

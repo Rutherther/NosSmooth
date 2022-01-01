@@ -47,7 +47,7 @@ public record PinitSubPacket
     [PacketIndex(7)]
     short Race,
     [PacketIndex(8)]
-    short Morph,
+    short MorphVNum,
     [PacketConditionalIndex(9, "EntityType", false, EntityType.Player)]
     byte? HeroLevel,
     [PacketConditionalIndex(10, "EntityType", false, EntityType.Player)]
