@@ -23,7 +23,7 @@ namespace NosSmooth.Packets.Packets.Server.Entities;
 /// <param name="OwnerId">The id of the owner entity.</param>
 /// <param name="SpawnEffect">The effect the entity does on spawning.</param>
 /// <param name="IsSitting">Whether the entity is sitting.</param>
-/// <param name="Morph">The id of the morph (for special cards an such).</param>
+/// <param name="MorphVNum">The id of the morph (for special cards an such).</param>
 /// <param name="Name">The name of the entity, if any.</param>
 /// <param name="Unknown">Unknown.</param>
 /// <param name="Unknown2">Unknown.</param>

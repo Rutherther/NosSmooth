@@ -22,7 +22,7 @@ namespace NosSmooth.Packets.Packets.Server.Groups;
 /// <param name="Unknown">Unknown.</param>
 /// <param name="VNum">The VNum of the pet for pets.</param>
 /// <param name="Race">The race of the entity.</param>
-/// <param name="Morph">The morph of the entity.</param>
+/// <param name="MorphVNum">The morph of the entity.</param>
 /// <param name="HeroLevel">The hero level of the entity.</param>
 /// <param name="Unknown1">Unknown.</param>
 /// <param name="Unknown2">Unknown.</param>
