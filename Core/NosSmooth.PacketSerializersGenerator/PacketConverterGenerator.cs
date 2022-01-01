@@ -120,11 +120,6 @@ private IResultError? CheckDeserializationResult<T>(Result<T> result, string pro
         return new PacketParameterSerializerError(this, property, result);
     }}
 
-    if (!last && (stringEnumerator.IsOnLastToken() ?? false))
-    {{
-        return new PacketEndNotExpectedError(this, property);
-    }}
-
     return null;
 }}
 }}"

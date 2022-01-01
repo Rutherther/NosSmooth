@@ -97,6 +97,11 @@ public class PacketGreedyIndexAttributeGenerator : IParameterGenerator
             generator.PopLevel();
         }
 
+        if (!packetInfo.Parameters.IsLast)
+        {
+            generator.ValidateNotLast(parameter.Name);
+        }
+
         // end is last token if body
         if (parameter.IsOptional())
         {
