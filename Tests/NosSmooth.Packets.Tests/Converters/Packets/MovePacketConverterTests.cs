@@ -27,7 +27,6 @@ public class MovePacketConverterTests
     public MovePacketConverterTests()
     {
         var provider = new ServiceCollection()
-            .AddSingleton<TypeConverterRepository>()
             .AddPacketSerialization()
             .BuildServiceProvider();
 

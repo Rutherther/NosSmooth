@@ -27,7 +27,6 @@ public class PinitPacketConverterTest
     public PinitPacketConverterTest()
     {
         var provider = new ServiceCollection()
-            .AddSingleton<TypeConverterRepository>()
             .AddPacketSerialization()
             .BuildServiceProvider();
 

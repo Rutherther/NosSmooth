@@ -27,7 +27,6 @@ public class FcPacketConverterTests
     public FcPacketConverterTests()
     {
         var provider = new ServiceCollection()
-            .AddSingleton<TypeConverterRepository>()
             .AddPacketSerialization()
             .BuildServiceProvider();
 
