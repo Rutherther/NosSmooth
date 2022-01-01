@@ -45,7 +45,7 @@ public class ListTypeConverter : ISpecialTypeConverter
         var data = new List<object?>();
         var genericType = type.GetElementType() ?? type.GetGenericArguments()[0];
 
-        do
+        while (!(stringEnumerator.IsOnLastToken() ?? false))
         {
             if (!stringEnumerator.PushPreparedLevel())
             {
@@ -70,7 +70,6 @@ public class ListTypeConverter : ISpecialTypeConverter
 
             data.Add(result.Entity);
         }
-        while (!(stringEnumerator.IsOnLastToken() ?? false));
 
         return _fillFunctions.GetOrAdd(genericType, GetAndFillListMethod)(data);
     }
