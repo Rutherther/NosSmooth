@@ -38,7 +38,7 @@ if ({parameter.GetErrorVariableName()} is not null)
 {{
     return Result<{packet.Name}?>.FromError({parameter.GetErrorVariableName()}, {parameter.GetResultVariableName()});
 }}
-var {parameter.GetNullableVariableName()} = {parameter.GetResultVariableName()}.Entity.Token;
+var {parameter.GetNullableVariableName()} = {parameter.GetResultVariableName()}.Entity.Token == ""-"" ? null : {parameter.GetResultVariableName()}.Entity.Token;
 ");
         return null;
     }
