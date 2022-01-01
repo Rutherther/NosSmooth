@@ -129,11 +129,6 @@ public class SourceGenerator : ISourceGenerator
                     $"{packetRecord.Identifier.NormalizeWhitespace().ToFullString()}Converter.g.cs",
                     stringWriter.GetStringBuilder().ToString()
                 );
-                File.WriteAllText
-                (
-                    $"/tmp/{packetRecord.Identifier.NormalizeWhitespace().ToFullString()}Converter.g.cs",
-                    stringWriter.GetStringBuilder().ToString()
-                );
             }
         }
     }
