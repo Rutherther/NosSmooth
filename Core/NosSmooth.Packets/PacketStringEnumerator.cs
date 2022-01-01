@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Text;
 using NosSmooth.Packets.Errors;
@@ -14,14 +15,17 @@ namespace NosSmooth.Packets;
 /// <summary>
 /// Enumerator for packet strings.
 /// </summary>
-public struct PacketStringEnumerator
+public ref struct PacketStringEnumerator
 {
-    private readonly EnumeratorData _data;
+    private readonly ReadOnlySpan<char> _data;
     private readonly Dictionary<char, ushort> _numberOfSeparators;
     private EnumeratorLevel _currentLevel;
     private (char Separator, uint? MaxTokens)? _preparedLevel;
-    private PacketToken? _currentToken;
+    private bool _currentTokenRead;
+    private PacketToken _currentToken;
     private bool _readToLast;
+
+    private int _cursor;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PacketStringEnumerator"/> struct.
@@ -31,30 +35,14 @@ public struct PacketStringEnumerator
     public PacketStringEnumerator(string data, char separator = ' ')
     {
         _currentLevel = new EnumeratorLevel(null, separator);
-        _data = new EnumeratorData(data);
+        _data = new ReadOnlySpan<char>(data.ToCharArray());
+        _cursor = 0;
         _numberOfSeparators = new Dictionary<char, ushort>();
         _numberOfSeparators.Add(separator, 1);
-        _currentToken = null;
+        _currentToken = new PacketToken(default, default, default, default);
         _preparedLevel = null;
         _readToLast = false;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="PacketStringEnumerator"/> struct.
-    /// </summary>
-    /// <param name="data">The data of the enumerator.</param>
-    /// <param name="level">The current enumerator level.</param>
-    /// <param name="numberOfSeparators">The number of separators.</param>
-    private PacketStringEnumerator(EnumeratorData data, EnumeratorLevel level, Dictionary<char, ushort> numberOfSeparators)
-    {
-        _currentLevel = level;
-        _data = data;
-
-        // TODO: use something less heavy than copying everything from the dictionary.
-        _numberOfSeparators = new Dictionary<char, ushort>(numberOfSeparators);
-        _currentToken = null;
-        _preparedLevel = null;
-        _readToLast = false;
+        _currentTokenRead = false;
     }
 
     /// <summary>
@@ -66,7 +54,7 @@ public struct PacketStringEnumerator
     /// <param name="separator">The separator to look for.</param>
     public void SetAfterSeparatorOnce(char separator)
     {
-        _currentToken = null;
+        _currentTokenRead = false;
         _currentLevel.SeparatorOnce = separator;
     }
 
@@ -97,19 +85,6 @@ public struct PacketStringEnumerator
     }
 
     /// <summary>
-    /// Create next level with the separator given in the prepared level.
-    /// </summary>
-    /// <remarks>
-    /// Level of the current enumerator will stay the same.
-    /// Will return null, if there is not a level prepared.
-    /// </remarks>
-    /// <returns>An enumerator with the new level pushed.</returns>
-    public PacketStringEnumerator? CreatePreparedLevel()
-    {
-        return _preparedLevel is not null ? CreateLevel(_preparedLevel.Value.Separator, _preparedLevel.Value.MaxTokens) : null;
-    }
-
-    /// <summary>
     /// Push next level with the separator given in the prepared level.
     /// </summary>
     /// <returns>Whether there is a prepared level present.</returns>
@@ -120,7 +95,7 @@ public struct PacketStringEnumerator
             return false;
         }
 
-        _currentToken = null;
+        _currentTokenRead = false;
         _currentLevel = new EnumeratorLevel(_currentLevel, _preparedLevel.Value.Separator, _preparedLevel.Value.MaxTokens)
         {
             ReachedEnd = _currentLevel.ReachedEnd
@@ -136,25 +111,6 @@ public struct PacketStringEnumerator
     }
 
     /// <summary>
-    /// Create next level with the given separator and maximum number of tokens.
-    /// </summary>
-    /// <remarks>
-    /// Level of the current enumerator will stay the same.
-    /// The maximum number of tokens indicates how many tokens can be read ie. in lists,
-    /// the enumerator won't allow reading more than that many tokens, error will be thrown if the user tries to read more.
-    /// </remarks>
-    /// <param name="separator">The separator of the new level.</param>
-    /// <param name="maxTokens">The maximum number of tokens to read.</param>
-    /// <returns>An enumerator with the new level pushed.</returns>
-    public PacketStringEnumerator CreateLevel(char separator, uint? maxTokens = default)
-    {
-        _currentToken = null;
-        var stringEnumerator = new PacketStringEnumerator(_data, _currentLevel, _numberOfSeparators);
-        stringEnumerator.PushLevel(separator, maxTokens);
-        return stringEnumerator;
-    }
-
-    /// <summary>
     /// Push new separator level to the stack.
     /// </summary>
     /// <remarks>
@@ -166,7 +122,7 @@ public struct PacketStringEnumerator
     public void PushLevel(char separator, uint? maxTokens = default)
     {
         _preparedLevel = null;
-        _currentToken = null;
+        _currentTokenRead = false;
         _currentLevel = new EnumeratorLevel(_currentLevel, separator, maxTokens)
         {
             ReachedEnd = _currentLevel.ReachedEnd
@@ -197,36 +153,50 @@ public struct PacketStringEnumerator
     }
 
     /// <summary>
+    /// Skip the given amount of characters.
+    /// </summary>
+    /// <param name="count">The count of characters to skip.</param>
+    public void Skip(int count)
+    {
+        _cursor += count;
+    }
+
+    /// <summary>
     /// Get the next token.
     /// </summary>
+    /// <param name="packetToken">The resulting token.</param>
     /// <param name="seek">Whether to seek the cursor to the end of the token.</param>
     /// <returns>The found token.</returns>
-    public Result<PacketToken> GetNextToken(bool seek = true)
+    public Result GetNextToken(out PacketToken packetToken, bool seek = true)
     {
         // The token is cached if seek was false to speed things up.
-        if (_currentToken != null)
+        if (_currentTokenRead)
         {
-            var cachedToken = _currentToken.Value;
+            var cachedToken = _currentToken;
             if (seek)
             {
                 UpdateCurrentAndParentLevels(cachedToken);
                 _currentLevel.TokensRead++;
-                _currentToken = null;
-                _data.Cursor += cachedToken.Token.Length + 1;
+                _currentTokenRead = false;
+                _cursor += cachedToken.Token.Length + 1;
                 _currentLevel.SeparatorOnce = null;
             }
 
-            return cachedToken;
+            packetToken = new PacketToken(default, default, default, default);
+            packetToken = cachedToken;
+            return Result.FromSuccess();
         }
 
-        if (_data.ReachedEnd || (_currentLevel.ReachedEnd ?? false))
+        if ((_cursor >= _data.Length) || (_currentLevel.ReachedEnd ?? false))
         {
-            return new PacketEndReachedError(_data.Data, _currentLevel.ReachedEnd ?? false);
+            packetToken = new PacketToken(default, default, default, default);
+            return new PacketEndReachedError(_data.ToString(), _currentLevel.ReachedEnd ?? false);
         }
 
-        var currentIndex = _data.Cursor;
-        char currentCharacter = _data.Data[currentIndex];
-        StringBuilder tokenString = new StringBuilder();
+        var currentIndex = _cursor;
+        var length = 0;
+        var startIndex = currentIndex;
+        char currentCharacter = _data[currentIndex];
 
         bool? isLast, encounteredUpperLevel;
 
@@ -234,27 +204,27 @@ public struct PacketStringEnumerator
         // If should read to last, then read until isLast is null or true.
         while (!IsSeparator(currentCharacter, out isLast, out encounteredUpperLevel) || (_readToLast && !(isLast ?? true)))
         {
-            tokenString.Append(currentCharacter);
+            length++;
             currentIndex++;
 
-            if (currentIndex == _data.Data.Length)
+            if (currentIndex >= _data.Length)
             {
                 isLast = true;
                 encounteredUpperLevel = true;
                 break;
             }
 
-            currentCharacter = _data.Data[currentIndex];
+            currentCharacter = _data[currentIndex];
         }
 
         _readToLast = false;
         currentIndex++;
 
-        var token = new PacketToken(tokenString.ToString(), isLast, encounteredUpperLevel, _data.ReachedEnd);
+        var token = new PacketToken(_data.Slice(startIndex, length), isLast, encounteredUpperLevel, _cursor >= _data.Length);
         if (seek)
         {
             UpdateCurrentAndParentLevels(token);
-            _data.Cursor = currentIndex;
+            _cursor = currentIndex;
             _currentLevel.TokensRead++;
         }
         else
@@ -262,7 +232,8 @@ public struct PacketStringEnumerator
             _currentToken = token;
         }
 
-        return token;
+        packetToken = token;
+        return Result.FromSuccess();
     }
 
     /// <summary>
@@ -312,7 +283,7 @@ public struct PacketStringEnumerator
     /// <returns>Whether the last token was read. Null if cannot determine (ie. there are multiple levels with the same separator.)</returns>
     public bool? IsOnLastToken()
     {
-        if (_data.ReachedEnd)
+        if (_cursor >= _data.Length)
         {
             return true;
         }
@@ -374,21 +345,6 @@ public struct PacketStringEnumerator
         }
 
         return true;
-    }
-
-    private class EnumeratorData
-    {
-        public EnumeratorData(string data)
-        {
-            Data = data;
-            Cursor = 0;
-        }
-
-        public string Data { get; }
-
-        public int Cursor { get; set; }
-
-        public bool ReachedEnd => Cursor >= Data.Length;
     }
 
     private class EnumeratorLevel

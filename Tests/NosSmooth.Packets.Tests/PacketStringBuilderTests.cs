@@ -55,7 +55,6 @@ public class PacketStringBuilderTests
         stringBuilder.Append("a");
         stringBuilder.Append("b");
         stringBuilder.Append("c");
-        stringBuilder.ReplaceWithParentSeparator();
         stringBuilder.PopLevel();
         stringBuilder.Append("d");
 

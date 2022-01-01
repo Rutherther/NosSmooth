@@ -18,7 +18,7 @@ public interface IStringConverter
     /// </summary>
     /// <param name="stringEnumerator">The packet string enumerator with the current position.</param>
     /// <returns>The parsed object or an error.</returns>
-    public Result<object?> Deserialize(PacketStringEnumerator stringEnumerator);
+    public Result<object?> Deserialize(ref PacketStringEnumerator stringEnumerator);
 
     /// <summary>
     /// Serializes the given object to string by appending to the packet string builder.
@@ -43,7 +43,7 @@ public interface IStringConverter<TParseType> : IStringConverter
     /// </summary>
     /// <param name="stringEnumerator">The packet string enumerator with the current position.</param>
     /// <returns>The parsed object or an error.</returns>
-    public new Result<TParseType?> Deserialize(PacketStringEnumerator stringEnumerator);
+    public new Result<TParseType?> Deserialize(ref PacketStringEnumerator stringEnumerator);
 
     /// <summary>
     /// Serializes the given object to string by appending to the packet string builder.

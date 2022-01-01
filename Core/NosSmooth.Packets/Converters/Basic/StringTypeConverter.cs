@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using Remora.Results;
 
 namespace NosSmooth.Packets.Converters.Basic;
@@ -14,8 +15,8 @@ namespace NosSmooth.Packets.Converters.Basic;
 public class StringTypeConverter : BasicTypeConverter<string>
 {
     /// <inheritdoc />
-    protected override Result<string?> Deserialize(string value)
+    protected override Result<string?> Deserialize(ReadOnlySpan<char> value)
     {
-        return value;
+        return value.ToString();
     }
 }

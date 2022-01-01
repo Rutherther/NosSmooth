@@ -38,6 +38,16 @@ public static class ParameterInfoExtensions
     }
 
     /// <summary>
+    /// Gets the name of the token variable.
+    /// </summary>
+    /// <param name="parameterInfo">The parameter.</param>
+    /// <returns>The name of the token variable.</returns>
+    public static string GetTokenVariableName(this ParameterInfo parameterInfo)
+    {
+        return $"{parameterInfo.Name}Token";
+    }
+
+    /// <summary>
     /// Gets the name of the error variable.
     /// </summary>
     /// <param name="parameterInfo">The parameter.</param>

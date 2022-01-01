@@ -23,20 +23,20 @@ public abstract class BasicTypeConverter<TBasicType> : BaseStringConverter<TBasi
     }
 
     /// <inheritdoc />
-    public override Result<TBasicType?> Deserialize(PacketStringEnumerator stringEnumerator)
+    public override Result<TBasicType?> Deserialize(ref PacketStringEnumerator stringEnumerator)
     {
-        var nextTokenResult = stringEnumerator.GetNextToken();
+        var nextTokenResult = stringEnumerator.GetNextToken(out var packetToken);
         if (!nextTokenResult.IsSuccess)
         {
             return Result<TBasicType?>.FromError(nextTokenResult);
         }
 
-        if (nextTokenResult.Entity.Token == "-")
+        if (packetToken.Token[0] == '-' && packetToken.Token.Length == 1)
         {
             return Result<TBasicType?>.FromSuccess(default);
         }
 
-        return Deserialize(nextTokenResult.Entity.Token);
+        return Deserialize(packetToken.Token);
     }
 
     /// <summary>
@@ -44,5 +44,5 @@ public abstract class BasicTypeConverter<TBasicType> : BaseStringConverter<TBasi
     /// </summary>
     /// <param name="value">The value to deserialize.</param>
     /// <returns>The deserialized value or an error.</returns>
-    protected abstract Result<TBasicType?> Deserialize(string value);
+    protected abstract Result<TBasicType?> Deserialize(ReadOnlySpan<char> value);
 }

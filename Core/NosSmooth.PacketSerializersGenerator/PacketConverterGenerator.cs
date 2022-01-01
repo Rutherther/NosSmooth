@@ -95,7 +95,7 @@ public override Result Serialize({_packetInfo.Name}? obj, PacketStringBuilder bu
 }}
 
 /// <inheritdoc />
-public override Result<{_packetInfo.Name}?> Deserialize(PacketStringEnumerator stringEnumerator)
+public override Result<{_packetInfo.Name}?> Deserialize(ref PacketStringEnumerator stringEnumerator)
 {{
     var typeConverter = this;
 "
@@ -176,7 +176,7 @@ public override Result<{_packetInfo.Name}?> Deserialize(PacketStringEnumerator s
                     textWriter.WriteLine("IResultError? skipError;");
                     skipped = true;
                 }
-                textWriter.WriteLine($@"skipResult = stringEnumerator.GetNextToken();");
+                textWriter.WriteLine($@"skipResult = stringEnumerator.GetNextToken(out _);");
                 textWriter.WriteLine
                     ("skipError = CheckDeserializationResult(result, \"None\", stringEnumerator, false);");
                 textWriter.WriteMultiline

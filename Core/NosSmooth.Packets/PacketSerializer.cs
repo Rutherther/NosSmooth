@@ -59,20 +59,20 @@ public class PacketSerializer : IPacketSerializer
     public Result<IPacket> Deserialize(string packetString, PacketSource preferredSource)
     {
         var packetStringEnumerator = new PacketStringEnumerator(packetString);
-        var headerTokenResult = packetStringEnumerator.GetNextToken();
+        var headerTokenResult = packetStringEnumerator.GetNextToken(out var packetToken);
         if (!headerTokenResult.IsSuccess)
         {
             return Result<IPacket>.FromError(headerTokenResult);
         }
 
-        var packetInfoResult = _packetTypesRepository.FindPacketInfo(headerTokenResult.Entity.Token, preferredSource);
+        var packetInfoResult = _packetTypesRepository.FindPacketInfo(packetToken.Token.ToString(), preferredSource);
         if (!packetInfoResult.IsSuccess)
         {
             return Result<IPacket>.FromError(packetInfoResult);
         }
 
         var packetInfo = packetInfoResult.Entity;
-        var deserializedResult = packetInfo.PacketConverter.Deserialize(packetStringEnumerator);
+        var deserializedResult = packetInfo.PacketConverter.Deserialize(ref packetStringEnumerator);
         if (!deserializedResult.IsSuccess)
         {
             return Result<IPacket>.FromError(deserializedResult);
