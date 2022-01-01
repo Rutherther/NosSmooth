@@ -44,10 +44,10 @@ public record InPacket
     short PositionY,
     [PacketConditionalIndex(7, "EntityType", true, EntityType.Object)]
     byte? Direction,
-    [PacketConditionalIndex(8, "EntityType", false, EntityType.Player, InnerSeparator = ' ')]
+    [PacketConditionalIndex(8, "EntityType", false, EntityType.Player)]
     InPlayerSubPacket? PlayerSubPacket,
-    [PacketConditionalIndex(9, "EntityType", false, EntityType.Object, InnerSeparator = ' ')]
+    [PacketConditionalIndex(9, "EntityType", false, EntityType.Object)]
     InItemSubPacket? ItemSubPacket,
-    [PacketConditionalIndex(10, "EntityType", true, EntityType.Player, EntityType.Object, InnerSeparator = ' ')]
+    [PacketConditionalIndex(10, "EntityType", true, EntityType.Player, EntityType.Object)]
     InNonPlayerSubPacket? NonPlayerSubPacket
 ) : IPacket;
