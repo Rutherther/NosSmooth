@@ -56,7 +56,7 @@ public record InPlayerSubPacket
     [PacketIndex(18, InnerSeparator = '.')]
     FamilySubPacket FamilySubPacket,
     [PacketIndex(19)]
-    string FamilyName,
+    string? FamilyName,
     [PacketIndex(20)]
     string ReputationIcon,
     [PacketIndex(21)]
