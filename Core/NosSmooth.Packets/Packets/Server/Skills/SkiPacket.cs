@@ -24,6 +24,6 @@ public record SkiPacket
     long PrimarySkillId,
     [PacketIndex(1)]
     long SecondarySkillId,
-    [PacketListIndex(2, InnerSeparator = '.', ListSeparator = ' ')]
+    [PacketListIndex(2, InnerSeparator = '|', ListSeparator = ' ')]
     IReadOnlyList<SkiSubPacket> SkillSubPackets
 ) : IPacket;
