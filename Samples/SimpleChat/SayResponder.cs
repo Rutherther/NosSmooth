@@ -4,12 +4,11 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosCore.Packets.Enumerations;
-using NosCore.Packets.ServerPackets.Chats;
-using NosCore.Packets.ServerPackets.UI;
-using NosCore.Shared.Enumerations;
 using NosSmooth.Core.Client;
 using NosSmooth.Core.Packets;
+using NosSmooth.Packets.Enums;
+using NosSmooth.Packets.Enums.Chat;
+using NosSmooth.Packets.Packets.Server.Chat;
 using Remora.Results;
 
 namespace SimpleChat;
@@ -33,25 +32,20 @@ public class SayResponder : IPacketResponder<SayPacket>, IPacketResponder<MsgPac
     /// <inheritdoc />
     public Task<Result> Respond(PacketEventArgs<SayPacket> packet, CancellationToken ct = default)
     {
-        return _client.ReceivePacketAsync(
-            new SayPacket()
-            {
-                Message = "Hello world from NosSmooth!", VisualType = VisualType.Player, Type = SayColorType.Red, VisualId = 1,
-            },
-            ct);
+        return _client.ReceivePacketAsync
+        (
+            new SayPacket(EntityType.Map, 1, SayColor.Red, "Hello world from NosSmooth!"),
+            ct
+        );
     }
 
     /// <inheritdoc />
     public Task<Result> Respond(PacketEventArgs<MsgPacket> packet, CancellationToken ct = default)
     {
-        return _client.ReceivePacketAsync(
-            new SayPacket()
-            {
-                Message = "Hello world from NosSmooth!",
-                VisualType = VisualType.Player,
-                Type = SayColorType.Red,
-                VisualId = 1,
-            },
-            ct);
+        return _client.ReceivePacketAsync
+        (
+            new SayPacket(EntityType.Map, 1, SayColor.Red, "Hello world from NosSmooth!"),
+            ct
+        );
     }
 }
