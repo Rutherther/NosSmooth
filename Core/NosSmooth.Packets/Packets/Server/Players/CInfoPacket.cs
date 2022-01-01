@@ -8,6 +8,9 @@ using NosSmooth.Packets.Attributes;
 
 namespace NosSmooth.Packets.Packets.Server.Players;
 
+/// <summary>
+/// Character information.
+/// </summary>
 // [PacketHeader()]
 // [GenerateSerializer(true)]
 public record CInfoPacket();

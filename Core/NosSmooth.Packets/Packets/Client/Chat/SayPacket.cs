@@ -8,6 +8,10 @@ using NosSmooth.Packets.Attributes;
 
 namespace NosSmooth.Packets.Packets.Client.Chat;
 
+/// <summary>
+/// Sends a message to the map chat.
+/// </summary>
+/// <param name="Message">The message to send.</param>
 [PacketHeader("say", PacketSource.Client)]
 [GenerateSerializer(true)]
 public record SayPacket
