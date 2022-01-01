@@ -14,6 +14,7 @@ using NosSmooth.Core.Packets;
 using NosSmooth.LocalClient.Hooks;
 using NosSmooth.Packets;
 using NosSmooth.Packets.Attributes;
+using NosSmooth.Packets.Errors;
 using NosSmoothCore;
 using Remora.Results;
 
@@ -177,15 +178,20 @@ public class NostaleLocalClient : BaseNostaleClient
         var packet = _packetSerializer.Deserialize(packetString, type);
         if (!packet.IsSuccess)
         {
-            _logger.LogWarning("Could not parse {Packet}. Reason:", packetString);
-            _logger.LogResultError(packet);
+            if (packet.Error is not PacketConverterNotFoundError)
+            {
+                _logger.LogWarning("Could not parse {Packet}. Reason:", packetString);
+                _logger.LogResultError(packet);
+            }
+
             packet = new ParsingFailedPacket(packet, packetString);
         }
 
         Result result;
         if (type == PacketSource.Server)
         {
-            result = await _packetHandler.HandleReceivedPacketAsync(packet.Entity, packetString, _stopRequested ?? default);
+            result = await _packetHandler.HandleReceivedPacketAsync
+                (packet.Entity, packetString, _stopRequested ?? default);
         }
         else
         {
