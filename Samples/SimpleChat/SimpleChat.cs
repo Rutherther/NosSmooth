@@ -7,6 +7,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NosSmooth.Core.Client;
+using NosSmooth.Core.Extensions;
 using NosSmooth.LocalClient.Extensions;
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Chat;
@@ -27,8 +28,7 @@ public class SimpleChat
     {
         var provider = new ServiceCollection()
             .AddLocalClient()
-
-            // .AddPacketResponder<SayResponder>()
+            .AddPacketResponder<SayResponder>()
             .AddLogging
             (
                 b =>
