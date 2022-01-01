@@ -24,8 +24,19 @@ public class EnumInlineConverterGenerator : IInlineConverterGenerator
     {
         var parameter = packet.Parameters.Current;
         var underlyingType = ((INamedTypeSymbol)parameter.Type).EnumUnderlyingType!.ToString();
+        if (parameter.Nullable)
+        {
+            textWriter.WriteLine("if (obj is null)");
+            textWriter.WriteLine("{");
+            textWriter.WriteLine("builder.Append('-');");
+            textWriter.WriteLine("}");
+            textWriter.WriteLine("else");
+        }
+        textWriter.WriteLine("{");
         textWriter.WriteLine
-            ($"builder.Append((({underlyingType}?)obj.{parameter.Name}{(parameter.Nullable ? "?" : string.Empty)}).ToString() ?? \"-\");");
+            ($"builder.Append(({underlyingType})obj.{parameter.Name});");
+        textWriter.WriteLine("}");
+
         return null;
     }
 

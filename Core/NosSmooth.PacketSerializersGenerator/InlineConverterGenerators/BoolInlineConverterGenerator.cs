@@ -27,14 +27,14 @@ public class BoolInlineConverterGenerator : IInlineConverterGenerator
             textWriter.WriteLine($"if (obj.{parameter.Name} is null)");
             textWriter.WriteLine("{");
             textWriter.Indent++;
-            textWriter.WriteLine("builder.Append(\"-\");");
+            textWriter.WriteLine("builder.Append('-');");
             textWriter.Indent--;
             textWriter.WriteLine("}");
             textWriter.WriteLine("else");
         }
         textWriter.WriteLine("{");
         textWriter.Indent++;
-        textWriter.WriteLine($"builder.Append(obj.{parameter.Name} ? \"1\" : \"0\");");
+        textWriter.WriteLine($"builder.Append(obj.{parameter.Name} ? '1' : '0');");
         textWriter.Indent--;
         textWriter.WriteLine("}");
         return null;

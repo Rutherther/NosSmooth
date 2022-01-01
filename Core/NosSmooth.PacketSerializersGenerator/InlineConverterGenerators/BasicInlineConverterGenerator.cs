@@ -30,8 +30,18 @@ public class BasicInlineConverterGenerator : IInlineConverterGenerator
     public IError? GenerateSerializerPart(IndentedTextWriter textWriter, PacketInfo packet)
     {
         var parameter = packet.Parameters.Current;
+        if (parameter.Nullable)
+        {
+            textWriter.WriteLine("if (obj is null)");
+            textWriter.WriteLine("{");
+            textWriter.WriteLine("builder.Append('-');");
+            textWriter.WriteLine("}");
+            textWriter.WriteLine("else");
+        }
+        textWriter.WriteLine("{");
         textWriter.WriteLine
-            ($"builder.Append(obj.{parameter.Name}{(parameter.Nullable ? "?" : string.Empty)}.ToString() ?? \"-\");");
+            ($"builder.Append(obj.{parameter.Name});");
+        textWriter.WriteLine("}");
         return null;
     }
 
