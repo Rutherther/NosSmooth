@@ -22,7 +22,7 @@ namespace NosSmooth.Packets.Packets.Server.Entities;
 /// <param name="Hp">The current amount of hp.</param>
 /// <param name="Mp">The current amount of mp.</param>
 [PacketHeader("st", PacketSource.Server)]
-[GenerateSerializer]
+[GenerateSerializer(true)]
 public record StPacket
 (
     [PacketIndex(0)]

@@ -18,7 +18,7 @@ namespace NosSmooth.Packets.Packets.Client.Battle;
 /// <param name="EntityType">The type of the focused entity.</param>
 /// <param name="TargetId">The focused entity id.</param>
 [PacketHeader("ncif", PacketSource.Client)]
-[GenerateSerializer]
+[GenerateSerializer(true)]
 public record NcifPacket
 (
     [PacketIndex(0)]

@@ -18,7 +18,7 @@ namespace NosSmooth.Packets.Packets.Server.Entities;
 /// <param name="Unknown">Unknown TODO.</param>
 /// <param name="Option">Contains blockages (family block, exchange block etc). TODO add correct options.</param>
 [PacketHeader("stat", PacketSource.Server)]
-[GenerateSerializer]
+[GenerateSerializer(true)]
 public record StatPacket
 (
     [PacketIndex(0)]

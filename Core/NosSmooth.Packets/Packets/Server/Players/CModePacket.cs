@@ -21,7 +21,7 @@ namespace NosSmooth.Packets.Packets.Server.Players;
 /// <param name="Size">The size of the entity on the screen.</param>
 /// <param name="MorphSkin">Unknown TODO</param>
 [PacketHeader("c_mode", PacketSource.Server)]
-[GenerateSerializer]
+[GenerateSerializer(true)]
 public record CModePacket
 (
     [PacketIndex(0)]

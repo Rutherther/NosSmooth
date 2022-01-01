@@ -38,7 +38,7 @@ namespace NosSmooth.Packets.Packets.Server.Entities;
 /// <param name="Unknown4">Unknown.</param>
 /// <param name="Unknown5">Unknown.</param>
 [PacketHeader(null, PacketSource.Server)]
-[GenerateSerializer]
+[GenerateSerializer(true)]
 public record InNonPlayerSubPacket
 (
     [PacketIndex(0)]

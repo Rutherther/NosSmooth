@@ -14,7 +14,7 @@ using NosSmooth.Packets.Packets.Server.Weapons;
 namespace NosSmooth.Packets.Packets.Server.Entities;
 
 [PacketHeader(null, PacketSource.Server)]
-[GenerateSerializer]
+[GenerateSerializer(true)]
 public record InPlayerSubPacket
 (
     [PacketIndex(0)]

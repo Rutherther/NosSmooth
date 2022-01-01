@@ -15,7 +15,7 @@ namespace NosSmooth.Packets.Packets.Server.Chat;
 /// <param name="Type">The type of the message.</param>
 /// <param name="Message">The message text.</param>
 [PacketHeader("msg", PacketSource.Server)]
-[GenerateSerializer]
+[GenerateSerializer(true)]
 public record MsgPacket
 (
     [PacketIndex(0)]

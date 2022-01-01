@@ -19,5 +19,9 @@ namespace NosSmooth.Packets.Packets.Server.Skills;
 /// </remarks>
 /// <param name="SkillId">The id of the skill that is resetted.</param>
 [PacketHeader("sr", PacketSource.Server)]
-[GenerateSerializer]
-public record SrPacket(long SkillId) : IPacket;
+[GenerateSerializer(true)]
+public record SrPacket
+(
+    [PacketIndex(0)]
+    long SkillId
+) : IPacket;

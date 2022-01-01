@@ -16,7 +16,7 @@ namespace NosSmooth.Packets.Packets.Client.Misc;
 /// </remarks>
 /// <param name="Seconds">The number of seconds till connected. (should be sent only as multiples of 60)</param>
 /// <param name="Unknown">Unknown TODO</param>
-[GenerateSerializer]
+[GenerateSerializer(true)]
 [PacketHeader("pulse", PacketSource.Client)]
 public record PulsePacket
 (

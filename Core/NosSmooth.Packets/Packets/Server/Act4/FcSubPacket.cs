@@ -22,7 +22,7 @@ namespace NosSmooth.Packets.Packets.Server.Act4;
 /// <param name="IsCalvina">Whether the current raid is Calvina.</param>
 /// <param name="IsBerios">Whether the current raid is Berios.</param>
 /// <param name="Unknown">Unknown value, seems to be always 0.</param>
-[GenerateSerializer]
+[GenerateSerializer(true)]
 [PacketHeader(null, PacketSource.Server)]
 public record FcSubPacket
 (

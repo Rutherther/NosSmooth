@@ -17,7 +17,7 @@ namespace NosSmooth.Packets.Packets.Server.Skills;
 /// <param name="SecondarySkillId">The secondary skill id. (may be same as primary in some cases, like for special cards).</param>
 /// <param name="SkillSubPackets">The rest of the skills.</param>
 [PacketHeader("ski", PacketSource.Server)]
-[GenerateSerializer]
+[GenerateSerializer(true)]
 public record SkiPacket
 (
     [PacketIndex(0)]

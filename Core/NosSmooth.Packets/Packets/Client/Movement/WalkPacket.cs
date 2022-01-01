@@ -23,7 +23,7 @@ namespace NosSmooth.Packets.Packets.Client.Movement;
 /// <param name="CheckSum">The check sum. Has value: (walkPacket.PositionX + walkPacket.PositionY) % 3 % 2. </param>
 /// <param name="Speed">The movement speed.</param>
 [PacketHeader("walk", PacketSource.Client)]
-[GenerateSerializer]
+[GenerateSerializer(true)]
 public record WalkPacket
 (
     [PacketIndex(0)]

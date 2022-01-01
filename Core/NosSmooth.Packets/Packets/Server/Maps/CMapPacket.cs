@@ -15,7 +15,7 @@ namespace NosSmooth.Packets.Packets.Server.Maps;
 /// <param name="Id">The id of the map.</param>
 /// <param name="IsBaseType">Whether the map is a base map.</param>
 [PacketHeader("c_map", PacketSource.Server)]
-[GenerateSerializer]
+[GenerateSerializer(true)]
 public record CMapPacket
 (
     [PacketIndex(0)]

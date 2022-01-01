@@ -16,7 +16,7 @@ namespace NosSmooth.Packets.Packets.Client.Battle;
 /// Contains the position etc. for dashes.
 /// </remarks>
 [PacketHeader("u_s", PacketSource.Client)]
-[GenerateSerializer]
+[GenerateSerializer(true)]
 public record UseSkillPacket
 (
     [PacketIndex(0)]

@@ -14,7 +14,7 @@ namespace NosSmooth.Packets.Packets.Server.Skills;
 /// <param name="SkillId">The id of the skill.</param>
 /// <param name="Rank">The rank of the skill.</param>
 [PacketHeader(null, PacketSource.Server)]
-[GenerateSerializer]
+[GenerateSerializer(true)]
 public record SkiSubPacket
 (
     [PacketIndex(0)]

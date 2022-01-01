@@ -16,7 +16,7 @@ namespace NosSmooth.Packets.Packets.Server.Entities;
 /// <param name="IsQuestRelative">Whether the item is needed for a quest.</param>
 /// <param name="OwnerId">The id of the owner of the item.</param>
 [PacketHeader(null, PacketSource.Server)]
-[GenerateSerializer]
+[GenerateSerializer(true)]
 public record InItemSubPacket
 (
     [PacketIndex(0)]

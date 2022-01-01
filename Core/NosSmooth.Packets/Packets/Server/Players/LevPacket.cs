@@ -26,7 +26,7 @@ namespace NosSmooth.Packets.Packets.Server.Players;
 /// <param name="HeroLevel">The hero level. (shown as (+xx))</param>
 /// <param name="HeroXpLoad">Unknown TODO</param>
 [PacketHeader("lev", PacketSource.Server)]
-[GenerateSerializer]
+[GenerateSerializer(true)]
 public record LevPacket
 (
     [PacketIndex(0)]

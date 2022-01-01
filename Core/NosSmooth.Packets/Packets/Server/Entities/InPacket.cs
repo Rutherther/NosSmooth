@@ -25,7 +25,7 @@ namespace NosSmooth.Packets.Packets.Server.Entities;
 /// <param name="ItemSubPacket">The item data sub packet present only for objects.</param>
 /// <param name="NonPlayerSubPacket">The non player data sub packet present only for npcs and monsters.</param>
 [PacketHeader("in", PacketSource.Server)]
-[GenerateSerializer]
+[GenerateSerializer(true)]
 public record InPacket
 (
     [PacketIndex(0)]

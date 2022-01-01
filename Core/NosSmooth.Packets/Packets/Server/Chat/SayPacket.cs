@@ -18,7 +18,7 @@ namespace NosSmooth.Packets.Packets.Server.Chat;
 /// <param name="Color">The color of the message in chat.</param>
 /// <param name="Message">The message received.</param>
 [PacketHeader("say", PacketSource.Server)]
-[GenerateSerializer]
+[GenerateSerializer(true)]
 public record SayPacket
 (
     [PacketIndex(0)]

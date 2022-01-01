@@ -24,7 +24,7 @@ namespace NosSmooth.Packets.Packets.Server.Act4;
 /// <param name="AngelState">The status of angel faction, see <see cref="FcSubPacket"/>.</param>
 /// <param name="DemonState">The status of demon faction, see <see cref="FcSubPacket"/>.</param>
 [PacketHeader("fc", PacketSource.Server)]
-[GenerateSerializer]
+[GenerateSerializer(true)]
 public record FcPacket(
     [PacketIndex(0)]
     FactionType Faction,

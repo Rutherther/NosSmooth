@@ -11,8 +11,10 @@ using Microsoft.Extensions.DependencyInjection;
 using NosSmooth.Packets.Converters;
 using NosSmooth.Packets.Converters.Basic;
 using NosSmooth.Packets.Converters.Common;
+using NosSmooth.Packets.Converters.Packets;
 using NosSmooth.Packets.Converters.Special;
 using NosSmooth.Packets.Packets;
+using NosSmooth.Packets.Packets.Server.Weapons;
 
 namespace NosSmooth.Packets.Extensions;
 
@@ -47,7 +49,7 @@ public static class ServiceCollectionExtensions
                     if (!result.IsSuccess)
                     {
                         // TODO: figure out how to handle this.
-                        throw new Exception(result.Error.Message);
+                        throw new Exception(packetType + ": " + result.Error.Message);
                     }
                 }
 
@@ -100,7 +102,8 @@ public static class ServiceCollectionExtensions
             .AddTypeConverter<LongTypeConverter>()
             .AddTypeConverter<StringTypeConverter>()
             .AddTypeConverter<NameStringConverter>()
-            .AddTypeConverter<CharTypeConverter>();
+            .AddTypeConverter<CharTypeConverter>()
+            .AddTypeConverter<UpgradeRareSubPacketConverter>();
     }
 
     /// <summary>

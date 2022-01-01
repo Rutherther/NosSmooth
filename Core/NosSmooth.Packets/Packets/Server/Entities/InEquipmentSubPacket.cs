@@ -23,7 +23,8 @@ namespace NosSmooth.Packets.Packets.Server.Entities;
 /// <param name="CostumeHatVNum">The VNum of the costume hat.</param>
 /// <param name="WeaponSkin">The skin of the weapon.</param>
 /// <param name="WingSkin">The skin of the wings.</param>
-[GenerateSerializer]
+[PacketHeader(null, PacketSource.Server)]
+[GenerateSerializer(true)]
 public record InEquipmentSubPacket
 (
     [PacketIndex(0)]

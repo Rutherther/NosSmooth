@@ -14,7 +14,8 @@ namespace NosSmooth.Packets.Packets.Server.Players;
 /// <param name="FamilyId">The id of the family.</param>
 /// <param name="Title">The title of the family.</param>
 /// <param name="FamilyName">The name of the family.</param>
-[GenerateSerializer]
+[GenerateSerializer(true)]
+[PacketHeader(null, PacketSource.Server)]
 public record FamilySubPacket
 (
     [PacketIndex(0, AfterSeparator = '.')]

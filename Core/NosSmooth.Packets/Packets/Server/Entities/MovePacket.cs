@@ -18,7 +18,7 @@ namespace NosSmooth.Packets.Packets.Server.Entities;
 /// <param name="MapY">The y coordinate the entity has moved to.</param>
 /// <param name="Speed">The speed of the entity.</param>
 [PacketHeader("mv", PacketSource.Server)]
-[GenerateSerializer]
+[GenerateSerializer(true)]
 public record MovePacket
 (
     [PacketIndex(0)]

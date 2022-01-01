@@ -15,7 +15,7 @@ namespace NosSmooth.Packets.Packets.Client.Battle;
 /// <param name="PositionX">The x coordinate where to target to.</param>
 /// <param name="PositionY">The y coordinate where to targe to.</param>
 [PacketHeader("u_as", PacketSource.Client)]
-[GenerateSerializer]
+[GenerateSerializer(true)]
 public record UseAOESkillPacket
 (
     [PacketIndex(0)]
