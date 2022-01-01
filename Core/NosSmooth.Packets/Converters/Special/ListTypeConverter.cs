@@ -79,7 +79,7 @@ public class ListTypeConverter : ISpecialTypeConverter
     {
         if (obj is null)
         {
-            builder.Append("-");
+            builder.Append('-');
             return Result.FromSuccess();
         }
 
@@ -94,14 +94,12 @@ public class ListTypeConverter : ISpecialTypeConverter
             }
 
             var serializeResult = _typeConverterRepository.Serialize(genericType, item, builder);
-            builder.ReplaceWithParentSeparator();
             builder.PopLevel();
             if (!serializeResult.IsSuccess)
             {
                 return serializeResult;
             }
         }
-        builder.ReplaceWithParentSeparator();
 
         return Result.FromSuccess();
     }

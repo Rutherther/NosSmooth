@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Remora.Results;
@@ -121,13 +122,154 @@ public class PacketStringBuilder
     /// <param name="value">The value to append.</param>
     public void Append(string value)
     {
+        BeforeAppend();
+        _builder.Append(value);
+        AfterAppend();
+    }
+
+    /// <summary>
+    /// Appends the value to the string.
+    /// </summary>
+    /// <param name="value">The value to append.</param>
+    public void Append(int value)
+    {
+        BeforeAppend();
+        _builder.Append(value);
+        AfterAppend();
+    }
+
+    /// <summary>
+    /// Appends the value to the string.
+    /// </summary>
+    /// <param name="value">The value to append.</param>
+    public void Append(uint value)
+    {
+        BeforeAppend();
+        _builder.Append(value);
+        AfterAppend();
+    }
+
+    /// <summary>
+    /// Appends the value to the string.
+    /// </summary>
+    /// <param name="value">The value to append.</param>
+    public void Append(short value)
+    {
+        BeforeAppend();
+        _builder.Append(value);
+        AfterAppend();
+    }
+
+    /// <summary>
+    /// Appends the value to the string.
+    /// </summary>
+    /// <param name="value">The value to append.</param>
+    public void Append(char value)
+    {
+        BeforeAppend();
+        _builder.Append(value);
+        AfterAppend();
+    }
+
+    /// <summary>
+    /// Appends the value to the string.
+    /// </summary>
+    /// <param name="value">The value to append.</param>
+    public void Append(ushort value)
+    {
+        BeforeAppend();
+        _builder.Append(value);
+        AfterAppend();
+    }
+
+    /// <summary>
+    /// Appends the value to the string.
+    /// </summary>
+    /// <param name="value">The value to append.</param>
+    public void Append(long value)
+    {
+        BeforeAppend();
+        _builder.Append(value);
+        AfterAppend();
+    }
+
+    /// <summary>
+    /// Appends the value to the string.
+    /// </summary>
+    /// <param name="value">The value to append.</param>
+    public void Append(ulong value)
+    {
+        BeforeAppend();
+        _builder.Append(value);
+        AfterAppend();
+    }
+
+    /// <summary>
+    /// Appends the value to the string.
+    /// </summary>
+    /// <param name="value">The value to append.</param>
+    public void Append(byte value)
+    {
+        BeforeAppend();
+        _builder.Append(value);
+        AfterAppend();
+    }
+
+    /// <summary>
+    /// Appends the value to the string.
+    /// </summary>
+    /// <param name="value">The value to append.</param>
+    public void Append(sbyte value)
+    {
+        BeforeAppend();
+        _builder.Append(value);
+        AfterAppend();
+    }
+
+    /// <summary>
+    /// Appends the value to the string.
+    /// </summary>
+    /// <param name="value">The value to append.</param>
+    public void Append(float value)
+    {
+        BeforeAppend();
+        _builder.Append(value);
+        AfterAppend();
+    }
+
+    /// <summary>
+    /// Appends the value to the string.
+    /// </summary>
+    /// <param name="value">The value to append.</param>
+    public void Append(double value)
+    {
+        BeforeAppend();
+        _builder.Append(value);
+        AfterAppend();
+    }
+
+    /// <summary>
+    /// Appends the value to the string.
+    /// </summary>
+    /// <param name="value">The value to append.</param>
+    public void Append(decimal value)
+    {
+        BeforeAppend();
+        _builder.Append(value);
+        AfterAppend();
+    }
+
+    private void BeforeAppend()
+    {
         if (_insertSeparator is not null)
         {
             _builder.Append(_insertSeparator);
             _insertSeparator = null;
         }
+    }
 
-        _builder.Append(value);
+    private void AfterAppend()
+    {
         _insertSeparator = _currentLevel.SeparatorOnce ?? _currentLevel.Separator;
         _currentLevel.SeparatorOnce = null;
     }

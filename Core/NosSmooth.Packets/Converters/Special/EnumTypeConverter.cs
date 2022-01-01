@@ -35,11 +35,11 @@ public class EnumTypeConverter : ISpecialTypeConverter
     {
         if (obj is null)
         {
-            builder.Append("-");
+            builder.Append('-');
             return Result.FromSuccess();
         }
 
-        builder.Append(Convert.ToInt64(obj).ToString());
+        builder.Append(Convert.ToInt64(obj));
         return Result.FromSuccess();
     }
 }
