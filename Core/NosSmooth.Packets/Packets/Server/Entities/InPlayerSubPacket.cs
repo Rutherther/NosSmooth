@@ -53,32 +53,34 @@ public record InPlayerSubPacket
     UpgradeRareSubPacket WeaponUpgradeRareSubPacket,
     [PacketIndex(17)]
     UpgradeRareSubPacket ArmorUpgradeRareSubPacket,
-    [PacketIndex(18)]
+    [PacketIndex(18, InnerSeparator = '.')]
     FamilySubPacket FamilySubPacket,
     [PacketIndex(19)]
-    string ReputationIcon,
+    string FamilyName,
     [PacketIndex(20)]
-    bool IsInvisible,
+    string ReputationIcon,
     [PacketIndex(21)]
-    byte MorphUpgrade,
+    bool IsInvisible,
     [PacketIndex(22)]
-    FactionType Faction,
+    byte MorphUpgrade,
     [PacketIndex(23)]
-    byte MorphUpgrade2,
+    FactionType Faction,
     [PacketIndex(24)]
-    byte Level,
+    byte MorphUpgrade2,
     [PacketIndex(25)]
+    byte Level,
+    [PacketIndex(26)]
     byte FamilyLevel,
-    [PacketListIndex(26, ListSeparator = '|')]
+    [PacketListIndex(27, ListSeparator = '|')]
     IReadOnlyList<bool> FamilyIcons,
-    [PacketIndex(27)]
-    bool ArenaWinner,
     [PacketIndex(28)]
-    short Compliment,
+    bool ArenaWinner,
     [PacketIndex(29)]
-    byte Size,
+    short Compliment,
     [PacketIndex(30)]
-    byte HeroLevel,
+    byte Size,
     [PacketIndex(31)]
+    byte HeroLevel,
+    [PacketIndex(32)]
     short Title
 ) : IPacket;

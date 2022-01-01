@@ -20,8 +20,6 @@ public record FamilySubPacket
 (
     [PacketIndex(0, AfterSeparator = '.')]
     string FamilyId,
-    [PacketIndex(1)]
-    short Title,
-    [PacketIndex(2)]
-    string FamilyName
+    [PacketIndex(1, IsOptional = true)]
+    short? Title
 ) : IPacket;
