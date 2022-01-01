@@ -42,6 +42,6 @@ public record StPacket
     long Hp,
     [PacketIndex(7)]
     long Mp,
-    [PacketListIndex(8, ListSeparator = ' ')]
-    List<long> BuffVNums
+    [PacketListIndex(8, ListSeparator = ' ', IsOptional = true)]
+    List<long>? BuffVNums
 ) : IPacket;

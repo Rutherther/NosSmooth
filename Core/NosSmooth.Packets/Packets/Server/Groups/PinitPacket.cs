@@ -22,6 +22,6 @@ namespace NosSmooth.Packets.Packets.Server.Groups;
 public record PinitPacket
 (
     [PacketIndex(0)] int GroupSize,
-    [PacketListIndex(1, ListSeparator = ' ', InnerSeparator = '|')]
-    IReadOnlyList<PinitSubPacket> PinitSubPackets
+    [PacketListIndex(1, ListSeparator = ' ', InnerSeparator = '|', IsOptional = true)]
+    IReadOnlyList<PinitSubPacket>? PinitSubPackets
 ) : IPacket;
