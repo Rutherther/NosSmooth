@@ -12,13 +12,13 @@ namespace NosSmooth.Packets.Converters.Special;
 /// <inheritdoc />
 public class NullableTypeConverter : ISpecialTypeConverter
 {
-    private readonly TypeConverterRepository _typeConverterRepository;
+    private readonly ITypeConverterRepository _typeConverterRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NullableTypeConverter"/> class.
     /// </summary>
     /// <param name="typeConverterRepository">The type converter repository.</param>
-    public NullableTypeConverter(TypeConverterRepository typeConverterRepository)
+    public NullableTypeConverter(ITypeConverterRepository typeConverterRepository)
     {
         _typeConverterRepository = typeConverterRepository;
     }

@@ -22,14 +22,14 @@ namespace NosSmooth.Packets.Converters.Special;
 /// </summary>
 public class ListTypeConverter : ISpecialTypeConverter
 {
-    private readonly TypeConverterRepository _typeConverterRepository;
+    private readonly ITypeConverterRepository _typeConverterRepository;
     private readonly ConcurrentDictionary<Type, Func<IEnumerable<object?>, object>> _fillFunctions;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ListTypeConverter"/> class.
     /// </summary>
     /// <param name="typeConverterRepository">The type converter repository.</param>
-    public ListTypeConverter(TypeConverterRepository typeConverterRepository)
+    public ListTypeConverter(ITypeConverterRepository typeConverterRepository)
     {
         _typeConverterRepository = typeConverterRepository;
         _fillFunctions = new ConcurrentDictionary<Type, Func<IEnumerable<object?>, object>>();
