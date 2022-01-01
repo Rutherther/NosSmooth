@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using NosSmooth.Packets.Attributes;
@@ -13,8 +14,8 @@ using NosSmooth.Packets.Enums.Entities;
 using NosSmooth.Packets.Enums.Players;
 using NosSmooth.Packets.Extensions;
 using NosSmooth.Packets.Packets.Server.Entities;
-using NosSmooth.Packets.Packets.Server.Entities.Generated;
 using NosSmooth.Packets.Packets.Server.Players;
+using NosSmooth.Packets.Packets.Server.Skills;
 using NosSmooth.Packets.Packets.Server.Weapons;
 using Xunit;
 
