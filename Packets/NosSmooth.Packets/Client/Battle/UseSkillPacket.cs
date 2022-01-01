@@ -29,4 +29,4 @@ public record UseSkillPacket
     short? MapX,
     [PacketIndex(4, IsOptional = true)]
     short? MapY
-);
+) : IPacket;

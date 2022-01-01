@@ -24,4 +24,4 @@ public record UseAOESkillPacket
     short PositionX,
     [PacketIndex(2)]
     short PositionY
-);
+) : IPacket;
