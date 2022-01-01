@@ -6,11 +6,9 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using NosSmooth.Core.Commands;
 using NosSmooth.Core.Extensions;
 using NosSmooth.Game.Apis;
 using NosSmooth.Game.Events.Core;
-using NosSmooth.Game.Events.Players;
 using NosSmooth.Game.PacketHandlers.Characters;
 using NosSmooth.Game.PacketHandlers.Entities;
 using NosSmooth.Game.PacketHandlers.Login;

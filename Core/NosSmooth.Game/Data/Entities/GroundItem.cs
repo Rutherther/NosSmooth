@@ -4,8 +4,8 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosCore.Shared.Enumerations;
 using NosSmooth.Game.Data.Info;
+using NosSmooth.Packets.Enums;
 
 namespace NosSmooth.Game.Data.Entities;
 
@@ -21,5 +21,5 @@ public record GroundItem(long Id, long ItemVNum, Position? Position) : IEntity
     public string? Name => null;
 
     /// <inheritdoc />
-    public VisualType Type => VisualType.Object;
+    public EntityType Type => EntityType.Object;
 }

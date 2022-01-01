@@ -4,12 +4,12 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosCore.Packets.Enumerations;
-using NosCore.Shared.Enumerations;
 using NosSmooth.Game.Data.Chat;
 using NosSmooth.Game.Data.Entities;
 using NosSmooth.Game.Data.Info;
 using NosSmooth.Game.Data.Social;
+using NosSmooth.Packets.Enums;
+using NosSmooth.Packets.Enums.Players;
 
 namespace NosSmooth.Game.Data.Characters;
 
@@ -66,10 +66,10 @@ public record Character
     FactionType? Faction = default,
     short Size = default,
     AuthorityType AuthorityType = default,
-    GenderType Gender = default,
-    HairStyleType HairStyle = default,
-    HairColorType HairColor = default,
-    CharacterClassType Class = default,
+    SexType Gender = default,
+    HairStyle HairStyle = default,
+    HairColor HairColor = default,
+    PlayerClass Class = default,
     byte? Icon = default,
     short? Compliment = default,
     Morph? Morph = default,

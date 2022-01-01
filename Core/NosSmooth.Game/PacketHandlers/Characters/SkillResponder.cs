@@ -4,11 +4,11 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosCore.Packets.ServerPackets.Battle;
 using NosSmooth.Core.Packets;
 using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Events.Characters;
 using NosSmooth.Game.Events.Core;
+using NosSmooth.Packets.Packets.Server.Skills;
 using Remora.Results;
 
 namespace NosSmooth.Game.PacketHandlers.Characters;
@@ -41,29 +41,29 @@ public class SkillResponder : IPacketResponder<SkiPacket>
 
         var character = await _game.EnsureCharacterCreatedAsync(false, ct);
 
-        if (packet.PrimarySkill == character.Skills?.PrimarySkill.SkillVNum)
+        if (packet.PrimarySkillId == character.Skills?.PrimarySkill.SkillVNum)
         {
             primarySkill = character.Skills.PrimarySkill;
         }
         else
         {
-            primarySkill = new Skill(packet.PrimarySkill);
+            primarySkill = new Skill(packet.PrimarySkillId);
         }
 
-        if (packet.PrimarySkill == packet.SecondarySkill)
+        if (packet.PrimarySkillId == packet.SecondarySkillId)
         {
             secondarySkill = primarySkill;
         }
-        else if (packet.SecondarySkill == character.Skills?.SecondarySkill.SkillVNum)
+        else if (packet.SecondarySkillId == character.Skills?.SecondarySkill.SkillVNum)
         {
             secondarySkill = character.Skills.SecondarySkill;
         }
         else
         {
-            secondarySkill = new Skill(packet.SecondarySkill);
+            secondarySkill = new Skill(packet.SecondarySkillId);
         }
 
-        var skillsFromPacket = packet.SkiSubPackets?.Select(x => x.SkillVNum).ToList() ?? new List<long>();
+        var skillsFromPacket = packet.SkillSubPackets?.Select(x => x.SkillId).ToList() ?? new List<long>();
         var skillsFromCharacter = character.Skills is null ? new List<long>() : character.Skills.OtherSkills.Select(x => x.SkillVNum).ToList();
         var newSkills = skillsFromPacket.Except(skillsFromCharacter);
         var oldSkills = skillsFromCharacter.Except(skillsFromPacket);

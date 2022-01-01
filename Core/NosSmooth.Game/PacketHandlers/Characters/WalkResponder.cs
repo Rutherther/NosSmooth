@@ -4,11 +4,11 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosCore.Packets.ClientPackets.Movement;
 using NosSmooth.Core.Packets;
 using NosSmooth.Game.Data.Info;
 using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.Events.Entities;
+using NosSmooth.Packets.Packets.Client.Movement;
 using Remora.Results;
 
 namespace NosSmooth.Game.PacketHandlers.Characters;
@@ -44,8 +44,8 @@ public class WalkResponder : IPacketResponder<WalkPacket>
                 Y = character.Position.Y
             };
 
-            character.Position.X = packetArgs.Packet.XCoordinate;
-            character.Position.Y = packetArgs.Packet.YCoordinate;
+            character.Position.X = packetArgs.Packet.PositionX;
+            character.Position.Y = packetArgs.Packet.PositionY;
 
             return await _eventDispatcher.DispatchEvent
             (

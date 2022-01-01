@@ -4,10 +4,10 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosCore.Packets.Enumerations;
-using NosCore.Packets.ServerPackets.Chats;
 using NosSmooth.Core.Client;
-using NosSmooth.Game.Data.Entities;
+using NosSmooth.Packets.Enums;
+using NosSmooth.Packets.Enums.Chat;
+using NosSmooth.Packets.Packets.Server.Chat;
 using Remora.Results;
 
 namespace NosSmooth.Game.Apis;
@@ -39,16 +39,8 @@ public class NostaleChatPacketApi
     /// <param name="color">The color of the message.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Task<Result> ReceiveSystemMessageAsync(string content, SayColorType color = SayColorType.Yellow, CancellationToken ct = default)
-    {
-        return _client.ReceivePacketAsync(
-            new SayPacket
-            {
-                Message = content, Type = color
-            },
-            ct
-        );
-    }
+    public Task<Result> ReceiveSystemMessageAsync(string content, SayColor color = SayColor.Yellow, CancellationToken ct = default)
+        => _client.ReceivePacketAsync(new SayPacket(EntityType.Map, 0, color, content), ct);
 
     /// <summary>
     /// Sends the given message to the public chat.
@@ -57,15 +49,7 @@ public class NostaleChatPacketApi
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
     public Task<Result> SendMessageAsync(string content, CancellationToken ct = default)
-    {
-        return _client.SendPacketAsync(
-            new SayPacket
-            {
-                Message = content
-            },
-            ct
-        );
-    }
+        => _client.SendPacketAsync(new Packets.Packets.Client.Chat.SayPacket(content), ct);
 
     /// <summary>
     /// Sends the given message to the family chat.

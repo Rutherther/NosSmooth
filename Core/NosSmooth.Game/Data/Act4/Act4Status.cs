@@ -4,7 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosCore.Packets.Enumerations;
+using NosSmooth.Packets.Enums;
 
 namespace NosSmooth.Game.Data.Act4;
 

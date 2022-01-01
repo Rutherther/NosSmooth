@@ -4,8 +4,6 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosCore.Packets.ClientPackets.Warehouse;
-using NosCore.Packets.ServerPackets.CharacterSelectionScreen;
 using NosSmooth.Core.Packets;
 using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.Events.Login;

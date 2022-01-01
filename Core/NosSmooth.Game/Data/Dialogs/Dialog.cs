@@ -4,7 +4,6 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosCore.Packets.Enumerations;
 using OneOf;
 
 namespace NosSmooth.Game.Data.Dialogs;
@@ -18,6 +17,7 @@ namespace NosSmooth.Game.Data.Dialogs;
 public record Dialog
 (
     string AcceptCommand,
-    OneOf<Game18NConstString, string> Message,
+
+    // OneOf<Game18NConstString, string> Message,
     IReadOnlyList<string> Parameters
 );

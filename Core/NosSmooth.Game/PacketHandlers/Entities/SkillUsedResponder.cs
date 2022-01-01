@@ -4,14 +4,14 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosCore.Packets.ServerPackets.Battle;
-using NosCore.Shared.Enumerations;
 using NosSmooth.Core.Packets;
 using NosSmooth.Game.Data.Info;
 using NosSmooth.Game.Events.Characters;
 using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.Events.Players;
 using NosSmooth.Game.Extensions;
+using NosSmooth.Packets.Enums;
+using NosSmooth.Packets.Packets.Server.Skills;
 using Remora.Results;
 
 namespace NosSmooth.Game.PacketHandlers.Entities;
@@ -41,7 +41,7 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
         var packet = packetArgs.Packet;
         var character = _game.Character;
 
-        if (packet.VisualType != VisualType.Player)
+        if (packet.EntityType != EntityType.Player)
         {
             return Result.FromSuccess();
         }
@@ -100,7 +100,7 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
 
         if (character is not null && character.Skills is not null)
         {
-            var skillResult = character.Skills.TryGetSkill(packet.SkillVnum);
+            var skillResult = character.Skills.TryGetSkill(packet.SkillId);
 
             if (skillResult.IsDefined(out var skillEntity))
             {
@@ -110,7 +110,7 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
         }
         else
         {
-            await _eventDispatcher.DispatchEvent(new SkillReadyEvent(null, packet.SkillVnum), ct);
+            await _eventDispatcher.DispatchEvent(new SkillReadyEvent(null, packet.SkillId), ct);
         }
 
         return Result.FromSuccess();

@@ -4,8 +4,8 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosCore.Shared.Enumerations;
 using NosSmooth.Game.Data.Info;
+using NosSmooth.Packets.Enums;
 
 namespace NosSmooth.Game.Data.Entities;
 
@@ -32,5 +32,5 @@ public interface IEntity
     /// <summary>
     /// Gets the type of the entity.
     /// </summary>
-    public VisualType Type { get; }
+    public EntityType Type { get; }
 }

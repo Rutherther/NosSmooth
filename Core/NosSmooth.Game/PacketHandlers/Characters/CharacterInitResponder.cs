@@ -4,13 +4,12 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosCore.Packets.ServerPackets.Player;
 using NosSmooth.Core.Packets;
-using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Info;
 using NosSmooth.Game.Data.Social;
 using NosSmooth.Game.Events.Characters;
 using NosSmooth.Game.Events.Core;
+using NosSmooth.Packets.Packets.Server.Players;
 using Remora.Results;
 
 namespace NosSmooth.Game.PacketHandlers.Characters;
@@ -45,7 +44,7 @@ public class CharacterInitResponder : IPacketResponder<CInfoPacket>, IPacketResp
         {
             _game.Character = character = character with
             {
-                Id = packet.CharacterId,
+                /*Id = packet.CharacterId,
                 AuthorityType = packet.Authority,
                 Gender = packet.Gender,
                 HairStyle = packet.HairStyle,
@@ -59,7 +58,7 @@ public class CharacterInitResponder : IPacketResponder<CInfoPacket>, IPacketResp
                 },
                 ArenaWinner = packet.ArenaWinner,
                 Invisible = packet.Invisible,
-                Family = new Family(packet.FamilyId, packet.FamilyName, packet.FamilyLevel)
+                Family = new Family(packet.FamilyId, packet.FamilyName, packet.FamilyLevel)*/
             };
         }
 
@@ -108,7 +107,7 @@ public class CharacterInitResponder : IPacketResponder<CInfoPacket>, IPacketResp
         var oldCharacter = _game.Character;
         var character = oldCharacter;
 
-        if (character is null || character.Id != packetArgs.Packet.VisualId)
+        if (character is null || character.Id != packetArgs.Packet.EntityId)
         { // Not the current character.
             return Result.FromSuccess();
         }
@@ -118,7 +117,7 @@ public class CharacterInitResponder : IPacketResponder<CInfoPacket>, IPacketResp
         {
             Morph = new Morph
             (
-                packet.Morph,
+                packet.MorphVNum,
                 packet.MorphUpgrade,
                 packet.MorphDesign,
                 packet.MorphBonus,
