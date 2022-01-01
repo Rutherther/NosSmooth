@@ -96,12 +96,18 @@ public class PacketStringBuilder
     /// <summary>
     /// Pop the current level.
     /// </summary>
+    /// <param name="replaceSeparator">Whether to replace the last separator with the parent one.</param>
     /// <returns>A result that may or may not have succeeded. There will be an error if the current level is the top one.</returns>
-    public Result PopLevel()
+    public Result PopLevel(bool replaceSeparator = true)
     {
         if (_currentLevel.Parent is null)
         {
             return new InvalidOperationError("The level cannot be popped, the stack is already at the top level.");
+        }
+
+        if (replaceSeparator)
+        {
+            ReplaceWithParentSeparator();
         }
 
         _currentLevel = _currentLevel.Parent;
