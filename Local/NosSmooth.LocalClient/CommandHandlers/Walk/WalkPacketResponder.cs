@@ -4,10 +4,6 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Security;
-using NosCore.Packets.ClientPackets.Battle;
-using NosCore.Packets.ClientPackets.Movement;
-using NosCore.Packets.ServerPackets.MiniMap;
 using NosSmooth.Core.Commands;
 using NosSmooth.Core.Packets;
 using NosSmooth.Packets.Packets.Client.Movement;
