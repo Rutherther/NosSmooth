@@ -126,7 +126,7 @@ public class SourceGenerator : ISourceGenerator
 
                 context.AddSource
                 (
-                    $"{packetRecord.Identifier.NormalizeWhitespace().ToFullString()}Converter.g.cs",
+                    $"{packetRecord.GetPrefix()}.{packetRecord.Identifier.NormalizeWhitespace().ToFullString()}Converter.g.cs",
                     stringWriter.GetStringBuilder().ToString()
                 );
             }
