@@ -63,7 +63,8 @@ public class PinitPacketConverterTest
         var actualPacket = (PinitPacket)result.Entity;
 
         Assert.Equal(2, actualPacket.GroupSize);
-        Assert.Equal(2, actualPacket.PinitSubPackets.Count);
+        Assert.NotNull(actualPacket.PinitSubPackets);
+        Assert.Equal(2, actualPacket.PinitSubPackets!.Count);
         Assert.StrictEqual(new PinitSubPacket(EntityType.Npc, 345377, 0, 83, "Kliff", -1, 319, 1, 0, null, null, null), actualPacket.PinitSubPackets[0]);
         Assert.StrictEqual(new PinitSubPacket(EntityType.Npc, 345384, 1, 83, "@", -1, 2105, 0, 0, null, null, null), actualPacket.PinitSubPackets[1]);
     }
