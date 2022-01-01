@@ -8,7 +8,6 @@ using System.CodeDom.Compiler;
 using NosSmooth.PacketSerializersGenerator.Data;
 using NosSmooth.PacketSerializersGenerator.Errors;
 using NosSmooth.PacketSerializersGenerator.Extensions;
-using NosSmooth.PacketSerializersGenerator.TypeGenerators;
 
 namespace NosSmooth.PacketSerializersGenerator.AttributeGenerators;
 

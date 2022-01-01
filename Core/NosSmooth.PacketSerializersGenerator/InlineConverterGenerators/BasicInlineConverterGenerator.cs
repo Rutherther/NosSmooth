@@ -1,31 +1,37 @@
 //
-//  EnumTypeGenerator.cs
+//  BasicInlineConverterGenerator.cs
 //
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.CodeDom.Compiler;
-using Microsoft.CodeAnalysis;
 using NosSmooth.PacketSerializersGenerator.Data;
 using NosSmooth.PacketSerializersGenerator.Errors;
 using NosSmooth.PacketSerializersGenerator.Extensions;
 
-namespace NosSmooth.PacketSerializersGenerator.TypeGenerators;
+namespace NosSmooth.PacketSerializersGenerator.InlineConverterGenerators;
 
-/// <inheritdoc />
-public class EnumTypeGenerator : IInlineConverterGenerator
+/// <summary>
+/// Serializes and deserializes
+/// long, ulong, int, uint, short, ushort, byte, sbyte.
+/// </summary>
+public class BasicInlineConverterGenerator : IInlineConverterGenerator
 {
+    /// <summary>
+    /// The list of the types to handle.
+    /// </summary>
+    public static IReadOnlyList<string> HandleTypes => new[] { "long", "ulong", "int", "uint", "short", "ushort", "byte", "sbyte" };
+
     /// <inheritdoc />
     public bool ShouldHandle(ParameterInfo parameter)
-        => parameter.Type.TypeKind == TypeKind.Enum;
+        => HandleTypes.Contains(parameter.Parameter.Type!.ToString());
 
     /// <inheritdoc />
     public IError? GenerateSerializerPart(IndentedTextWriter textWriter, PacketInfo packet)
     {
         var parameter = packet.Parameters.Current;
-        var underlyingType = ((INamedTypeSymbol)parameter.Type).EnumUnderlyingType!.ToString();
         textWriter.WriteLine
-            ($"builder.Append((({underlyingType}?)obj.{parameter.Name}{(parameter.Nullable ? "?" : string.Empty)}).ToString() ?? \"-\");");
+            ($"builder.Append(obj.{parameter.Name}{(parameter.Nullable ? "?" : string.Empty)}.ToString() ?? \"-\");");
         return null;
     }
 
@@ -33,7 +39,7 @@ public class EnumTypeGenerator : IInlineConverterGenerator
     public IError? GenerateDeserializerPart(IndentedTextWriter textWriter, PacketInfo packet)
     {
         var parameter = packet.Parameters.Current;
-        var underlyingType = ((INamedTypeSymbol)parameter.Type).EnumUnderlyingType!.ToString();
+        var type = parameter.Parameter.Type!.ToString();
         string isLastString = packet.Parameters.IsLast ? "true" : "false";
         textWriter.WriteMultiline
         (
@@ -45,15 +51,14 @@ if ({parameter.GetErrorVariableName()} is not null)
     return Result<{packet.Name}?>.FromError({parameter.GetErrorVariableName()}, {parameter.GetResultVariableName()});
 }}
 {parameter.GetVariableName()} = default;
-{underlyingType} {parameter.GetVariableName()}Underlying = default;
 {parameter.GetNullableType()} {parameter.GetNullableVariableName()};
 if ({parameter.GetResultVariableName()}.Entity.Token == ""-"") {{
     {parameter.GetNullableVariableName()} = null;
 }}
-else if (!{underlyingType}.TryParse({parameter.GetResultVariableName()}.Entity.Token, out {parameter.GetVariableName()}Underlying)) {{
-    return new PacketParameterSerializerError(this, ""{parameter.Name}"", {parameter.GetResultVariableName()}, $""Could not convert {{{parameter.GetResultVariableName()}.Entity.Token}} as {underlyingType} in inline converter"");
+else if (!{type}.TryParse({parameter.GetResultVariableName()}.Entity.Token, out {parameter.GetVariableName()})) {{
+    return new PacketParameterSerializerError(this, ""{parameter.Name}"", {parameter.GetResultVariableName()}, $""Could not convert {{{parameter.GetResultVariableName()}.Entity.Token}} as {type} in inline converter"");
 }}
-{parameter.GetNullableVariableName()} = ({parameter.GetNullableType()}){parameter.GetVariableName()}Underlying;
+{parameter.GetNullableVariableName()} = {parameter.GetVariableName()};
 "
         );
         return null;

@@ -1,5 +1,5 @@
 //
-//  StringInlineConverterGenerator.cs
+//  FallbackInlineConverterGenerator.cs
 //
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -9,20 +9,31 @@ using NosSmooth.PacketSerializersGenerator.Data;
 using NosSmooth.PacketSerializersGenerator.Errors;
 using NosSmooth.PacketSerializersGenerator.Extensions;
 
-namespace NosSmooth.PacketSerializersGenerator.TypeGenerators;
+namespace NosSmooth.PacketSerializersGenerator.InlineConverterGenerators;
 
 /// <inheritdoc />
-public class StringInlineConverterGenerator : IInlineConverterGenerator
+public class FallbackInlineConverterGenerator : IInlineConverterGenerator
 {
     /// <inheritdoc />
     public bool ShouldHandle(ParameterInfo parameter)
-        => parameter.Parameter.Type!.ToString() == "string";
+    {
+        return true;
+    }
 
     /// <inheritdoc />
     public IError? GenerateSerializerPart(IndentedTextWriter textWriter, PacketInfo packet)
     {
         var parameter = packet.Parameters.Current;
-        textWriter.WriteLine($"builder.Append(obj.{parameter.Name} ?? \"-\");");
+        textWriter.WriteMultiline
+        (
+            $@"
+var {parameter.GetResultVariableName()} = _typeConverterRepository.Serialize<{parameter.GetActualType()}>(obj.{parameter.Name}, builder);
+if (!{parameter.GetResultVariableName()}.IsSuccess)
+{{
+    return Result.FromError(new PacketParameterSerializerError(this, ""{parameter.Name}"", {parameter.GetResultVariableName()}), {parameter.GetResultVariableName()});
+}}
+"
+        );
         return null;
     }
 
@@ -32,13 +43,13 @@ public class StringInlineConverterGenerator : IInlineConverterGenerator
         var parameter = packet.Parameters.Current;
         string isLastString = packet.Parameters.IsLast ? "true" : "false";
         textWriter.WriteMultiline($@"
-var {parameter.GetResultVariableName()} = stringEnumerator.GetNextToken();
+var {parameter.GetResultVariableName()} = _typeConverterRepository.Deserialize<{parameter.GetNullableType()}>(stringEnumerator);
 var {parameter.GetErrorVariableName()} = CheckDeserializationResult({parameter.GetResultVariableName()}, ""{parameter.Name}"", stringEnumerator, {isLastString});
 if ({parameter.GetErrorVariableName()} is not null)
 {{
     return Result<{packet.Name}?>.FromError({parameter.GetErrorVariableName()}, {parameter.GetResultVariableName()});
 }}
-var {parameter.GetNullableVariableName()} = {parameter.GetResultVariableName()}.Entity.Token;
+var {parameter.GetNullableVariableName()} = {parameter.GetResultVariableName()}.Entity;
 ");
         return null;
     }

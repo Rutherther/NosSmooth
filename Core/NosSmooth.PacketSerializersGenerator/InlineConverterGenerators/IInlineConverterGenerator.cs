@@ -8,7 +8,7 @@ using System.CodeDom.Compiler;
 using NosSmooth.PacketSerializersGenerator.Data;
 using NosSmooth.PacketSerializersGenerator.Errors;
 
-namespace NosSmooth.PacketSerializersGenerator.TypeGenerators;
+namespace NosSmooth.PacketSerializersGenerator.InlineConverterGenerators;
 
 /// <summary>
 /// Generates inline type converters.

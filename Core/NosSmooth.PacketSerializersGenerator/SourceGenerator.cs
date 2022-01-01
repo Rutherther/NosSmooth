@@ -14,12 +14,12 @@ using NosSmooth.PacketSerializersGenerator.AttributeGenerators;
 using NosSmooth.PacketSerializersGenerator.Data;
 using NosSmooth.PacketSerializersGenerator.Errors;
 using NosSmooth.PacketSerializersGenerator.Extensions;
-using NosSmooth.PacketSerializersGenerator.TypeGenerators;
+using NosSmooth.PacketSerializersGenerator.InlineConverterGenerators;
 
 namespace NosSmooth.PacketSerializersGenerator;
 
 /// <summary>
-/// Generates ITypeGenerator for packets that are marked with NosSmooth.Packets.Attributes.GenerateSerializerAttribute.
+/// Generates IInlineGenerator for packets that are marked with NosSmooth.Packets.Attributes.GenerateSerializerAttribute.
 /// </summary>
 /// <remarks>
 /// The packets to create serializer for have to be records that specify PacketIndices in the constructor.
@@ -37,9 +37,9 @@ public class SourceGenerator : ISourceGenerator
             new IInlineConverterGenerator[]
             {
                 new StringInlineConverterGenerator(),
-                new BasicTypeGenerator(),
-                new EnumTypeGenerator(),
-                new BoolTypeGenerator(),
+                new BasicInlineConverterGenerator(),
+                new EnumInlineConverterGenerator(),
+                new BoolInlineConverterGenerator(),
             }
         );
 
