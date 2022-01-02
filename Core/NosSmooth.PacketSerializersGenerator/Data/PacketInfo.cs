@@ -13,6 +13,7 @@ namespace NosSmooth.PacketSerializersGenerator.Data;
 /// Contains information about a packet record syntax.
 /// </summary>
 /// <param name="Compilation">The compilation of the generator.</param>
+/// <param name="GenerateAttribute">The generate serializer attribute.</param>
 /// <param name="PacketRecord">The packet record declaration.</param>
 /// <param name="SemanticModel">The semantic model the packet is in.</param>
 /// <param name="Parameters">The parsed parameters of the packet.</param>
