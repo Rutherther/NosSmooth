@@ -178,4 +178,29 @@ if ({nullableVariableName} is null) {{
         _textWriter.Indent--;
         _textWriter.WriteLine("}");
     }
+
+    /// <summary>
+    /// Call deserializer and check the result.
+    /// </summary>
+    /// <param name="parameter">The parameter.</param>
+    /// <param name="packet">The packet.</param>
+    /// <param name="inlineTypeConverter">The inline converter generator.</param>
+    public void DeserializeAndCheck(ParameterInfo parameter, PacketInfo packet, InlineTypeConverterGenerator inlineTypeConverter)
+    {
+        _textWriter.WriteLine($"var {parameter.GetResultVariableName()} = ");
+        inlineTypeConverter.CallDeserialize(_textWriter, packet);
+
+        _textWriter.WriteLine($"if (!{parameter.GetResultVariableName()}.IsSuccess)");
+        _textWriter.Indent++;
+        _textWriter.WriteLine
+        (
+            $"return Result<{packet.Name}?>.FromError(new PacketParameterSerializerError(this, \"{parameter.Name}\", {parameter.GetResultVariableName()}), {parameter.GetResultVariableName()});"
+        );
+        _textWriter.Indent--;
+
+        _textWriter.WriteLine
+        (
+            $"{parameter.GetNullableType()} {parameter.GetNullableVariableName()} = {parameter.GetResultVariableName()}.Entity;"
+        );
+    }
 }

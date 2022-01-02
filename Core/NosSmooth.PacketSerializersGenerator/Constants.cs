@@ -20,4 +20,9 @@ public class Constants
     /// Gets the full name of the packet attribute classes that are used for the generation.
     /// </summary>
     public static string PacketAttributesClassRegex => @"^NosSmooth\.Packets\.Attributes\.Packet.*";
+
+    /// <summary>
+    /// Gets the full name of helper class used for inline type converters.
+    /// </summary>
+    public static string HelperClass => "NosSmooth.Generated.HelperClass";
 }

@@ -37,7 +37,7 @@ public class InlineTypeConverterGenerator
     /// <param name="textWriter">The text writer.</param>
     /// <param name="packet">The packet.</param>
     /// <returns>An error, if any.</returns>
-    public IError? DeserializeAndCheck(IndentedTextWriter textWriter, PacketInfo packet)
+    public IError? CallDeserialize(IndentedTextWriter textWriter, PacketInfo packet)
     {
         var shouldGenerateInline = packet.GenerateAttribute.GetIndexedValue<bool>(0);
         if (shouldGenerateInline)
@@ -46,12 +46,12 @@ public class InlineTypeConverterGenerator
             {
                 if (generator.ShouldHandle(packet.Parameters.Current))
                 {
-                    return generator.GenerateDeserializerPart(textWriter, packet);
+                    return generator.CallDeserialize(textWriter, packet);
                 }
             }
         }
 
-        return _fallbackInlineConverterGenerator.GenerateDeserializerPart(textWriter, packet);
+        return _fallbackInlineConverterGenerator.CallDeserialize(textWriter, packet);
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ public class InlineTypeConverterGenerator
     /// <param name="textWriter">The text writer.</param>
     /// <param name="packet">The packet.</param>
     /// <returns>An error, if any.</returns>
-    public IError? SerializeAndCheck(IndentedTextWriter textWriter, PacketInfo packet)
+    public IError? Serialize(IndentedTextWriter textWriter, PacketInfo packet)
     {
         var shouldGenerateInline = packet.GenerateAttribute.GetIndexedValue<bool>(0);
         if (shouldGenerateInline)

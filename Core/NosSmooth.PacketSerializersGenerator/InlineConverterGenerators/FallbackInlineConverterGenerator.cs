@@ -24,33 +24,21 @@ public class FallbackInlineConverterGenerator : IInlineConverterGenerator
     public IError? GenerateSerializerPart(IndentedTextWriter textWriter, PacketInfo packet)
     {
         var parameter = packet.Parameters.Current;
-        textWriter.WriteMultiline
-        (
-            $@"
-var {parameter.GetResultVariableName()} = _typeConverterRepository.Serialize<{parameter.GetActualType()}>(obj.{parameter.Name}, builder);
-if (!{parameter.GetResultVariableName()}.IsSuccess)
-{{
-    return Result.FromError(new PacketParameterSerializerError(this, ""{parameter.Name}"", {parameter.GetResultVariableName()}), {parameter.GetResultVariableName()});
-}}
-"
-        );
+        textWriter.WriteLine($"_typeConverterRepository.Serialize<{parameter.GetActualType()}>(obj.{parameter.Name}, builder);");
         return null;
     }
 
     /// <inheritdoc />
-    public IError? GenerateDeserializerPart(IndentedTextWriter textWriter, PacketInfo packet)
+    public IError? CallDeserialize(IndentedTextWriter textWriter, PacketInfo packet)
     {
         var parameter = packet.Parameters.Current;
-        string isLastString = packet.Parameters.IsLast ? "true" : "false";
-        textWriter.WriteMultiline($@"
-var {parameter.GetResultVariableName()} = _typeConverterRepository.Deserialize<{parameter.GetNullableType()}>(stringEnumerator);
-var {parameter.GetErrorVariableName()} = CheckDeserializationResult({parameter.GetResultVariableName()}, ""{parameter.Name}"", stringEnumerator, {isLastString});
-if ({parameter.GetErrorVariableName()} is not null)
-{{
-    return Result<{packet.Name}?>.FromError({parameter.GetErrorVariableName()}, {parameter.GetResultVariableName()});
-}}
-var {parameter.GetNullableVariableName()} = {parameter.GetResultVariableName()}.Entity;
-");
+        textWriter.WriteLine($"_typeConverterRepository.Deserialize<{parameter.GetNullableType()}>(stringEnumerator);");
         return null;
+    }
+
+    /// <inheritdoc />
+    public void GenerateHelperMethods(IndentedTextWriter textWriter)
+    {
+        // ignore
     }
 }

@@ -41,10 +41,11 @@ public class BoolInlineConverterGenerator : IInlineConverterGenerator
     }
 
     /// <inheritdoc />
-    public IError? GenerateDeserializerPart(IndentedTextWriter textWriter, PacketInfo packet)
+    public IError? CallDeserialize(IndentedTextWriter textWriter, PacketInfo packet)
     {
         var parameter = packet.Parameters.Current;
-        string isLastString = packet.Parameters.IsLast ? "true" : "false";
+        textWriter.WriteLine($"{Constants.HelperClass}.ParseBool(stringEnumerator);");
+        /*string isLastString = packet.Parameters.IsLast ? "true" : "false";
         textWriter.WriteMultiline($@"
 var {parameter.GetResultVariableName()} = stringEnumerator.GetNextToken();
 var {parameter.GetErrorVariableName()} = CheckDeserializationResult({parameter.GetResultVariableName()}, ""{parameter.Name}"", stringEnumerator, {isLastString});
@@ -53,7 +54,30 @@ if ({parameter.GetErrorVariableName()} is not null)
     return Result<{packet.Name}?>.FromError({parameter.GetErrorVariableName()}, {parameter.GetResultVariableName()});
 }}
 {parameter.GetNullableType()} {parameter.GetNullableVariableName()} = {parameter.GetResultVariableName()}.Entity.Token == ""1"" ? true : ({parameter.GetResultVariableName()}.Entity.Token == ""-"" ? null : false);
-");
+");*/
         return null;
+    }
+
+    /// <inheritdoc />
+    public void GenerateHelperMethods(IndentedTextWriter textWriter)
+    {
+        textWriter.WriteLine(@"
+public static Result<bool?> ParseBool(PacketStringEnumerator stringEnumerator)
+{{
+    var tokenResult = stringEnumerator.GetNextToken();
+    if (!tokenResult.IsSuccess)
+    {{
+        return Result<bool?>.FromError(tokenResult);
+    }}
+
+    var token = tokenResult.Entity.Token;
+    if (token == ""-"")
+    {{
+        return Result<bool?>.FromSuccess(null);
+    }}
+
+    return token == ""1"" ? true : false;
+}}
+");
     }
 }

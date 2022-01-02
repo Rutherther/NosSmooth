@@ -27,11 +27,12 @@ public class StringInlineConverterGenerator : IInlineConverterGenerator
     }
 
     /// <inheritdoc />
-    public IError? GenerateDeserializerPart(IndentedTextWriter textWriter, PacketInfo packet)
+    public IError? CallDeserialize(IndentedTextWriter textWriter, PacketInfo packet)
     {
-        var parameter = packet.Parameters.Current;
-        string isLastString = packet.Parameters.IsLast ? "true" : "false";
-        textWriter.WriteMultiline($@"
+        // var parameter = packet.Parameters.Current;
+        // string isLastString = packet.Parameters.IsLast ? "true" : "false";
+        textWriter.WriteLine($"{Constants.HelperClass}.ParseString(stringEnumerator);");
+        /*textWriter.WriteMultiline($@"
 var {parameter.GetResultVariableName()} = stringEnumerator.GetNextToken();
 var {parameter.GetErrorVariableName()} = CheckDeserializationResult({parameter.GetResultVariableName()}, ""{parameter.Name}"", stringEnumerator, {isLastString});
 if ({parameter.GetErrorVariableName()} is not null)
@@ -39,7 +40,27 @@ if ({parameter.GetErrorVariableName()} is not null)
     return Result<{packet.Name}?>.FromError({parameter.GetErrorVariableName()}, {parameter.GetResultVariableName()});
 }}
 var {parameter.GetNullableVariableName()} = {parameter.GetResultVariableName()}.Entity.Token == ""-"" ? null : {parameter.GetResultVariableName()}.Entity.Token;
-");
+");*/
         return null;
+    }
+
+    /// <inheritdoc />
+    public void GenerateHelperMethods(IndentedTextWriter textWriter)
+    {
+        textWriter.WriteLine
+        (
+            @"
+public static Result<string?> ParseString(PacketStringEnumerator stringEnumerator)
+{{
+    var tokenResult = stringEnumerator.GetNextToken();
+    if (!tokenResult.IsSuccess)
+    {{
+        return Result<string?>.FromError(tokenResult);
+    }}
+
+    return tokenResult.Entity.Token;
+}}
+"
+        );
     }
 }

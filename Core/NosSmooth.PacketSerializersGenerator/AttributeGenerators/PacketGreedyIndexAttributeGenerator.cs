@@ -82,7 +82,7 @@ public class PacketGreedyIndexAttributeGenerator : IParameterGenerator
         }
 
         generator.SetReadToLast(); // Greedy
-        _inlineTypeConverterGenerators.DeserializeAndCheck(textWriter, packetInfo);
+        generator.DeserializeAndCheck(parameter, packetInfo, _inlineTypeConverterGenerators);
 
         if (!parameter.Nullable)
         {

@@ -36,5 +36,17 @@ public interface IInlineConverterGenerator
     /// <param name="textWriter">The text writer to write to.</param>
     /// <param name="packet">The packet.</param>
     /// <returns>An error, if any.</returns>
-    public IError? GenerateDeserializerPart(IndentedTextWriter textWriter, PacketInfo packet);
+    public IError? CallDeserialize(IndentedTextWriter textWriter, PacketInfo packet);
+
+    /// <summary>
+    /// Generate helper methods to HelperClass.
+    /// </summary>
+    /// <remarks>
+    /// These will be added to class <see cref="Constants.HelperClass"/>.
+    /// This will be called after calling <see cref="CallDeserialize"/> and
+    /// <see cref="GenerateSerializerPart"/> for all packets and parameters.
+    /// The converter can group information it needs for the generations that way.
+    /// </remarks>
+    /// <param name="textWriter">The text writer to append full methods to.</param>
+    public void GenerateHelperMethods(IndentedTextWriter textWriter);
 }

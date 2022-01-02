@@ -112,16 +112,6 @@ public override Result<{_packetInfo.Name}?> Deserialize(PacketStringEnumerator s
         (
             $@"
     }}
-
-private IResultError? CheckDeserializationResult<T>(Result<T> result, string property, PacketStringEnumerator stringEnumerator, bool last = false)
-{{
-    if (!result.IsSuccess)
-    {{
-        return new PacketParameterSerializerError(this, property, result);
-    }}
-
-    return null;
-}}
 }}"
         );
         return null;

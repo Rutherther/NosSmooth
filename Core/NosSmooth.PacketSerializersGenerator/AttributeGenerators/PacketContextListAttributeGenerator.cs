@@ -75,7 +75,7 @@ public class PacketContextListAttributeGenerator : IParameterGenerator
         var innerSeparator = attribute.GetNamedValue<char>("InnerSeparator", '.');
         generator.PrepareLevel(innerSeparator);
 
-        _inlineTypeConverterGenerators.SerializeAndCheck(textWriter, packetInfo);
+        _inlineTypeConverterGenerators.Serialize(textWriter, packetInfo);
         generator.RemovePreparedLevel();
         generator.PopLevel();
 
@@ -115,7 +115,7 @@ public class PacketContextListAttributeGenerator : IParameterGenerator
         var innerSeparator = attribute.GetNamedValue<char>("InnerSeparator", '.');
         generator.PrepareLevel(innerSeparator);
 
-        _inlineTypeConverterGenerators.DeserializeAndCheck(textWriter, packetInfo);
+        generator.DeserializeAndCheck(parameter, packetInfo, _inlineTypeConverterGenerators);
         generator.RemovePreparedLevel();
         generator.PopLevel();
         if (!parameter.Nullable)
