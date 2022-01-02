@@ -120,14 +120,75 @@ private IResultError? CheckDeserializationResult<T>(Result<T> result, string pro
         return new PacketParameterSerializerError(this, property, result);
     }}
 
+    if (!last && (stringEnumerator.IsOnLastToken() ?? false))
+    {{
+        return new PacketEndNotExpectedError(this, property);
+    }}
+
     return null;
+}}");
+        var parametersSerializerError = GenerateParametersSerializerMethods(textWriter);
+        if (parametersSerializerError is not null)
+        {
+            return parametersSerializerError;
+        }
+
+        var parametersDeserializerError = GenerateParametersDeserializerMethods(textWriter);
+        textWriter.WriteLine("}");
+        return parametersDeserializerError;
+    }
+
+    private IError? GenerateDeserializer(IndentedTextWriter textWriter)
+    {
+        _packetInfo.Parameters.CurrentIndex = 0;
+        foreach (var parameter in _packetInfo.Parameters.List)
+        {
+            string isLastString = _packetInfo.Parameters.IsLast ? "true" : "false";
+            textWriter.WriteLine
+                ($"var {parameter.GetResultVariableName()} = Deserialize{parameter.Name}(stringEnumerator);");
+            textWriter.WriteMultiline
+            (
+                @$"
+var {parameter.GetErrorVariableName()} = CheckDeserializationResult({parameter.GetResultVariableName()}, ""{parameter.Name}"", stringEnumerator, {isLastString});
+if ({parameter.GetErrorVariableName()} is not null)
+{{
+    return Result<{_packetInfo.Name}?>.FromError({parameter.GetErrorVariableName()}, {parameter.GetResultVariableName()});
 }}
-}}"
-        );
+"
+            );
+            _packetInfo.Parameters.CurrentIndex++;
+        }
+
+        string parametersString = string.Join
+            (", ", _packetInfo.Parameters.List.OrderBy(x => x.ConstructorIndex).Select(x => x.GetResultVariableName() + ".Entity"));
+        textWriter.WriteLine
+            ($"return new {_packetInfo.Name}({parametersString});");
         return null;
     }
 
     private IError? GenerateSerializer(IndentedTextWriter textWriter)
+    {
+        _packetInfo.Parameters.CurrentIndex = 0;
+        foreach (var parameter in _packetInfo.Parameters.List)
+        {
+            textWriter.WriteLine
+                ($"var {parameter.GetResultVariableName()} = Serialize{parameter.Name}(obj, builder);");
+            textWriter.WriteMultiline
+            (
+                @$"
+if (!{parameter.GetResultVariableName()}.IsSuccess)
+{{
+    return Result.FromError(new PacketParameterSerializerError(this, ""{parameter.Name}"", {parameter.GetResultVariableName()}), {parameter.GetResultVariableName()});
+}}
+"
+            );
+            _packetInfo.Parameters.CurrentIndex++;
+        }
+        textWriter.WriteLine("return Result.FromSuccess();");
+        return null;
+    }
+
+    private IError? GenerateParametersSerializerMethods(IndentedTextWriter textWriter)
     {
         _packetInfo.Parameters.CurrentIndex = 0;
         foreach (var parameter in _packetInfo.Parameters.List)
@@ -143,11 +204,20 @@ private IResultError? CheckDeserializationResult<T>(Result<T> result, string pro
                         return checkError;
                     }
 
+                    textWriter.WriteLine
+                    (
+                        $"public Result Serialize{parameter.Name}({_packetInfo.Name} obj, PacketStringBuilder builder)"
+                    );
+                    textWriter.WriteLine("{");
+                    textWriter.Indent++;
                     var serializerError = generator.GenerateSerializerPart(textWriter, _packetInfo);
                     if (serializerError is not null)
                     {
                         return serializerError;
                     }
+                    textWriter.Indent--;
+                    textWriter.WriteLine("}");
+                    textWriter.WriteLine();
 
                     handled = true;
                     break;
@@ -164,11 +234,10 @@ private IResultError? CheckDeserializationResult<T>(Result<T> result, string pro
             _packetInfo.Parameters.CurrentIndex++;
         }
 
-        textWriter.WriteLine("return Result.FromSuccess();");
         return null;
     }
 
-    private IError? GenerateDeserializer
+    private IError? GenerateParametersDeserializerMethods
         (IndentedTextWriter textWriter)
     {
         _packetInfo.Parameters.CurrentIndex = 0;
@@ -227,11 +296,20 @@ private IResultError? CheckDeserializationResult<T>(Result<T> result, string pro
                         return checkError;
                     }
 
+                    textWriter.WriteLine
+                    (
+                        $"public Result<{parameter.GetActualType()}> Deserialize{parameter.Name}(PacketStringEnumerator stringEnumerator)"
+                    );
+                    textWriter.WriteLine("{");
+                    textWriter.Indent++;
                     var result = generator.GenerateDeserializerPart(textWriter, _packetInfo);
                     if (result is not null)
                     {
                         return result;
                     }
+                    textWriter.Indent--;
+                    textWriter.WriteLine("}");
+                    textWriter.WriteLine();
 
                     handled = true;
                     break;
@@ -248,10 +326,6 @@ private IResultError? CheckDeserializationResult<T>(Result<T> result, string pro
             lastIndex = parameter.PacketIndex;
             _packetInfo.Parameters.CurrentIndex++;
         }
-
-        string parametersString = string.Join(", ", _packetInfo.Parameters.List.OrderBy(x => x.ConstructorIndex).Select(x => x.GetVariableName()));
-        textWriter.WriteLine
-            ($"return new {_packetInfo.Name}({parametersString});");
 
         return null;
     }

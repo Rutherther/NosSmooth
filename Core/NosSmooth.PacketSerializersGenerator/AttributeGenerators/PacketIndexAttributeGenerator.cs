@@ -92,6 +92,7 @@ public class PacketIndexAttributeGenerator : IParameterGenerator
             textWriter.WriteLine("}");
         }
 
+        generator.ReturnSuccess();
         return null;
     }
 
@@ -138,17 +139,13 @@ public class PacketIndexAttributeGenerator : IParameterGenerator
             generator.PopLevel();
         }
 
-        if (!packetInfo.Parameters.IsLast)
-        {
-            generator.ValidateNotLast(parameter.Name);
-        }
-
         // end is last token if body
         if (parameter.IsOptional())
         {
             generator.EndOptionalCheck(parameter);
         }
 
+        generator.ReturnVariable(parameter.GetVariableName(), parameter.GetActualType());
         return null;
     }
 }

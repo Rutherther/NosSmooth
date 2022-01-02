@@ -166,16 +166,12 @@ if ({nullableVariableName} is null) {{
     }
 
     /// <summary>
-    /// Validates that the string enumerator is currently not at the last token.
+    /// Return the given variable.
     /// </summary>
-    /// <param name="parameterName">The parameter that is being converted.</param>
-    public void ValidateNotLast(string parameterName)
+    /// <param name="name">The name of the variable.</param>
+    /// <param name="type">The name of the type.</param>
+    public void ReturnVariable(string name, string type)
     {
-        _textWriter.WriteLine($"if ({_stringEnumeratorVariable}.IsOnLastToken() ?? false)");
-        _textWriter.WriteLine("{");
-        _textWriter.Indent++;
-        _textWriter.WriteLine($"return new PacketEndNotExpectedError(this, \"{parameterName}\");");
-        _textWriter.Indent--;
-        _textWriter.WriteLine("}");
+        _textWriter.WriteLine($"return Result<{type}>.FromSuccess({name});");
     }
 }

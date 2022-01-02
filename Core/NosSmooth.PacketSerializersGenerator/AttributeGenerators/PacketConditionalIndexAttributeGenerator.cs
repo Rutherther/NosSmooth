@@ -237,6 +237,7 @@ public class PacketConditionalIndexAttributeGenerator : IParameterGenerator
         textWriter.Indent--;
         textWriter.WriteLine("}");
 
+        generator.ReturnSuccess();
         return null;
     }
 
@@ -288,11 +289,6 @@ public class PacketConditionalIndexAttributeGenerator : IParameterGenerator
             generator.PopLevel();
         }
 
-        if (!packetInfo.Parameters.IsLast)
-        {
-            generator.ValidateNotLast(parameter.Name);
-        }
-
         // end is last token if body
         if (parameter.IsOptional())
         {
@@ -309,6 +305,7 @@ public class PacketConditionalIndexAttributeGenerator : IParameterGenerator
         textWriter.Indent--;
         textWriter.WriteLine("}");
 
+        generator.ReturnVariable(parameter.GetVariableName(), parameter.GetActualType());
         return null;
     }
 }

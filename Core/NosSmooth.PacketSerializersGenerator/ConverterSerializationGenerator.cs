@@ -71,4 +71,12 @@ public class ConverterSerializationGenerator
     {
         _textWriter.WriteLine($@"{_builderVariable}.RemovePreparedLevel();");
     }
+
+    /// <summary>
+    /// Returns successful result.
+    /// </summary>
+    public void ReturnSuccess()
+    {
+        _textWriter.WriteLine("return Result.FromSuccess();");
+    }
 }

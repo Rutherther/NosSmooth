@@ -36,7 +36,7 @@ var {parameter.GetResultVariableName()} = stringEnumerator.GetNextToken();
 var {parameter.GetErrorVariableName()} = CheckDeserializationResult({parameter.GetResultVariableName()}, ""{parameter.Name}"", stringEnumerator, {isLastString});
 if ({parameter.GetErrorVariableName()} is not null)
 {{
-    return Result<{packet.Name}?>.FromError({parameter.GetErrorVariableName()}, {parameter.GetResultVariableName()});
+    return Result<{parameter.GetActualType()}>.FromError({parameter.GetErrorVariableName()}, {parameter.GetResultVariableName()});
 }}
 var {parameter.GetNullableVariableName()} = {parameter.GetResultVariableName()}.Entity.Token == ""-"" ? null : {parameter.GetResultVariableName()}.Entity.Token;
 ");
