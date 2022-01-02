@@ -57,7 +57,7 @@ public class BasicInlineConverterGenerator : IInlineConverterGenerator
             throw new Exception("TypeSyntax or TypeSymbol has to be non null.");
         }
 
-        textWriter.WriteLine($"{Constants.HelperClass}.ParseBasic{type}(this, stringEnumerator);");
+        textWriter.WriteLine($"{Constants.HelperClass}.ParseBasic{type}(typeConverter, stringEnumerator);");
         return null;
     }
 

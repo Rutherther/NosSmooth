@@ -42,8 +42,8 @@ public class SourceGenerator : ISourceGenerator
                 new BoolInlineConverterGenerator(),
             }
         );
-
         var inlineTypeConverter = new InlineTypeConverterGenerator(_typeConverterGenerator);
+        _typeConverterGenerator.Add(new ListInlineConverterGenerator(inlineTypeConverter));
 
         _generators = new List<IParameterGenerator>
         (
@@ -130,11 +130,6 @@ public class SourceGenerator : ISourceGenerator
                     $"{packetRecord.GetPrefix()}.{packetRecord.Identifier.NormalizeWhitespace().ToFullString()}Converter.g.cs",
                     stringWriter.GetStringBuilder().ToString()
                 );
-                File.WriteAllText
-                (
-                    $"/tmp/{packetRecord.GetPrefix()}.{packetRecord.Identifier.NormalizeWhitespace().ToFullString()}Converter.g.cs",
-                    stringWriter.GetStringBuilder().ToString()
-                );
             }
         }
 
@@ -142,11 +137,6 @@ public class SourceGenerator : ISourceGenerator
         context.AddSource
         (
             $"HelperClass.g.cs",
-            helperClass
-        );
-        File.WriteAllText
-        (
-            $"/tmp/HelperClass.g.cs",
             helperClass
         );
     }
@@ -159,6 +149,8 @@ public class SourceGenerator : ISourceGenerator
 #nullable enable
 #pragma warning disable 1591
 
+using System.Collections;
+using System.Collections.Generic;
 using NosSmooth.Packets.Converters;
 using NosSmooth.Packets.Errors;
 using NosSmooth.Packets;

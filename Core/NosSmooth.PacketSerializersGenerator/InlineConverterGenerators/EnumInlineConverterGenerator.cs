@@ -66,7 +66,7 @@ public class EnumInlineConverterGenerator : IInlineConverterGenerator
 
         textWriter.WriteLine
         (
-            $"{Constants.HelperClass}.ParseEnum{typeSymbol?.ToString().TrimEnd('?').Replace('.', '_')}(this, stringEnumerator);"
+            $"{Constants.HelperClass}.ParseEnum{typeSymbol?.ToString().TrimEnd('?').Replace('.', '_')}(typeConverter, stringEnumerator);"
         );
         return null;
     }

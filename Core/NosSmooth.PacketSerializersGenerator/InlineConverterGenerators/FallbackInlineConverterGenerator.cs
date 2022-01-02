@@ -29,10 +29,17 @@ public class FallbackInlineConverterGenerator : IInlineConverterGenerator
         ITypeSymbol? typeSymbol
     )
     {
+        var resultName = $"{variableName.Replace(".", string.Empty)}Result";
         textWriter.WriteLine
         (
-            $"_typeConverterRepository.Serialize<{(typeSyntax?.ToString() ?? typeSymbol!.ToString()).TrimEnd('?')}?>({variableName}, builder);"
+            $"var {resultName} = _typeConverterRepository.Serialize<{(typeSyntax?.ToString() ?? typeSymbol!.ToString()).TrimEnd('?')}?>({variableName}, builder);"
         );
+        textWriter.WriteLine($"if (!{resultName}.IsSuccess)");
+        textWriter.WriteLine("{");
+        textWriter.Indent++;
+        textWriter.WriteLine($"return Result.FromError(new PacketParameterSerializerError(this, \"{variableName}\", {resultName}), {resultName});");
+        textWriter.Indent--;
+        textWriter.WriteLine("}");
         return null;
     }
 

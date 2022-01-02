@@ -19,8 +19,4 @@
         <EmbeddedResource Include="$(PkgRemora_Results)\lib\netstandard2.0\*.dll" Visible="false" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="HelperClassGenerators" />
-    </ItemGroup>
-
 </Project>
