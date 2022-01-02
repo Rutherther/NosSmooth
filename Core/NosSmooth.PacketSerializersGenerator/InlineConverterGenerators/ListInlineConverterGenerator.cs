@@ -129,7 +129,7 @@ public static Result<IReadOnlyList<{type.GetActualType()}>> {GetMethodName(type)
         // or the packet has more fields.
         while (stringEnumerator.IsOnLastToken() == false)
         {{
-            stringEnumerator.GetNextToken();
+            stringEnumerator.GetNextToken(out _);
         }}
 
         stringEnumerator.PopLevel();

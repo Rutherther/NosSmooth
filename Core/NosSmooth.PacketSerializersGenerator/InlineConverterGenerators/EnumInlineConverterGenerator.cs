@@ -66,7 +66,7 @@ public class EnumInlineConverterGenerator : IInlineConverterGenerator
 
         textWriter.WriteLine
         (
-            $"{Constants.HelperClass}.ParseEnum{typeSymbol?.ToString().TrimEnd('?').Replace('.', '_')}(typeConverter, stringEnumerator);"
+            $"{Constants.HelperClass}.ParseEnum{typeSymbol?.ToString().TrimEnd('?').Replace('.', '_')}(typeConverter, ref stringEnumerator);"
         );
         return null;
     }
@@ -80,23 +80,23 @@ public class EnumInlineConverterGenerator : IInlineConverterGenerator
             textWriter.WriteMultiline
             (
                 $@"
-public static Result<{type}?> ParseEnum{type.ToString().Replace('.', '_')}(IStringConverter typeConverter, PacketStringEnumerator stringEnumerator)
+public static Result<{type}?> ParseEnum{type.ToString().Replace('.', '_')}(IStringConverter typeConverter, ref PacketStringEnumerator stringEnumerator)
 {{
-    var tokenResult = stringEnumerator.GetNextToken();
+    var tokenResult = stringEnumerator.GetNextToken(out var packetToken);
     if (!tokenResult.IsSuccess)
     {{
         return Result<{type}?>.FromError(tokenResult);
     }}
 
-    var token = tokenResult.Entity.Token;
-    if (token == ""-"")
+    var token = packetToken.Token;
+    if (token[0] == '-')
     {{
         return Result<{type}?>.FromSuccess(null);
     }}
 
     if (!{underlyingType}.TryParse(token, out var val))
     {{
-        return new CouldNotConvertError(typeConverter, token, ""Could not convert as {type} in inline converter"");
+        return new CouldNotConvertError(typeConverter, token.ToString(), ""Could not convert as {type} in inline converter"");
     }}
 
     return ({type}?)val;

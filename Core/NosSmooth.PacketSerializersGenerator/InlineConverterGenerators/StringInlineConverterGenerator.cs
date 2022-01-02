@@ -30,7 +30,7 @@ public class StringInlineConverterGenerator : IInlineConverterGenerator
     /// <inheritdoc />
     public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol)
     {
-        textWriter.WriteLine($"{Constants.HelperClass}.ParseString(stringEnumerator);");
+        textWriter.WriteLine($"{Constants.HelperClass}.ParseString(ref stringEnumerator);");
         return null;
     }
 
@@ -40,15 +40,15 @@ public class StringInlineConverterGenerator : IInlineConverterGenerator
         textWriter.WriteLine
         (
             @"
-public static Result<string?> ParseString(PacketStringEnumerator stringEnumerator)
+public static Result<string?> ParseString(ref PacketStringEnumerator stringEnumerator)
 {{
-    var tokenResult = stringEnumerator.GetNextToken();
+    var tokenResult = stringEnumerator.GetNextToken(out var packetToken);
     if (!tokenResult.IsSuccess)
     {{
         return Result<string?>.FromError(tokenResult);
     }}
 
-    return tokenResult.Entity.Token;
+    return packetToken.Token.ToString();
 }}
 "
         );

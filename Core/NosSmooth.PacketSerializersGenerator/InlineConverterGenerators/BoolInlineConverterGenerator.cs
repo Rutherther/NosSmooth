@@ -44,7 +44,7 @@ public class BoolInlineConverterGenerator : IInlineConverterGenerator
     /// <inheritdoc />
     public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol)
     {
-        textWriter.WriteLine($"{Constants.HelperClass}.ParseBool(stringEnumerator);");
+        textWriter.WriteLine($"{Constants.HelperClass}.ParseBool(ref stringEnumerator);");
         return null;
     }
 
@@ -52,21 +52,21 @@ public class BoolInlineConverterGenerator : IInlineConverterGenerator
     public void GenerateHelperMethods(IndentedTextWriter textWriter)
     {
         textWriter.WriteLine(@"
-public static Result<bool?> ParseBool(PacketStringEnumerator stringEnumerator)
+public static Result<bool?> ParseBool(ref PacketStringEnumerator stringEnumerator)
 {{
-    var tokenResult = stringEnumerator.GetNextToken();
+    var tokenResult = stringEnumerator.GetNextToken(out var packetToken);
     if (!tokenResult.IsSuccess)
     {{
         return Result<bool?>.FromError(tokenResult);
     }}
 
-    var token = tokenResult.Entity.Token;
-    if (token == ""-"")
+    var token = packetToken.Token;
+    if (token[0] == '-')
     {{
         return Result<bool?>.FromSuccess(null);
     }}
 
-    return token == ""1"" ? true : false;
+    return token[0] == '1' ? true : false;
 }}
 ");
     }

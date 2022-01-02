@@ -48,7 +48,7 @@ public class FallbackInlineConverterGenerator : IInlineConverterGenerator
     {
         textWriter.WriteLine
         (
-            $"_stringSerializer.Deserialize<{(typeSyntax?.ToString() ?? typeSymbol!.ToString()).TrimEnd('?')}?>(stringEnumerator);"
+            $"_stringSerializer.Deserialize<{(typeSyntax?.ToString() ?? typeSymbol!.ToString()).TrimEnd('?')}?>(ref stringEnumerator);"
         );
         return null;
     }
