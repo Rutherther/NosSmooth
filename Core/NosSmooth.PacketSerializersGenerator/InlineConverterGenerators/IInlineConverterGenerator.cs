@@ -5,6 +5,8 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.CodeDom.Compiler;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NosSmooth.PacketSerializersGenerator.Data;
 using NosSmooth.PacketSerializersGenerator.Errors;
 
@@ -18,25 +20,29 @@ public interface IInlineConverterGenerator
     /// <summary>
     /// Whether the given parameter should be handled by this.
     /// </summary>
-    /// <param name="parameter">The parameter.</param>
-    /// <returns>Whethet to handle.</returns>
-    public bool ShouldHandle(ParameterInfo parameter);
+    /// <param name="typeSyntax">The type syntax.</param>
+    /// <param name="typeSymbol">The type symbol.</param>
+    /// <returns>Whether to handle.</returns>
+    public bool ShouldHandle(TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol);
 
     /// <summary>
     /// Generate the serializer part.
     /// </summary>
     /// <param name="textWriter">The text writer to write to.</param>
-    /// <param name="packet">The packet.</param>
+    /// <param name="variableName">The name of the variable.</param>
+    /// <param name="typeSyntax">The type syntax.</param>
+    /// <param name="typeSymbol">The type symbol.</param>
     /// <returns>An error, if any.</returns>
-    public IError? GenerateSerializerPart(IndentedTextWriter textWriter, PacketInfo packet);
+    public IError? GenerateSerializerPart(IndentedTextWriter textWriter, string variableName, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol);
 
     /// <summary>
     /// Generate the deserializer part.
     /// </summary>
     /// <param name="textWriter">The text writer to write to.</param>
-    /// <param name="packet">The packet.</param>
+    /// <param name="typeSyntax">The type syntax.</param>
+    /// <param name="typeSymbol">The type symbol.</param>
     /// <returns>An error, if any.</returns>
-    public IError? CallDeserialize(IndentedTextWriter textWriter, PacketInfo packet);
+    public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol);
 
     /// <summary>
     /// Generate helper methods to HelperClass.

@@ -20,6 +20,21 @@ public static class TypeSyntaxExtensions
     /// <returns>Whether the type syntax is nullable.</returns>
     public static bool IsNullable(this TypeSyntax typeSyntax)
     {
-        return typeSyntax is NullableTypeSyntax;
+        return typeSyntax is NullableTypeSyntax || typeSyntax.ToString().EndsWith("?");
+    }
+
+    /// <summary>
+    /// Gets the type name with ? if it is nullable.
+    /// </summary>
+    /// <param name="typeSyntax">The type.</param>
+    /// <returns>The actual name.</returns>
+    public static string GetActualType(this TypeSyntax typeSyntax)
+    {
+        if (typeSyntax.IsNullable())
+        {
+            return typeSyntax.ToString().TrimEnd('?') + '?';
+        }
+
+        return typeSyntax.ToString();
     }
 }

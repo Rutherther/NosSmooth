@@ -6,6 +6,7 @@
 
 using System.CodeDom.Compiler;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NosSmooth.PacketSerializersGenerator.Data;
 using NosSmooth.PacketSerializersGenerator.Errors;
 using NosSmooth.PacketSerializersGenerator.Extensions;
@@ -26,15 +27,20 @@ public class EnumInlineConverterGenerator : IInlineConverterGenerator
     }
 
     /// <inheritdoc />
-    public bool ShouldHandle(ParameterInfo parameter)
-        => parameter.Type.TypeKind == TypeKind.Enum;
+    public bool ShouldHandle(TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol)
+        => typeSymbol?.TypeKind == TypeKind.Enum;
 
     /// <inheritdoc />
-    public IError? GenerateSerializerPart(IndentedTextWriter textWriter, PacketInfo packet)
+    public IError? GenerateSerializerPart
+    (
+        IndentedTextWriter textWriter,
+        string variableName,
+        TypeSyntax? typeSyntax,
+        ITypeSymbol? typeSymbol
+    )
     {
-        var parameter = packet.Parameters.Current;
-        var underlyingType = ((INamedTypeSymbol)parameter.Type).EnumUnderlyingType!.ToString();
-        if (parameter.Nullable)
+        var underlyingType = ((INamedTypeSymbol)typeSymbol!).EnumUnderlyingType!.ToString();
+        if ((typeSyntax?.IsNullable() ?? false) || (typeSymbol?.IsNullable() ?? false))
         {
             textWriter.WriteLine("if (obj is null)");
             textWriter.WriteLine("{");
@@ -44,23 +50,24 @@ public class EnumInlineConverterGenerator : IInlineConverterGenerator
         }
         textWriter.WriteLine("{");
         textWriter.WriteLine
-            ($"builder.Append(({underlyingType})obj.{parameter.Name});");
+            ($"builder.Append(({underlyingType}){variableName});");
         textWriter.WriteLine("}");
 
         return null;
     }
 
     /// <inheritdoc />
-    public IError? CallDeserialize(IndentedTextWriter textWriter, PacketInfo packet)
+    public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol)
     {
-        var parameter = packet.Parameters.Current;
-        if (_enumTypes.All(x => x.ToString() != parameter.Type.ToString()))
+        if (_enumTypes.All(x => x.ToString() != typeSymbol!.ToString()))
         {
-            _enumTypes.Add(parameter.Type);
+            _enumTypes.Add(typeSymbol!);
         }
 
         textWriter.WriteLine
-            ($"{Constants.HelperClass}.ParseEnum{parameter.GetActualType().Replace('.', '_')}(this, stringEnumerator);");
+        (
+            $"{Constants.HelperClass}.ParseEnum{typeSymbol?.ToString().TrimEnd('?').Replace('.', '_')}(this, stringEnumerator);"
+        );
         return null;
     }
 

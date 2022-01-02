@@ -5,9 +5,9 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.CodeDom.Compiler;
-using NosSmooth.PacketSerializersGenerator.Data;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NosSmooth.PacketSerializersGenerator.Errors;
-using NosSmooth.PacketSerializersGenerator.Extensions;
 
 namespace NosSmooth.PacketSerializersGenerator.InlineConverterGenerators;
 
@@ -15,24 +15,34 @@ namespace NosSmooth.PacketSerializersGenerator.InlineConverterGenerators;
 public class FallbackInlineConverterGenerator : IInlineConverterGenerator
 {
     /// <inheritdoc />
-    public bool ShouldHandle(ParameterInfo parameter)
+    public bool ShouldHandle(TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol)
     {
         return true;
     }
 
     /// <inheritdoc />
-    public IError? GenerateSerializerPart(IndentedTextWriter textWriter, PacketInfo packet)
+    public IError? GenerateSerializerPart
+    (
+        IndentedTextWriter textWriter,
+        string variableName,
+        TypeSyntax? typeSyntax,
+        ITypeSymbol? typeSymbol
+    )
     {
-        var parameter = packet.Parameters.Current;
-        textWriter.WriteLine($"_typeConverterRepository.Serialize<{parameter.GetActualType()}>(obj.{parameter.Name}, builder);");
+        textWriter.WriteLine
+        (
+            $"_typeConverterRepository.Serialize<{(typeSyntax?.ToString() ?? typeSymbol!.ToString()).TrimEnd('?')}?>({variableName}, builder);"
+        );
         return null;
     }
 
     /// <inheritdoc />
-    public IError? CallDeserialize(IndentedTextWriter textWriter, PacketInfo packet)
+    public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol)
     {
-        var parameter = packet.Parameters.Current;
-        textWriter.WriteLine($"_typeConverterRepository.Deserialize<{parameter.GetNullableType()}>(stringEnumerator);");
+        textWriter.WriteLine
+        (
+            $"_typeConverterRepository.Deserialize<{(typeSyntax?.ToString() ?? typeSymbol!.ToString()).TrimEnd('?')}?>(stringEnumerator);"
+        );
         return null;
     }
 

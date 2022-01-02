@@ -5,6 +5,7 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NosSmooth.PacketSerializersGenerator.Extensions;
 
@@ -30,7 +31,27 @@ public static class TypeSymbolExtensions
             return false;
         }
 
+        if (typeSymbol.ToString().EndsWith("?"))
+        {
+            return true;
+        }
+
         // cannot determine if not nullable from reference type.
         return null;
+    }
+
+    /// <summary>
+    /// Gets the type name with ? if it is nullable.
+    /// </summary>
+    /// <param name="typeSymbol">The type.</param>
+    /// <returns>The actual name.</returns>
+    public static string GetActualType(this ITypeSymbol typeSymbol)
+    {
+        if (typeSymbol.IsNullable() ?? false)
+        {
+            return typeSymbol.ToString().TrimEnd('?') + '?';
+        }
+
+        return typeSymbol.ToString();
     }
 }

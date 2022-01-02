@@ -39,19 +39,20 @@ public class InlineTypeConverterGenerator
     /// <returns>An error, if any.</returns>
     public IError? CallDeserialize(IndentedTextWriter textWriter, PacketInfo packet)
     {
+        var parameter = packet.Parameters.Current;
         var shouldGenerateInline = packet.GenerateAttribute.GetIndexedValue<bool>(0);
         if (shouldGenerateInline)
         {
             foreach (var generator in _typeGenerators)
             {
-                if (generator.ShouldHandle(packet.Parameters.Current))
+                if (generator.ShouldHandle(parameter.Parameter.Type, parameter.Type))
                 {
-                    return generator.CallDeserialize(textWriter, packet);
+                    return generator.CallDeserialize(textWriter, parameter.Parameter.Type, parameter.Type);
                 }
             }
         }
 
-        return _fallbackInlineConverterGenerator.CallDeserialize(textWriter, packet);
+        return _fallbackInlineConverterGenerator.CallDeserialize(textWriter, parameter.Parameter.Type, parameter.Type);
     }
 
     /// <summary>
@@ -62,18 +63,20 @@ public class InlineTypeConverterGenerator
     /// <returns>An error, if any.</returns>
     public IError? Serialize(IndentedTextWriter textWriter, PacketInfo packet)
     {
+        var parameter = packet.Parameters.Current;
+        var variableName = "obj." + parameter.Name;
         var shouldGenerateInline = packet.GenerateAttribute.GetIndexedValue<bool>(0);
         if (shouldGenerateInline)
         {
             foreach (var generator in _typeGenerators)
             {
-                if (generator.ShouldHandle(packet.Parameters.Current))
+                if (generator.ShouldHandle(parameter.Parameter.Type, parameter.Type))
                 {
-                    return generator.GenerateSerializerPart(textWriter, packet);
+                    return generator.GenerateSerializerPart(textWriter, variableName, parameter.Parameter.Type, parameter.Type);
                 }
             }
         }
 
-        return _fallbackInlineConverterGenerator.GenerateSerializerPart(textWriter, packet);
+        return _fallbackInlineConverterGenerator.GenerateSerializerPart(textWriter, variableName, parameter.Parameter.Type, parameter.Type);
     }
 }
