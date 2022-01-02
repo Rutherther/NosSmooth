@@ -218,7 +218,7 @@ public class PacketConditionalIndexAttributeGenerator : IParameterGenerator
         }
 
         // serialize, check the error.
-        _inlineTypeConverterGenerators.SerializeAndCheck(textWriter, packetInfo);
+        _inlineTypeConverterGenerators.Serialize(textWriter, packetInfo);
 
         // pop inner separator level
         if (pushedLevel)
@@ -274,7 +274,7 @@ public class PacketConditionalIndexAttributeGenerator : IParameterGenerator
             pushedLevel = true;
         }
 
-        _inlineTypeConverterGenerators.DeserializeAndCheck(textWriter, packetInfo);
+        generator.DeserializeAndCheck(parameter, packetInfo, _inlineTypeConverterGenerators);
 
         if (!parameter.Nullable)
         {

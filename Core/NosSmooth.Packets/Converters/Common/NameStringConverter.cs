@@ -20,7 +20,7 @@ public class NameStringConverter : BaseTypeConverter<NameString>
     {
         if (obj is null)
         {
-            builder.Append("-");
+            builder.Append('-');
             return Result.FromSuccess();
         }
 

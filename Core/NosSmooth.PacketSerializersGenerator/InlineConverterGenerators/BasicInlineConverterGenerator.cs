@@ -5,6 +5,8 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.CodeDom.Compiler;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NosSmooth.PacketSerializersGenerator.Data;
 using NosSmooth.PacketSerializersGenerator.Errors;
 using NosSmooth.PacketSerializersGenerator.Extensions;
@@ -23,44 +25,70 @@ public class BasicInlineConverterGenerator : IInlineConverterGenerator
     public static IReadOnlyList<string> HandleTypes => new[] { "long", "ulong", "int", "uint", "short", "ushort", "byte", "sbyte" };
 
     /// <inheritdoc />
-    public bool ShouldHandle(ParameterInfo parameter)
-        => HandleTypes.Contains(parameter.Parameter.Type!.ToString());
+    public bool ShouldHandle(TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol)
+        => HandleTypes.Contains(typeSyntax?.ToString().TrimEnd('?')) || HandleTypes.Contains(typeSymbol?.ToString().TrimEnd('?'));
 
     /// <inheritdoc />
-    public IError? GenerateSerializerPart(IndentedTextWriter textWriter, PacketInfo packet)
+    public IError? GenerateSerializerPart(IndentedTextWriter textWriter, string variableName, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol)
     {
-        var parameter = packet.Parameters.Current;
+        if ((typeSyntax is not null && typeSyntax.IsNullable()) || (typeSymbol is not null && (typeSymbol.IsNullable() ?? false)))
+        {
+            textWriter.WriteLine($"if ({variableName} is null)");
+            textWriter.WriteLine("{");
+            textWriter.WriteLine("builder.Append('-');");
+            textWriter.WriteLine("}");
+            textWriter.WriteLine("else");
+        }
+        textWriter.WriteLine("{");
         textWriter.WriteLine
-            ($"builder.Append(obj.{parameter.Name}{(parameter.Nullable ? "?" : string.Empty)}.ToString() ?? \"-\");");
+            ($"builder.Append(({(typeSymbol?.ToString() ?? typeSyntax!.ToString()).TrimEnd('?')}){variableName});");
+        textWriter.WriteLine("}");
         return null;
     }
 
     /// <inheritdoc />
-    public IError? GenerateDeserializerPart(IndentedTextWriter textWriter, PacketInfo packet)
+    public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol)
     {
-        var parameter = packet.Parameters.Current;
-        var type = parameter.Parameter.Type!.ToString();
-        string isLastString = packet.Parameters.IsLast ? "true" : "false";
-        textWriter.WriteMultiline
-        (
-            $@"
-var {parameter.GetResultVariableName()} = stringEnumerator.GetNextToken();
-var {parameter.GetErrorVariableName()} = CheckDeserializationResult({parameter.GetResultVariableName()}, ""{parameter.Name}"", stringEnumerator, {isLastString});
-if ({parameter.GetErrorVariableName()} is not null)
-{{
-    return Result<{packet.Name}?>.FromError({parameter.GetErrorVariableName()}, {parameter.GetResultVariableName()});
-}}
-{parameter.GetVariableName()} = default;
-{parameter.GetNullableType()} {parameter.GetNullableVariableName()};
-if ({parameter.GetResultVariableName()}.Entity.Token == ""-"") {{
-    {parameter.GetNullableVariableName()} = null;
-}}
-else if (!{type}.TryParse({parameter.GetResultVariableName()}.Entity.Token, out {parameter.GetVariableName()})) {{
-    return new PacketParameterSerializerError(this, ""{parameter.Name}"", {parameter.GetResultVariableName()}, $""Could not convert {{{parameter.GetResultVariableName()}.Entity.Token}} as {type} in inline converter"");
-}}
-{parameter.GetNullableVariableName()} = {parameter.GetVariableName()};
-"
-        );
+        var type = typeSyntax is not null
+            ? typeSyntax.ToString().TrimEnd('?')
+            : typeSymbol?.ToString();
+        if (type is null)
+        {
+            throw new Exception("TypeSyntax or TypeSymbol has to be non null.");
+        }
+
+        textWriter.WriteLine($"{Constants.HelperClass}.ParseBasic{type}(typeConverter, stringEnumerator);");
         return null;
+    }
+
+    /// <inheritdoc />
+    public void GenerateHelperMethods(IndentedTextWriter textWriter)
+    {
+        foreach (var type in HandleTypes)
+        {
+            textWriter.WriteMultiline($@"
+public static Result<{type}?> ParseBasic{type}(ITypeConverter typeConverter, PacketStringEnumerator stringEnumerator)
+{{
+    var tokenResult = stringEnumerator.GetNextToken();
+    if (!tokenResult.IsSuccess)
+    {{
+        return Result<{type}?>.FromError(tokenResult);
+    }}
+
+    var token = tokenResult.Entity.Token;
+    if (token == ""-"")
+    {{
+        return Result<{type}?>.FromSuccess(null);
+    }}
+
+    if (!{type}.TryParse(token, out var val))
+    {{
+        return new CouldNotConvertError(typeConverter, token, ""Could not convert as {type} in inline converter"");
+    }}
+
+    return val;
+}}
+");
+        }
     }
 }

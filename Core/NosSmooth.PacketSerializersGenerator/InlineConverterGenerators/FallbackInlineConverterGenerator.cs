@@ -5,9 +5,9 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.CodeDom.Compiler;
-using NosSmooth.PacketSerializersGenerator.Data;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NosSmooth.PacketSerializersGenerator.Errors;
-using NosSmooth.PacketSerializersGenerator.Extensions;
 
 namespace NosSmooth.PacketSerializersGenerator.InlineConverterGenerators;
 
@@ -15,42 +15,47 @@ namespace NosSmooth.PacketSerializersGenerator.InlineConverterGenerators;
 public class FallbackInlineConverterGenerator : IInlineConverterGenerator
 {
     /// <inheritdoc />
-    public bool ShouldHandle(ParameterInfo parameter)
+    public bool ShouldHandle(TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol)
     {
         return true;
     }
 
     /// <inheritdoc />
-    public IError? GenerateSerializerPart(IndentedTextWriter textWriter, PacketInfo packet)
+    public IError? GenerateSerializerPart
+    (
+        IndentedTextWriter textWriter,
+        string variableName,
+        TypeSyntax? typeSyntax,
+        ITypeSymbol? typeSymbol
+    )
     {
-        var parameter = packet.Parameters.Current;
-        textWriter.WriteMultiline
+        var resultName = $"{variableName.Replace(".", string.Empty)}Result";
+        textWriter.WriteLine
         (
-            $@"
-var {parameter.GetResultVariableName()} = _typeConverterRepository.Serialize<{parameter.GetActualType()}>(obj.{parameter.Name}, builder);
-if (!{parameter.GetResultVariableName()}.IsSuccess)
-{{
-    return Result.FromError(new PacketParameterSerializerError(this, ""{parameter.Name}"", {parameter.GetResultVariableName()}), {parameter.GetResultVariableName()});
-}}
-"
+            $"var {resultName} = _typeConverterRepository.Serialize<{(typeSyntax?.ToString() ?? typeSymbol!.ToString()).TrimEnd('?')}?>({variableName}, builder);"
+        );
+        textWriter.WriteLine($"if (!{resultName}.IsSuccess)");
+        textWriter.WriteLine("{");
+        textWriter.Indent++;
+        textWriter.WriteLine($"return Result.FromError(new PacketParameterSerializerError(this, \"{variableName}\", {resultName}), {resultName});");
+        textWriter.Indent--;
+        textWriter.WriteLine("}");
+        return null;
+    }
+
+    /// <inheritdoc />
+    public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol)
+    {
+        textWriter.WriteLine
+        (
+            $"_typeConverterRepository.Deserialize<{(typeSyntax?.ToString() ?? typeSymbol!.ToString()).TrimEnd('?')}?>(stringEnumerator);"
         );
         return null;
     }
 
     /// <inheritdoc />
-    public IError? GenerateDeserializerPart(IndentedTextWriter textWriter, PacketInfo packet)
+    public void GenerateHelperMethods(IndentedTextWriter textWriter)
     {
-        var parameter = packet.Parameters.Current;
-        string isLastString = packet.Parameters.IsLast ? "true" : "false";
-        textWriter.WriteMultiline($@"
-var {parameter.GetResultVariableName()} = _typeConverterRepository.Deserialize<{parameter.GetNullableType()}>(stringEnumerator);
-var {parameter.GetErrorVariableName()} = CheckDeserializationResult({parameter.GetResultVariableName()}, ""{parameter.Name}"", stringEnumerator, {isLastString});
-if ({parameter.GetErrorVariableName()} is not null)
-{{
-    return Result<{packet.Name}?>.FromError({parameter.GetErrorVariableName()}, {parameter.GetResultVariableName()});
-}}
-var {parameter.GetNullableVariableName()} = {parameter.GetResultVariableName()}.Entity;
-");
-        return null;
+        // ignore
     }
 }

@@ -20,7 +20,7 @@ public class UpgradeRareSubPacketConverter : BaseTypeConverter<UpgradeRareSubPac
     {
         if (obj is null)
         {
-            builder.Append("-");
+            builder.Append('-');
             return Result.FromSuccess();
         }
         builder.Append($"{obj.Upgrade}{obj.Rare}");

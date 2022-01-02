@@ -77,7 +77,7 @@ public class PacketIndexAttributeGenerator : IParameterGenerator
         }
 
         // serialize, check the error.
-        _inlineTypeConverterGenerators.SerializeAndCheck(textWriter, packetInfo);
+        _inlineTypeConverterGenerators.Serialize(textWriter, packetInfo);
 
         // pop inner separator level
         if (pushedLevel)
@@ -124,11 +124,11 @@ public class PacketIndexAttributeGenerator : IParameterGenerator
             pushedLevel = true;
         }
 
-        _inlineTypeConverterGenerators.DeserializeAndCheck(textWriter, packetInfo);
-
+        generator.DeserializeAndCheck(parameter, packetInfo, _inlineTypeConverterGenerators);
         if (!parameter.Nullable)
         {
-            generator.CheckNullError(parameter.GetNullableVariableName(), parameter.GetResultVariableName(), parameter.Name);
+            generator.CheckNullError
+                (parameter.GetNullableVariableName(), parameter.GetResultVariableName(), parameter.Name);
         }
 
         generator.AssignLocalVariable(parameter, false);

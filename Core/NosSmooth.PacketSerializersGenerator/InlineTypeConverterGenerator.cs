@@ -5,6 +5,8 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.CodeDom.Compiler;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NosSmooth.PacketSerializersGenerator.Data;
 using NosSmooth.PacketSerializersGenerator.Errors;
 using NosSmooth.PacketSerializersGenerator.Extensions;
@@ -32,48 +34,107 @@ public class InlineTypeConverterGenerator
     }
 
     /// <summary>
-    /// Generates deserialize and check code.
+    /// Generates deserialize call.
     /// </summary>
     /// <param name="textWriter">The text writer.</param>
     /// <param name="packet">The packet.</param>
     /// <returns>An error, if any.</returns>
-    public IError? DeserializeAndCheck(IndentedTextWriter textWriter, PacketInfo packet)
+    public IError? CallDeserialize(IndentedTextWriter textWriter, PacketInfo packet)
     {
+        var parameter = packet.Parameters.Current;
         var shouldGenerateInline = packet.GenerateAttribute.GetIndexedValue<bool>(0);
         if (shouldGenerateInline)
         {
             foreach (var generator in _typeGenerators)
             {
-                if (generator.ShouldHandle(packet.Parameters.Current))
+                if (generator.ShouldHandle(parameter.Parameter.Type, parameter.Type))
                 {
-                    return generator.GenerateDeserializerPart(textWriter, packet);
+                    return generator.CallDeserialize(textWriter, parameter.Parameter.Type, parameter.Type);
                 }
             }
         }
 
-        return _fallbackInlineConverterGenerator.GenerateDeserializerPart(textWriter, packet);
+        return _fallbackInlineConverterGenerator.CallDeserialize(textWriter, parameter.Parameter.Type, parameter.Type);
     }
 
     /// <summary>
-    /// Generates serialize and check code.
+    /// Generates deserialize call.
+    /// </summary>
+    /// <param name="textWriter">The text writer.</param>
+    /// <param name="typeSyntax">The type syntax.</param>
+    /// <param name="typeSymbol">The type symbol.</param>
+    /// <returns>An error, if any.</returns>
+    public IError? CallDeserialize
+    (
+        IndentedTextWriter textWriter,
+        TypeSyntax? typeSyntax,
+        ITypeSymbol? typeSymbol
+    )
+    {
+        foreach (var generator in _typeGenerators)
+        {
+            if (generator.ShouldHandle(typeSyntax, typeSymbol))
+            {
+                return generator.CallDeserialize(textWriter, typeSyntax, typeSymbol);
+            }
+        }
+
+        return _fallbackInlineConverterGenerator.CallDeserialize(textWriter, typeSyntax, typeSymbol);
+    }
+
+    /// <summary>
+    /// Generates serialize code.
     /// </summary>
     /// <param name="textWriter">The text writer.</param>
     /// <param name="packet">The packet.</param>
     /// <returns>An error, if any.</returns>
-    public IError? SerializeAndCheck(IndentedTextWriter textWriter, PacketInfo packet)
+    public IError? Serialize(IndentedTextWriter textWriter, PacketInfo packet)
     {
+        var parameter = packet.Parameters.Current;
+        var variableName = "obj." + parameter.Name;
         var shouldGenerateInline = packet.GenerateAttribute.GetIndexedValue<bool>(0);
         if (shouldGenerateInline)
         {
             foreach (var generator in _typeGenerators)
             {
-                if (generator.ShouldHandle(packet.Parameters.Current))
+                if (generator.ShouldHandle(parameter.Parameter.Type, parameter.Type))
                 {
-                    return generator.GenerateSerializerPart(textWriter, packet);
+                    return generator.GenerateSerializerPart
+                        (textWriter, variableName, parameter.Parameter.Type, parameter.Type);
                 }
             }
         }
 
-        return _fallbackInlineConverterGenerator.GenerateSerializerPart(textWriter, packet);
+        return _fallbackInlineConverterGenerator.GenerateSerializerPart
+            (textWriter, variableName, parameter.Parameter.Type, parameter.Type);
+    }
+
+    /// <summary>
+    /// Generates serialize code.
+    /// </summary>
+    /// <param name="textWriter">The text writer.</param>
+    /// <param name="variableName">The name of the variable.</param>
+    /// <param name="typeSyntax">The type syntax.</param>
+    /// <param name="typeSymbol">The type symbol.</param>
+    /// <returns>An error, if any.</returns>
+    public IError? Serialize
+    (
+        IndentedTextWriter textWriter,
+        string variableName,
+        TypeSyntax? typeSyntax,
+        ITypeSymbol? typeSymbol
+    )
+    {
+        foreach (var generator in _typeGenerators)
+        {
+            if (generator.ShouldHandle(typeSyntax, typeSymbol))
+            {
+                return generator.GenerateSerializerPart
+                    (textWriter, variableName, typeSyntax, typeSymbol);
+            }
+        }
+
+        return _fallbackInlineConverterGenerator.GenerateSerializerPart
+            (textWriter, variableName, typeSyntax, typeSymbol);
     }
 }

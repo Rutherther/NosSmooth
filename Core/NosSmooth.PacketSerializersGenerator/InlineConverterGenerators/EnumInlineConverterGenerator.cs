@@ -6,6 +6,7 @@
 
 using System.CodeDom.Compiler;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NosSmooth.PacketSerializersGenerator.Data;
 using NosSmooth.PacketSerializersGenerator.Errors;
 using NosSmooth.PacketSerializersGenerator.Extensions;
@@ -15,47 +16,93 @@ namespace NosSmooth.PacketSerializersGenerator.InlineConverterGenerators;
 /// <inheritdoc />
 public class EnumInlineConverterGenerator : IInlineConverterGenerator
 {
-    /// <inheritdoc />
-    public bool ShouldHandle(ParameterInfo parameter)
-        => parameter.Type.TypeKind == TypeKind.Enum;
+    private readonly List<ITypeSymbol> _enumTypes;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EnumInlineConverterGenerator"/> class.
+    /// </summary>
+    public EnumInlineConverterGenerator()
+    {
+        _enumTypes = new List<ITypeSymbol>();
+    }
 
     /// <inheritdoc />
-    public IError? GenerateSerializerPart(IndentedTextWriter textWriter, PacketInfo packet)
+    public bool ShouldHandle(TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol)
+        => typeSymbol?.TypeKind == TypeKind.Enum;
+
+    /// <inheritdoc />
+    public IError? GenerateSerializerPart
+    (
+        IndentedTextWriter textWriter,
+        string variableName,
+        TypeSyntax? typeSyntax,
+        ITypeSymbol? typeSymbol
+    )
     {
-        var parameter = packet.Parameters.Current;
-        var underlyingType = ((INamedTypeSymbol)parameter.Type).EnumUnderlyingType!.ToString();
+        var underlyingType = ((INamedTypeSymbol)typeSymbol!).EnumUnderlyingType!.ToString();
+        if ((typeSyntax?.IsNullable() ?? false) || (typeSymbol?.IsNullable() ?? false))
+        {
+            textWriter.WriteLine("if (obj is null)");
+            textWriter.WriteLine("{");
+            textWriter.WriteLine("builder.Append('-');");
+            textWriter.WriteLine("}");
+            textWriter.WriteLine("else");
+        }
+        textWriter.WriteLine("{");
         textWriter.WriteLine
-            ($"builder.Append((({underlyingType}?)obj.{parameter.Name}{(parameter.Nullable ? "?" : string.Empty)}).ToString() ?? \"-\");");
+            ($"builder.Append(({underlyingType}){variableName});");
+        textWriter.WriteLine("}");
+
         return null;
     }
 
     /// <inheritdoc />
-    public IError? GenerateDeserializerPart(IndentedTextWriter textWriter, PacketInfo packet)
+    public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol)
     {
-        var parameter = packet.Parameters.Current;
-        var underlyingType = ((INamedTypeSymbol)parameter.Type).EnumUnderlyingType!.ToString();
-        string isLastString = packet.Parameters.IsLast ? "true" : "false";
-        textWriter.WriteMultiline
+        if (_enumTypes.All(x => x.ToString() != typeSymbol!.ToString()))
+        {
+            _enumTypes.Add(typeSymbol!);
+        }
+
+        textWriter.WriteLine
         (
-            $@"
-var {parameter.GetResultVariableName()} = stringEnumerator.GetNextToken();
-var {parameter.GetErrorVariableName()} = CheckDeserializationResult({parameter.GetResultVariableName()}, ""{parameter.Name}"", stringEnumerator, {isLastString});
-if ({parameter.GetErrorVariableName()} is not null)
-{{
-    return Result<{packet.Name}?>.FromError({parameter.GetErrorVariableName()}, {parameter.GetResultVariableName()});
-}}
-{parameter.GetVariableName()} = default;
-{underlyingType} {parameter.GetVariableName()}Underlying = default;
-{parameter.GetNullableType()} {parameter.GetNullableVariableName()};
-if ({parameter.GetResultVariableName()}.Entity.Token == ""-"") {{
-    {parameter.GetNullableVariableName()} = null;
-}}
-else if (!{underlyingType}.TryParse({parameter.GetResultVariableName()}.Entity.Token, out {parameter.GetVariableName()}Underlying)) {{
-    return new PacketParameterSerializerError(this, ""{parameter.Name}"", {parameter.GetResultVariableName()}, $""Could not convert {{{parameter.GetResultVariableName()}.Entity.Token}} as {underlyingType} in inline converter"");
-}}
-{parameter.GetNullableVariableName()} = ({parameter.GetNullableType()}){parameter.GetVariableName()}Underlying;
-"
+            $"{Constants.HelperClass}.ParseEnum{typeSymbol?.ToString().TrimEnd('?').Replace('.', '_')}(typeConverter, stringEnumerator);"
         );
         return null;
+    }
+
+    /// <inheritdoc />
+    public void GenerateHelperMethods(IndentedTextWriter textWriter)
+    {
+        foreach (var type in _enumTypes)
+        {
+            var underlyingType = ((INamedTypeSymbol)type).EnumUnderlyingType!.ToString();
+            textWriter.WriteMultiline
+            (
+                $@"
+public static Result<{type}?> ParseEnum{type.ToString().Replace('.', '_')}(ITypeConverter typeConverter, PacketStringEnumerator stringEnumerator)
+{{
+    var tokenResult = stringEnumerator.GetNextToken();
+    if (!tokenResult.IsSuccess)
+    {{
+        return Result<{type}?>.FromError(tokenResult);
+    }}
+
+    var token = tokenResult.Entity.Token;
+    if (token == ""-"")
+    {{
+        return Result<{type}?>.FromSuccess(null);
+    }}
+
+    if (!{underlyingType}.TryParse(token, out var val))
+    {{
+        return new CouldNotConvertError(typeConverter, token, ""Could not convert as {type} in inline converter"");
+    }}
+
+    return ({type}?)val;
+}}
+"
+            );
+        }
     }
 }

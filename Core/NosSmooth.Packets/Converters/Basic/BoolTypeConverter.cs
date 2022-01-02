@@ -17,7 +17,7 @@ public class BoolTypeConverter : BaseTypeConverter<bool>
     /// <inheritdoc />
     public override Result Serialize(bool obj, PacketStringBuilder builder)
     {
-        builder.Append(obj ? "1" : "0");
+        builder.Append(obj ? '1' : '0');
         return Result.FromSuccess();
     }
 
