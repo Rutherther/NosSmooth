@@ -103,16 +103,28 @@ public class PacketTypesRepository : IPacketTypesRepository
             return _headerToPacket[preferredSource][header];
         }
 
-        var foundPackets = _headerToPacket.Values
-            .Where(x => x.ContainsKey(header))
-            .Select(x => x[header]).ToArray();
-
-        return foundPackets.Length switch
+        PacketInfo? info = null;
+        foreach (var dict in _headerToPacket.Values)
         {
-            1 => foundPackets[0],
-            0 => new PacketConverterNotFoundError(header),
-            _ => new AmbiguousHeaderError(header, null, foundPackets)
-        };
+            if (dict.ContainsKey(header))
+            {
+                if (info is null)
+                {
+                    info = dict[header];
+                }
+                else
+                {
+                    return new AmbiguousHeaderError(header, null, new PacketInfo[] { dict[header], info });
+                }
+            }
+        }
+
+        if (info is null)
+        {
+            return new PacketConverterNotFoundError(header);
+        }
+
+        return info;
     }
 
     /// <summary>
