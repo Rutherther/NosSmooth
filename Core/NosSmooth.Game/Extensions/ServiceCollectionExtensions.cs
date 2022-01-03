@@ -11,7 +11,6 @@ using NosSmooth.Game.Apis;
 using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.PacketHandlers.Characters;
 using NosSmooth.Game.PacketHandlers.Entities;
-using NosSmooth.Game.PacketHandlers.Login;
 
 namespace NosSmooth.Game.Extensions;
 
@@ -37,8 +36,7 @@ public static class ServiceCollectionExtensions
             .AddPacketResponder<CharacterInitResponder>()
             .AddPacketResponder<SkillResponder>()
             .AddPacketResponder<WalkResponder>()
-            .AddPacketResponder<SkillUsedResponder>()
-            .AddPacketResponder<CListPacketResponder>();
+            .AddPacketResponder<SkillUsedResponder>();
 
         serviceCollection
             .AddTransient<NostaleChatPacketApi>()

@@ -24,7 +24,7 @@ namespace NosSmooth.Game.Data.Entities;
 /// <param name="Faction"></param>
 /// <param name="Size"></param>
 /// <param name="AuthorityType"></param>
-/// <param name="Gender"></param>
+/// <param name="Sex"></param>
 /// <param name="HairStyle"></param>
 /// <param name="HairColor"></param>
 /// <param name="Class"></param>
@@ -47,7 +47,7 @@ public record Player
     FactionType? Faction = default,
     short Size = default,
     AuthorityType AuthorityType = default,
-    SexType Gender = default,
+    SexType Sex = default,
     HairStyle HairStyle = default,
     HairColor HairColor = default,
     PlayerClass Class = default,

@@ -44,21 +44,21 @@ public class CharacterInitResponder : IPacketResponder<CInfoPacket>, IPacketResp
         {
             _game.Character = character = character with
             {
-                /*Id = packet.CharacterId,
+                Id = packet.CharacterId,
                 AuthorityType = packet.Authority,
-                Gender = packet.Gender,
+                Sex = packet.Sex,
                 HairStyle = packet.HairStyle,
                 HairColor = packet.HairColor,
                 Class = packet.Class,
                 Icon = packet.Icon,
                 Compliment = packet.Compliment,
-                Morph = (character.Morph ?? new Morph(packet.Morph, packet.MorphUpgrade)) with
+                Morph = (character.Morph ?? new Morph(packet.MorphVNum, packet.MorphUpgrade)) with
                 {
-                    VNum = packet.Morph, Upgrade = packet.MorphUpgrade
+                    VNum = packet.MorphVNum, Upgrade = packet.MorphUpgrade
                 },
                 ArenaWinner = packet.ArenaWinner,
-                Invisible = packet.Invisible,
-                Family = new Family(packet.FamilyId, packet.FamilyName, packet.FamilyLevel)*/
+                Invisible = packet.IsInvisible,
+                Family = new Family(packet.FamilyId, packet.FamilyName, packet.FamilyLevel)
             };
         }
 

@@ -11,6 +11,7 @@ using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.Events.Players;
 using NosSmooth.Game.Extensions;
 using NosSmooth.Packets.Enums;
+using NosSmooth.Packets.Packets.Server.Battle;
 using NosSmooth.Packets.Packets.Server.Skills;
 using Remora.Results;
 
@@ -41,14 +42,9 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
         var packet = packetArgs.Packet;
         var character = _game.Character;
 
-        if (packet.EntityType != EntityType.Player)
+        if (character is not null && character.Id == packet.CasterEntityId && character.Skills is not null)
         {
-            return Result.FromSuccess();
-        }
-
-        if (character is not null && character.Id != packet.VisualId && character.Skills is not null)
-        {
-            var skillResult = character.Skills.TryGetSkill(packet.SkillVnum);
+            var skillResult = character.Skills.TryGetSkill(packet.SkillVNum);
 
             if (skillResult.IsDefined(out var skillEntity))
             {
@@ -63,8 +59,8 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
                     character,
                     character.Id,
                     skillResult.IsSuccess ? skillEntity : null,
-                    packet.SkillVnum,
-                    packet.TargetId,
+                    packet.SkillVNum,
+                    packet.TargetEntityId,
                     new Position { X = packet.PositionX, Y = packet.PositionY }
                 ),
                 ct);
@@ -76,10 +72,10 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
                 new SkillUsedEvent
                 (
                     null,
-                    packet.VisualId,
+                    packet.CasterEntityId,
                     null,
-                    packet.SkillVnum,
-                    packet.TargetId,
+                    packet.SkillVNum,
+                    packet.TargetEntityId,
                     new Position
                     {
                         X = packet.PositionX, Y = packet.PositionY
