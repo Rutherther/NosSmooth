@@ -22,6 +22,7 @@ public class TypeConverterRepository : ITypeConverterRepository
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ConcurrentDictionary<Type, ITypeConverter?> _typeConverters;
+    private readonly ConcurrentDictionary<Type, ISpecialTypeConverter?> _specialConverter;
     private IReadOnlyList<ISpecialTypeConverter>? _specialTypeConverters;
 
     /// <summary>
@@ -31,6 +32,7 @@ public class TypeConverterRepository : ITypeConverterRepository
     public TypeConverterRepository(IServiceProvider serviceProvider)
     {
         _typeConverters = new ConcurrentDictionary<Type, ITypeConverter?>();
+        _specialConverter = new ConcurrentDictionary<Type, ISpecialTypeConverter?>();
         _specialTypeConverters = null;
         _serviceProvider = serviceProvider;
     }
@@ -42,11 +44,15 @@ public class TypeConverterRepository : ITypeConverterRepository
     /// <returns>The type converter or an error.</returns>
     public Result<ITypeConverter> GetTypeConverter(Type type)
     {
-        var typeConverter = _typeConverters.GetOrAdd(type, (getType) =>
-        {
-            var converterType = typeof(ITypeConverter<>).MakeGenericType(type);
-            return (ITypeConverter?)_serviceProvider.GetService(converterType);
-        });
+        var typeConverter = _typeConverters.GetOrAdd
+        (
+            type,
+            (getType) =>
+            {
+                var converterType = typeof(ITypeConverter<>).MakeGenericType(type);
+                return (ITypeConverter?)_serviceProvider.GetService(converterType);
+            }
+        );
 
         if (typeConverter is null)
         {
@@ -63,7 +69,8 @@ public class TypeConverterRepository : ITypeConverterRepository
     /// <returns>The type converter or an error.</returns>
     public Result<ITypeConverter<TParseType>> GetTypeConverter<TParseType>()
     {
-        var typeConverter = _typeConverters.GetOrAdd(
+        var typeConverter = _typeConverters.GetOrAdd
+        (
             typeof(TParseType),
             _ => _serviceProvider.GetService<ITypeConverter<TParseType>>()
         );
@@ -216,19 +223,23 @@ public class TypeConverterRepository : ITypeConverterRepository
 
     private ISpecialTypeConverter? GetSpecialConverter(Type type)
     {
-        if (_specialTypeConverters is null)
-        {
-            _specialTypeConverters = _serviceProvider.GetServices<ISpecialTypeConverter>().ToList();
-        }
-
-        foreach (var specialConverter in _specialTypeConverters)
-        {
-            if (specialConverter.ShouldHandle(type))
+        return _specialConverter.GetOrAdd
+        (
+            type,
+            (t) =>
             {
-                return specialConverter;
-            }
-        }
+                _specialTypeConverters ??= _serviceProvider.GetServices<ISpecialTypeConverter>().ToList();
 
-        return null;
+                foreach (var specialConverter in _specialTypeConverters)
+                {
+                    if (specialConverter.ShouldHandle(t))
+                    {
+                        return specialConverter;
+                    }
+                }
+
+                return null;
+            }
+        );
     }
 }
