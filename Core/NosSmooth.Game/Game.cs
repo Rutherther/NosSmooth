@@ -25,8 +25,14 @@ public class Game
     /// <param name="options">The options for the game.</param>
     public Game(IOptions<GameOptions> options)
     {
+        Semaphores = new GameSemaphores();
         _options = options.Value;
     }
+
+    /// <summary>
+    /// Gets the game semaphores.
+    /// </summary>
+    internal GameSemaphores Semaphores { get; }
 
     /// <summary>
     /// Gets the playing character of the client.
@@ -63,30 +69,107 @@ public class Game
     internal CancellationTokenSource? MapChanged { get; private set; }
 
     /// <summary>
-    /// Gets the set semaphore used for changing internal fields.
+    /// Creates the character if it is null, or updates the current character.
     /// </summary>
-    internal SemaphoreSlim SetSemaphore { get; } = new SemaphoreSlim(1, 1);
+    /// <param name="create">The function for creating the character.</param>
+    /// <param name="update">The function for updating the character.</param>
+    /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the character.</param>
+    /// <param name="ct">The cancellation token for cancelling the operation.</param>
+    /// <returns>The updated character.</returns>
+    internal async Task<Character> CreateOrUpdateCharacterAsync
+    (
+        Func<Character> create,
+        Func<Character, Character> update,
+        bool releaseSemaphore = true,
+        CancellationToken ct = default
+    )
+    {
+        return await CreateOrUpdateAsync
+        (
+            GameSemaphoreType.Character,
+            () => Character,
+            c => Character = c,
+            create,
+            update,
+            releaseSemaphore,
+            ct
+        );
+    }
 
     /// <summary>
-    /// Ensures that Character is not null.
+    /// Creates the map if it is null, or updates the current map.
     /// </summary>
-    /// <param name="releaseSemaphore">Whether to release the semaphore.</param>
+    /// <param name="create">The function for creating the map.</param>
+    /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the map.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
-    /// <returns>A Task that may or may not have succeeded.</returns>
-    internal async Task<Character> EnsureCharacterCreatedAsync(bool releaseSemaphore, CancellationToken ct = default)
+    /// <returns>The updated character.</returns>
+    internal async Task<Map> CreateMapAsync
+    (
+        Func<Map> create,
+        bool releaseSemaphore = true,
+        CancellationToken ct = default
+    )
     {
-        await SetSemaphore.WaitAsync(ct);
-        Character? character = Character;
-        if (Character is null)
-        {
-            Character = character = new Character();
-        }
+        return await CreateAsync
+        (
+            GameSemaphoreType.Map,
+            m => CurrentMap = m,
+            create,
+            releaseSemaphore,
+            ct
+        );
+    }
 
+    private async Task<T> CreateAsync<T>
+    (
+        GameSemaphoreType type,
+        Action<T> set,
+        Func<T> create,
+        bool releaseSemaphore = true,
+        CancellationToken ct = default
+    )
+    {
+        await Semaphores.AcquireSemaphore(type, ct);
+
+        var current = create();
+        set(current);
         if (releaseSemaphore)
         {
-            SetSemaphore.Release();
+            Semaphores.ReleaseSemaphore(type);
         }
 
-        return character!;
+        return current;
+    }
+
+    private async Task<T> CreateOrUpdateAsync<T>
+    (
+        GameSemaphoreType type,
+        Func<T?> get,
+        Action<T> set,
+        Func<T> create,
+        Func<T, T> update,
+        bool releaseSemaphore = true,
+        CancellationToken ct = default
+    )
+    {
+        await Semaphores.AcquireSemaphore(type, ct);
+
+        var current = get();
+        if (current is null)
+        {
+            current = create();
+        }
+        else
+        {
+            current = update(current);
+        }
+
+        set(current);
+        if (releaseSemaphore)
+        {
+            Semaphores.ReleaseSemaphore(type);
+        }
+
+        return current;
     }
 }

@@ -5,6 +5,7 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using NosSmooth.Core.Packets;
+using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Info;
 using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.Events.Entities;
@@ -36,6 +37,7 @@ public class WalkResponder : IPacketResponder<WalkPacket>
     public async Task<Result> Respond(PacketEventArgs<WalkPacket> packetArgs, CancellationToken ct = default)
     {
         var character = _game.Character;
+        var packet = packetArgs.Packet;
         if (character is not null && character.Position is not null)
         {
             var oldPosition = new Position
@@ -44,13 +46,36 @@ public class WalkResponder : IPacketResponder<WalkPacket>
                 Y = character.Position.Y
             };
 
-            character.Position.X = packetArgs.Packet.PositionX;
-            character.Position.Y = packetArgs.Packet.PositionY;
+            character.Position.X = packet.PositionX;
+            character.Position.Y = packet.PositionY;
 
             return await _eventDispatcher.DispatchEvent
             (
                 new MovedEvent(character, character.Id, oldPosition, character.Position),
                 ct
+            );
+        }
+        else if (character?.Position is null)
+        {
+            await _game.CreateOrUpdateCharacterAsync
+            (
+                () => new Character
+                (
+                    Position: new Position()
+                    {
+                        X = packet.PositionX,
+                        Y = packet.PositionY
+                    }
+                ),
+                (c) => c with
+                {
+                    Position = new Position()
+                    {
+                        X = packet.PositionX,
+                        Y = packet.PositionY
+                    }
+                },
+                ct: ct
             );
         }
 

@@ -39,9 +39,9 @@ public class SkillResponder : IPacketResponder<SkiPacket>
 
         Skill primarySkill, secondarySkill;
 
-        var character = await _game.EnsureCharacterCreatedAsync(false, ct);
+        var character = _game.Character;
 
-        if (packet.PrimarySkillId == character.Skills?.PrimarySkill.SkillVNum)
+        if (character is not null && packet.PrimarySkillId == character.Skills?.PrimarySkill.SkillVNum)
         {
             primarySkill = character.Skills.PrimarySkill;
         }
@@ -50,11 +50,11 @@ public class SkillResponder : IPacketResponder<SkiPacket>
             primarySkill = new Skill(packet.PrimarySkillId);
         }
 
-        if (packet.PrimarySkillId == packet.SecondarySkillId)
+        if (character is not null && packet.PrimarySkillId == packet.SecondarySkillId)
         {
             secondarySkill = primarySkill;
         }
-        else if (packet.SecondarySkillId == character.Skills?.SecondarySkill.SkillVNum)
+        else if (character is not null && packet.SecondarySkillId == character.Skills?.SecondarySkill.SkillVNum)
         {
             secondarySkill = character.Skills.SecondarySkill;
         }
@@ -64,11 +64,13 @@ public class SkillResponder : IPacketResponder<SkiPacket>
         }
 
         var skillsFromPacket = packet.SkillSubPackets?.Select(x => x.SkillId).ToList() ?? new List<long>();
-        var skillsFromCharacter = character.Skills is null ? new List<long>() : character.Skills.OtherSkills.Select(x => x.SkillVNum).ToList();
+        var skillsFromCharacter = character?.Skills is null
+            ? new List<long>()
+            : character.Skills.OtherSkills.Select(x => x.SkillVNum).ToList();
         var newSkills = skillsFromPacket.Except(skillsFromCharacter);
         var oldSkills = skillsFromCharacter.Except(skillsFromPacket);
 
-        var otherSkillsFromCharacter = new List<Skill>(character.Skills?.OtherSkills ?? new Skill[] { });
+        var otherSkillsFromCharacter = new List<Skill>(character?.Skills?.OtherSkills ?? new Skill[] { });
         otherSkillsFromCharacter.RemoveAll(x => oldSkills.Contains(x.SkillVNum));
 
         foreach (var newSkill in newSkills)
@@ -78,12 +80,13 @@ public class SkillResponder : IPacketResponder<SkiPacket>
 
         var skills = new Skills(primarySkill, secondarySkill, otherSkillsFromCharacter);
 
-        _game.Character = character with
-        {
-            Skills = skills
-        };
+        await _game.CreateOrUpdateCharacterAsync
+        (
+            () => new Character(Skills: skills),
+            c => c with { Skills = skills },
+            ct: ct
+        );
 
-        _game.SetSemaphore.Release();
         await _eventDispatcher.DispatchEvent(new SkillsReceivedEvent(skills), ct);
 
         return Result.FromSuccess();
