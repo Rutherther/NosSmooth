@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.ObjectModel;
 using NosSmooth.Game.Data.Info;
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Players;
@@ -56,7 +57,8 @@ public record Player
     Morph? Morph = default,
     bool? ArenaWinner = default,
     bool? Invisible = default,
-    long? Reputation = default
+    long? Reputation = default,
+    IReadOnlyList<long>? EffectsVNums = default
 ) : ILivingEntity
 {
     /// <inheritdoc/>

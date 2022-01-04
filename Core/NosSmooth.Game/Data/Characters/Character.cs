@@ -35,7 +35,7 @@ namespace NosSmooth.Game.Data.Characters;
 /// <param name="Faction"></param>
 /// <param name="Size"></param>
 /// <param name="AuthorityType"></param>
-/// <param name="Gender"></param>
+/// <param name="Sex"></param>
 /// <param name="HairStyle"></param>
 /// <param name="HairColor"></param>
 /// <param name="Class"></param>
@@ -75,7 +75,8 @@ public record Character
     Morph? Morph = default,
     bool? ArenaWinner = default,
     bool? Invisible = default,
-    long? Reputation = default
+    long? Reputation = default,
+    IReadOnlyList<long>? EffectsVNums = default
 ) : Player(
     Id,
     Name,
@@ -98,5 +99,6 @@ public record Character
     Morph,
     ArenaWinner,
     Invisible,
-    Reputation
+    Reputation,
+    EffectsVNums
 );

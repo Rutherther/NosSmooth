@@ -35,7 +35,8 @@ public record Monster
     Health? Mp,
     FactionType? Faction,
     short Size,
-    long MonsterVNum
+    long MonsterVNum,
+    IReadOnlyList<long>? EffectsVNums = default
 ) : ILivingEntity
 {
     /// <inheritdoc/>

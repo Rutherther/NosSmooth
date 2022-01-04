@@ -48,4 +48,9 @@ public interface ILivingEntity : IEntity
     /// Gets the size of the entity.
     /// </summary>
     public short Size { get; }
+
+    /// <summary>
+    /// Gets the VNums of the effects the entity has.
+    /// </summary>
+    public IReadOnlyList<long>? EffectsVNums { get; }
 }
