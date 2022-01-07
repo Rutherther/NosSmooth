@@ -15,7 +15,6 @@ namespace NosSmooth.Packets.Converters.Special.Converters;
 /// <typeparam name="TEnum">The enum.</typeparam>
 /// <typeparam name="TUnderlyingType">The enum's underlying type.</typeparam>
 public class EnumStringConverter<TEnum, TUnderlyingType> : BaseStringConverter<TEnum>
-    where TEnum : TUnderlyingType
 {
     private readonly IStringSerializer _serializer;
 
@@ -31,7 +30,7 @@ public class EnumStringConverter<TEnum, TUnderlyingType> : BaseStringConverter<T
     /// <inheritdoc />
     public override Result Serialize(TEnum? obj, PacketStringBuilder builder)
     {
-        builder.Append(((TUnderlyingType?)obj)?.ToString() ?? "-");
+        builder.Append(((TUnderlyingType?)(object?)obj)?.ToString() ?? "-");
         return Result.FromSuccess();
     }
 
@@ -44,6 +43,6 @@ public class EnumStringConverter<TEnum, TUnderlyingType> : BaseStringConverter<T
             return Result<TEnum?>.FromError(result);
         }
 
-        return (TEnum?)result.Entity;
+        return (TEnum?)(object?)result.Entity;
     }
 }
