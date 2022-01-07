@@ -18,7 +18,7 @@ namespace NosSmooth.Packets.Packets.Server.Players;
 public record FamilySubPacket
 (
     [PacketIndex(0, AfterSeparator = '.')]
-    string FamilyId,
+    string? FamilyId,
     [PacketIndex(1, IsOptional = true)]
     short? Title
 ) : IPacket;
