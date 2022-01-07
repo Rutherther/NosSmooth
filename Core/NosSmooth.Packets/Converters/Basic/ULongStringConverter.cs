@@ -1,5 +1,5 @@
 //
-//  CharTypeConverter.cs
+//  ULongStringConverter.cs
 //
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -10,18 +10,18 @@ using Remora.Results;
 namespace NosSmooth.Packets.Converters.Basic;
 
 /// <summary>
-/// Converter of <see cref="char"/>.
+/// Converter of <see cref="ulong"/>.
 /// </summary>
-public class CharTypeConverter : BasicTypeConverter<char>
+public class ULongStringConverter : BasicTypeConverter<ulong>
 {
     /// <inheritdoc />
-    protected override Result<char> Deserialize(string value)
+    protected override Result<ulong> Deserialize(string value)
     {
-        if (value.Length != 1)
+        if (!ulong.TryParse(value, out var parsed))
         {
-            return new CouldNotConvertError(this, value, "The token is not one character long.");
+            return new CouldNotConvertError(this, value, "Could not parse as an ulong.");
         }
 
-        return value[0];
+        return parsed;
     }
 }

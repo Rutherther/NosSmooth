@@ -1,5 +1,5 @@
 //
-//  BoolTypeConverter.cs
+//  BoolStringConverter.cs
 //
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -12,7 +12,7 @@ namespace NosSmooth.Packets.Converters.Basic;
 /// <summary>
 /// Converter of <see cref="bool"/>.
 /// </summary>
-public class BoolTypeConverter : BaseTypeConverter<bool>
+public class BoolStringConverter : BaseStringConverter<bool>
 {
     /// <inheritdoc />
     public override Result Serialize(bool obj, PacketStringBuilder builder)

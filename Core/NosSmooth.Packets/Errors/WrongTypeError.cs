@@ -16,5 +16,5 @@ namespace NosSmooth.Packets.Errors;
 /// <param name="TypeConverter">The converter that failed to convert the object.</param>
 /// <param name="ExpectedType">The expected type of the converting object.</param>
 /// <param name="ActualObject">The actual object the converter got.</param>
-public record WrongTypeError(ITypeConverter TypeConverter, Type ExpectedType, object? ActualObject)
+public record WrongTypeError(IStringConverter TypeConverter, Type ExpectedType, object? ActualObject)
     : ResultError($"{TypeConverter.GetType().FullName} expected type {ExpectedType.FullName}, but got {ActualObject?.GetType().FullName ?? "null"}");

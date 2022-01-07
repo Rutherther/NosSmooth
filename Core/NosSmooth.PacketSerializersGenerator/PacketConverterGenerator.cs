@@ -58,18 +58,18 @@ using Remora.Results;
 
 namespace {_packetInfo.Namespace}.Generated;
 
-public class {_packetInfo.Name}Converter : BaseTypeConverter<{_packetInfo.Name}>
+public class {_packetInfo.Name}Converter : BaseStringConverter<{_packetInfo.Name}>
 {{"
         );
         textWriter.Indent++;
         textWriter.WriteLine
         (
             $@"
-private readonly ITypeConverterRepository _typeConverterRepository;
+private readonly IStringSerializer _stringSerializer;
 
-public {_packetInfo.Name}Converter(ITypeConverterRepository typeConverterRepository)
+public {_packetInfo.Name}Converter(IStringSerializer stringSerializer)
 {{
-    _typeConverterRepository = typeConverterRepository;
+    _stringSerializer = stringSerializer;
 }}
 
 /// <inheritdoc />

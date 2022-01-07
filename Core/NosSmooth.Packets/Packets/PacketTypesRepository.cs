@@ -21,17 +21,17 @@ namespace NosSmooth.Packets.Packets;
 /// </summary>
 public class PacketTypesRepository : IPacketTypesRepository
 {
-    private readonly ITypeConverterRepository _typeConverterRepository;
+    private readonly IStringConverterRepository _stringConverterRepository;
     private readonly Dictionary<PacketSource, Dictionary<string, PacketInfo>> _headerToPacket;
     private readonly Dictionary<string, PacketInfo> _typeToPacket;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PacketTypesRepository"/> class.
     /// </summary>
-    /// <param name="typeConverterRepository">The type converter repository.</param>
-    public PacketTypesRepository(ITypeConverterRepository typeConverterRepository)
+    /// <param name="stringConverterRepository">The type converter repository.</param>
+    public PacketTypesRepository(IStringConverterRepository stringConverterRepository)
     {
-        _typeConverterRepository = typeConverterRepository;
+        _stringConverterRepository = stringConverterRepository;
         _headerToPacket = new Dictionary<PacketSource, Dictionary<string, PacketInfo>>();
         _typeToPacket = new Dictionary<string, PacketInfo>();
     }
@@ -54,7 +54,7 @@ public class PacketTypesRepository : IPacketTypesRepository
             return new ArgumentInvalidError(nameof(type), "Every packet has to specify the header.");
         }
 
-        var converterResult = _typeConverterRepository.GetTypeConverter(type);
+        var converterResult = _stringConverterRepository.GetTypeConverter(type);
         if (!converterResult.IsSuccess)
         {
             return Result.FromError(converterResult);

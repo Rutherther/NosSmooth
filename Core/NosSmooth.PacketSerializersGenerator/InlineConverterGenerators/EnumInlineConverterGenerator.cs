@@ -80,7 +80,7 @@ public class EnumInlineConverterGenerator : IInlineConverterGenerator
             textWriter.WriteMultiline
             (
                 $@"
-public static Result<{type}?> ParseEnum{type.ToString().Replace('.', '_')}(ITypeConverter typeConverter, PacketStringEnumerator stringEnumerator)
+public static Result<{type}?> ParseEnum{type.ToString().Replace('.', '_')}(IStringConverter typeConverter, PacketStringEnumerator stringEnumerator)
 {{
     var tokenResult = stringEnumerator.GetNextToken();
     if (!tokenResult.IsSuccess)

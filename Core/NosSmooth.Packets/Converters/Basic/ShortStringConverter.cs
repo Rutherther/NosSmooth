@@ -1,5 +1,5 @@
 //
-//  ShortTypeConverter.cs
+//  ShortStringConverter.cs
 //
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -12,7 +12,7 @@ namespace NosSmooth.Packets.Converters.Basic;
 /// <summary>
 /// Converter of <see cref="short"/>.
 /// </summary>
-public class ShortTypeConverter : BasicTypeConverter<short>
+public class ShortStringConverter : BasicTypeConverter<short>
 {
     /// <inheritdoc />
     protected override Result<short> Deserialize(string value)

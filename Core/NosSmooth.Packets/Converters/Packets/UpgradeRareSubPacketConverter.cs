@@ -13,7 +13,7 @@ namespace NosSmooth.Packets.Converters.Packets;
 /// <summary>
 /// Converter for <see cref="UpgradeRareSubPacket"/>.
 /// </summary>
-public class UpgradeRareSubPacketConverter : BaseTypeConverter<UpgradeRareSubPacket>
+public class UpgradeRareSubPacketConverter : BaseStringConverter<UpgradeRareSubPacket>
 {
     /// <inheritdoc />
     public override Result Serialize(UpgradeRareSubPacket? obj, PacketStringBuilder builder)

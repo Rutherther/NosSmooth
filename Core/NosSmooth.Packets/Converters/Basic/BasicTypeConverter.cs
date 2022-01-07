@@ -13,7 +13,7 @@ namespace NosSmooth.Packets.Converters.Basic;
 /// Basic type converter for converting using <see cref="Convert"/>.
 /// </summary>
 /// <typeparam name="TBasicType">The basic type, that contains correct to string.</typeparam>
-public abstract class BasicTypeConverter<TBasicType> : BaseTypeConverter<TBasicType>
+public abstract class BasicTypeConverter<TBasicType> : BaseStringConverter<TBasicType>
 {
     /// <inheritdoc />
     public override Result Serialize(TBasicType? obj, PacketStringBuilder builder)

@@ -67,7 +67,7 @@ public class BasicInlineConverterGenerator : IInlineConverterGenerator
         foreach (var type in HandleTypes)
         {
             textWriter.WriteMultiline($@"
-public static Result<{type}?> ParseBasic{type}(ITypeConverter typeConverter, PacketStringEnumerator stringEnumerator)
+public static Result<{type}?> ParseBasic{type}(IStringConverter typeConverter, PacketStringEnumerator stringEnumerator)
 {{
     var tokenResult = stringEnumerator.GetNextToken();
     if (!tokenResult.IsSuccess)

@@ -15,4 +15,4 @@ namespace NosSmooth.Packets.Packets;
 /// <param name="Header">The packet's header, if any.</param>
 /// <param name="PacketType">The packet's type.</param>
 /// <param name="PacketConverter">The packet's converter.</param>
-public record PacketInfo(string? Header, Type PacketType, ITypeConverter PacketConverter);
+public record PacketInfo(string? Header, Type PacketType, IStringConverter PacketConverter);

@@ -13,7 +13,7 @@ namespace NosSmooth.Packets.Converters.Common;
 /// <summary>
 /// Converter of <see cref="NameString"/>.
 /// </summary>
-public class NameStringConverter : BaseTypeConverter<NameString>
+public class NameStringConverter : BaseStringConverter<NameString>
 {
     /// <inheritdoc />
     public override Result Serialize(NameString? obj, PacketStringBuilder builder)

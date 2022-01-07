@@ -14,7 +14,6 @@ using NosSmooth.Packets.Converters.Common;
 using NosSmooth.Packets.Converters.Packets;
 using NosSmooth.Packets.Converters.Special;
 using NosSmooth.Packets.Packets;
-using NosSmooth.Packets.Packets.Server.Weapons;
 
 namespace NosSmooth.Packets.Extensions;
 
@@ -27,7 +26,7 @@ public static class ServiceCollectionExtensions
     /// Add packet serialization classes.
     /// </summary>
     /// <remarks>
-    /// All generic implementations of ITypeConverter the class
+    /// All generic implementations of IStringConverter the class
     /// implements will be registered.
     /// </remarks>
     /// <param name="serviceCollection">The service collection.</param>
@@ -35,11 +34,12 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddPacketSerialization(this IServiceCollection serviceCollection)
     {
         return serviceCollection
-            .AddSingleton<ITypeConverterRepository, TypeConverterRepository>()
+            .AddSingleton<IStringConverterRepository, StringConverterRepository>()
+            .AddSingleton<IStringSerializer, StringSerializer>()
             .AddSingleton<IPacketSerializer, PacketSerializer>()
             .AddSingleton<IPacketTypesRepository>(p =>
             {
-                var repository = new PacketTypesRepository(p.GetRequiredService<ITypeConverterRepository>());
+                var repository = new PacketTypesRepository(p.GetRequiredService<IStringConverterRepository>());
                 var packetTypes = typeof(ServiceCollectionExtensions).Assembly
                     .GetExportedTypes()
                     .Where(x => x != typeof(UnresolvedPacket) && !x.IsAbstract && typeof(IPacket).IsAssignableFrom(x));
@@ -70,11 +70,11 @@ public static class ServiceCollectionExtensions
         var types = assembly.GetExportedTypes()
             .Where(x => x.Namespace?.Contains("Generated") ?? false)
             .Where(x => x.GetInterfaces().Any(
-                i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ITypeConverter<>)
+                i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IStringConverter<>)
             ));
         foreach (var type in types)
         {
-            serviceCollection.AddTypeConverter(type);
+            serviceCollection.AddStringConverter(type);
         }
 
         return serviceCollection;
@@ -89,62 +89,62 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddBasicConverters(this IServiceCollection serviceCollection)
     {
         return serviceCollection
-            .AddSpecialConverter<ListTypeConverter>()
-            .AddSpecialConverter<NullableTypeConverter>()
-            .AddSpecialConverter<EnumTypeConverter>()
-            .AddTypeConverter<IntTypeConverter>()
-            .AddTypeConverter<BoolTypeConverter>()
-            .AddTypeConverter<UIntTypeConverter>()
-            .AddTypeConverter<ShortTypeConverter>()
-            .AddTypeConverter<UShortTypeConverter>()
-            .AddTypeConverter<ByteTypeConverter>()
-            .AddTypeConverter<ULongTypeConverter>()
-            .AddTypeConverter<LongTypeConverter>()
-            .AddTypeConverter<StringTypeConverter>()
-            .AddTypeConverter<NameStringConverter>()
-            .AddTypeConverter<CharTypeConverter>()
-            .AddTypeConverter<UpgradeRareSubPacketConverter>();
+            .AddStringConverterFactory<ListStringConverterFactory>()
+            .AddStringConverterFactory<NullableStringConverterFactory>()
+            .AddStringConverterFactory<EnumStringConverterFactory>()
+            .AddStringConverter<IntStringConverter>()
+            .AddStringConverter<BoolStringConverter>()
+            .AddStringConverter<UIntStringConverter>()
+            .AddStringConverter<ShortStringConverter>()
+            .AddStringConverter<UShortStringConverter>()
+            .AddStringConverter<ByteStringConverter>()
+            .AddStringConverter<ULongStringConverter>()
+            .AddStringConverter<LongStringConverter>()
+            .AddStringConverter<StringTypeConverter>()
+            .AddStringConverter<NameStringConverter>()
+            .AddStringConverter<CharStringConverter>()
+            .AddStringConverter<UpgradeRareSubPacketConverter>();
     }
 
     /// <summary>
     /// Add generic type converter.
     /// </summary>
     /// <remarks>
-    /// All generic implementations of ITypeConverter the class
+    /// All generic implementations of IStringConverter the class
     /// implements will be registered.
     /// </remarks>
     /// <param name="serviceCollection">The service collection.</param>
     /// <typeparam name="TConverter">The type of the converter.</typeparam>
     /// <returns>The collection.</returns>
-    public static IServiceCollection AddTypeConverter<TConverter>(this IServiceCollection serviceCollection)
-        where TConverter : ITypeConverter
-        => serviceCollection.AddTypeConverter(typeof(TConverter));
+    public static IServiceCollection AddStringConverter<TConverter>(this IServiceCollection serviceCollection)
+        where TConverter : IStringConverter
+        => serviceCollection.AddStringConverter(typeof(TConverter));
 
     /// <summary>
     /// Add generic type converter.
     /// </summary>
     /// <remarks>
-    /// All generic implementations of ITypeConverter the class
+    /// All generic implementations of IStringConverter the class
     /// implements will be registered.
     /// </remarks>
     /// <param name="serviceCollection">The service collection.</param>
     /// <param name="converterType">The type of the converter.</param>
     /// <returns>The collection.</returns>
-    public static IServiceCollection AddTypeConverter(this IServiceCollection serviceCollection, Type converterType)
+    public static IServiceCollection AddStringConverter(this IServiceCollection serviceCollection, Type converterType)
     {
         if (!converterType.GetInterfaces().Any(
-                i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ITypeConverter<>)
+                i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IStringConverter<>)
             ))
         {
             throw new ArgumentException(
-                $"{nameof(converterType)} should implement ITypeConverter.",
+                $"{nameof(converterType)} should implement IStringConverter.",
                 nameof(converterType));
         }
 
         var handlerTypeInterfaces = converterType.GetInterfaces();
         var handlerInterfaces = handlerTypeInterfaces.Where
         (
-            r => r.IsGenericType && r.GetGenericTypeDefinition() == typeof(ITypeConverter<>)
+            r => r.IsGenericType && r.GetGenericTypeDefinition() == typeof(IStringConverter<>)
         );
 
         foreach (var handlerInterface in handlerInterfaces)
@@ -159,11 +159,11 @@ public static class ServiceCollectionExtensions
     /// Add the specified converter as a special converter.
     /// </summary>
     /// <param name="serviceCollection">The service collection.</param>
-    /// <typeparam name="TSpecialConverter">The type to add as a special converter.</typeparam>
+    /// <typeparam name="TConverterFactory">The type to add as a special converter.</typeparam>
     /// <returns>The collection.</returns>
-    public static IServiceCollection AddSpecialConverter<TSpecialConverter>(this IServiceCollection serviceCollection)
-        where TSpecialConverter : class, ISpecialTypeConverter
+    public static IServiceCollection AddStringConverterFactory<TConverterFactory>(this IServiceCollection serviceCollection)
+        where TConverterFactory : class, IStringConverterFactory
     {
-        return serviceCollection.AddSingleton<ISpecialTypeConverter, TSpecialConverter>();
+        return serviceCollection.AddSingleton<IStringConverterFactory, TConverterFactory>();
     }
 }

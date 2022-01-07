@@ -15,5 +15,5 @@ namespace NosSmooth.Packets.Errors;
 /// </summary>
 /// <param name="Converter">The type converter.</param>
 /// <param name="PropertyName">The property name.</param>
-public record PacketEndNotExpectedError(ITypeConverter Converter, string PropertyName)
+public record PacketEndNotExpectedError(IStringConverter Converter, string PropertyName)
     : ResultError($"Unexpected packet end reached in {Converter.GetType()} during deserializing the property {PropertyName}");
