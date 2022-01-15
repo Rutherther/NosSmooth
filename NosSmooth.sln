@@ -54,6 +54,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NosSmooth.Injector.CLI", "L
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NosSmooth.Injector", "Local\NosSmooth.Injector\NosSmooth.Injector.csproj", "{7B68DE7D-159B-42A7-8CF8-69F156CD04DE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NosSmooth.LocalBinding", "Local\NosSmooth.LocalBinding\NosSmooth.LocalBinding.csproj", "{BC0DCD32-E917-4187-8CF3-970D17301ED3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -268,6 +270,18 @@ Global
 		{7B68DE7D-159B-42A7-8CF8-69F156CD04DE}.Release|x64.Build.0 = Release|Any CPU
 		{7B68DE7D-159B-42A7-8CF8-69F156CD04DE}.Release|x86.ActiveCfg = Release|Any CPU
 		{7B68DE7D-159B-42A7-8CF8-69F156CD04DE}.Release|x86.Build.0 = Release|Any CPU
+		{BC0DCD32-E917-4187-8CF3-970D17301ED3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC0DCD32-E917-4187-8CF3-970D17301ED3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC0DCD32-E917-4187-8CF3-970D17301ED3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BC0DCD32-E917-4187-8CF3-970D17301ED3}.Debug|x64.Build.0 = Debug|Any CPU
+		{BC0DCD32-E917-4187-8CF3-970D17301ED3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BC0DCD32-E917-4187-8CF3-970D17301ED3}.Debug|x86.Build.0 = Debug|Any CPU
+		{BC0DCD32-E917-4187-8CF3-970D17301ED3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC0DCD32-E917-4187-8CF3-970D17301ED3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC0DCD32-E917-4187-8CF3-970D17301ED3}.Release|x64.ActiveCfg = Release|Any CPU
+		{BC0DCD32-E917-4187-8CF3-970D17301ED3}.Release|x64.Build.0 = Release|Any CPU
+		{BC0DCD32-E917-4187-8CF3-970D17301ED3}.Release|x86.ActiveCfg = Release|Any CPU
+		{BC0DCD32-E917-4187-8CF3-970D17301ED3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -291,6 +305,7 @@ Global
 		{5D351C91-C631-40F6-82D2-F8D68468B076} = {6078AE6E-7CD0-48E4-84E0-EB164D8881DA}
 		{7B68DE7D-159B-42A7-8CF8-69F156CD04DE} = {6078AE6E-7CD0-48E4-84E0-EB164D8881DA}
 		{18A62EF6-ADDA-4224-90AB-2D5DCFC95D3E} = {F20FE754-FDEA-4F3A-93D4-0750CB9EBB33}
+		{BC0DCD32-E917-4187-8CF3-970D17301ED3} = {6078AE6E-7CD0-48E4-84E0-EB164D8881DA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5F46653-4DEC-429B-8580-4ED18ED9B4CA}
