@@ -9,7 +9,7 @@ using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Info;
 using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.Events.Entities;
-using NosSmooth.Packets.Packets.Client.Movement;
+using NosSmooth.Packets.Client.Movement;
 using Remora.Results;
 
 namespace NosSmooth.Game.PacketHandlers.Characters;

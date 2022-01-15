@@ -4,14 +4,13 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Data.Common;
 using NosSmooth.Core.Packets;
 using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Info;
 using NosSmooth.Game.Data.Social;
 using NosSmooth.Game.Events.Characters;
 using NosSmooth.Game.Events.Core;
-using NosSmooth.Packets.Packets.Server.Players;
+using NosSmooth.Packets.Server.Players;
 using Remora.Results;
 
 namespace NosSmooth.Game.PacketHandlers.Characters;

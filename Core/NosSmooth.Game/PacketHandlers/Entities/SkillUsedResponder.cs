@@ -10,9 +10,8 @@ using NosSmooth.Game.Events.Characters;
 using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.Events.Players;
 using NosSmooth.Game.Extensions;
-using NosSmooth.Packets.Enums;
-using NosSmooth.Packets.Packets.Server.Battle;
-using NosSmooth.Packets.Packets.Server.Skills;
+using NosSmooth.Packets.Server.Battle;
+using NosSmooth.Packets.Server.Skills;
 using Remora.Results;
 
 namespace NosSmooth.Game.PacketHandlers.Entities;

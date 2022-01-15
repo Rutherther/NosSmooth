@@ -8,7 +8,7 @@ using NosSmooth.Core.Packets;
 using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Events.Characters;
 using NosSmooth.Game.Events.Core;
-using NosSmooth.Packets.Packets.Server.Skills;
+using NosSmooth.Packets.Server.Skills;
 using Remora.Results;
 
 namespace NosSmooth.Game.PacketHandlers.Characters;

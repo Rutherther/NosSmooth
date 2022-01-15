@@ -7,7 +7,7 @@
 using NosSmooth.Core.Client;
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Chat;
-using NosSmooth.Packets.Packets.Server.Chat;
+using NosSmooth.Packets.Server.Chat;
 using Remora.Results;
 
 namespace NosSmooth.Game.Apis;
@@ -49,7 +49,7 @@ public class NostaleChatPacketApi
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
     public Task<Result> SendMessageAsync(string content, CancellationToken ct = default)
-        => _client.SendPacketAsync(new Packets.Packets.Client.Chat.SayPacket(content), ct);
+        => _client.SendPacketAsync(new Packets.Client.Chat.SayPacket(content), ct);
 
     /// <summary>
     /// Sends the given message to the family chat.

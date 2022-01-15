@@ -8,8 +8,8 @@ using NosSmooth.Core.Client;
 using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Entities;
 using NosSmooth.Game.Errors;
+using NosSmooth.Packets.Client.Battle;
 using NosSmooth.Packets.Enums;
-using NosSmooth.Packets.Packets.Client.Battle;
 using Remora.Results;
 
 namespace NosSmooth.Game.Apis;
