@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NosSmooth.Core.Client;
 using NosSmooth.Core.Extensions;
+using NosSmooth.LocalBinding;
 using NosSmooth.LocalClient.Extensions;
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Chat;
@@ -42,6 +43,14 @@ public class SimpleChat
 
         var logger = provider.GetRequiredService<ILogger<SimpleChat>>();
         logger.LogInformation("Hello world from SimpleChat!");
+
+        var bindingManager = provider.GetRequiredService<NosBindingManager>();
+        var initializeResult = bindingManager.Initialize();
+        if (!initializeResult.IsSuccess)
+        {
+            logger.LogError($"Could not initialize the bindings {initializeResult.Error.Message}.");
+            return;
+        }
 
         var client = provider.GetRequiredService<INostaleClient>();
 
