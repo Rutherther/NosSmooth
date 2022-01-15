@@ -6,8 +6,8 @@
 
 using Microsoft.Extensions.Options;
 using NosSmooth.Core.Commands;
+using NosSmooth.LocalBinding.Objects;
 using NosSmooth.LocalClient.CommandHandlers.Walk.Errors;
-using NosSmoothCore;
 using Remora.Results;
 
 namespace NosSmooth.LocalClient.CommandHandlers.Walk;
@@ -17,20 +17,20 @@ namespace NosSmooth.LocalClient.CommandHandlers.Walk;
 /// </summary>
 public class WalkCommandHandler : ICommandHandler<WalkCommand>
 {
-    private readonly NosClient _nosClient;
+    private readonly CharacterBinding _characterBinding;
     private readonly WalkStatus _walkStatus;
     private readonly WalkCommandHandlerOptions _options;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WalkCommandHandler"/> class.
     /// </summary>
-    /// <param name="nosClient">The local client.</param>
+    /// <param name="characterBinding">The character object binding.</param>
     /// <param name="walkStatus">The walk status.</param>
     /// <param name="options">The options.</param>
-    public WalkCommandHandler(NosClient nosClient, WalkStatus walkStatus, IOptions<WalkCommandHandlerOptions> options)
+    public WalkCommandHandler(CharacterBinding characterBinding, WalkStatus walkStatus, IOptions<WalkCommandHandlerOptions> options)
     {
         _options = options.Value;
-        _nosClient = nosClient;
+        _characterBinding = characterBinding;
         _walkStatus = walkStatus;
     }
 
@@ -46,11 +46,8 @@ public class WalkCommandHandler : ICommandHandler<WalkCommand>
         await _walkStatus.SetWalking(linked, command.TargetX, command.TargetY, command.CancelOnUserMove);
         while (!ct.IsCancellationRequested)
         {
-            try
-            {
-                _nosClient.GetCharacter().Walk(command.TargetX, command.TargetY);
-            }
-            catch (Exception e)
+            var walkResult = _characterBinding.Walk(command.TargetX, command.TargetY);
+            if (!walkResult.IsSuccess)
             {
                 try
                 {
@@ -61,7 +58,7 @@ public class WalkCommandHandler : ICommandHandler<WalkCommand>
                     // ignored, just for cancellation
                 }
 
-                return e;
+                return walkResult;
             }
 
             try

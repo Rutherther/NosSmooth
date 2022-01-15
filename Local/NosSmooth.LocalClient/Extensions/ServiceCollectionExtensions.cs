@@ -8,10 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NosSmooth.Core.Client;
 using NosSmooth.Core.Extensions;
-using NosSmooth.LocalClient.CommandHandlers;
+using NosSmooth.LocalBinding.Extensions;
 using NosSmooth.LocalClient.CommandHandlers.Walk;
-using NosSmooth.LocalClient.Hooks;
-using NosSmoothCore;
 
 namespace NosSmooth.LocalClient.Extensions;
 
@@ -28,13 +26,12 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddLocalClient(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddNostaleCore();
+        serviceCollection.AddNostaleBindings();
         serviceCollection
             .AddCommandHandler<WalkCommandHandler>()
             .AddPacketResponder<WalkPacketResponder>()
             .AddSingleton<WalkStatus>();
         serviceCollection.TryAddSingleton<NostaleLocalClient>();
-        serviceCollection.TryAddSingleton<NostaleHookManager>();
-        serviceCollection.TryAddSingleton<NosClient>();
         serviceCollection.TryAddSingleton<INostaleClient>(p => p.GetRequiredService<NostaleLocalClient>());
 
         return serviceCollection;

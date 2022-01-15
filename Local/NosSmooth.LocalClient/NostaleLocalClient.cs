@@ -11,11 +11,10 @@ using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands;
 using NosSmooth.Core.Extensions;
 using NosSmooth.Core.Packets;
-using NosSmooth.LocalClient.Hooks;
+using NosSmooth.LocalBinding.Objects;
 using NosSmooth.Packets;
 using NosSmooth.Packets.Attributes;
 using NosSmooth.Packets.Errors;
-using NosSmoothCore;
 using Remora.Results;
 
 namespace NosSmooth.LocalClient;
@@ -29,12 +28,11 @@ namespace NosSmooth.LocalClient;
 /// </remarks>
 public class NostaleLocalClient : BaseNostaleClient
 {
+    private readonly NetworkBinding _networkBinding;
     private readonly IPacketSerializer _packetSerializer;
-    private readonly NostaleHookManager _hookManager;
     private readonly IPacketHandler _packetHandler;
     private readonly ILogger _logger;
     private readonly IServiceProvider _provider;
-    private readonly NosClient _client;
     private readonly LocalClientOptions _options;
     private CancellationToken? _stopRequested;
     private IPacketInterceptor? _interceptor;
@@ -42,34 +40,31 @@ public class NostaleLocalClient : BaseNostaleClient
     /// <summary>
     /// Initializes a new instance of the <see cref="NostaleLocalClient"/> class.
     /// </summary>
+    /// <param name="networkBinding">The network binding.</param>
     /// <param name="commandProcessor">The command processor.</param>
     /// <param name="packetSerializer">The packet serializer.</param>
-    /// <param name="hookManager">The hooking manager.</param>
     /// <param name="packetHandler">The packet handler.</param>
     /// <param name="logger">The logger.</param>
     /// <param name="options">The options for the client.</param>
     /// <param name="provider">The dependency injection provider.</param>
-    /// <param name="client">The nostale managed client.</param>
     public NostaleLocalClient
     (
+        NetworkBinding networkBinding,
         CommandProcessor commandProcessor,
         IPacketSerializer packetSerializer,
-        NostaleHookManager hookManager,
         IPacketHandler packetHandler,
         ILogger<NostaleLocalClient> logger,
         IOptions<LocalClientOptions> options,
-        IServiceProvider provider,
-        NosClient client
+        IServiceProvider provider
     )
         : base(commandProcessor, packetSerializer)
     {
         _options = options.Value;
+        _networkBinding = networkBinding;
         _packetSerializer = packetSerializer;
-        _hookManager = hookManager;
         _packetHandler = packetHandler;
         _logger = logger;
         _provider = provider;
-        _client = client;
     }
 
     /// <inheritdoc />
@@ -77,25 +72,8 @@ public class NostaleLocalClient : BaseNostaleClient
     {
         _stopRequested = stopRequested;
         _logger.LogInformation("Starting local client");
-        NetworkCallback receiveCallback = ReceiveCallback;
-        NetworkCallback sendCallback = SendCallback;
-
-        if (_options.HookPacketReceive)
-        {
-            _client.GetNetwork().SetReceiveCallback(receiveCallback);
-        }
-
-        if (_options.HookPacketSend)
-        {
-            _client.GetNetwork().SetSendCallback(sendCallback);
-        }
-
-        if (_options.HookCharacterWalk)
-        {
-            _hookManager.HookCharacterWalk();
-        }
-
-        _logger.LogInformation("Packet methods hooked successfully");
+        _networkBinding.PacketSend += SendCallback;
+        _networkBinding.PacketReceive += ReceiveCallback;
 
         try
         {
@@ -106,7 +84,8 @@ public class NostaleLocalClient : BaseNostaleClient
             // ignored
         }
 
-        _client.ResetHooks();
+        _networkBinding.PacketSend -= SendCallback;
+        _networkBinding.PacketReceive -= ReceiveCallback;
 
         return Result.FromSuccess();
     }
@@ -163,13 +142,13 @@ public class NostaleLocalClient : BaseNostaleClient
 
     private void SendPacket(string packetString)
     {
-        _client.GetNetwork().SendPacket(packetString);
+        _networkBinding.SendPacket(packetString);
         _logger.LogDebug($"Sending client packet {packetString}");
     }
 
     private void ReceivePacket(string packetString)
     {
-        _client.GetNetwork().ReceivePacket(packetString);
+        _networkBinding.ReceivePacket(packetString);
         _logger.LogDebug($"Receiving client packet {packetString}");
     }
 

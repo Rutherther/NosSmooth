@@ -4,7 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosSmooth.LocalClient.Hooks;
+using NosSmooth.LocalBinding.Objects;
 
 namespace NosSmooth.LocalClient.CommandHandlers.Walk;
 
@@ -13,7 +13,7 @@ namespace NosSmooth.LocalClient.CommandHandlers.Walk;
 /// </summary>
 public class WalkStatus
 {
-    private readonly NostaleHookManager _hookManager;
+    private readonly CharacterBinding _characterBinding;
     private readonly SemaphoreSlim _semaphore;
     private CancellationTokenSource? _walkingCancellation;
     private bool _userCanCancel;
@@ -22,10 +22,10 @@ public class WalkStatus
     /// <summary>
     /// Initializes a new instance of the <see cref="WalkStatus"/> class.
     /// </summary>
-    /// <param name="hookManager">The hooking manager.</param>
-    public WalkStatus(NostaleHookManager hookManager)
+    /// <param name="characterBinding">The character binding.</param>
+    public WalkStatus(CharacterBinding characterBinding)
     {
-        _hookManager = hookManager;
+        _characterBinding = characterBinding;
         _semaphore = new SemaphoreSlim(1, 1);
     }
 
@@ -110,7 +110,7 @@ public class WalkStatus
 
         if (!_walkHooked)
         {
-            _hookManager.ClientWalked += OnCharacterWalked;
+            _characterBinding.WalkCall += OnCharacterWalked;
             _walkHooked = true;
         }
 
@@ -159,7 +159,7 @@ public class WalkStatus
         await CancelWalkingAsync(ct: ct);
     }
 
-    private bool OnCharacterWalked(WalkEventArgs walkEventArgs)
+    private bool OnCharacterWalked(ushort x, ushort y)
     {
         if (IsWalking)
         {

@@ -39,8 +39,8 @@ public class WalkCommands
     /// <returns>A result that may or may not have succeeded.</returns>
     public async Task<Result> HandleWalkToAsync
     (
-        int x,
-        int y,
+        ushort x,
+        ushort y,
         bool isCancellable = true,
         CancellationToken ct = default
     )
