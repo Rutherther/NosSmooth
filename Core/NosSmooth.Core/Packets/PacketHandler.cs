@@ -11,8 +11,8 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using NosSmooth.Packets.Attributes;
-using NosSmooth.Packets.Packets;
+using NosSmooth.Packets;
+using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using Remora.Results;
 
 namespace NosSmooth.Core.Packets;

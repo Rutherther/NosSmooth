@@ -4,19 +4,16 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
-using NosSmooth.Packets.Attributes;
-using NosSmooth.Packets.Converters;
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Entities;
 using NosSmooth.Packets.Enums.Players;
 using NosSmooth.Packets.Extensions;
-using NosSmooth.Packets.Packets.Server.Entities;
-using NosSmooth.Packets.Packets.Server.Players;
-using NosSmooth.Packets.Packets.Server.Skills;
-using NosSmooth.Packets.Packets.Server.Weapons;
+using NosSmooth.Packets.Server.Entities;
+using NosSmooth.Packets.Server.Players;
+using NosSmooth.Packets.Server.Weapons;
+using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using Xunit;
 
 namespace NosSmooth.Packets.Tests.Converters.Packets;
@@ -91,7 +88,7 @@ public class InPacketConverterTests
                 0,
                 new UpgradeRareSubPacket(10, 8),
                 new UpgradeRareSubPacket(10, 8),
-                new FamilySubPacket("-1", null),
+                new FamilySubPacket(null, null),
                 null,
                 "26",
                 false,
@@ -222,7 +219,7 @@ public class InPacketConverterTests
                 -1,
                 null,
                 "0",
-                "-1",
+                null,
                 "0",
                 0,
                 0,
@@ -271,7 +268,7 @@ public class InPacketConverterTests
                 -1,
                 null,
                 "0",
-                "-1",
+                null,
                 "0",
                 0,
                 0,

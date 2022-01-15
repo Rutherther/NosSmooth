@@ -5,11 +5,10 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Extensions.DependencyInjection;
-using NosSmooth.Packets.Attributes;
-using NosSmooth.Packets.Converters;
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Extensions;
-using NosSmooth.Packets.Packets.Server.Entities;
+using NosSmooth.Packets.Server.Entities;
+using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using Xunit;
 
 namespace NosSmooth.Packets.Tests.Converters.Packets;

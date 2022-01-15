@@ -12,7 +12,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\NosSmooth.Packets\NosSmooth.Packets.csproj" />
+      <ProjectReference Include="..\..\Packets\NosSmooth.PacketSerializer\NosSmooth.PacketSerializer.csproj" />
+      <ProjectReference Include="..\..\Packets\NosSmooth.Packets\NosSmooth.Packets.csproj" />
     </ItemGroup>
 
 </Project>

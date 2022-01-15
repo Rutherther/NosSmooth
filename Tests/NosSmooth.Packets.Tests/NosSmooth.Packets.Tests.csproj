@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Core\NosSmooth.Packets\NosSmooth.Packets.csproj" />
+      <ProjectReference Include="..\..\Packets\NosSmooth.PacketSerializer\NosSmooth.PacketSerializer.csproj" />
     </ItemGroup>
 
 </Project>

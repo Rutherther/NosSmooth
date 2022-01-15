@@ -6,8 +6,8 @@
 
 using NosSmooth.Core.Commands;
 using NosSmooth.Core.Packets;
-using NosSmooth.Packets.Packets.Client.Movement;
-using NosSmooth.Packets.Packets.Server.Maps;
+using NosSmooth.Packets.Client.Movement;
+using NosSmooth.Packets.Server.Maps;
 using Remora.Results;
 
 namespace NosSmooth.LocalClient.CommandHandlers.Walk;
