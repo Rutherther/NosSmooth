@@ -10,9 +10,6 @@ using NosSmooth.Core.Client;
 using NosSmooth.LocalBinding;
 using NosSmooth.LocalClient;
 using NosSmooth.LocalClient.Extensions;
-using NosSmooth.Packets.Enums;
-using NosSmooth.Packets.Enums.Chat;
-using NosSmooth.Packets.Packets.Server.Chat;
 using WalkCommands.Commands;
 
 namespace WalkCommands;

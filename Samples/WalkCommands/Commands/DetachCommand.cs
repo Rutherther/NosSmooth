@@ -7,7 +7,7 @@
 using NosSmooth.Core.Client;
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Chat;
-using NosSmooth.Packets.Packets.Server.Chat;
+using NosSmooth.Packets.Server.Chat;
 using Remora.Results;
 
 namespace WalkCommands.Commands;

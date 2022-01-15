@@ -9,7 +9,7 @@ using NosSmooth.Core.Client;
 using NosSmooth.LocalClient;
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Chat;
-using NosSmooth.Packets.Packets.Server.Chat;
+using NosSmooth.Packets.Server.Chat;
 
 namespace InterceptNameChanger
 {

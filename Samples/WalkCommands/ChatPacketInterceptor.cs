@@ -6,14 +6,12 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using NosSmooth.Core.Client;
-using NosSmooth.Core.Commands;
 using NosSmooth.Core.Extensions;
 using NosSmooth.LocalClient;
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Chat;
-using NosSmooth.Packets.Packets.Server.Chat;
+using NosSmooth.Packets.Server.Chat;
 using Remora.Results;
 using WalkCommands.Commands;
 
