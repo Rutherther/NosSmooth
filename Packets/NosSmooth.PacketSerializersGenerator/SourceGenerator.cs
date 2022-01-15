@@ -64,7 +64,7 @@ public class SourceGenerator : ISourceGenerator
     /// <inheritdoc />
     public void Initialize(GeneratorInitializationContext context)
     {
-        SpinWait.SpinUntil(() => Debugger.IsAttached);
+        // SpinWait.SpinUntil(() => Debugger.IsAttached);
     }
 
     private IEnumerable<RecordDeclarationSyntax> GetPacketRecords(Compilation compilation, SyntaxTree tree)
@@ -128,11 +128,6 @@ public class SourceGenerator : ISourceGenerator
                 context.AddSource
                 (
                     $"{packetRecord.GetPrefix()}.{packetRecord.Identifier.NormalizeWhitespace().ToFullString()}Converter.g.cs",
-                    stringWriter.GetStringBuilder().ToString()
-                );
-                File.WriteAllText
-                (
-                    $"/tmp/{packetRecord.GetPrefix()}.{packetRecord.Identifier.NormalizeWhitespace().ToFullString()}Converter.g.cs",
                     stringWriter.GetStringBuilder().ToString()
                 );
             }
