@@ -21,7 +21,7 @@ public class DllMain
     /// <summary>
     /// Represents the dll entrypoint method.
     /// </summary>
-    [DllExport]
+    [UnmanagedCallersOnly(EntryPoint = "Main")]
     public static void Main()
     {
         AllocConsole();

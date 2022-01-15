@@ -94,7 +94,7 @@ public class ConverterDeserializationGenerator
         _textWriter.WriteLine($@"while ({_stringEnumeratorVariable}.IsOnLastToken() == false)");
         _textWriter.WriteLine("{");
         _textWriter.Indent++;
-        _textWriter.WriteLine($"{_stringEnumeratorVariable}.GetNextToken();");
+        _textWriter.WriteLine($"{_stringEnumeratorVariable}.GetNextToken(out _);");
         _textWriter.Indent--;
         _textWriter.WriteLine("}");
     }

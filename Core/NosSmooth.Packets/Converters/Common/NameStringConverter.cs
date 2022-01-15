@@ -29,19 +29,19 @@ public class NameStringConverter : BaseStringConverter<NameString>
     }
 
     /// <inheritdoc />
-    public override Result<NameString?> Deserialize(PacketStringEnumerator stringEnumerator)
+    public override Result<NameString?> Deserialize(ref PacketStringEnumerator stringEnumerator)
     {
-        var tokenResult = stringEnumerator.GetNextToken();
+        var tokenResult = stringEnumerator.GetNextToken(out var packetToken);
         if (!tokenResult.IsSuccess)
         {
             return Result<NameString?>.FromError(tokenResult);
         }
 
-        if (tokenResult.Entity.Token == "-")
+        if (packetToken.Token[0] == '-' && packetToken.Token.Length == 1)
         {
             return Result<NameString?>.FromSuccess(null);
         }
 
-        return NameString.FromPacket(tokenResult.Entity.Token);
+        return NameString.FromPacket(packetToken.Token.ToString());
     }
 }

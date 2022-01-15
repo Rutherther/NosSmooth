@@ -21,9 +21,8 @@ public class DllMain
     /// <summary>
     /// The main entrypoint method of the dll.
     /// </summary>
-    /// <param name="handle">The handle of the module.</param>
-    [DllExport]
-    public static void Main(IntPtr handle)
+    [UnmanagedCallersOnly(EntryPoint = "Main")]
+    public static void Main()
     {
         AllocConsole();
         Console.WriteLine("Hello from SimpleChat DllMain entry point.");

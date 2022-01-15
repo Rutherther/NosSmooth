@@ -28,31 +28,31 @@ public class UpgradeRareSubPacketConverter : BaseStringConverter<UpgradeRareSubP
     }
 
     /// <inheritdoc />
-    public override Result<UpgradeRareSubPacket?> Deserialize(PacketStringEnumerator stringEnumerator)
+    public override Result<UpgradeRareSubPacket?> Deserialize(ref PacketStringEnumerator stringEnumerator)
     {
-        var tokenResult = stringEnumerator.GetNextToken();
+        var tokenResult = stringEnumerator.GetNextToken(out var packetToken);
         if (!tokenResult.IsSuccess)
         {
             return Result<UpgradeRareSubPacket?>.FromError(tokenResult);
         }
+        var token = packetToken.Token;
 
-        var token = tokenResult.Entity.Token;
         if (token.Length > 3)
         {
-            return new CouldNotConvertError(this, token, "The string is not two/three characters long.");
+            return new CouldNotConvertError(this, token.ToString(), "The string is not two/three characters long.");
         }
 
-        var upgradeString = token.Substring(0, token.Length - 1);
-        var rareString = token[token.Length - 1].ToString();
+        var upgradeString = token.Slice(0, token.Length - 1);
+        var rareString = token.Slice(token.Length - 1);
 
         if (!byte.TryParse(upgradeString, out var upgrade))
         {
-            return new CouldNotConvertError(this, upgradeString, "Could not parse as byte");
+            return new CouldNotConvertError(this, upgradeString.ToString(), "Could not parse as byte");
         }
 
         if (!sbyte.TryParse(rareString, out var rare))
         {
-            return new CouldNotConvertError(this, rareString, "Could not parse as byte");
+            return new CouldNotConvertError(this, rareString.ToString(), "Could not parse as byte");
         }
 
         return new UpgradeRareSubPacket(upgrade, rare);

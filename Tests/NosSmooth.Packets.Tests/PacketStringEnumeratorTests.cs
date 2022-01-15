@@ -23,64 +23,65 @@ public class PacketStringEnumeratorTests
     public void EnumeratorListComplexStringGivesCorrectResult()
     {
         var stringEnumerator = new PacketStringEnumerator("in 1 11.12.13|14.15.16|17.18.19");
-        var headerTokenResult = stringEnumerator.GetNextToken();
+        var headerTokenResult = stringEnumerator.GetNextToken(out var packetToken);
         Assert.True(headerTokenResult.IsSuccess);
-        Assert.False(headerTokenResult.Entity.PacketEndReached);
-        Assert.NotNull(headerTokenResult.Entity.IsLast);
-        Assert.NotNull(headerTokenResult.Entity.EncounteredUpperLevel);
-        Assert.False(headerTokenResult.Entity.IsLast);
-        Assert.False(headerTokenResult.Entity.EncounteredUpperLevel);
-        Assert.Matches("in", headerTokenResult.Entity.Token);
+        Assert.False(packetToken.PacketEndReached);
+        Assert.NotNull(packetToken.IsLast);
+        Assert.NotNull(packetToken.EncounteredUpperLevel);
+        Assert.False(packetToken.IsLast);
+        Assert.False(packetToken.EncounteredUpperLevel);
+        Assert.Matches("in", packetToken.Token.ToString());
 
-        var firstToken = stringEnumerator.GetNextToken();
+        var firstToken = stringEnumerator.GetNextToken(out packetToken);
         Assert.True(firstToken.IsSuccess);
-        Assert.False(firstToken.Entity.PacketEndReached);
-        Assert.NotNull(firstToken.Entity.IsLast);
-        Assert.NotNull(firstToken.Entity.EncounteredUpperLevel);
-        Assert.False(firstToken.Entity.IsLast);
-        Assert.False(firstToken.Entity.EncounteredUpperLevel);
-        Assert.Matches("1", firstToken.Entity.Token);
+        Assert.False(packetToken.PacketEndReached);
+        Assert.NotNull(packetToken.IsLast);
+        Assert.NotNull(packetToken.EncounteredUpperLevel);
+        Assert.False(packetToken.IsLast);
+        Assert.False(packetToken.EncounteredUpperLevel);
+        Assert.Matches("1", packetToken.Token.ToString());
 
-        var listEnumerator = stringEnumerator.CreateLevel('|');
-        listEnumerator.PrepareLevel('.');
+        stringEnumerator.PushLevel('|');
+        stringEnumerator.PrepareLevel('.');
 
         for (int i = 0; i < 3; i++)
         {
-            var preparedLevel = listEnumerator.CreatePreparedLevel();
-            Assert.NotNull(preparedLevel);
+            stringEnumerator.PushPreparedLevel();
 
             for (int j = 0; j < 3; j++)
             {
                 string currentNum = (j + (i * 3) + 1 + 10).ToString();
-                var currentToken = preparedLevel!.Value.GetNextToken();
+                var currentToken = stringEnumerator.GetNextToken(out packetToken);
                 Assert.True(currentToken.IsSuccess);
-                Assert.False(currentToken.Entity.PacketEndReached);
-                Assert.NotNull(currentToken.Entity.IsLast);
-                Assert.NotNull(currentToken.Entity.EncounteredUpperLevel);
+                Assert.False(packetToken.PacketEndReached);
+                Assert.NotNull(packetToken.IsLast);
+                Assert.NotNull(packetToken.EncounteredUpperLevel);
                 if (j == 2 && i == 2)
                 {
-                    Assert.True(currentToken.Entity.EncounteredUpperLevel);
+                    Assert.True(packetToken.EncounteredUpperLevel);
                 }
                 else
                 {
-                    Assert.False(currentToken.Entity.EncounteredUpperLevel);
+                    Assert.False(packetToken.EncounteredUpperLevel);
                 }
 
                 if (j != 2)
                 {
-                    Assert.False(currentToken.Entity.IsLast);
+                    Assert.False(packetToken.IsLast);
                 }
                 else
                 {
-                    Assert.True(currentToken.Entity.IsLast);
+                    Assert.True(packetToken.IsLast);
                 }
 
-                Assert.Matches(currentNum, currentToken.Entity.Token);
+                Assert.Matches(currentNum, packetToken.Token.ToString());
             }
 
-            Assert.True(preparedLevel!.Value.IsOnLastToken());
+            Assert.True(stringEnumerator.IsOnLastToken());
+            stringEnumerator.PopLevel();
         }
 
+        stringEnumerator.PopLevel();
         Assert.True(stringEnumerator.IsOnLastToken());
     }
 
@@ -91,18 +92,18 @@ public class PacketStringEnumeratorTests
     public void EnumeratorDoesNotAllowOvereachingPacketEnd()
     {
         var stringEnumerator = new PacketStringEnumerator("in 1 2 3 4");
-        var tokenResult = stringEnumerator.GetNextToken();
+        var tokenResult = stringEnumerator.GetNextToken(out _);
         Assert.True(tokenResult.IsSuccess); // in
-        tokenResult = stringEnumerator.GetNextToken();
+        tokenResult = stringEnumerator.GetNextToken(out _);
         Assert.True(tokenResult.IsSuccess); // 1
-        tokenResult = stringEnumerator.GetNextToken();
+        tokenResult = stringEnumerator.GetNextToken(out _);
         Assert.True(tokenResult.IsSuccess); // 2
-        tokenResult = stringEnumerator.GetNextToken();
+        tokenResult = stringEnumerator.GetNextToken(out _);
         Assert.True(tokenResult.IsSuccess); // 3
-        tokenResult = stringEnumerator.GetNextToken();
+        tokenResult = stringEnumerator.GetNextToken(out _);
         Assert.True(tokenResult.IsSuccess); // 4
 
-        tokenResult = stringEnumerator.GetNextToken();
+        tokenResult = stringEnumerator.GetNextToken(out _);
         Assert.False(tokenResult.IsSuccess);
         Assert.IsType<PacketEndReachedError>(tokenResult.Error);
     }
@@ -114,20 +115,20 @@ public class PacketStringEnumeratorTests
     public void EnumeratorDoesNotAllowOvereachingListComplexTypeEnd()
     {
         var stringEnumerator = new PacketStringEnumerator("in 1|2.2|3.3|4.4|5");
-        var tokenResult = stringEnumerator.GetNextToken();
+        var tokenResult = stringEnumerator.GetNextToken(out _);
         Assert.True(tokenResult.IsSuccess); // in
 
-        var listEnumerator = stringEnumerator.CreateLevel('.');
-        var itemEnumerator = listEnumerator.CreateLevel('|');
+        stringEnumerator.PushLevel('.');
+        stringEnumerator.PushLevel('|');
 
-        tokenResult = itemEnumerator.GetNextToken();
+        tokenResult = stringEnumerator.GetNextToken(out _);
         Assert.True(tokenResult.IsSuccess); // 1
 
-        tokenResult = itemEnumerator.GetNextToken();
+        tokenResult = stringEnumerator.GetNextToken(out var packetToken);
         Assert.True(tokenResult.IsSuccess); // 2
-        Assert.True(tokenResult.Entity.IsLast);
+        Assert.True(packetToken.IsLast);
 
-        tokenResult = itemEnumerator.GetNextToken();
+        tokenResult = stringEnumerator.GetNextToken(out _);
         Assert.False(tokenResult.IsSuccess);
         Assert.IsType<PacketEndReachedError>(tokenResult.Error);
         Assert.True(((PacketEndReachedError)tokenResult.Error!).LevelEnd);
@@ -140,33 +141,37 @@ public class PacketStringEnumeratorTests
     public void EnumeratorDoesNotAllowOvereachingListLength()
     {
         var stringEnumerator = new PacketStringEnumerator("in 1|2.2|3.3|4.4|5");
-        var tokenResult = stringEnumerator.GetNextToken();
+        var tokenResult = stringEnumerator.GetNextToken(out _);
         Assert.True(tokenResult.IsSuccess); // in
 
-        var listEnumerator = stringEnumerator.CreateLevel('.', 2);
-        var itemEnumerator = listEnumerator.CreateLevel('|');
+        stringEnumerator.PushLevel('.', 2);
+        stringEnumerator.PushLevel('|');
 
         // first item
-        tokenResult = itemEnumerator.GetNextToken();
+        tokenResult = stringEnumerator.GetNextToken(out _);
         Assert.True(tokenResult.IsSuccess);
 
-        tokenResult = itemEnumerator.GetNextToken();
+        tokenResult = stringEnumerator.GetNextToken(out var packetToken);
         Assert.True(tokenResult.IsSuccess);
-        Assert.True(tokenResult.Entity.IsLast);
+        Assert.True(packetToken.IsLast);
+
+        stringEnumerator.PopLevel();
 
         // second item
-        itemEnumerator = listEnumerator.CreateLevel('|');
-        tokenResult = itemEnumerator.GetNextToken();
+        stringEnumerator.PushLevel('|');
+        tokenResult = stringEnumerator.GetNextToken(out _);
         Assert.True(tokenResult.IsSuccess);
 
-        tokenResult = itemEnumerator.GetNextToken();
+        stringEnumerator.GetNextToken(out packetToken);
         Assert.True(tokenResult.IsSuccess);
-        Assert.True(tokenResult.Entity.IsLast);
+        Assert.True(packetToken.IsLast);
+
+        stringEnumerator.PopLevel();
 
         // cannot reach third item
-        Assert.True(listEnumerator.IsOnLastToken());
-        itemEnumerator = listEnumerator.CreateLevel('|');
-        tokenResult = itemEnumerator.GetNextToken();
+        Assert.True(stringEnumerator.IsOnLastToken());
+        stringEnumerator.PushLevel('|');
+        tokenResult = stringEnumerator.GetNextToken(out _);
         Assert.False(tokenResult.IsSuccess);
         Assert.IsType<PacketEndReachedError>(tokenResult.Error);
         Assert.True(((PacketEndReachedError)tokenResult.Error!).LevelEnd);
@@ -179,18 +184,18 @@ public class PacketStringEnumeratorTests
     public void EnumeratorReturnsEncounteredUpperLevel()
     {
         var stringEnumerator = new PacketStringEnumerator("in 1|2 1");
-        var tokenResult = stringEnumerator.GetNextToken();
+        var tokenResult = stringEnumerator.GetNextToken(out _);
         Assert.True(tokenResult.IsSuccess); // in
 
-        var listEnumerator = stringEnumerator.CreateLevel('.');
-        var itemEnumerator = listEnumerator.CreateLevel('|');
+        stringEnumerator.PushLevel('.');
+        stringEnumerator.PushLevel('|');
 
-        tokenResult = itemEnumerator.GetNextToken();
+        tokenResult = stringEnumerator.GetNextToken(out _);
         Assert.True(tokenResult.IsSuccess);
 
-        tokenResult = itemEnumerator.GetNextToken();
+        tokenResult = stringEnumerator.GetNextToken(out var packetToken);
         Assert.True(tokenResult.IsSuccess);
-        Assert.True(tokenResult.Entity.IsLast);
-        Assert.True(tokenResult.Entity.EncounteredUpperLevel);
+        Assert.True(packetToken.IsLast);
+        Assert.True(packetToken.EncounteredUpperLevel);
     }
 }

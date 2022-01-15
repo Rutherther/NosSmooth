@@ -2,9 +2,9 @@
 
     <PropertyGroup>
         <LangVersion>10</LangVersion>
-        <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
         <AssemblyName>NosSmooth.Packets</AssemblyName>
         <RootNamespace>NosSmooth.Packets</RootNamespace>
+        <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
     </PropertyGroup>
 
     <ItemGroup>

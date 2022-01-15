@@ -7,8 +7,12 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NosSmooth.Core.Client;
+using NosSmooth.LocalBinding;
 using NosSmooth.LocalClient;
 using NosSmooth.LocalClient.Extensions;
+using NosSmooth.Packets.Enums;
+using NosSmooth.Packets.Enums.Chat;
+using NosSmooth.Packets.Packets.Server.Chat;
 using WalkCommands.Commands;
 
 namespace WalkCommands;
@@ -43,6 +47,14 @@ public class Startup
     public async Task RunAsync()
     {
         var provider = BuildServices();
+        var bindingManager = provider.GetRequiredService<NosBindingManager>();
+        var logger = provider.GetRequiredService<ILogger<Startup>>();
+        var initializeResult = bindingManager.Initialize();
+        if (!initializeResult.IsSuccess)
+        {
+            logger.LogError($"Could not initialize {initializeResult.Error.Message}.");
+        }
+
         var mainCancellation = provider.GetRequiredService<CancellationTokenSource>();
 
         var client = provider.GetRequiredService<INostaleClient>();

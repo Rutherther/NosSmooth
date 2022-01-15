@@ -88,8 +88,8 @@ public class ChatPacketInterceptor : IPacketInterceptor
                 var walkCommand = scope.ServiceProvider.GetRequiredService<Commands.WalkCommands>();
                 result = await walkCommand.HandleWalkToAsync
                 (
-                    int.Parse(splitted[1]),
-                    int.Parse(splitted[2]),
+                    ushort.Parse(splitted[1]),
+                    ushort.Parse(splitted[2]),
                     splitted.Length > 3 ? bool.Parse(splitted[3]) : true
                 );
                 break;

@@ -22,19 +22,14 @@ public class BoolStringConverter : BaseStringConverter<bool>
     }
 
     /// <inheritdoc />
-    public override Result<bool> Deserialize(PacketStringEnumerator stringEnumerator)
+    public override Result<bool> Deserialize(ref PacketStringEnumerator stringEnumerator)
     {
-        var nextTokenResult = stringEnumerator.GetNextToken();
+        var nextTokenResult = stringEnumerator.GetNextToken(out var packetToken);
         if (!nextTokenResult.IsSuccess)
         {
             return Result<bool>.FromError(nextTokenResult);
         }
 
-        if (nextTokenResult.Entity.Token == "-")
-        {
-            return Result<bool>.FromSuccess(default);
-        }
-
-        return nextTokenResult.Entity.Token == "1" ? true : false;
+        return packetToken.Token[0] == '1' ? true : false;
     }
 }
