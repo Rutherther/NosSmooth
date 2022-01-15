@@ -4,11 +4,11 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosSmooth.Packets.Attributes;
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Players;
+using NosSmooth.PacketSerializer.Abstractions.Attributes;
 
-namespace NosSmooth.Packets.Packets.Server.Players;
+namespace NosSmooth.Packets.Server.Players;
 
 /// <summary>
 /// Information about the playing character.
