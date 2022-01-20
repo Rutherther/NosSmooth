@@ -7,6 +7,7 @@
 using System.Diagnostics;
 using NosSmooth.LocalBinding.Errors;
 using NosSmooth.LocalBinding.Options;
+using NosSmooth.LocalBinding.Structs;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.X86;
 using Remora.Results;
@@ -24,7 +25,29 @@ public class CharacterBinding
         FunctionAttribute.Register.eax,
         FunctionAttribute.StackCleanup.Callee
     )]
-    private delegate bool WalkDelegate(IntPtr characterObject, int position, short unknown0 = 0, int unknown1 = 1);
+    private delegate bool WalkDelegate(IntPtr playerManagerPtr, int position, short unknown0 = 0, int unknown1 = 1);
+
+    [Function
+    (
+        new[] { FunctionAttribute.Register.eax, FunctionAttribute.Register.edx, FunctionAttribute.Register.ecx },
+        FunctionAttribute.Register.eax,
+        FunctionAttribute.StackCleanup.Callee
+    )]
+    private delegate bool FollowEntityDelegate
+    (
+        IntPtr playerManagerPtr,
+        IntPtr entityPtr,
+        char unknown1 = '\0',
+        char unknown2 = ''
+    );
+
+    [Function
+    (
+        new[] { FunctionAttribute.Register.eax, FunctionAttribute.Register.edx },
+        FunctionAttribute.Register.eax,
+        FunctionAttribute.StackCleanup.Callee
+    )]
+    private delegate void UnfollowEntityDelegate(IntPtr playerManagerPtr, int unknown = 0);
 
     /// <summary>
     /// Create the network binding with finding the network object and functions.
@@ -47,15 +70,37 @@ public class CharacterBinding
             return new BindingNotFoundError(options.WalkFunctionPattern, "CharacterBinding.Walk");
         }
 
+        var followEntityAddress = bindingManager.Scanner.CompiledFindPattern(options.FollowEntityPattern);
+        if (!followEntityAddress.Found)
+        {
+            return new BindingNotFoundError(options.FollowEntityPattern, "CharacterBinding.FollowEntity");
+        }
+
+        var unfollowEntityAddress = bindingManager.Scanner.CompiledFindPattern(options.UnfollowEntityPattern);
+        if (!unfollowEntityAddress.Found)
+        {
+            return new BindingNotFoundError(options.UnfollowEntityPattern, "CharacterBinding.UnfollowEntity");
+        }
+
         var walkFunction = bindingManager.Hooks.CreateFunction<WalkDelegate>
             (walkFunctionAddress.Offset + (int)process.MainModule!.BaseAddress);
         var walkWrapper = walkFunction.GetWrapper();
+
+        var followEntityFunction = bindingManager.Hooks.CreateFunction<FollowEntityDelegate>
+            (followEntityAddress.Offset + (int)process.MainModule!.BaseAddress);
+        var followEntityWrapper = followEntityFunction.GetWrapper();
+
+        var unfollowEntityFunction = bindingManager.Hooks.CreateFunction<UnfollowEntityDelegate>
+            (unfollowEntityAddress.Offset + (int)process.MainModule!.BaseAddress);
+        var unfollowEntityWrapper = unfollowEntityFunction.GetWrapper();
 
         var binding = new CharacterBinding
         (
             bindingManager,
             (IntPtr)(characterObjectAddress.Offset + (int)process.MainModule!.BaseAddress + 0x06),
-            walkWrapper
+            walkWrapper,
+            followEntityWrapper,
+            unfollowEntityWrapper
         );
 
         if (options.HookWalk)
@@ -65,25 +110,49 @@ public class CharacterBinding
             binding._originalWalk = binding._walkHook.OriginalFunction;
         }
 
+        if (options.HookFollowEntity)
+        {
+            binding._followHook = followEntityFunction.Hook(binding.FollowEntityDetour);
+            binding._originalFollowEntity = binding._followHook.OriginalFunction;
+        }
+
+        if (options.HookUnfollowEntity)
+        {
+            binding._unfollowHook = unfollowEntityFunction.Hook(binding.UnfollowEntityDetour);
+            binding._originalUnfollowEntity = binding._unfollowHook.OriginalFunction;
+        }
+
         binding._walkHook?.Activate();
+        binding._followHook?.Activate();
+        binding._unfollowHook?.Activate();
         return binding;
     }
 
     private readonly NosBindingManager _bindingManager;
     private readonly IntPtr _characterAddress;
+
     private IHook<WalkDelegate>? _walkHook;
+    private IHook<FollowEntityDelegate>? _followHook;
+    private IHook<UnfollowEntityDelegate>? _unfollowHook;
+
+    private FollowEntityDelegate _originalFollowEntity;
+    private UnfollowEntityDelegate _originalUnfollowEntity;
     private WalkDelegate _originalWalk;
 
     private CharacterBinding
     (
         NosBindingManager bindingManager,
         IntPtr characterAddress,
-        WalkDelegate originalWalk
+        WalkDelegate originalWalk,
+        FollowEntityDelegate originalFollowEntity,
+        UnfollowEntityDelegate originalUnfollowEntity
     )
     {
         _bindingManager = bindingManager;
         _characterAddress = characterAddress;
         _originalWalk = originalWalk;
+        _originalFollowEntity = originalFollowEntity;
+        _originalUnfollowEntity = originalUnfollowEntity;
     }
 
     /// <summary>
@@ -93,6 +162,14 @@ public class CharacterBinding
     /// The walk must be hooked for this event to be called.
     /// </remarks>
     public event Func<ushort, ushort, bool>? WalkCall;
+
+    /// <summary>
+    /// Event that is called when entity follow or unfollow was called.
+    /// </summary>
+    /// <remarks>
+    /// The follow/unfollow entity must be hooked for this event to be called.
+    /// </remarks>
+    public event Func<MapBaseObj?, bool>? FollowEntityCall;
 
     /// <summary>
     /// Disable all the hooks that are currently enabled.
@@ -141,5 +218,77 @@ public class CharacterBinding
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Follow the entity.
+    /// </summary>
+    /// <param name="entity">The entity.</param>
+    /// <returns>A result that may or may not have succeeded.</returns>
+    public Result FollowEntity(MapBaseObj? entity)
+        => FollowEntity(entity?.Address ?? IntPtr.Zero);
+
+    /// <summary>
+    /// Follow the entity.
+    /// </summary>
+    /// <param name="entityAddress">The entity address.</param>
+    /// <returns>A result that may or may not have succeeded.</returns>
+    public Result FollowEntity(IntPtr entityAddress)
+    {
+        try
+        {
+            _originalFollowEntity(GetCharacterAddress(), entityAddress);
+        }
+        catch (Exception e)
+        {
+            return e;
+        }
+
+        return Result.FromSuccess();
+    }
+
+    /// <summary>
+    /// Stop following entity.
+    /// </summary>
+    /// <returns>A result that may or may not have succeeded.</returns>
+    public Result UnfollowEntity()
+    {
+        try
+        {
+            _originalUnfollowEntity(GetCharacterAddress());
+        }
+        catch (Exception e)
+        {
+            return e;
+        }
+
+        return Result.FromSuccess();
+    }
+
+    private bool FollowEntityDetour
+    (
+        IntPtr sceneManagerPtr,
+        IntPtr entityPtr,
+        char unknown1,
+        char unknown2
+    )
+    {
+        var result = FollowEntityCall?.Invoke(new MapBaseObj(_bindingManager.Memory, entityPtr));
+        if (result ?? true)
+        {
+            return _originalFollowEntity(sceneManagerPtr, entityPtr, unknown1, unknown2);
+        }
+
+        return false;
+    }
+
+    private void UnfollowEntityDetour(IntPtr entityPtr, int unknown)
+    {
+        var result = FollowEntityCall?.Invoke(null);
+        if (result ?? true)
+        {
+            Console.WriteLine("Called with unknown: " + unknown);
+            _originalUnfollowEntity(entityPtr, unknown);
+        }
     }
 }
