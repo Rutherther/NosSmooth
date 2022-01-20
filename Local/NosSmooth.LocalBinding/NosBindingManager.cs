@@ -23,19 +23,23 @@ public class NosBindingManager : IDisposable
 {
     private readonly CharacterBindingOptions _characterBindingOptions;
     private readonly NetworkBindingOptions _networkBindingOptions;
+    private SceneManagerBindingOptions _sceneManagerBindingOptions;
 
     private NetworkBinding? _networkBinding;
     private CharacterBinding? _characterBinding;
+    private SceneManagerBinding? _sceneManagerBinding;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NosBindingManager"/> class.
     /// </summary>
     /// <param name="characterBindingOptions">The character binding options.</param>
     /// <param name="networkBindingOptions">The network binding options.</param>
+    /// <param name="sceneManagerBindingOptions">The scene manager binding options.</param>
     public NosBindingManager
     (
         IOptions<CharacterBindingOptions> characterBindingOptions,
-        IOptions<NetworkBindingOptions> networkBindingOptions
+        IOptions<NetworkBindingOptions> networkBindingOptions,
+        IOptions<SceneManagerBindingOptions> sceneManagerBindingOptions
     )
     {
         Hooks = new ReloadedHooks();
@@ -43,6 +47,7 @@ public class NosBindingManager : IDisposable
         Scanner = new Scanner(Process.GetCurrentProcess(), Process.GetCurrentProcess().MainModule);
         _characterBindingOptions = characterBindingOptions.Value;
         _networkBindingOptions = networkBindingOptions.Value;
+        _sceneManagerBindingOptions = sceneManagerBindingOptions.Value;
     }
 
     /// <summary>
@@ -97,6 +102,24 @@ public class NosBindingManager : IDisposable
     }
 
     /// <summary>
+    /// Gets the character binding.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown if the manager is not initialized yet.</exception>
+    public SceneManagerBinding SceneManager
+    {
+        get
+        {
+            if (_sceneManagerBinding is null)
+            {
+                throw new InvalidOperationException
+                    ("Could not get scene manager. The binding manager is not initialized. Did you forget to call NosBindingManager.Initialize?");
+            }
+
+            return _sceneManagerBinding;
+        }
+    }
+
+    /// <summary>
     /// Initialize the existing bindings and hook NosTale functions.
     /// </summary>
     /// <returns>A result that may or may not have succeeded.</returns>
@@ -115,6 +138,13 @@ public class NosBindingManager : IDisposable
             return Result.FromError(character);
         }
         _characterBinding = character.Entity;
+
+        var sceneManager = SceneManagerBinding.Create(this, _sceneManagerBindingOptions);
+        if (!sceneManager.IsSuccess)
+        {
+            return Result.FromError(sceneManager);
+        }
+        _sceneManagerBinding = sceneManager.Entity;
 
         return Result.FromSuccess();
     }

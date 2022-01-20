@@ -36,4 +36,16 @@ public static class ServiceCollectionExtensions
 
         return serviceCollection;
     }
+
+    /// <summary>
+    /// Adds packet interceptor.
+    /// </summary>
+    /// <param name="serviceCollection">The service collection.</param>
+    /// <typeparam name="TInterceptor">The type of the interceptor.</typeparam>
+    /// <returns>The collection.</returns>
+    public static IServiceCollection AddPacketInterceptor<TInterceptor>(this IServiceCollection serviceCollection)
+        where TInterceptor : class, IPacketInterceptor
+    {
+        return serviceCollection.AddSingleton<IPacketInterceptor, TInterceptor>();
+    }
 }

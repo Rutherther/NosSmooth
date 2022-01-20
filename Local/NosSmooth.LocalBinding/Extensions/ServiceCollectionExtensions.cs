@@ -30,6 +30,7 @@ public static class ServiceCollectionExtensions
         return serviceCollection
             .AddSingleton<NosBindingManager>()
             .AddSingleton(p => p.GetRequiredService<NosBindingManager>().Character)
+            .AddSingleton(p => p.GetRequiredService<NosBindingManager>().SceneManager)
             .AddSingleton(p => p.GetRequiredService<NosBindingManager>().Network);
     }
 }
