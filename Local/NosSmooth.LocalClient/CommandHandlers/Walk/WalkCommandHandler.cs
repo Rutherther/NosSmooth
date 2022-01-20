@@ -58,9 +58,14 @@ public class WalkCommandHandler : ICommandHandler<WalkCommand>
                     // ignored, just for cancellation
                 }
 
-                return walkResult;
+                return Result.FromError(walkResult);
             }
 
+            if (walkResult.Entity == false)
+            {
+                await _walkStatus.CancelWalkingAsync(WalkCancelReason.NosTaleReturnedFalse);
+                return new WalkNotFinishedError(_walkStatus.CurrentX, _walkStatus.CurrentY, WalkCancelReason.NosTaleReturnedFalse);
+            }
             try
             {
                 await Task.Delay(_options.CheckDelay, ct);

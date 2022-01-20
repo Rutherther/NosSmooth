@@ -32,4 +32,12 @@ public enum WalkCancelReason
     /// The client was not walking for too long.
     /// </summary>
     NotWalkingTooLong,
+
+    /// <summary>
+    /// The nostale walk function has returned false.
+    /// </summary>
+    /// <remarks>
+    /// The player may be stunned or immobile.
+    /// </remarks>
+    NosTaleReturnedFalse
 }
