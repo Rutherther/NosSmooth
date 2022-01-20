@@ -7,7 +7,9 @@
     <RootNamespace>WalkCommands</RootNamespace>
     <LangVersion>10</LangVersion>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-    <IncludeCopyLocalFilesOutputGroup>true</IncludeCopyLocalFilesOutputGroup>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Costura.Fody">
@@ -34,6 +36,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Local\NosSmooth.ChatCommands\NosSmooth.ChatCommands.csproj" />
     <ProjectReference Include="..\..\Local\NosSmooth.LocalClient\NosSmooth.LocalClient.csproj" />
   </ItemGroup>
 </Project>

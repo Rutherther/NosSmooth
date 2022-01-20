@@ -4,10 +4,12 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using NosSmooth.ChatCommands;
 using NosSmooth.Core.Client;
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Chat;
 using NosSmooth.Packets.Server.Chat;
+using Remora.Commands.Groups;
 using Remora.Results;
 
 namespace WalkCommands.Commands;
@@ -15,20 +17,20 @@ namespace WalkCommands.Commands;
 /// <summary>
 /// Group for detaching command that detaches the dll.
 /// </summary>
-public class DetachCommand
+public class DetachCommand : CommandGroup
 {
     private readonly CancellationTokenSource _dllStop;
-    private readonly INostaleClient _client;
+    private readonly FeedbackService _feedbackService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DetachCommand"/> class.
     /// </summary>
     /// <param name="dllStop">The cancellation token source to stop the client.</param>
-    /// <param name="client">The nostale client.</param>
-    public DetachCommand(CancellationTokenSource dllStop, INostaleClient client)
+    /// <param name="feedbackService">The feedback service.</param>
+    public DetachCommand(CancellationTokenSource dllStop, FeedbackService feedbackService)
     {
         _dllStop = dllStop;
-        _client = client;
+        _feedbackService = feedbackService;
     }
 
     /// <summary>
@@ -37,8 +39,7 @@ public class DetachCommand
     /// <returns>A result that may or may not have succeeded.</returns>
     public async Task<Result> HandleDetach()
     {
-        var receiveResult = await _client.ReceivePacketAsync
-            (new SayPacket(EntityType.Map, 1, SayColor.Green, "Going to detach!"));
+        var receiveResult = await _feedbackService.SendInfoMessageAsync("Going to detach!", CancellationToken);
 
         if (!receiveResult.IsSuccess)
         {

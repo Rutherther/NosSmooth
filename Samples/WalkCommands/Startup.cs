@@ -6,10 +6,12 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NosSmooth.ChatCommands;
 using NosSmooth.Core.Client;
 using NosSmooth.LocalBinding;
 using NosSmooth.LocalClient;
 using NosSmooth.LocalClient.Extensions;
+using Remora.Commands.Extensions;
 using WalkCommands.Commands;
 
 namespace WalkCommands;
@@ -21,20 +23,28 @@ public class Startup
 {
     private IServiceProvider BuildServices()
     {
-        return new ServiceCollection()
+        var collection = new ServiceCollection()
             .AddLocalClient()
             .AddScoped<Commands.WalkCommands>()
             .AddScoped<DetachCommand>()
             .AddSingleton<CancellationTokenSource>()
             .Configure<LocalClientOptions>(o => o.AllowIntercept = true)
-            .AddSingleton<IPacketInterceptor, ChatPacketInterceptor>()
-            .AddLogging(b =>
-            {
-                b.ClearProviders();
-                b.AddConsole();
-                b.SetMinimumLevel(LogLevel.Debug);
-            })
-            .BuildServiceProvider();
+            .AddNostaleChatCommands()
+            .AddLogging
+            (
+                b =>
+                {
+                    b.ClearProviders();
+                    b.AddConsole();
+                    b.SetMinimumLevel(LogLevel.Debug);
+                }
+            );
+
+        collection.AddCommandTree()
+            .WithCommandGroup<DetachCommand>()
+            .WithCommandGroup<CombatCommands>()
+            .WithCommandGroup<Commands.WalkCommands>();
+        return collection.BuildServiceProvider();
     }
 
     /// <summary>

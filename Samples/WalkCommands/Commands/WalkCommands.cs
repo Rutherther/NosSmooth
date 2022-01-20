@@ -4,11 +4,14 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using NosSmooth.ChatCommands;
 using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands;
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Chat;
 using NosSmooth.Packets.Server.Chat;
+using Remora.Commands.Attributes;
+using Remora.Commands.Groups;
 using Remora.Results;
 
 namespace WalkCommands.Commands;
@@ -16,17 +19,20 @@ namespace WalkCommands.Commands;
 /// <summary>
 /// Represents command group for walking.
 /// </summary>
-public class WalkCommands
+public class WalkCommands : CommandGroup
 {
     private readonly INostaleClient _client;
+    private readonly FeedbackService _feedbackService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WalkCommands"/> class.
     /// </summary>
     /// <param name="client">The nostale client.</param>
-    public WalkCommands(INostaleClient client)
+    /// <param name="feedbackService">The feedback service.</param>
+    public WalkCommands(INostaleClient client, FeedbackService feedbackService)
     {
-        _client = client ?? throw new ArgumentNullException(nameof(client));
+        _client = client;
+        _feedbackService = feedbackService;
     }
 
     /// <summary>
@@ -35,20 +41,19 @@ public class WalkCommands
     /// <param name="x">The x coordinate.</param>
     /// <param name="y">The y coordinate.</param>
     /// <param name="isCancellable">Whether the user can cancel the operation.</param>
-    /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
+    [Command("walk")]
     public async Task<Result> HandleWalkToAsync
     (
         ushort x,
         ushort y,
-        bool isCancellable = true,
-        CancellationToken ct = default
+        bool isCancellable = true
     )
     {
         var receiveResult = await _client.ReceivePacketAsync
         (
             new SayPacket(EntityType.Map, 1, SayColor.Red, $"Going to walk to {x} {y}."),
-            ct
+            CancellationToken
         );
 
         if (!receiveResult.IsSuccess)
@@ -57,13 +62,14 @@ public class WalkCommands
         }
 
         var command = new WalkCommand(x, y, isCancellable);
-        var walkResult = await _client.SendCommandAsync(command, ct);
+        var walkResult = await _client.SendCommandAsync(command, CancellationToken);
         if (!walkResult.IsSuccess)
         {
+            await _feedbackService.SendErrorMessageAsync($"Could not finish walking. {walkResult.Error.Message}", CancellationToken);
             await _client.ReceivePacketAsync
             (
                 new SayPacket(EntityType.Map, 1, SayColor.Red, "Could not finish walking."),
-                ct
+                CancellationToken
             );
             return walkResult;
         }
@@ -71,7 +77,7 @@ public class WalkCommands
         return await _client.ReceivePacketAsync
         (
             new SayPacket(EntityType.Map, 1, SayColor.Red, "Walk has finished successfully."),
-            ct
+            CancellationToken
         );
     }
 }
