@@ -37,8 +37,8 @@ public class CharacterBinding
     (
         IntPtr playerManagerPtr,
         IntPtr entityPtr,
-        char unknown1 = '\0',
-        char unknown2 = ''
+        int unknown1 = 0,
+        int unknown2 = 1
     );
 
     [Function
@@ -267,28 +267,27 @@ public class CharacterBinding
 
     private bool FollowEntityDetour
     (
-        IntPtr sceneManagerPtr,
+        IntPtr playerManagerPtr,
         IntPtr entityPtr,
-        char unknown1,
-        char unknown2
+        int unknown1,
+        int unknown2
     )
     {
         var result = FollowEntityCall?.Invoke(new MapBaseObj(_bindingManager.Memory, entityPtr));
         if (result ?? true)
         {
-            return _originalFollowEntity(sceneManagerPtr, entityPtr, unknown1, unknown2);
+            return _originalFollowEntity(playerManagerPtr, entityPtr, unknown1, unknown2);
         }
 
         return false;
     }
 
-    private void UnfollowEntityDetour(IntPtr entityPtr, int unknown)
+    private void UnfollowEntityDetour(IntPtr playerManagerPtr, int unknown)
     {
         var result = FollowEntityCall?.Invoke(null);
         if (result ?? true)
         {
-            Console.WriteLine("Called with unknown: " + unknown);
-            _originalUnfollowEntity(entityPtr, unknown);
+            _originalUnfollowEntity(playerManagerPtr, unknown);
         }
     }
 }
