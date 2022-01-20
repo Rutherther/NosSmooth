@@ -39,5 +39,5 @@ public record CModePacket
     [PacketIndex(6)]
     byte Size,
     [PacketIndex(7)]
-    byte MorphSkin
+    short MorphSkin
 ) : IPacket;
