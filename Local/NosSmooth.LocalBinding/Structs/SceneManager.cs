@@ -47,6 +47,23 @@ public class SceneManager
     /// </summary>
     public MapObjBaseList ItemList => new MapObjBaseList(_memory, ReadPtr(_sceneManager + 0x18));
 
+    /// <summary>
+    /// Gets the entity that is currently being followed by the player.
+    /// </summary>
+    public MapBaseObj? FollowEntity
+    {
+        get
+        {
+            var ptr = ReadPtr(_sceneManager + 0x48);
+            if (ptr == IntPtr.Zero)
+            {
+                return null;
+            }
+
+            return new MapBaseObj(_memory, ptr);
+        }
+    }
+
     private IntPtr ReadPtr(IntPtr ptr)
     {
         _memory.Read(ptr, out IntPtr read);
