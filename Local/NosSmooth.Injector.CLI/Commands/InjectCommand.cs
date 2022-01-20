@@ -5,6 +5,7 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.ComponentModel;
+using System.Diagnostics;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Results;
@@ -30,7 +31,7 @@ namespace NosSmooth.Injector.CLI.Commands
         /// <summary>
         /// The command to inject.
         /// </summary>
-        /// <param name="processId">The id of the process.</param>
+        /// <param name="process">The id of the process or part of its name.</param>
         /// <param name="dllPath">The path to the dll to inject.</param>
         /// <param name="typeName">The full type specifier. Default is LibraryName.DllMain, LibraryName.</param>
         /// <param name="methodName">The name of the UnmanagedCallersOnly method. Default is Main.</param>
@@ -39,7 +40,7 @@ namespace NosSmooth.Injector.CLI.Commands
         public Task<Result> Inject
         (
             [Description("The id of the process to inject into.")]
-            int processId,
+            string process,
             [Description("The path to the dll to inject.")]
             string dllPath,
             [Option('t', "type"), Description("The full type specifier. Default is LibraryName.DllMain, LibraryName")]
@@ -48,6 +49,17 @@ namespace NosSmooth.Injector.CLI.Commands
             string? methodName = null
         )
         {
+            if (!int.TryParse(process, out var processId))
+            {
+                var foundProcess = Process.GetProcesses().FirstOrDefault(x => x.ProcessName.Contains(process, StringComparison.OrdinalIgnoreCase));
+                if (foundProcess is null)
+                {
+                    return Task.FromResult(Result.FromError(new NotFoundError("Could not find the given process.")));
+                }
+
+                processId = foundProcess.Id;
+            }
+
             var dllName = Path.GetFileNameWithoutExtension(dllPath);
             return Task.FromResult
                 (_injector.Inject(processId, dllPath, $"{dllName}.DllMain, {dllName}", methodName ?? "Main"));
