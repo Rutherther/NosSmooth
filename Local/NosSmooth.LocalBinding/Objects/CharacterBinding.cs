@@ -20,11 +20,11 @@ public class CharacterBinding
 {
         [Function
     (
-        new[] { FunctionAttribute.Register.eax, FunctionAttribute.Register.edx },
+        new[] { FunctionAttribute.Register.eax, FunctionAttribute.Register.edx, FunctionAttribute.Register.ecx },
         FunctionAttribute.Register.eax,
         FunctionAttribute.StackCleanup.Callee
     )]
-    private delegate void WalkDelegate(IntPtr characterObject, int position, int unknown = 1);
+    private delegate bool WalkDelegate(IntPtr characterObject, int position, short unknown0 = 0, int unknown1 = 1);
 
     /// <summary>
     /// Create the network binding with finding the network object and functions.
@@ -119,19 +119,27 @@ public class CharacterBinding
     /// <param name="x">The x coordinate.</param>
     /// <param name="y">The y coordinate.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Result Walk(ushort x, ushort y)
+    public Result<bool> Walk(ushort x, ushort y)
     {
         int param = (y << 16) | x;
-        _originalWalk(GetCharacterAddress(), param);
-        return Result.FromSuccess();
+        try
+        {
+            return _originalWalk(GetCharacterAddress(), param);
+        }
+        catch (Exception e)
+        {
+            return e;
+        }
     }
 
-    private void WalkDetour(IntPtr characterObject, int position, int unknown)
+    private bool WalkDetour(IntPtr characterObject, int position, short unknown0, int unknown1)
     {
         var result = WalkCall?.Invoke((ushort)(position & 0xFFFF), (ushort)((position >> 16) & 0xFFFF));
         if (result ?? true)
         {
-            _originalWalk(characterObject, position, unknown);
+            return _originalWalk(characterObject, position, unknown0, unknown1);
         }
+
+        return false;
     }
 }
