@@ -28,7 +28,7 @@ public class BoolInlineConverterGenerator : IInlineConverterGenerator
             textWriter.WriteLine($"if ({variableName} is null)");
             textWriter.WriteLine("{");
             textWriter.Indent++;
-            textWriter.WriteLine("builder.Append('-');");
+            textWriter.WriteLine("builder.Append(\"-1\");");
             textWriter.Indent--;
             textWriter.WriteLine("}");
             textWriter.WriteLine("else");
@@ -61,7 +61,7 @@ public static Result<bool?> ParseBool(ref PacketStringEnumerator stringEnumerato
     }}
 
     var token = packetToken.Token;
-    if (token[0] == '-')
+    if (token.Length == 2 && token.StartsWith(""-1""))
     {{
         return Result<bool?>.FromSuccess(null);
     }}

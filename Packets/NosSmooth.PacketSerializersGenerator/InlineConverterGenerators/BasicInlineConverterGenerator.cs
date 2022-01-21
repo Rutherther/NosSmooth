@@ -35,7 +35,7 @@ public class BasicInlineConverterGenerator : IInlineConverterGenerator
         {
             textWriter.WriteLine($"if ({variableName} is null)");
             textWriter.WriteLine("{");
-            textWriter.WriteLine("builder.Append('-');");
+            textWriter.WriteLine("builder.Append(\"-1\");");
             textWriter.WriteLine("}");
             textWriter.WriteLine("else");
         }
@@ -76,7 +76,7 @@ public static Result<{type}?> ParseBasic{type}(IStringConverter typeConverter, r
     }}
 
     var token = packetToken.Token;
-    if (token[0] == '-' && token.Length == 1)
+    if (token.Length == 2 && token.StartsWith(""-1""))
     {{
         return Result<{type}?>.FromSuccess(null);
     }}

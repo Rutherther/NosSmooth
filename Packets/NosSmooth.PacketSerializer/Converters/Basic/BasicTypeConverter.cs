@@ -19,7 +19,7 @@ public abstract class BasicTypeConverter<TBasicType> : BaseStringConverter<TBasi
     /// <inheritdoc />
     public override Result Serialize(TBasicType? obj, PacketStringBuilder builder)
     {
-        builder.Append(obj?.ToString() ?? "-");
+        builder.Append(obj?.ToString() ?? GetNullSymbol());
         return Result.FromSuccess();
     }
 
@@ -32,7 +32,8 @@ public abstract class BasicTypeConverter<TBasicType> : BaseStringConverter<TBasi
             return Result<TBasicType?>.FromError(nextTokenResult);
         }
 
-        if (packetToken.Token[0] == '-' && packetToken.Token.Length == 1)
+        var nullSymbol = GetNullSymbol();
+        if (packetToken.Token.Length == nullSymbol.Length && packetToken.Token.StartsWith(nullSymbol))
         {
             return Result<TBasicType?>.FromSuccess(default);
         }
@@ -46,4 +47,13 @@ public abstract class BasicTypeConverter<TBasicType> : BaseStringConverter<TBasi
     /// <param name="value">The value to deserialize.</param>
     /// <returns>The deserialized value or an error.</returns>
     protected abstract Result<TBasicType?> Deserialize(ReadOnlySpan<char> value);
+
+    /// <summary>
+    /// Gets the symbol that represents null.
+    /// </summary>
+    /// <returns>The null symbol.</returns>
+    protected virtual string GetNullSymbol()
+    {
+        return "-1";
+    }
 }

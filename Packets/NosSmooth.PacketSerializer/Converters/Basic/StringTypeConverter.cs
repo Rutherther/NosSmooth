@@ -19,4 +19,10 @@ public class StringTypeConverter : BasicTypeConverter<string>
     {
         return value.ToString();
     }
+
+    /// <inheritdoc />
+    protected override string GetNullSymbol()
+    {
+        return "-";
+    }
 }

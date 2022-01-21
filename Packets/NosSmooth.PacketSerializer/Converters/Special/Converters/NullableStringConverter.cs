@@ -35,7 +35,7 @@ public class NullableStringConverter<T> : BaseStringConverter<Nullable<T>>
     {
         if (obj is null)
         {
-            builder.Append('-');
+            builder.Append("-1");
             return Result.FromSuccess();
         }
 
@@ -45,6 +45,17 @@ public class NullableStringConverter<T> : BaseStringConverter<Nullable<T>>
     /// <inheritdoc />
     public override Result<T?> Deserialize(ref PacketStringEnumerator stringEnumerator)
     {
+        var nextToken = stringEnumerator.GetNextToken(out var packetToken, false);
+        if (!nextToken.IsSuccess)
+        {
+            return Result<T?>.FromError(nextToken);
+        }
+
+        if (packetToken.Token.Length == 2 && packetToken.Token.StartsWith("-1"))
+        {
+            return Result<T?>.FromSuccess(null);
+        }
+
         var result = _stringSerializer.Deserialize<T>(ref stringEnumerator);
         if (!result.IsSuccess)
         {
