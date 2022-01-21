@@ -1,5 +1,5 @@
 ﻿//
-//  CharacterBinding.cs
+//  PlayerManagerBinding.cs
 //
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -17,7 +17,7 @@ namespace NosSmooth.LocalBinding.Objects;
 /// <summary>
 /// The nostale binding of a character.
 /// </summary>
-public class CharacterBinding
+public class PlayerManagerBinding
 {
         [Function
     (
@@ -55,7 +55,7 @@ public class CharacterBinding
     /// <param name="bindingManager">The binding manager.</param>
     /// <param name="options">The options for the binding.</param>
     /// <returns>A network binding or an error.</returns>
-    public static Result<CharacterBinding> Create(NosBindingManager bindingManager, CharacterBindingOptions options)
+    public static Result<PlayerManagerBinding> Create(NosBindingManager bindingManager, CharacterBindingOptions options)
     {
         var process = Process.GetCurrentProcess();
         var characterObjectAddress = bindingManager.Scanner.CompiledFindPattern(options.CharacterObjectPattern);
@@ -94,7 +94,7 @@ public class CharacterBinding
             (unfollowEntityAddress.Offset + (int)process.MainModule!.BaseAddress);
         var unfollowEntityWrapper = unfollowEntityFunction.GetWrapper();
 
-        var binding = new CharacterBinding
+        var binding = new PlayerManagerBinding
         (
             bindingManager,
             (IntPtr)(characterObjectAddress.Offset + (int)process.MainModule!.BaseAddress + 0x06),
@@ -139,7 +139,7 @@ public class CharacterBinding
     private UnfollowEntityDelegate _originalUnfollowEntity;
     private WalkDelegate _originalWalk;
 
-    private CharacterBinding
+    private PlayerManagerBinding
     (
         NosBindingManager bindingManager,
         IntPtr characterAddress,

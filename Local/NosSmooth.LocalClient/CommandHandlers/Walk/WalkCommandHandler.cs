@@ -17,20 +17,20 @@ namespace NosSmooth.LocalClient.CommandHandlers.Walk;
 /// </summary>
 public class WalkCommandHandler : ICommandHandler<WalkCommand>
 {
-    private readonly CharacterBinding _characterBinding;
+    private readonly PlayerManagerBinding _playerManagerBinding;
     private readonly WalkStatus _walkStatus;
     private readonly WalkCommandHandlerOptions _options;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WalkCommandHandler"/> class.
     /// </summary>
-    /// <param name="characterBinding">The character object binding.</param>
+    /// <param name="playerManagerBinding">The character object binding.</param>
     /// <param name="walkStatus">The walk status.</param>
     /// <param name="options">The options.</param>
-    public WalkCommandHandler(CharacterBinding characterBinding, WalkStatus walkStatus, IOptions<WalkCommandHandlerOptions> options)
+    public WalkCommandHandler(PlayerManagerBinding playerManagerBinding, WalkStatus walkStatus, IOptions<WalkCommandHandlerOptions> options)
     {
         _options = options.Value;
-        _characterBinding = characterBinding;
+        _playerManagerBinding = playerManagerBinding;
         _walkStatus = walkStatus;
     }
 
@@ -46,7 +46,7 @@ public class WalkCommandHandler : ICommandHandler<WalkCommand>
         await _walkStatus.SetWalking(linked, command.TargetX, command.TargetY, command.CancelOnUserMove);
         while (!ct.IsCancellationRequested)
         {
-            var walkResult = _characterBinding.Walk(command.TargetX, command.TargetY);
+            var walkResult = _playerManagerBinding.Walk(command.TargetX, command.TargetY);
             if (!walkResult.IsSuccess)
             {
                 try

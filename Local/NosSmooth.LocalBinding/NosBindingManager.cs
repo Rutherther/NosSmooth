@@ -26,7 +26,7 @@ public class NosBindingManager : IDisposable
     private SceneManagerBindingOptions _sceneManagerBindingOptions;
 
     private NetworkBinding? _networkBinding;
-    private CharacterBinding? _characterBinding;
+    private PlayerManagerBinding? _characterBinding;
     private SceneManagerBinding? _sceneManagerBinding;
 
     /// <summary>
@@ -87,7 +87,7 @@ public class NosBindingManager : IDisposable
     /// Gets the character binding.
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown if the manager is not initialized yet.</exception>
-    public CharacterBinding Character
+    public PlayerManagerBinding PlayerManager
     {
         get
         {
@@ -132,7 +132,7 @@ public class NosBindingManager : IDisposable
         }
         _networkBinding = network.Entity;
 
-        var character = CharacterBinding.Create(this, _characterBindingOptions);
+        var character = PlayerManagerBinding.Create(this, _characterBindingOptions);
         if (!character.IsSuccess)
         {
             return Result.FromError(character);

@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions
     /// Adds bindings to Nostale objects along with <see cref="NosBindingManager"/> to initialize those.
     /// </summary>
     /// <remarks>
-    /// Adds <see cref="CharacterBinding"/> and <see cref="NetworkBinding"/>.
+    /// Adds <see cref="PlayerManagerBinding"/> and <see cref="NetworkBinding"/>.
     /// You have to initialize these using <see cref="NosBindingManager"/>
     /// prior to requesting them from the provider, otherwise an exception
     /// will be thrown.
@@ -29,7 +29,7 @@ public static class ServiceCollectionExtensions
     {
         return serviceCollection
             .AddSingleton<NosBindingManager>()
-            .AddSingleton(p => p.GetRequiredService<NosBindingManager>().Character)
+            .AddSingleton(p => p.GetRequiredService<NosBindingManager>().PlayerManager)
             .AddSingleton(p => p.GetRequiredService<NosBindingManager>().SceneManager)
             .AddSingleton(p => p.GetRequiredService<NosBindingManager>().Network);
     }

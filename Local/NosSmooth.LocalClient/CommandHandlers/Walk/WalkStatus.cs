@@ -13,7 +13,7 @@ namespace NosSmooth.LocalClient.CommandHandlers.Walk;
 /// </summary>
 public class WalkStatus
 {
-    private readonly CharacterBinding _characterBinding;
+    private readonly PlayerManagerBinding _playerManagerBinding;
     private readonly SemaphoreSlim _semaphore;
     private CancellationTokenSource? _walkingCancellation;
     private bool _userCanCancel;
@@ -22,10 +22,10 @@ public class WalkStatus
     /// <summary>
     /// Initializes a new instance of the <see cref="WalkStatus"/> class.
     /// </summary>
-    /// <param name="characterBinding">The character binding.</param>
-    public WalkStatus(CharacterBinding characterBinding)
+    /// <param name="playerManagerBinding">The character binding.</param>
+    public WalkStatus(PlayerManagerBinding playerManagerBinding)
     {
-        _characterBinding = characterBinding;
+        _playerManagerBinding = playerManagerBinding;
         _semaphore = new SemaphoreSlim(1, 1);
     }
 
@@ -110,7 +110,7 @@ public class WalkStatus
 
         if (!_walkHooked)
         {
-            _characterBinding.WalkCall += OnCharacterWalked;
+            _playerManagerBinding.WalkCall += OnCharacterWalked;
             _walkHooked = true;
         }
 

@@ -19,19 +19,19 @@ namespace WalkCommands.Commands;
 public class CombatCommands : CommandGroup
 {
     private readonly SceneManagerBinding _sceneManagerBinding;
-    private readonly CharacterBinding _characterBinding;
+    private readonly PlayerManagerBinding _playerManagerBinding;
     private readonly FeedbackService _feedbackService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CombatCommands"/> class.
     /// </summary>
     /// <param name="sceneManagerBinding">The scene manager binding.</param>
-    /// <param name="characterBinding">The character binding.</param>
+    /// <param name="playerManagerBinding">The character binding.</param>
     /// <param name="feedbackService">The feedback service.</param>
-    public CombatCommands(SceneManagerBinding sceneManagerBinding, CharacterBinding characterBinding, FeedbackService feedbackService)
+    public CombatCommands(SceneManagerBinding sceneManagerBinding, PlayerManagerBinding playerManagerBinding, FeedbackService feedbackService)
     {
         _sceneManagerBinding = sceneManagerBinding;
-        _characterBinding = characterBinding;
+        _playerManagerBinding = playerManagerBinding;
         _feedbackService = feedbackService;
     }
 
@@ -60,7 +60,7 @@ public class CombatCommands : CommandGroup
             return Task.FromResult(Result.FromError(entity));
         }
 
-        return Task.FromResult(_characterBinding.FollowEntity(entity.Entity));
+        return Task.FromResult(_playerManagerBinding.FollowEntity(entity.Entity));
     }
 
     /// <summary>
@@ -70,6 +70,6 @@ public class CombatCommands : CommandGroup
     [Command("unfollow")]
     public Task<Result> HandleUnfollowAsync()
     {
-        return Task.FromResult(_characterBinding.UnfollowEntity());
+        return Task.FromResult(_playerManagerBinding.UnfollowEntity());
     }
 }

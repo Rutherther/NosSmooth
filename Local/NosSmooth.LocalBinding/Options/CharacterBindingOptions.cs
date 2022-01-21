@@ -9,7 +9,7 @@ using NosSmooth.LocalBinding.Objects;
 namespace NosSmooth.LocalBinding.Options;
 
 /// <summary>
-/// Options for <see cref="CharacterBinding"/>.
+/// Options for <see cref="PlayerManagerBinding"/>.
 /// </summary>
 public class CharacterBindingOptions
 {
