@@ -65,21 +65,21 @@ public class InPacketConverterTests
                 PlayerClass.Archer,
                 new InEquipmentSubPacket
                 (
-                    -1,
+                    null,
                     4480,
                     4452,
                     4468,
                     4840,
                     4132,
-                    -1,
-                    -1,
-                    -1,
-                    -1
+                    null,
+                    null,
+                    null,
+                    null
                 ),
                 50,
                 95,
                 false,
-                -1,
+                null,
                 4,
                 Element.Dark,
                 0,
@@ -213,10 +213,10 @@ public class InPacketConverterTests
                 0,
                 0,
                 0,
-                -1,
+                null,
                 SpawnEffect.NoEffect,
                 false,
-                -1,
+                null,
                 null,
                 "0",
                 null,
@@ -285,7 +285,7 @@ public class InPacketConverterTests
         var result = _packetSerializer.Serialize(actualPacket);
         Assert.True(result.IsSuccess);
         var expectedPacketString
-            = "in 2 334 1992 134 112 2 100 80 0 0 0 -1 1 0 -1 - 0 -1 0 0 0 0 0 0 0 0 0 0";
+            = "in 2 334 1992 134 112 2 100 80 0 0 0 -1 1 0 -1 - 0 - 0 0 0 0 0 0 0 0 0 0";
         Assert.Equal(expectedPacketString, result.Entity);
     }
 }
