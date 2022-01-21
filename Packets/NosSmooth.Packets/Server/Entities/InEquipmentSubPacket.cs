@@ -28,23 +28,23 @@ namespace NosSmooth.Packets.Server.Entities;
 public record InEquipmentSubPacket
 (
     [PacketIndex(0)]
-    long HatVNum,
+    long? HatVNum,
     [PacketIndex(1)]
-    long ArmorVNum,
+    long? ArmorVNum,
     [PacketIndex(2)]
-    long MainWeaponVNum,
+    long? MainWeaponVNum,
     [PacketIndex(3)]
-    long SecondaryWeaponVNum,
+    long? SecondaryWeaponVNum,
     [PacketIndex(4)]
-    long MaskVNum,
+    long? MaskVNum,
     [PacketIndex(5)]
-    long Fairy,
+    long? Fairy,
     [PacketIndex(6)]
-    long CostumeSuitVNum,
+    long? CostumeSuitVNum,
     [PacketIndex(7)]
-    long CostumeHatVNum,
+    long? CostumeHatVNum,
     [PacketIndex(8)]
-    short WeaponSkin,
+    short? WeaponSkin,
     [PacketIndex(9)]
-    short WingSkin
+    short? WingSkin
 ) : IPacket;

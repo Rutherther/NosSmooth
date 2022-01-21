@@ -41,7 +41,7 @@ public record PinitSubPacket
     [PacketIndex(4)]
     NameString? Name,
     [PacketIndex(5)]
-    int Unknown,
+    int? Unknown,
     [PacketIndex(6)]
     long VNum,
     [PacketIndex(7)]

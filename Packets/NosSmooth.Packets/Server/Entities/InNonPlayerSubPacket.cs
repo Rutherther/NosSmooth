@@ -52,13 +52,13 @@ public record InNonPlayerSubPacket
     [PacketIndex(4)]
     short GroupEffect,
     [PacketIndex(5)]
-    long OwnerId,
+    long? OwnerId,
     [PacketIndex(6)]
     SpawnEffect SpawnEffect,
     [PacketIndex(7)]
     bool IsSitting,
     [PacketIndex(8)]
-    long MorphVNum,
+    long? MorphVNum,
     [PacketIndex(9)]
     NameString? Name,
     [PacketIndex(10)]
