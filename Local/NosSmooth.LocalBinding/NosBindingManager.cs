@@ -21,6 +21,7 @@ namespace NosSmooth.LocalBinding;
 /// </summary>
 public class NosBindingManager : IDisposable
 {
+    private readonly WinControlBindingOptions _winControlBindingOptions;
     private readonly CharacterBindingOptions _characterBindingOptions;
     private readonly NetworkBindingOptions _networkBindingOptions;
     private SceneManagerBindingOptions _sceneManagerBindingOptions;
@@ -28,6 +29,7 @@ public class NosBindingManager : IDisposable
     private NetworkBinding? _networkBinding;
     private PlayerManagerBinding? _characterBinding;
     private SceneManagerBinding? _sceneManagerBinding;
+    private WinControlBinding? _windowControlBinding;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NosBindingManager"/> class.
@@ -35,11 +37,13 @@ public class NosBindingManager : IDisposable
     /// <param name="characterBindingOptions">The character binding options.</param>
     /// <param name="networkBindingOptions">The network binding options.</param>
     /// <param name="sceneManagerBindingOptions">The scene manager binding options.</param>
+    /// <param name="winControlBindingOptions">The win control binding options.</param>
     public NosBindingManager
     (
         IOptions<CharacterBindingOptions> characterBindingOptions,
         IOptions<NetworkBindingOptions> networkBindingOptions,
-        IOptions<SceneManagerBindingOptions> sceneManagerBindingOptions
+        IOptions<SceneManagerBindingOptions> sceneManagerBindingOptions,
+        IOptions<WinControlBindingOptions> winControlBindingOptions
     )
     {
         Hooks = new ReloadedHooks();
@@ -48,6 +52,7 @@ public class NosBindingManager : IDisposable
         _characterBindingOptions = characterBindingOptions.Value;
         _networkBindingOptions = networkBindingOptions.Value;
         _sceneManagerBindingOptions = sceneManagerBindingOptions.Value;
+        _winControlBindingOptions = winControlBindingOptions.Value;
     }
 
     /// <summary>
@@ -102,7 +107,7 @@ public class NosBindingManager : IDisposable
     }
 
     /// <summary>
-    /// Gets the character binding.
+    /// Gets the scene manager binding.
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown if the manager is not initialized yet.</exception>
     public SceneManagerBinding SceneManager
@@ -120,33 +125,64 @@ public class NosBindingManager : IDisposable
     }
 
     /// <summary>
+    /// Gets the window control binding.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown if the manager is not initialized yet.</exception>
+    public WinControlBinding WinControl
+    {
+        get
+        {
+            if (_windowControlBinding is null)
+            {
+                throw new InvalidOperationException
+                    ("Could not get window control. The binding manager is not initialized. Did you forget to call NosBindingManager.Initialize?");
+            }
+
+            return _windowControlBinding;
+        }
+    }
+
+    /// <summary>
     /// Initialize the existing bindings and hook NosTale functions.
     /// </summary>
     /// <returns>A result that may or may not have succeeded.</returns>
     public Result Initialize()
     {
+        List<IResult> errorResults = new List<IResult>();
+
         var network = NetworkBinding.Create(this, _networkBindingOptions);
         if (!network.IsSuccess)
         {
-            return Result.FromError(network);
+            errorResults.Add(network);
         }
         _networkBinding = network.Entity;
 
         var character = PlayerManagerBinding.Create(this, _characterBindingOptions);
         if (!character.IsSuccess)
         {
-            return Result.FromError(character);
+            errorResults.Add(character);
         }
         _characterBinding = character.Entity;
 
         var sceneManager = SceneManagerBinding.Create(this, _sceneManagerBindingOptions);
         if (!sceneManager.IsSuccess)
         {
-            return Result.FromError(sceneManager);
+            errorResults.Add(sceneManager);
         }
         _sceneManagerBinding = sceneManager.Entity;
 
-        return Result.FromSuccess();
+        var winControl = WinControlBinding.Create(this, _winControlBindingOptions);
+        if (!winControl.IsSuccess)
+        {
+            errorResults.Add(winControl);
+        }
+        _windowControlBinding = winControl.Entity;
+
+        return errorResults.Count switch
+        {
+            0 => Result.FromSuccess(),
+            _ => new AggregateError(errorResults)
+        };
     }
 
     /// <summary>

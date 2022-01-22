@@ -31,6 +31,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<NosBindingManager>()
             .AddSingleton(p => p.GetRequiredService<NosBindingManager>().PlayerManager)
             .AddSingleton(p => p.GetRequiredService<NosBindingManager>().SceneManager)
+            .AddSingleton(p => p.GetRequiredService<NosBindingManager>().WinControl)
             .AddSingleton(p => p.GetRequiredService<NosBindingManager>().Network);
     }
 }
