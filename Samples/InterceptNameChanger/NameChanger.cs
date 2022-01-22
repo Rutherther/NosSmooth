@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NosSmooth.Core.Client;
+using NosSmooth.Core.Extensions;
+using NosSmooth.LocalBinding;
 using NosSmooth.LocalClient;
 using NosSmooth.LocalClient.Extensions;
 using NosSmooth.Packets.Enums;
@@ -46,6 +48,14 @@ namespace InterceptNameChanger
 
             var logger = provider.GetRequiredService<ILogger<NameChanger>>();
             logger.LogInformation("Hello world from NameChanger!");
+
+            var bindingManager = provider.GetRequiredService<NosBindingManager>();
+            var initializeResult = bindingManager.Initialize();
+            if (!initializeResult.IsSuccess)
+            {
+                logger.LogError($"Could not initialize NosBindingManager.");
+                logger.LogResultError(initializeResult);
+            }
 
             var client = provider.GetRequiredService<INostaleClient>();
 

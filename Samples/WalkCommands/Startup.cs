@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NosSmooth.ChatCommands;
 using NosSmooth.Core.Client;
+using NosSmooth.Core.Extensions;
 using NosSmooth.LocalBinding;
 using NosSmooth.LocalClient;
 using NosSmooth.LocalClient.Extensions;
@@ -59,7 +60,8 @@ public class Startup
         var initializeResult = bindingManager.Initialize();
         if (!initializeResult.IsSuccess)
         {
-            logger.LogError($"Could not initialize {initializeResult.Error.Message}.");
+            logger.LogError($"Could not initialize NosBindingManager.");
+            logger.LogResultError(initializeResult);
         }
 
         var mainCancellation = provider.GetRequiredService<CancellationTokenSource>();

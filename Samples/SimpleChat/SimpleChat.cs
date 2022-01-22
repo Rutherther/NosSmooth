@@ -48,8 +48,8 @@ public class SimpleChat
         var initializeResult = bindingManager.Initialize();
         if (!initializeResult.IsSuccess)
         {
-            logger.LogError($"Could not initialize the bindings {initializeResult.Error.Message}.");
-            return;
+            logger.LogError($"Could not initialize NosBindingManager.");
+            logger.LogResultError(initializeResult);
         }
 
         var client = provider.GetRequiredService<INostaleClient>();
