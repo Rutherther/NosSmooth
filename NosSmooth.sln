@@ -56,6 +56,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NosSmooth.PacketSerializer.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NosSmooth.ChatCommands", "Local\NosSmooth.ChatCommands\NosSmooth.ChatCommands.csproj", "{7DC7FC22-EFA6-4EB0-8E75-99F746E50F6E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalBrowser", "Samples\ExternalBrowser\ExternalBrowser.csproj", "{A3BCC882-6DCD-4326-8BC2-A5C78AD10361}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -282,6 +284,18 @@ Global
 		{7DC7FC22-EFA6-4EB0-8E75-99F746E50F6E}.Release|x64.Build.0 = Release|Any CPU
 		{7DC7FC22-EFA6-4EB0-8E75-99F746E50F6E}.Release|x86.ActiveCfg = Release|Any CPU
 		{7DC7FC22-EFA6-4EB0-8E75-99F746E50F6E}.Release|x86.Build.0 = Release|Any CPU
+		{A3BCC882-6DCD-4326-8BC2-A5C78AD10361}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3BCC882-6DCD-4326-8BC2-A5C78AD10361}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3BCC882-6DCD-4326-8BC2-A5C78AD10361}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A3BCC882-6DCD-4326-8BC2-A5C78AD10361}.Debug|x64.Build.0 = Debug|Any CPU
+		{A3BCC882-6DCD-4326-8BC2-A5C78AD10361}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A3BCC882-6DCD-4326-8BC2-A5C78AD10361}.Debug|x86.Build.0 = Debug|Any CPU
+		{A3BCC882-6DCD-4326-8BC2-A5C78AD10361}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3BCC882-6DCD-4326-8BC2-A5C78AD10361}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3BCC882-6DCD-4326-8BC2-A5C78AD10361}.Release|x64.ActiveCfg = Release|Any CPU
+		{A3BCC882-6DCD-4326-8BC2-A5C78AD10361}.Release|x64.Build.0 = Release|Any CPU
+		{A3BCC882-6DCD-4326-8BC2-A5C78AD10361}.Release|x86.ActiveCfg = Release|Any CPU
+		{A3BCC882-6DCD-4326-8BC2-A5C78AD10361}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -306,6 +320,7 @@ Global
 		{86B4ED0C-CD28-4C6C-B58E-B4B1F7AAD683} = {54A49AC2-55B3-4156-8023-41C56719EBB5}
 		{CF03BCEA-EB5B-427F-8576-7DA7EB869BDC} = {54A49AC2-55B3-4156-8023-41C56719EBB5}
 		{7DC7FC22-EFA6-4EB0-8E75-99F746E50F6E} = {6078AE6E-7CD0-48E4-84E0-EB164D8881DA}
+		{A3BCC882-6DCD-4326-8BC2-A5C78AD10361} = {F20FE754-FDEA-4F3A-93D4-0750CB9EBB33}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5F46653-4DEC-429B-8580-4ED18ED9B4CA}
