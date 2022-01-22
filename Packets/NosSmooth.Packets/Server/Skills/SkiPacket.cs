@@ -11,17 +11,17 @@ namespace NosSmooth.Packets.Server.Skills;
 /// <summary>
 /// Information about skills, sent when changing sp, map etc.
 /// </summary>
-/// <param name="PrimarySkillId">The primary skill id.</param>
-/// <param name="SecondarySkillId">The secondary skill id. (may be same as primary in some cases, like for special cards).</param>
+/// <param name="PrimarySkillVNum">The primary skill vnum.</param>
+/// <param name="SecondarySkillVNum">The secondary skill vnum. (may be same as primary in some cases, like for special cards).</param>
 /// <param name="SkillSubPackets">The rest of the skills.</param>
 [PacketHeader("ski", PacketSource.Server)]
 [GenerateSerializer(true)]
 public record SkiPacket
 (
     [PacketIndex(0)]
-    long PrimarySkillId,
+    long PrimarySkillVNum,
     [PacketIndex(1)]
-    long SecondarySkillId,
+    long SecondarySkillVNum,
     [PacketListIndex(2, InnerSeparator = '|', ListSeparator = ' ')]
     IReadOnlyList<SkiSubPacket> SkillSubPackets
 ) : IPacket;

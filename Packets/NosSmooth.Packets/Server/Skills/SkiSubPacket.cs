@@ -11,14 +11,14 @@ namespace NosSmooth.Packets.Server.Skills;
 /// <summary>
 /// Sub packet for <see cref="SkiPacket"/> containing information about a skill.
 /// </summary>
-/// <param name="SkillId">The id of the skill.</param>
+/// <param name="SkillId">The vnum of the skill.</param>
 /// <param name="Rank">The rank of the skill.</param>
 [PacketHeader(null, PacketSource.Server)]
 [GenerateSerializer(true)]
 public record SkiSubPacket
 (
     [PacketIndex(0)]
-    long SkillId,
+    long SkillVNum,
     [PacketIndex(1)]
     byte Rank
 ) : IPacket;

@@ -16,7 +16,7 @@ namespace NosSmooth.Packets.Server.Skills;
 /// Do not rely on skill used + cooldown time. You will get kicked out of the sever
 /// after some time (on official).
 /// </remarks>
-/// <param name="SkillId">The id of the skill that is resetted.</param>
+/// <param name="SkillId">The id of the skill that is resetted. (NOT VNUM! In Skill.dat this is under TYPE x id)</param>
 [PacketHeader("sr", PacketSource.Server)]
 [GenerateSerializer(true)]
 public record SrPacket
