@@ -38,24 +38,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton<IStringConverterRepository, StringConverterRepository>()
             .AddSingleton<IStringSerializer, StringSerializer>()
             .AddSingleton<IPacketSerializer, PacketSerializer>()
-            .AddSingleton<IPacketTypesRepository>(p =>
-            {
-                var repository = new PacketTypesRepository(p.GetRequiredService<IStringConverterRepository>());
-                var packetTypes = typeof(IPacket).Assembly
-                    .GetExportedTypes()
-                    .Where(x => x != typeof(UnresolvedPacket) && !x.IsAbstract && typeof(IPacket).IsAssignableFrom(x));
-                foreach (var packetType in packetTypes)
-                {
-                    var result = repository.AddPacketType(packetType);
-                    if (!result.IsSuccess)
-                    {
-                        // TODO: figure out how to handle this.
-                        throw new Exception(packetType + ": " + result.Error.Message);
-                    }
-                }
-
-                return repository;
-            })
+            .AddSingleton<IPacketTypesRepository, PacketTypesRepository>()
             .AddGeneratedSerializers(typeof(IPacket).Assembly)
             .AddBasicConverters();
     }

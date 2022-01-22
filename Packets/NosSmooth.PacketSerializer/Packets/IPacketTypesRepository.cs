@@ -26,6 +26,19 @@ public interface IPacketTypesRepository
     public Result AddPacketType(Type type);
 
     /// <summary>
+    /// Add all of the given packet types.
+    /// </summary>
+    /// <remarks>
+    /// If there is an error, it will continue to add the rest of the types
+    /// and then return an aggregate error containing all the errors.
+    ///
+    /// The application can still run, but without the errorful packets.
+    /// </remarks>
+    /// <param name="packetTypes">The types add.</param>
+    /// <returns>A result that may or may not have succeeded.</returns>
+    public Result AddPacketTypes(IEnumerable<Type> packetTypes);
+
+    /// <summary>
     /// Gets the type of a packet that corresponds to the given header.
     /// </summary>
     /// <param name="header">The header of the packet.</param>

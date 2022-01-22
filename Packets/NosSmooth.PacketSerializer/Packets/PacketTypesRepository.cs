@@ -46,13 +46,13 @@ public class PacketTypesRepository : IPacketTypesRepository
     {
         if (!typeof(IPacket).IsAssignableFrom(type))
         {
-            return new ArgumentInvalidError(nameof(type), "The type has to be assignable to IPacket.");
+            return new ArgumentInvalidError(nameof(type), $"The type has to be assignable to IPacket. {type.FullName} isn't.");
         }
 
         var header = type.GetCustomAttribute<PacketHeaderAttribute>();
         if (header is null)
         {
-            return new ArgumentInvalidError(nameof(type), "Every packet has to specify the header.");
+            return new ArgumentInvalidError(nameof(type), $"Every packet has to specify the header. {type.FullName} didn't.");
         }
 
         var converterResult = _stringConverterRepository.GetTypeConverter(type);
@@ -89,6 +89,27 @@ public class PacketTypesRepository : IPacketTypesRepository
         }
 
         return Result.FromSuccess();
+    }
+
+    /// <inheritdoc />
+    public Result AddPacketTypes(IEnumerable<Type> packetTypes)
+    {
+        var errorResults = new List<IResult>();
+        foreach (var packetType in packetTypes)
+        {
+            var result = AddPacketType(packetType);
+            if (!result.IsSuccess)
+            {
+                errorResults.Add(result);
+            }
+        }
+
+        return errorResults.Count switch
+        {
+            0 => Result.FromSuccess(),
+            1 => (Result)errorResults[0],
+            _ => new AggregateError(errorResults)
+        };
     }
 
     /// <summary>
@@ -133,7 +154,8 @@ public class PacketTypesRepository : IPacketTypesRepository
     /// </summary>
     /// <typeparam name="TPacket">The type of the packet.</typeparam>
     /// <returns>Info that stores the packet's info. Or an error, if not found.</returns>
-    public Result<PacketInfo> FindPacketInfo<TPacket>() where TPacket : IPacket
+    public Result<PacketInfo> FindPacketInfo<TPacket>()
+        where TPacket : IPacket
         => FindPacketInfo(typeof(TPacket));
 
     /// <summary>
