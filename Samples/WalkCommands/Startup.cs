@@ -12,6 +12,8 @@ using NosSmooth.Core.Extensions;
 using NosSmooth.LocalBinding;
 using NosSmooth.LocalClient;
 using NosSmooth.LocalClient.Extensions;
+using NosSmooth.Packets.Extensions;
+using NosSmooth.Packets.Packets;
 using Remora.Commands.Extensions;
 using WalkCommands.Commands;
 
@@ -62,6 +64,14 @@ public class Startup
         {
             logger.LogError($"Could not initialize NosBindingManager.");
             logger.LogResultError(initializeResult);
+        }
+
+        var packetTypesRepository = provider.GetRequiredService<IPacketTypesRepository>();
+        var packetAddResult = packetTypesRepository.AddDefaultPackets();
+        if (!packetAddResult.IsSuccess)
+        {
+            logger.LogError("Could not initialize default packet serializers correctly");
+            logger.LogResultError(packetAddResult);
         }
 
         var mainCancellation = provider.GetRequiredService<CancellationTokenSource>();

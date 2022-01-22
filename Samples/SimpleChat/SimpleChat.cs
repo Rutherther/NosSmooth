@@ -12,6 +12,8 @@ using NosSmooth.LocalBinding;
 using NosSmooth.LocalClient.Extensions;
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Chat;
+using NosSmooth.Packets.Extensions;
+using NosSmooth.Packets.Packets;
 using NosSmooth.Packets.Server.Chat;
 
 namespace SimpleChat;
@@ -50,6 +52,14 @@ public class SimpleChat
         {
             logger.LogError($"Could not initialize NosBindingManager.");
             logger.LogResultError(initializeResult);
+        }
+
+        var packetTypesRepository = provider.GetRequiredService<IPacketTypesRepository>();
+        var packetAddResult = packetTypesRepository.AddDefaultPackets();
+        if (!packetAddResult.IsSuccess)
+        {
+            logger.LogError("Could not initialize default packet serializers correctly");
+            logger.LogResultError(packetAddResult);
         }
 
         var client = provider.GetRequiredService<INostaleClient>();
