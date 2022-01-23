@@ -21,8 +21,10 @@ public class ExternalNosBrowser
 {
     private readonly PlayerManagerOptions _playerManagerOptions;
     private readonly SceneManagerOptions _sceneManagerOptions;
+    private readonly PetManagerOptions _petManagerOptions;
     private PlayerManager? _playerManager;
     private SceneManager? _sceneManager;
+    private PetManagerList? _petManagerList;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ExternalNosBrowser"/> class.
@@ -30,15 +32,18 @@ public class ExternalNosBrowser
     /// <param name="process">The process to browse.</param>
     /// <param name="playerManagerOptions">The options for obtaining player manager.</param>
     /// <param name="sceneManagerOptions">The scene manager options.</param>
+    /// <param name="petManagerOptions">The pet manager options.</param>
     public ExternalNosBrowser
     (
         Process process,
         PlayerManagerOptions playerManagerOptions,
-        SceneManagerOptions sceneManagerOptions
+        SceneManagerOptions sceneManagerOptions,
+        PetManagerOptions petManagerOptions
     )
     {
         _playerManagerOptions = playerManagerOptions;
         _sceneManagerOptions = sceneManagerOptions;
+        _petManagerOptions = petManagerOptions;
         Process = process;
         Memory = new ExternalMemory(process);
         Scanner = new Scanner(process, process.MainModule);
@@ -97,5 +102,25 @@ public class ExternalNosBrowser
         }
 
         return _sceneManager;
+    }
+
+    /// <summary>
+    /// Get the pet manager list.
+    /// </summary>
+    /// <returns>The player manager or an error.</returns>
+    public Result<PetManagerList> GetPetManagerList()
+    {
+        if (_petManagerList is null)
+        {
+            var petManagerResult = PetManagerList.Create(this, _petManagerOptions);
+            if (!petManagerResult.IsSuccess)
+            {
+                return petManagerResult;
+            }
+
+            _petManagerList = petManagerResult.Entity;
+        }
+
+        return _petManagerList;
     }
 }

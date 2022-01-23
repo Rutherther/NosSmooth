@@ -38,13 +38,15 @@ public class NosBindingManager : IDisposable
     /// <param name="sceneManagerBindingOptions">The scene manager binding options.</param>
     /// <param name="playerManagerOptions">The player manager options.</param>
     /// <param name="sceneManagerOptions">The scene manager options.</param>
+    /// <param name="petManagerOptions">The pet manager options.</param>
     public NosBindingManager
     (
         IOptions<CharacterBindingOptions> characterBindingOptions,
         IOptions<NetworkBindingOptions> networkBindingOptions,
         IOptions<SceneManagerBindingOptions> sceneManagerBindingOptions,
         IOptions<PlayerManagerOptions> playerManagerOptions,
-        IOptions<SceneManagerOptions> sceneManagerOptions
+        IOptions<SceneManagerOptions> sceneManagerOptions,
+        IOptions<PetManagerOptions> petManagerOptions
     )
     {
         Hooks = new ReloadedHooks();
@@ -54,7 +56,12 @@ public class NosBindingManager : IDisposable
         _networkBindingOptions = networkBindingOptions.Value;
         _sceneManagerBindingOptions = sceneManagerBindingOptions.Value;
         _nosBrowser = new ExternalNosBrowser
-            (Process.GetCurrentProcess(), playerManagerOptions.Value, sceneManagerOptions.Value);
+        (
+            Process.GetCurrentProcess(),
+            playerManagerOptions.Value,
+            sceneManagerOptions.Value,
+            petManagerOptions.Value
+        );
     }
 
     /// <summary>

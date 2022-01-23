@@ -36,7 +36,7 @@ public class SceneManager
             return new NotFoundError("Cannot find the main module of the target process.");
         }
 
-        int staticManagerAddress = (int)nosBrowser.Process.MainModule.BaseAddress + characterObjectAddress.Offset + 1;
+        int staticManagerAddress = (int)nosBrowser.Process.MainModule.BaseAddress + characterObjectAddress.Offset;
         return new SceneManager(nosBrowser.Memory, staticManagerAddress, options.SceneManagerOffsets);
     }
 
