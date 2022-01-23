@@ -23,5 +23,5 @@ public class PlayerManagerOptions
     /// Gets or sets the offsets to find the player manager at from the static address.
     /// </summary>
     public int[] PlayerManagerOffsets { get; set; }
-        = { 6, 0, 0 };
+        = { 6, 0 };
 }
