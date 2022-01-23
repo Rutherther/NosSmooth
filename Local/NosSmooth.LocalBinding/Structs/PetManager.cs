@@ -42,7 +42,7 @@ public class PetManager : ControlManager
     {
         get
         {
-            _memory.SafeRead(Address + 0x20, out int playerAddress);
+            _memory.SafeRead(Address + 0x7C, out int playerAddress);
             return new MapNpcObj(_memory, (IntPtr)playerAddress);
         }
     }

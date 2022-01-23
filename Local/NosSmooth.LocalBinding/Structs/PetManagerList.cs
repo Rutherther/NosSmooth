@@ -88,7 +88,7 @@ public class PetManagerList
     /// Get the first pet.
     /// </summary>
     /// <returns>First pet, if exists.</returns>
-    public MapNpcObj? GetFirst()
+    public PetManager? GetFirst()
     {
         if (Length == 0)
         {
@@ -96,14 +96,14 @@ public class PetManagerList
         }
 
         _memory.SafeRead(List, out int firstAddress);
-        return new MapNpcObj(_memory, (IntPtr)firstAddress);
+        return new PetManager(_memory, (IntPtr)firstAddress);
     }
 
     /// <summary>
     /// Get the second pet.
     /// </summary>
     /// <returns>Second pet, if exists.</returns>
-    public MapNpcObj? GetSecond()
+    public PetManager? GetSecond()
     {
         if (Length < 2)
         {
@@ -111,6 +111,6 @@ public class PetManagerList
         }
 
         _memory.SafeRead(List + 0x04, out int secondAddress);
-        return new MapNpcObj(_memory, (IntPtr)secondAddress);
+        return new PetManager(_memory, (IntPtr)secondAddress);
     }
 }
