@@ -1,11 +1,12 @@
 ﻿//
-//  SceneManagerBinding.cs
+//  UnitManagerBinding.cs
 //
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics;
 using NosSmooth.LocalBinding.Errors;
+using NosSmooth.LocalBinding.Extensions;
 using NosSmooth.LocalBinding.Options;
 using NosSmooth.LocalBinding.Structs;
 using Reloaded.Hooks;
@@ -13,6 +14,7 @@ using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.X86;
 using Reloaded.Memory.Buffers.Internal.Kernel32;
 using Remora.Results;
+using SharpDisasm.Udis86;
 
 namespace NosSmooth.LocalBinding.Objects;
 
@@ -22,42 +24,48 @@ namespace NosSmooth.LocalBinding.Objects;
 /// <remarks>
 /// The scene manager holds addresses to entities, mouse position, ....
 /// </remarks>
-public class SceneManagerBinding
+public class UnitManagerBinding
 {
     [Function
     (
         new[] { FunctionAttribute.Register.eax, FunctionAttribute.Register.edx },
-        FunctionAttribute.Register.ecx,
+        FunctionAttribute.Register.eax,
         FunctionAttribute.StackCleanup.Callee
     )]
-    private delegate void FocusEntityDelegate(IntPtr outputStringPtr, IntPtr entityPtr);
+    private delegate int FocusEntityDelegate(IntPtr unitManagerPtr, IntPtr entityPtr);
 
     /// <summary>
     /// Create the scene manager binding.
     /// </summary>
     /// <param name="bindingManager">The binding manager.</param>
-    /// <param name="sceneManager">The scene manager.</param>
     /// <param name="bindingOptions">The options for the binding.</param>
     /// <returns>A network binding or an error.</returns>
-    public static Result<SceneManagerBinding> Create
-        (NosBindingManager bindingManager, SceneManager sceneManager, SceneManagerBindingOptions bindingOptions)
+    public static Result<UnitManagerBinding> Create
+        (NosBindingManager bindingManager, UnitManagerBindingOptions bindingOptions)
     {
         var process = Process.GetCurrentProcess();
+
+        var unitManagerStaticAddress = bindingManager.Scanner.CompiledFindPattern(bindingOptions.UnitManagerPattern);
+        if (!unitManagerStaticAddress.Found)
+        {
+            return new BindingNotFoundError(bindingOptions.UnitManagerPattern, "UnitManagerBinding.UnitManager");
+        }
 
         var focusEntityAddress = bindingManager.Scanner.CompiledFindPattern(bindingOptions.FocusEntityPattern);
         if (!focusEntityAddress.Found)
         {
-            return new BindingNotFoundError(bindingOptions.FocusEntityPattern, "SceneManagerBinding.FocusEntity");
+            return new BindingNotFoundError(bindingOptions.FocusEntityPattern, "UnitManagerBinding.FocusEntity");
         }
 
         var focusEntityFunction = bindingManager.Hooks.CreateFunction<FocusEntityDelegate>
             (focusEntityAddress.Offset + (int)process.MainModule!.BaseAddress + 0x04);
         var focusEntityWrapper = focusEntityFunction.GetWrapper();
 
-        var binding = new SceneManagerBinding
+        var binding = new UnitManagerBinding
         (
             bindingManager,
-            sceneManager,
+            (int)process.MainModule!.BaseAddress + unitManagerStaticAddress.Offset,
+            bindingOptions.UnitManagerOffsets,
             focusEntityWrapper
         );
 
@@ -71,22 +79,33 @@ public class SceneManagerBinding
         return binding;
     }
 
+    private readonly int _staticUnitManagerAddress;
+    private readonly int[] _unitManagerOffsets;
+
     private readonly NosBindingManager _bindingManager;
     private FocusEntityDelegate _originalFocusEntity;
 
     private IHook<FocusEntityDelegate>? _focusHook;
 
-    private SceneManagerBinding
+    private UnitManagerBinding
     (
         NosBindingManager bindingManager,
-        SceneManager sceneManager,
+        int staticUnitManagerAddress,
+        int[] unitManagerOffsets,
         FocusEntityDelegate originalFocusEntity
     )
     {
         _originalFocusEntity = originalFocusEntity;
         _bindingManager = bindingManager;
-        SceneManager = sceneManager;
+        _staticUnitManagerAddress = staticUnitManagerAddress;
+        _unitManagerOffsets = unitManagerOffsets;
     }
+
+    /// <summary>
+    /// Gets the address of unit manager.
+    /// </summary>
+    public IntPtr Address => _bindingManager.Memory.FollowStaticAddressOffsets
+        (_staticUnitManagerAddress, _unitManagerOffsets);
 
     /// <summary>
     /// Event that is called when entity focus was called by NosTale.
@@ -95,27 +114,6 @@ public class SceneManagerBinding
     /// The focus entity must be hooked for this event to be called.
     /// </remarks>
     public event Func<MapBaseObj?, bool>? EntityFocus;
-
-    /// <summary>
-    /// Gets the scene manager object.
-    /// </summary>
-    public SceneManager SceneManager { get; }
-
-    /// <summary>
-    /// Focus the entity with the given id.
-    /// </summary>
-    /// <param name="id">The id of the entity.</param>
-    /// <returns>A result that may or may not have succeeded.</returns>
-    public Result FocusEntity(int id)
-    {
-        var entityResult = FindEntity(id);
-        if (!entityResult.IsSuccess)
-        {
-            return Result.FromError(entityResult);
-        }
-
-        return FocusEntity(entityResult.Entity);
-    }
 
     /// <summary>
     /// Focus the entity.
@@ -134,7 +132,8 @@ public class SceneManagerBinding
     {
         try
         {
-            _originalFocusEntity(IntPtr.Zero, entityAddress);
+            var res = _originalFocusEntity(Address, entityAddress);
+            Console.WriteLine(res);
         }
         catch (Exception e)
         {
@@ -144,48 +143,7 @@ public class SceneManagerBinding
         return Result.FromSuccess();
     }
 
-    /// <summary>
-    /// Find the given entity address.
-    /// </summary>
-    /// <param name="id">The id of the entity.</param>
-    /// <returns>The pointer to the entity or an error.</returns>
-    public Result<MapBaseObj?> FindEntity(int id)
-    {
-        if (id == 0)
-        {
-            return Result<MapBaseObj?>.FromSuccess(null);
-        }
-
-        var manager = SceneManager;
-
-        var item = manager.ItemList.FirstOrDefault(x => x.Id == id);
-        if (item is not null)
-        {
-            return item;
-        }
-
-        var monster = manager.MonsterList.FirstOrDefault(x => x.Id == id);
-        if (monster is not null)
-        {
-            return monster;
-        }
-
-        var npc = manager.NpcList.FirstOrDefault(x => x.Id == id);
-        if (npc is not null)
-        {
-            return npc;
-        }
-
-        var player = manager.PlayerList.FirstOrDefault(x => x.Id == id);
-        if (player is not null)
-        {
-            return player;
-        }
-
-        return new NotFoundError($"Could not find entity with id {id}");
-    }
-
-    private void FocusEntityDetour(IntPtr outputStringPtr, IntPtr entityId)
+    private int FocusEntityDetour(IntPtr unitManagerPtr, IntPtr entityId)
     {
         MapBaseObj? obj = null;
         if (entityId != IntPtr.Zero)
@@ -196,7 +154,11 @@ public class SceneManagerBinding
         var result = EntityFocus?.Invoke(obj);
         if (result ?? true)
         {
-            _originalFocusEntity(outputStringPtr, entityId);
+            var res = _originalFocusEntity(unitManagerPtr, entityId);
+            Console.WriteLine(res);
+            return res;
         }
+
+        return 0;
     }
 }

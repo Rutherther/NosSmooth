@@ -29,8 +29,9 @@ public static class ServiceCollectionExtensions
     {
         return serviceCollection
             .AddSingleton<NosBindingManager>()
+            .AddSingleton(p => p.GetRequiredService<NosBindingManager>().NosBrowser)
             .AddSingleton(p => p.GetRequiredService<NosBindingManager>().PlayerManager)
-            .AddSingleton(p => p.GetRequiredService<NosBindingManager>().SceneManager)
+            .AddSingleton(p => p.GetRequiredService<NosBindingManager>().UnitManager)
             .AddSingleton(p => p.GetRequiredService<NosBindingManager>().Network);
     }
 }

@@ -99,9 +99,62 @@ public class SceneManager
         }
     }
 
+    /// <summary>
+    /// Gets the lock on target marked address.
+    /// </summary>
+    public IntPtr LockOnTargetMarkedAddress
+    {
+        get
+        {
+            var ptr = ReadPtr(Address + 0x1C);
+            ptr = ReadPtr(ptr + 0x04);
+            ptr = ReadPtr(ptr + 0x00);
+            return ptr;
+        }
+    }
+
     private IntPtr ReadPtr(IntPtr ptr)
     {
         _memory.Read(ptr, out int read);
         return (IntPtr)read;
+    }
+
+    /// <summary>
+    /// Find the given entity address.
+    /// </summary>
+    /// <param name="id">The id of the entity.</param>
+    /// <returns>The pointer to the entity or an error.</returns>
+    public Result<MapBaseObj?> FindEntity(int id)
+    {
+        if (id == 0)
+        {
+            return Result<MapBaseObj?>.FromSuccess(null);
+        }
+
+        var item = ItemList.FirstOrDefault(x => x.Id == id);
+        if (item is not null)
+        {
+            return item;
+        }
+
+        var monster = MonsterList.FirstOrDefault(x => x.Id == id);
+        if (monster is not null)
+        {
+            return monster;
+        }
+
+        var npc = NpcList.FirstOrDefault(x => x.Id == id);
+        if (npc is not null)
+        {
+            return npc;
+        }
+
+        var player = PlayerList.FirstOrDefault(x => x.Id == id);
+        if (player is not null)
+        {
+            return player;
+        }
+
+        return new NotFoundError($"Could not find entity with id {id}");
     }
 }

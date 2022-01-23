@@ -23,12 +23,11 @@ public class NosBindingManager : IDisposable
 {
     private readonly CharacterBindingOptions _characterBindingOptions;
     private readonly NetworkBindingOptions _networkBindingOptions;
-    private readonly ExternalNosBrowser _nosBrowser;
-    private SceneManagerBindingOptions _sceneManagerBindingOptions;
+    private UnitManagerBindingOptions _unitManagerBindingOptions;
 
     private NetworkBinding? _networkBinding;
     private PlayerManagerBinding? _characterBinding;
-    private SceneManagerBinding? _sceneManagerBinding;
+    private UnitManagerBinding? _unitManagerBinding;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NosBindingManager"/> class.
@@ -43,7 +42,7 @@ public class NosBindingManager : IDisposable
     (
         IOptions<CharacterBindingOptions> characterBindingOptions,
         IOptions<NetworkBindingOptions> networkBindingOptions,
-        IOptions<SceneManagerBindingOptions> sceneManagerBindingOptions,
+        IOptions<UnitManagerBindingOptions> sceneManagerBindingOptions,
         IOptions<PlayerManagerOptions> playerManagerOptions,
         IOptions<SceneManagerOptions> sceneManagerOptions,
         IOptions<PetManagerOptions> petManagerOptions
@@ -54,8 +53,8 @@ public class NosBindingManager : IDisposable
         Scanner = new Scanner(Process.GetCurrentProcess(), Process.GetCurrentProcess().MainModule);
         _characterBindingOptions = characterBindingOptions.Value;
         _networkBindingOptions = networkBindingOptions.Value;
-        _sceneManagerBindingOptions = sceneManagerBindingOptions.Value;
-        _nosBrowser = new ExternalNosBrowser
+        _unitManagerBindingOptions = sceneManagerBindingOptions.Value;
+        NosBrowser = new ExternalNosBrowser
         (
             Process.GetCurrentProcess(),
             playerManagerOptions.Value,
@@ -63,6 +62,11 @@ public class NosBindingManager : IDisposable
             petManagerOptions.Value
         );
     }
+
+    /// <summary>
+    /// Gets the nos browser.
+    /// </summary>
+    public ExternalNosBrowser NosBrowser { get; }
 
     /// <summary>
     /// Gets the memory scanner.
@@ -123,11 +127,11 @@ public class NosBindingManager : IDisposable
     /// Gets the character binding.
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown if the manager is not initialized yet.</exception>
-    public SceneManagerBinding SceneManager
+    public UnitManagerBinding UnitManager
     {
         get
         {
-            if (_sceneManagerBinding is null)
+            if (_unitManagerBinding is null)
             {
                 throw new InvalidOperationException
                 (
@@ -135,7 +139,7 @@ public class NosBindingManager : IDisposable
                 );
             }
 
-            return _sceneManagerBinding;
+            return _unitManagerBinding;
         }
     }
 
@@ -152,16 +156,10 @@ public class NosBindingManager : IDisposable
         }
         _networkBinding = network.Entity;
 
-        var playerManager = _nosBrowser.GetPlayerManager();
+        var playerManager = NosBrowser.GetPlayerManager();
         if (!playerManager.IsSuccess)
         {
             return Result.FromError(playerManager);
-        }
-
-        var sceneManager = _nosBrowser.GetSceneManager();
-        if (!sceneManager.IsSuccess)
-        {
-            return Result.FromError(sceneManager);
         }
 
         var playerManagerBinding = PlayerManagerBinding.Create
@@ -176,17 +174,16 @@ public class NosBindingManager : IDisposable
         }
         _characterBinding = playerManagerBinding.Entity;
 
-        var sceneManagerBinding = SceneManagerBinding.Create
+        var unitManagerBinding = UnitManagerBinding.Create
         (
             this,
-            sceneManager.Entity,
-            _sceneManagerBindingOptions
+            _unitManagerBindingOptions
         );
-        if (!sceneManagerBinding.IsSuccess)
+        if (!unitManagerBinding.IsSuccess)
         {
-            return Result.FromError(sceneManagerBinding);
+            return Result.FromError(unitManagerBinding);
         }
-        _sceneManagerBinding = sceneManagerBinding.Entity;
+        _unitManagerBinding = unitManagerBinding.Entity;
 
         return Result.FromSuccess();
     }
