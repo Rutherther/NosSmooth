@@ -19,7 +19,7 @@ namespace NosSmooth.LocalBinding.Objects;
 /// </summary>
 public class PlayerManagerBinding
 {
-        [Function
+    [Function
     (
         new[] { FunctionAttribute.Register.eax, FunctionAttribute.Register.edx, FunctionAttribute.Register.ecx },
         FunctionAttribute.Register.eax,
@@ -53,16 +53,12 @@ public class PlayerManagerBinding
     /// Create the network binding with finding the network object and functions.
     /// </summary>
     /// <param name="bindingManager">The binding manager.</param>
+    /// <param name="playerManager">The player manager.</param>
     /// <param name="options">The options for the binding.</param>
     /// <returns>A network binding or an error.</returns>
-    public static Result<PlayerManagerBinding> Create(NosBindingManager bindingManager, CharacterBindingOptions options)
+    public static Result<PlayerManagerBinding> Create(NosBindingManager bindingManager, PlayerManager playerManager, CharacterBindingOptions options)
     {
         var process = Process.GetCurrentProcess();
-        var characterObjectAddress = bindingManager.Scanner.CompiledFindPattern(options.CharacterObjectPattern);
-        if (!characterObjectAddress.Found)
-        {
-            return new BindingNotFoundError(options.CharacterObjectPattern, "CharacterBinding");
-        }
 
         var walkFunctionAddress = bindingManager.Scanner.CompiledFindPattern(options.WalkFunctionPattern);
         if (!walkFunctionAddress.Found)
@@ -97,7 +93,7 @@ public class PlayerManagerBinding
         var binding = new PlayerManagerBinding
         (
             bindingManager,
-            (IntPtr)(characterObjectAddress.Offset + (int)process.MainModule!.BaseAddress + 0x06),
+            playerManager,
             walkWrapper,
             followEntityWrapper,
             unfollowEntityWrapper
@@ -129,7 +125,6 @@ public class PlayerManagerBinding
     }
 
     private readonly NosBindingManager _bindingManager;
-    private readonly IntPtr _characterAddress;
 
     private IHook<WalkDelegate>? _walkHook;
     private IHook<FollowEntityDelegate>? _followHook;
@@ -142,18 +137,23 @@ public class PlayerManagerBinding
     private PlayerManagerBinding
     (
         NosBindingManager bindingManager,
-        IntPtr characterAddress,
+        PlayerManager playerManager,
         WalkDelegate originalWalk,
         FollowEntityDelegate originalFollowEntity,
         UnfollowEntityDelegate originalUnfollowEntity
     )
     {
+        PlayerManager = playerManager;
         _bindingManager = bindingManager;
-        _characterAddress = characterAddress;
         _originalWalk = originalWalk;
         _originalFollowEntity = originalFollowEntity;
         _originalUnfollowEntity = originalUnfollowEntity;
     }
+
+    /// <summary>
+    /// Gets the player manager.
+    /// </summary>
+    public PlayerManager PlayerManager { get; }
 
     /// <summary>
     /// Event that is called when walk was called by NosTale.
@@ -181,15 +181,6 @@ public class PlayerManagerBinding
         return Result.FromSuccess();
     }
 
-    private IntPtr GetCharacterAddress()
-    {
-        IntPtr characterAddress = _characterAddress;
-        _bindingManager.Memory.Read(characterAddress, out characterAddress);
-        _bindingManager.Memory.Read(characterAddress, out characterAddress);
-
-        return characterAddress;
-    }
-
     /// <summary>
     /// Walk to the given position.
     /// </summary>
@@ -201,7 +192,7 @@ public class PlayerManagerBinding
         int param = (y << 16) | x;
         try
         {
-            return _originalWalk(GetCharacterAddress(), param);
+            return _originalWalk(PlayerManager.Address, param);
         }
         catch (Exception e)
         {
@@ -237,7 +228,7 @@ public class PlayerManagerBinding
     {
         try
         {
-            _originalFollowEntity(GetCharacterAddress(), entityAddress);
+            _originalFollowEntity(PlayerManager.Address, entityAddress);
         }
         catch (Exception e)
         {
@@ -255,7 +246,7 @@ public class PlayerManagerBinding
     {
         try
         {
-            _originalUnfollowEntity(GetCharacterAddress());
+            _originalUnfollowEntity(PlayerManager.Address);
         }
         catch (Exception e)
         {

@@ -5,6 +5,7 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using NosSmooth.LocalBinding.Errors;
+using NosSmooth.LocalBinding.Extensions;
 using NosSmooth.LocalBinding.Options;
 using Reloaded.Memory.Sources;
 using Remora.Results;
@@ -22,7 +23,7 @@ public class SceneManager
     /// <param name="nosBrowser">The NosTale process browser.</param>
     /// <param name="options">The options.</param>
     /// <returns>The player manager or an error.</returns>
-    public static Result<SceneManager> Create(ExternalNosBrowser nosBrowser, SceneManagerBindingOptions options)
+    public static Result<SceneManager> Create(ExternalNosBrowser nosBrowser, SceneManagerOptions options)
     {
         var characterObjectAddress = nosBrowser.Scanner.CompiledFindPattern(options.SceneManagerObjectPattern);
         if (!characterObjectAddress.Found)
@@ -35,44 +36,51 @@ public class SceneManager
             return new NotFoundError("Cannot find the main module of the target process.");
         }
 
-        var ptrAddress = nosBrowser.Process.MainModule.BaseAddress + characterObjectAddress.Offset;
-        nosBrowser.Memory.SafeRead(ptrAddress, out ptrAddress);
-        return new SceneManager(nosBrowser.Memory, ptrAddress);
+        int staticManagerAddress = (int)nosBrowser.Process.MainModule.BaseAddress + characterObjectAddress.Offset + 1;
+        return new SceneManager(nosBrowser.Memory, staticManagerAddress, options.SceneManagerOffsets);
     }
 
+    private readonly int[] _sceneManagerOffsets;
     private readonly IMemory _memory;
-    private readonly IntPtr _sceneManager;
+    private readonly int _staticSceneManagerAddress;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SceneManager"/> class.
     /// </summary>
     /// <param name="memory">The memory.</param>
-    /// <param name="sceneManager">The pointer to the scene manager.</param>
-    public SceneManager(IMemory memory, IntPtr sceneManager)
+    /// <param name="staticSceneManagerAddress">The pointer to the scene manager.</param>
+    /// <param name="sceneManagerOffsets">The offsets from the static scene manager address.</param>
+    public SceneManager(IMemory memory, int staticSceneManagerAddress, int[] sceneManagerOffsets)
     {
         _memory = memory;
-        _sceneManager = sceneManager;
+        _staticSceneManagerAddress = staticSceneManagerAddress;
+        _sceneManagerOffsets = sceneManagerOffsets;
     }
+
+    /// <summary>
+    /// Gets the address of the scene manager.
+    /// </summary>
+    public IntPtr Address => _memory.FollowStaticAddressOffsets(_staticSceneManagerAddress, _sceneManagerOffsets);
 
     /// <summary>
     /// Gets the player list.
     /// </summary>
-    public MapObjBaseList PlayerList => new MapObjBaseList(_memory, ReadPtr(_sceneManager + 0xC));
+    public MapObjBaseList PlayerList => new MapObjBaseList(_memory, ReadPtr(Address + 0xC));
 
     /// <summary>
     /// Gets the monster list.
     /// </summary>
-    public MapObjBaseList MonsterList => new MapObjBaseList(_memory, ReadPtr(_sceneManager + 0x10));
+    public MapObjBaseList MonsterList => new MapObjBaseList(_memory, ReadPtr(Address + 0x10));
 
     /// <summary>
     /// Gets the npc list.
     /// </summary>
-    public MapObjBaseList NpcList => new MapObjBaseList(_memory, ReadPtr(_sceneManager + 0x14));
+    public MapObjBaseList NpcList => new MapObjBaseList(_memory, ReadPtr(Address + 0x14));
 
     /// <summary>
     /// Gets the item list.
     /// </summary>
-    public MapObjBaseList ItemList => new MapObjBaseList(_memory, ReadPtr(_sceneManager + 0x18));
+    public MapObjBaseList ItemList => new MapObjBaseList(_memory, ReadPtr(Address + 0x18));
 
     /// <summary>
     /// Gets the entity that is currently being followed by the player.
@@ -81,7 +89,7 @@ public class SceneManager
     {
         get
         {
-            var ptr = ReadPtr(_sceneManager + 0x48);
+            var ptr = ReadPtr(Address + 0x48);
             if (ptr == IntPtr.Zero)
             {
                 return null;
@@ -93,7 +101,7 @@ public class SceneManager
 
     private IntPtr ReadPtr(IntPtr ptr)
     {
-        _memory.Read(ptr, out IntPtr read);
-        return read;
+        _memory.Read(ptr, out int read);
+        return (IntPtr)read;
     }
 }

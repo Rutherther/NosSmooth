@@ -19,8 +19,8 @@ namespace NosSmooth.LocalBinding;
 /// </summary>
 public class ExternalNosBrowser
 {
-    private readonly CharacterBindingOptions _characterOptions;
-    private readonly SceneManagerBindingOptions _sceneManagerOptions;
+    private readonly PlayerManagerOptions _playerManagerOptions;
+    private readonly SceneManagerOptions _sceneManagerOptions;
     private PlayerManager? _playerManager;
     private SceneManager? _sceneManager;
 
@@ -28,16 +28,16 @@ public class ExternalNosBrowser
     /// Initializes a new instance of the <see cref="ExternalNosBrowser"/> class.
     /// </summary>
     /// <param name="process">The process to browse.</param>
-    /// <param name="characterOptions">The options for obtaining player manager.</param>
+    /// <param name="playerManagerOptions">The options for obtaining player manager.</param>
     /// <param name="sceneManagerOptions">The scene manager options.</param>
     public ExternalNosBrowser
     (
         Process process,
-        CharacterBindingOptions characterOptions,
-        SceneManagerBindingOptions sceneManagerOptions
+        PlayerManagerOptions playerManagerOptions,
+        SceneManagerOptions sceneManagerOptions
     )
     {
-        _characterOptions = characterOptions;
+        _playerManagerOptions = playerManagerOptions;
         _sceneManagerOptions = sceneManagerOptions;
         Process = process;
         Memory = new ExternalMemory(process);
@@ -67,7 +67,7 @@ public class ExternalNosBrowser
     {
         if (_playerManager is null)
         {
-            var playerManagerResult = PlayerManager.Create(this, _characterOptions);
+            var playerManagerResult = PlayerManager.Create(this, _playerManagerOptions);
             if (!playerManagerResult.IsSuccess)
             {
                 return playerManagerResult;

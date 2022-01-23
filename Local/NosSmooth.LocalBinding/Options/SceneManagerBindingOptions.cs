@@ -14,15 +14,6 @@ namespace NosSmooth.LocalBinding.Options;
 public class SceneManagerBindingOptions
 {
     /// <summary>
-    /// Gets or sets the pattern to find the scene manager object at.
-    /// </summary>
-    /// <remarks>
-    /// The address of the object is direct pointer to the scene manager.
-    /// </remarks>
-    public string SceneManagerObjectPattern { get; set; }
-        = "FF ?? ?? ?? ?? ?? FF FF FF 00 00 00 00 00 00 00 00 00 00 00 00 FF FF FF FF";
-
-    /// <summary>
     /// Gets or sets the pattern to find the focus entity method at.
     /// </summary>
     public string FocusEntityPattern { get; set; }

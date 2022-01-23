@@ -17,7 +17,7 @@ public class MapObjBaseList : IEnumerable<MapBaseObj>
 {
     private readonly IMemory _memory;
     private readonly IntPtr _objListPointer;
-    private readonly ArrayPtr<IntPtr> _objList;
+    private readonly ArrayPtr<int> _objList;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MapObjBaseList"/> class.
@@ -26,8 +26,8 @@ public class MapObjBaseList : IEnumerable<MapBaseObj>
     /// <param name="objListPointer">The object list pointer.</param>
     public MapObjBaseList(IMemory memory, IntPtr objListPointer)
     {
-        memory.Read(objListPointer + 0x04, out IntPtr arrayFirst);
-        _objList = new ArrayPtr<IntPtr>((ulong)arrayFirst, source: memory);
+        memory.Read(objListPointer + 0x04, out uint arrayFirst);
+        _objList = new ArrayPtr<int>(arrayFirst, source: memory);
         _memory = memory;
         _objListPointer = objListPointer;
     }
@@ -46,7 +46,7 @@ public class MapObjBaseList : IEnumerable<MapBaseObj>
                 throw new IndexOutOfRangeException();
             }
 
-            return new MapBaseObj(_memory, _objList[index]);
+            return new MapBaseObj(_memory, (IntPtr)_objList[index]);
         }
     }
 

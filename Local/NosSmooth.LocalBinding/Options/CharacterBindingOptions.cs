@@ -19,15 +19,6 @@ public class CharacterBindingOptions
     public bool HookWalk { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets the pattern to find the character object at.
-    /// </summary>
-    /// <remarks>
-    /// The address of the object is "three pointers down" from address found on this pattern.
-    /// </remarks>
-    public string CharacterObjectPattern { get; set; }
-        = "33 C9 8B 55 FC A1 ?? ?? ?? ?? E8 ?? ?? ?? ??";
-
-    /// <summary>
     /// Gets or sets the pattern to find the walk function at.
     /// </summary>
     public string WalkFunctionPattern { get; set; } = "55 8B EC 83 C4 EC 53 56 57 66 89 4D FA";

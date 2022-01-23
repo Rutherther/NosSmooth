@@ -23,6 +23,7 @@ public class NosBindingManager : IDisposable
 {
     private readonly CharacterBindingOptions _characterBindingOptions;
     private readonly NetworkBindingOptions _networkBindingOptions;
+    private readonly ExternalNosBrowser _nosBrowser;
     private SceneManagerBindingOptions _sceneManagerBindingOptions;
 
     private NetworkBinding? _networkBinding;
@@ -35,11 +36,15 @@ public class NosBindingManager : IDisposable
     /// <param name="characterBindingOptions">The character binding options.</param>
     /// <param name="networkBindingOptions">The network binding options.</param>
     /// <param name="sceneManagerBindingOptions">The scene manager binding options.</param>
+    /// <param name="playerManagerOptions">The player manager options.</param>
+    /// <param name="sceneManagerOptions">The scene manager options.</param>
     public NosBindingManager
     (
         IOptions<CharacterBindingOptions> characterBindingOptions,
         IOptions<NetworkBindingOptions> networkBindingOptions,
-        IOptions<SceneManagerBindingOptions> sceneManagerBindingOptions
+        IOptions<SceneManagerBindingOptions> sceneManagerBindingOptions,
+        IOptions<PlayerManagerOptions> playerManagerOptions,
+        IOptions<SceneManagerOptions> sceneManagerOptions
     )
     {
         Hooks = new ReloadedHooks();
@@ -48,6 +53,8 @@ public class NosBindingManager : IDisposable
         _characterBindingOptions = characterBindingOptions.Value;
         _networkBindingOptions = networkBindingOptions.Value;
         _sceneManagerBindingOptions = sceneManagerBindingOptions.Value;
+        _nosBrowser = new ExternalNosBrowser
+            (Process.GetCurrentProcess(), playerManagerOptions.Value, sceneManagerOptions.Value);
     }
 
     /// <summary>
@@ -76,7 +83,9 @@ public class NosBindingManager : IDisposable
             if (_networkBinding is null)
             {
                 throw new InvalidOperationException
-                    ("Could not get network. The binding manager is not initialized. Did you forget to call NosBindingManager.Initialize?");
+                (
+                    "Could not get network. The binding manager is not initialized. Did you forget to call NosBindingManager.Initialize?"
+                );
             }
 
             return _networkBinding;
@@ -94,7 +103,9 @@ public class NosBindingManager : IDisposable
             if (_characterBinding is null)
             {
                 throw new InvalidOperationException
-                    ("Could not get character. The binding manager is not initialized. Did you forget to call NosBindingManager.Initialize?");
+                (
+                    "Could not get character. The binding manager is not initialized. Did you forget to call NosBindingManager.Initialize?"
+                );
             }
 
             return _characterBinding;
@@ -112,7 +123,9 @@ public class NosBindingManager : IDisposable
             if (_sceneManagerBinding is null)
             {
                 throw new InvalidOperationException
-                    ("Could not get scene manager. The binding manager is not initialized. Did you forget to call NosBindingManager.Initialize?");
+                (
+                    "Could not get scene manager. The binding manager is not initialized. Did you forget to call NosBindingManager.Initialize?"
+                );
             }
 
             return _sceneManagerBinding;
@@ -132,19 +145,41 @@ public class NosBindingManager : IDisposable
         }
         _networkBinding = network.Entity;
 
-        var character = PlayerManagerBinding.Create(this, _characterBindingOptions);
-        if (!character.IsSuccess)
+        var playerManager = _nosBrowser.GetPlayerManager();
+        if (!playerManager.IsSuccess)
         {
-            return Result.FromError(character);
+            return Result.FromError(playerManager);
         }
-        _characterBinding = character.Entity;
 
-        var sceneManager = SceneManagerBinding.Create(this, _sceneManagerBindingOptions);
+        var sceneManager = _nosBrowser.GetSceneManager();
         if (!sceneManager.IsSuccess)
         {
             return Result.FromError(sceneManager);
         }
-        _sceneManagerBinding = sceneManager.Entity;
+
+        var playerManagerBinding = PlayerManagerBinding.Create
+        (
+            this,
+            playerManager.Entity,
+            _characterBindingOptions
+        );
+        if (!playerManagerBinding.IsSuccess)
+        {
+            return Result.FromError(playerManagerBinding);
+        }
+        _characterBinding = playerManagerBinding.Entity;
+
+        var sceneManagerBinding = SceneManagerBinding.Create
+        (
+            this,
+            sceneManager.Entity,
+            _sceneManagerBindingOptions
+        );
+        if (!sceneManagerBinding.IsSuccess)
+        {
+            return Result.FromError(sceneManagerBinding);
+        }
+        _sceneManagerBinding = sceneManagerBinding.Entity;
 
         return Result.FromSuccess();
     }

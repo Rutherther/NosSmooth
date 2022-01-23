@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.Options;
 using NosSmooth.LocalBinding.Errors;
+using NosSmooth.LocalBinding.Extensions;
 using NosSmooth.LocalBinding.Options;
 using Reloaded.Memory.Sources;
 using Remora.Results;
@@ -15,7 +16,7 @@ namespace NosSmooth.LocalBinding.Structs;
 /// <summary>
 /// NosTale player manager.
 /// </summary>
-public class PlayerManager
+public class PlayerManager : ControlManager
 {
     /// <summary>
     /// Create <see cref="PlayerManager"/> instance.
@@ -23,12 +24,12 @@ public class PlayerManager
     /// <param name="nosBrowser">The NosTale process browser.</param>
     /// <param name="options">The options.</param>
     /// <returns>The player manager or an error.</returns>
-    public static Result<PlayerManager> Create(ExternalNosBrowser nosBrowser, CharacterBindingOptions options)
+    public static Result<PlayerManager> Create(ExternalNosBrowser nosBrowser, PlayerManagerOptions options)
     {
-        var characterObjectAddress = nosBrowser.Scanner.CompiledFindPattern(options.CharacterObjectPattern);
+        var characterObjectAddress = nosBrowser.Scanner.CompiledFindPattern(options.PlayerManagerPattern);
         if (!characterObjectAddress.Found)
         {
-            return new BindingNotFoundError(options.CharacterObjectPattern, "PlayerManager");
+            return new BindingNotFoundError(options.PlayerManagerPattern, "PlayerManager");
         }
 
         if (nosBrowser.Process.MainModule is null)
@@ -36,77 +37,33 @@ public class PlayerManager
             return new NotFoundError("Cannot find the main module of the target process.");
         }
 
-        var ptrAddress = nosBrowser.Process.MainModule.BaseAddress + characterObjectAddress.Offset + 0x06;
-        nosBrowser.Memory.SafeRead(ptrAddress, out int address);
-        nosBrowser.Memory.SafeRead((IntPtr)address, out address);
-        return new PlayerManager(nosBrowser.Memory, (IntPtr)address);
+        var staticAddress = (int)nosBrowser.Process.MainModule.BaseAddress + characterObjectAddress.Offset;
+        return new PlayerManager(nosBrowser.Memory, staticAddress, options.PlayerManagerOffsets);
     }
 
     private readonly IMemory _memory;
+    private readonly int _staticPlayerManagerAddress;
+    private readonly int[] _playerManagerOffsets;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PlayerManager"/> class.
     /// </summary>
     /// <param name="memory">The memory.</param>
-    /// <param name="playerManager">The pointer to the beginning of the player manager structure.</param>
-    public PlayerManager(IMemory memory, IntPtr playerManager)
+    /// <param name="staticPlayerManagerAddress">The pointer to the beginning of the player manager structure.</param>
+    /// <param name="playerManagerOffsets">The offsets to get the player manager address from the static one.</param>
+    public PlayerManager(IMemory memory, int staticPlayerManagerAddress, int[] playerManagerOffsets)
+        : base(memory)
     {
         _memory = memory;
-        Address = playerManager;
+        _staticPlayerManagerAddress = staticPlayerManagerAddress;
+        _playerManagerOffsets = playerManagerOffsets;
     }
 
     /// <summary>
     /// Gets the address to the player manager.
     /// </summary>
-    public IntPtr Address { get; }
-
-    /// <summary>
-    /// Gets the current player position x coordinate.
-    /// </summary>
-    public int X
-    {
-        get
-        {
-            _memory.SafeRead(Address + 0x4, out short x);
-            return x;
-        }
-    }
-
-    /// <summary>
-    /// Gets the current player position x coordinate.
-    /// </summary>
-    public int Y
-    {
-        get
-        {
-            _memory.SafeRead(Address + 0x6, out short y);
-            return y;
-        }
-    }
-
-    /// <summary>
-    /// Gets the target x coordinate the player is moving to.
-    /// </summary>
-    public int TargetX
-    {
-        get
-        {
-            _memory.SafeRead(Address + 0x8, out short targetX);
-            return targetX;
-        }
-    }
-
-    /// <summary>
-    /// Gets the target y coordinate the player is moving to.
-    /// </summary>
-    public int TargetY
-    {
-        get
-        {
-            _memory.SafeRead(Address + 0xA, out short targetX);
-            return targetX;
-        }
-    }
+    public override IntPtr Address => _memory.FollowStaticAddressOffsets
+        (_staticPlayerManagerAddress, _playerManagerOffsets);
 
     /// <summary>
     /// Gets the player object.

@@ -36,18 +36,13 @@ public class SceneManagerBinding
     /// Create the scene manager binding.
     /// </summary>
     /// <param name="bindingManager">The binding manager.</param>
+    /// <param name="sceneManager">The scene manager.</param>
     /// <param name="bindingOptions">The options for the binding.</param>
     /// <returns>A network binding or an error.</returns>
     public static Result<SceneManagerBinding> Create
-        (NosBindingManager bindingManager, SceneManagerBindingOptions bindingOptions)
+        (NosBindingManager bindingManager, SceneManager sceneManager, SceneManagerBindingOptions bindingOptions)
     {
         var process = Process.GetCurrentProcess();
-        var sceneManagerObjectAddress = bindingManager.Scanner.CompiledFindPattern
-            (bindingOptions.SceneManagerObjectPattern);
-        if (!sceneManagerObjectAddress.Found)
-        {
-            return new BindingNotFoundError(bindingOptions.SceneManagerObjectPattern, "SceneManagerBinding");
-        }
 
         var focusEntityAddress = bindingManager.Scanner.CompiledFindPattern(bindingOptions.FocusEntityPattern);
         if (!focusEntityAddress.Found)
@@ -62,7 +57,7 @@ public class SceneManagerBinding
         var binding = new SceneManagerBinding
         (
             bindingManager,
-            (IntPtr)(sceneManagerObjectAddress.Offset + (int)process.MainModule!.BaseAddress + 0x01),
+            sceneManager,
             focusEntityWrapper
         );
 
@@ -77,7 +72,6 @@ public class SceneManagerBinding
     }
 
     private readonly NosBindingManager _bindingManager;
-    private readonly IntPtr _sceneManagerAddress;
     private FocusEntityDelegate _originalFocusEntity;
 
     private IHook<FocusEntityDelegate>? _focusHook;
@@ -85,13 +79,13 @@ public class SceneManagerBinding
     private SceneManagerBinding
     (
         NosBindingManager bindingManager,
-        IntPtr sceneManagerAddress,
+        SceneManager sceneManager,
         FocusEntityDelegate originalFocusEntity
     )
     {
         _originalFocusEntity = originalFocusEntity;
         _bindingManager = bindingManager;
-        _sceneManagerAddress = sceneManagerAddress;
+        SceneManager = sceneManager;
     }
 
     /// <summary>
@@ -105,15 +99,7 @@ public class SceneManagerBinding
     /// <summary>
     /// Gets the scene manager object.
     /// </summary>
-    public SceneManager SceneManager => new SceneManager(_bindingManager.Memory, GetSceneManagerAddress());
-
-    private IntPtr GetSceneManagerAddress()
-    {
-        IntPtr sceneManagerAddress = _sceneManagerAddress;
-        _bindingManager.Memory.Read(sceneManagerAddress, out sceneManagerAddress);
-
-        return sceneManagerAddress;
-    }
+    public SceneManager SceneManager { get; }
 
     /// <summary>
     /// Focus the entity with the given id.
