@@ -6,7 +6,9 @@
 
 using NosSmooth.ChatCommands;
 using NosSmooth.Core.Client;
+using NosSmooth.LocalBinding;
 using NosSmooth.LocalBinding.Objects;
+using NosSmooth.LocalBinding.Structs;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Results;
@@ -18,19 +20,28 @@ namespace WalkCommands.Commands;
 /// </summary>
 public class CombatCommands : CommandGroup
 {
-    private readonly SceneManagerBinding _sceneManagerBinding;
+    private readonly UnitManagerBinding _unitManagerBinding;
+    private readonly ExternalNosBrowser _nosBrowser;
     private readonly PlayerManagerBinding _playerManagerBinding;
     private readonly FeedbackService _feedbackService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CombatCommands"/> class.
     /// </summary>
-    /// <param name="sceneManagerBinding">The scene manager binding.</param>
+    /// <param name="unitManagerBinding">The scene manager binding.</param>
+    /// <param name="nosBrowser">The nostale browser.</param>
     /// <param name="playerManagerBinding">The character binding.</param>
     /// <param name="feedbackService">The feedback service.</param>
-    public CombatCommands(SceneManagerBinding sceneManagerBinding, PlayerManagerBinding playerManagerBinding, FeedbackService feedbackService)
+    public CombatCommands
+    (
+        UnitManagerBinding unitManagerBinding,
+        ExternalNosBrowser nosBrowser,
+        PlayerManagerBinding playerManagerBinding,
+        FeedbackService feedbackService
+    )
     {
-        _sceneManagerBinding = sceneManagerBinding;
+        _unitManagerBinding = unitManagerBinding;
+        _nosBrowser = nosBrowser;
         _playerManagerBinding = playerManagerBinding;
         _feedbackService = feedbackService;
     }
@@ -43,7 +54,19 @@ public class CombatCommands : CommandGroup
     [Command("focus")]
     public Task<Result> HandleFocusAsync(int entityId)
     {
-        return Task.FromResult(_sceneManagerBinding.FocusEntity(entityId));
+        var sceneManagerResult = _nosBrowser.GetSceneManager();
+        if (!sceneManagerResult.IsSuccess)
+        {
+            return Task.FromResult(Result.FromError(sceneManagerResult));
+        }
+
+        var entityResult = sceneManagerResult.Entity.FindEntity(entityId);
+        if (!entityResult.IsSuccess)
+        {
+            return Task.FromResult(Result.FromError(entityResult));
+        }
+
+        return Task.FromResult(_unitManagerBinding.FocusEntity(entityResult.Entity));
     }
 
     /// <summary>
@@ -54,13 +77,19 @@ public class CombatCommands : CommandGroup
     [Command("follow")]
     public Task<Result> HandleFollowAsync(int entityId)
     {
-        var entity = _sceneManagerBinding.FindEntity(entityId);
-        if (!entity.IsSuccess)
+        var sceneManagerResult = _nosBrowser.GetSceneManager();
+        if (!sceneManagerResult.IsSuccess)
         {
-            return Task.FromResult(Result.FromError(entity));
+            return Task.FromResult(Result.FromError(sceneManagerResult));
         }
 
-        return Task.FromResult(_playerManagerBinding.FollowEntity(entity.Entity));
+        var entityResult = sceneManagerResult.Entity.FindEntity(entityId);
+        if (!entityResult.IsSuccess)
+        {
+            return Task.FromResult(Result.FromError(entityResult));
+        }
+
+        return Task.FromResult(_playerManagerBinding.FollowEntity(entityResult.Entity));
     }
 
     /// <summary>
