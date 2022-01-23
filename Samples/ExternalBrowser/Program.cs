@@ -21,8 +21,9 @@ public class Program
     /// <param name="arguments">The arguments.</param>
     public static void Main(string[] arguments)
     {
-        var playerManagerOptions = new CharacterBindingOptions();
-        var sceneManagerOptions = new SceneManagerBindingOptions();
+        var playerManagerOptions = new PlayerManagerOptions();
+        var sceneManagerOptions = new SceneManagerOptions();
+        var petManagerOptions = new PetManagerOptions();
 
         foreach (var argument in arguments)
         {
@@ -42,7 +43,8 @@ public class Program
 
             foreach (var process in processes)
             {
-                var externalBrowser = new ExternalNosBrowser(process, playerManagerOptions, sceneManagerOptions);
+                var externalBrowser = new ExternalNosBrowser
+                    (process, playerManagerOptions, sceneManagerOptions, petManagerOptions);
                 var playerManager = externalBrowser.GetPlayerManager();
                 if (!playerManager.IsSuccess)
                 {
