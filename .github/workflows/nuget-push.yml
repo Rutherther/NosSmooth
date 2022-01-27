@@ -17,13 +17,15 @@ jobs:
       uses: actions/checkout@v2
       
     - name: Setup .NET Core SDK
-      uses: actions/setup-dotnet@v1.9.0
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.0.x'
       env:
-        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        NUGET_AUTH_TOKEN: ${{secrets.NUGET_KEY}}
         
     - name: Pack app
       run: dotnet pack NosSmooth.sln --configuration Release -o .
-        
+      
     - name: Publish NuGet
       working-directory: nuget
-      run: dotnet nuget push *.nupkg --skip-duplicate
+      run: dotnet nuget push *.nupkg --skip-duplicate -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json
