@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using NosSmooth.LocalBinding.Objects;
+using NosSmooth.LocalBinding.Structs;
 
 namespace NosSmooth.LocalBinding.Extensions;
 
@@ -29,8 +30,14 @@ public static class ServiceCollectionExtensions
     {
         return serviceCollection
             .AddSingleton<NosBindingManager>()
-            .AddSingleton(p => p.GetRequiredService<NosBindingManager>().NosBrowser)
+            .AddSingleton<NosBrowserManager>()
+            .AddSingleton(p => p.GetRequiredService<NosBrowserManager>().PlayerManager)
+            .AddSingleton(p => p.GetRequiredService<NosBrowserManager>().SceneManager)
+            .AddSingleton(p => p.GetRequiredService<NosBrowserManager>().PetManagerList)
+            .AddSingleton(p => p.GetRequiredService<NosBrowserManager>().SceneManager)
+            .AddSingleton(p => p.GetRequiredService<NosBrowserManager>().PetManagerList)
             .AddSingleton(p => p.GetRequiredService<NosBindingManager>().PlayerManager)
+            .AddSingleton(p => p.GetRequiredService<NosBindingManager>().PetManager)
             .AddSingleton(p => p.GetRequiredService<NosBindingManager>().UnitManager)
             .AddSingleton(p => p.GetRequiredService<NosBindingManager>().Network);
     }

@@ -6,6 +6,7 @@
 
 using System.Diagnostics;
 using Microsoft.Extensions.Options;
+using NosSmooth.LocalBinding.Errors;
 using NosSmooth.LocalBinding.Objects;
 using NosSmooth.LocalBinding.Options;
 using Reloaded.Hooks;
@@ -21,6 +22,8 @@ namespace NosSmooth.LocalBinding;
 /// </summary>
 public class NosBindingManager : IDisposable
 {
+    private readonly NosBrowserManager _browserManager;
+    private readonly PetManagerBindingOptions _petManagerBindingOptions;
     private readonly CharacterBindingOptions _characterBindingOptions;
     private readonly NetworkBindingOptions _networkBindingOptions;
     private UnitManagerBindingOptions _unitManagerBindingOptions;
@@ -28,45 +31,34 @@ public class NosBindingManager : IDisposable
     private NetworkBinding? _networkBinding;
     private PlayerManagerBinding? _characterBinding;
     private UnitManagerBinding? _unitManagerBinding;
+    private PetManagerBinding? _petManagerBinding;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NosBindingManager"/> class.
     /// </summary>
+    /// <param name="browserManager">The NosTale browser manager.</param>
     /// <param name="characterBindingOptions">The character binding options.</param>
     /// <param name="networkBindingOptions">The network binding options.</param>
     /// <param name="sceneManagerBindingOptions">The scene manager binding options.</param>
-    /// <param name="playerManagerOptions">The player manager options.</param>
-    /// <param name="sceneManagerOptions">The scene manager options.</param>
-    /// <param name="petManagerOptions">The pet manager options.</param>
+    /// <param name="petManagerBindingOptions">The pet manager binding options.</param>
     public NosBindingManager
     (
+        NosBrowserManager browserManager,
         IOptions<CharacterBindingOptions> characterBindingOptions,
         IOptions<NetworkBindingOptions> networkBindingOptions,
         IOptions<UnitManagerBindingOptions> sceneManagerBindingOptions,
-        IOptions<PlayerManagerOptions> playerManagerOptions,
-        IOptions<SceneManagerOptions> sceneManagerOptions,
-        IOptions<PetManagerOptions> petManagerOptions
+        IOptions<PetManagerBindingOptions> petManagerBindingOptions
     )
     {
+        _browserManager = browserManager;
         Hooks = new ReloadedHooks();
         Memory = new Memory();
         Scanner = new Scanner(Process.GetCurrentProcess(), Process.GetCurrentProcess().MainModule);
         _characterBindingOptions = characterBindingOptions.Value;
         _networkBindingOptions = networkBindingOptions.Value;
         _unitManagerBindingOptions = sceneManagerBindingOptions.Value;
-        NosBrowser = new ExternalNosBrowser
-        (
-            Process.GetCurrentProcess(),
-            playerManagerOptions.Value,
-            sceneManagerOptions.Value,
-            petManagerOptions.Value
-        );
+        _petManagerBindingOptions = petManagerBindingOptions.Value;
     }
-
-    /// <summary>
-    /// Gets the nos browser.
-    /// </summary>
-    public ExternalNosBrowser NosBrowser { get; }
 
     /// <summary>
     /// Gets the memory scanner.
@@ -144,48 +136,174 @@ public class NosBindingManager : IDisposable
     }
 
     /// <summary>
+    /// Gets the pet manager binding.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown if the manager is not initialized yet.</exception>
+    public PetManagerBinding PetManager
+    {
+        get
+        {
+            if (_petManagerBinding is null)
+            {
+                throw new InvalidOperationException
+                (
+                    "Could not get pet manager. The binding manager is not initialized. Did you forget to call NosBindingManager.Initialize?"
+                );
+            }
+
+            return _petManagerBinding;
+        }
+    }
+
+    /// <summary>
     /// Initialize the existing bindings and hook NosTale functions.
     /// </summary>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Result Initialize()
+    public IResult Initialize()
     {
-        var network = NetworkBinding.Create(this, _networkBindingOptions);
-        if (!network.IsSuccess)
+        List<IResult> errorResults = new List<IResult>();
+        var browserInitializationResult = _browserManager.Initialize();
+        if (!browserInitializationResult.IsSuccess)
         {
-            return Result.FromError(network);
-        }
-        _networkBinding = network.Entity;
+            if (browserInitializationResult.Error is NotNostaleProcessError)
+            {
+                return browserInitializationResult;
+            }
 
-        var playerManager = NosBrowser.GetPlayerManager();
-        if (!playerManager.IsSuccess)
+            errorResults.Add(browserInitializationResult);
+        }
+
+        try
         {
-            return Result.FromError(playerManager);
-        }
+            var network = NetworkBinding.Create(this, _networkBindingOptions);
+            if (!network.IsSuccess)
+            {
+                errorResults.Add
+                (
+                    Result.FromError
+                    (
+                        new CouldNotInitializeModuleError(typeof(NetworkBinding), network.Error),
+                        network
+                    )
+                );
+            }
 
-        var playerManagerBinding = PlayerManagerBinding.Create
-        (
-            this,
-            playerManager.Entity,
-            _characterBindingOptions
-        );
-        if (!playerManagerBinding.IsSuccess)
+            _networkBinding = network.Entity;
+        }
+        catch (Exception e)
         {
-            return Result.FromError(playerManagerBinding);
+            errorResults.Add(
+                Result.FromError
+                (
+                    new CouldNotInitializeModuleError(typeof(NetworkBinding), new ExceptionError(e)),
+                    (Result)new ExceptionError(e)
+                ));
         }
-        _characterBinding = playerManagerBinding.Entity;
 
-        var unitManagerBinding = UnitManagerBinding.Create
-        (
-            this,
-            _unitManagerBindingOptions
-        );
-        if (!unitManagerBinding.IsSuccess)
+        try
         {
-            return Result.FromError(unitManagerBinding);
+            var playerManagerBinding = PlayerManagerBinding.Create
+            (
+                this,
+                _browserManager.PlayerManager,
+                _characterBindingOptions
+            );
+            if (!playerManagerBinding.IsSuccess)
+            {
+                errorResults.Add
+                (
+                    Result.FromError
+                    (
+                        new CouldNotInitializeModuleError(typeof(PlayerManagerBinding), playerManagerBinding.Error),
+                        playerManagerBinding
+                    )
+                );
+            }
+            _characterBinding = playerManagerBinding.Entity;
         }
-        _unitManagerBinding = unitManagerBinding.Entity;
+        catch (Exception e)
+        {
+            errorResults.Add
+            (
+                Result.FromError
+                (
+                    new CouldNotInitializeModuleError(typeof(PlayerManagerBinding), new ExceptionError(e)),
+                    (Result)new ExceptionError(e)
+                )
+            );
+        }
 
-        return Result.FromSuccess();
+        try
+        {
+            var unitManagerBinding = UnitManagerBinding.Create
+            (
+                this,
+                _unitManagerBindingOptions
+            );
+            if (!unitManagerBinding.IsSuccess)
+            {
+                errorResults.Add
+                (
+                    Result.FromError
+                    (
+                        new CouldNotInitializeModuleError(typeof(UnitManagerBinding), unitManagerBinding.Error),
+                        unitManagerBinding
+                    )
+                );
+            }
+            _unitManagerBinding = unitManagerBinding.Entity;
+        }
+        catch (Exception e)
+        {
+            errorResults.Add
+            (
+                Result.FromError
+                (
+                    new CouldNotInitializeModuleError(typeof(UnitManagerBinding), new ExceptionError(e)),
+                    (Result)new ExceptionError(e)
+                )
+            );
+        }
+
+        try
+        {
+            var petManagerBinding = PetManagerBinding.Create
+            (
+                this,
+                _browserManager.PetManagerList,
+                _petManagerBindingOptions
+            );
+            if (!petManagerBinding.IsSuccess)
+            {
+                errorResults.Add
+                (
+                    Result.FromError
+                    (
+                        new CouldNotInitializeModuleError(typeof(PetManagerBinding), petManagerBinding.Error),
+                        petManagerBinding
+                    )
+                );
+            }
+            _petManagerBinding = petManagerBinding.Entity;
+        }
+        catch (Exception e)
+        {
+            errorResults.Add
+            (
+                Result.FromError
+                (
+                    new CouldNotInitializeModuleError(typeof(UnitManagerBinding), new ExceptionError(e)),
+                    (Result)new ExceptionError(e)
+                )
+            );
+        }
+
+        return errorResults.Count switch
+        {
+            0 => Result.FromSuccess(),
+            1 => errorResults[0],
+            _ => (Result)new AggregateError(errorResults)
+        };
     }
 
     /// <summary>
@@ -211,5 +329,47 @@ public class NosBindingManager : IDisposable
     {
         Scanner.Dispose();
         DisableHooks();
+    }
+
+    /// <summary>
+    /// Create a hook object for the given pattern.
+    /// </summary>
+    /// <param name="name">The name of the binding.</param>
+    /// <param name="callbackFunction">The callback function to call instead of the original one.</param>
+    /// <param name="pattern">The pattern.</param>
+    /// <param name="offset">The offset from the pattern.</param>
+    /// <param name="hook">Whether to activate the hook.</param>
+    /// <typeparam name="TFunction">The type of the function.</typeparam>
+    /// <returns>The hook object or an error.</returns>
+    internal Result<IHook<TFunction>> CreateHookFromPattern<TFunction>
+    (
+        string name,
+        TFunction callbackFunction,
+        string pattern,
+        int offset = 0,
+        bool hook = true
+    )
+    {
+        var walkFunctionAddress = Scanner.CompiledFindPattern(pattern);
+        if (!walkFunctionAddress.Found)
+        {
+            return new BindingNotFoundError(pattern, "PetManagerBinding.PetWalk");
+        }
+
+        try
+        {
+            return Result<IHook<TFunction>>.FromSuccess
+            (
+                Hooks.CreateHook
+                (
+                    callbackFunction,
+                    walkFunctionAddress.Offset + (int)_browserManager.Process.MainModule!.BaseAddress
+                )
+            );
+        }
+        catch (Exception e)
+        {
+            return e;
+        }
     }
 }
