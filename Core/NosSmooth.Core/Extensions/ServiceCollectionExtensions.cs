@@ -9,6 +9,7 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NosSmooth.Core.Commands;
+using NosSmooth.Core.Commands.Control;
 using NosSmooth.Core.Packets;
 using NosSmooth.Packets.Extensions;
 
@@ -23,12 +24,10 @@ public static class ServiceCollectionExtensions
     /// Adds base packet and command handling for nostale client.
     /// </summary>
     /// <param name="serviceCollection">The service collection to register the responder to.</param>
-    /// <param name="additionalPacketTypes">Custom types of packets to serialize and deserialize.</param>
     /// <returns>The collection.</returns>
     public static IServiceCollection AddNostaleCore
     (
-        this IServiceCollection serviceCollection,
-        params Type[] additionalPacketTypes
+        this IServiceCollection serviceCollection
     )
     {
         serviceCollection
@@ -38,6 +37,19 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddSingleton<CommandProcessor>();
 
         return serviceCollection;
+    }
+
+    /// <summary>
+    /// Adds command handling of <see cref="TakeControlCommand"/>.
+    /// </summary>
+    /// <param name="serviceCollection">The service collection to register the responder to.</param>
+    /// <returns>The collection.</returns>
+    public static IServiceCollection AddTakeControlCommand(this IServiceCollection serviceCollection)
+    {
+        return serviceCollection
+            .AddSingleton<ControlCommands>()
+            .AddPacketResponder<ControlCommandPacketResponders>()
+            .AddCommandHandler<TakeControlCommandHandler>();
     }
 
     /// <summary>
