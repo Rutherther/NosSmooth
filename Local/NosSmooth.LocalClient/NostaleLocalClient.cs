@@ -9,9 +9,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands;
+using NosSmooth.Core.Commands.Control;
 using NosSmooth.Core.Extensions;
 using NosSmooth.Core.Packets;
 using NosSmooth.LocalBinding.Objects;
+using NosSmooth.LocalBinding.Structs;
 using NosSmooth.Packets;
 using NosSmooth.Packets.Errors;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
@@ -29,6 +31,8 @@ namespace NosSmooth.LocalClient;
 public class NostaleLocalClient : BaseNostaleClient
 {
     private readonly NetworkBinding _networkBinding;
+    private readonly PlayerManagerBinding _playerManagerBinding;
+    private readonly ControlCommands _controlCommands;
     private readonly IPacketSerializer _packetSerializer;
     private readonly IPacketHandler _packetHandler;
     private readonly ILogger _logger;
@@ -41,6 +45,8 @@ public class NostaleLocalClient : BaseNostaleClient
     /// Initializes a new instance of the <see cref="NostaleLocalClient"/> class.
     /// </summary>
     /// <param name="networkBinding">The network binding.</param>
+    /// <param name="playerManagerBinding">The player manager binding.</param>
+    /// <param name="controlCommands">The control commands.</param>
     /// <param name="commandProcessor">The command processor.</param>
     /// <param name="packetSerializer">The packet serializer.</param>
     /// <param name="packetHandler">The packet handler.</param>
@@ -50,6 +56,8 @@ public class NostaleLocalClient : BaseNostaleClient
     public NostaleLocalClient
     (
         NetworkBinding networkBinding,
+        PlayerManagerBinding playerManagerBinding,
+        ControlCommands controlCommands,
         CommandProcessor commandProcessor,
         IPacketSerializer packetSerializer,
         IPacketHandler packetHandler,
@@ -61,6 +69,8 @@ public class NostaleLocalClient : BaseNostaleClient
     {
         _options = options.Value;
         _networkBinding = networkBinding;
+        _playerManagerBinding = playerManagerBinding;
+        _controlCommands = controlCommands;
         _packetSerializer = packetSerializer;
         _packetHandler = packetHandler;
         _logger = logger;
@@ -75,6 +85,9 @@ public class NostaleLocalClient : BaseNostaleClient
         _networkBinding.PacketSend += SendCallback;
         _networkBinding.PacketReceive += ReceiveCallback;
 
+        _playerManagerBinding.FollowEntityCall += FollowEntity;
+        _playerManagerBinding.WalkCall += Walk;
+
         try
         {
             await Task.Delay(-1, stopRequested);
@@ -86,6 +99,8 @@ public class NostaleLocalClient : BaseNostaleClient
 
         _networkBinding.PacketSend -= SendCallback;
         _networkBinding.PacketReceive -= ReceiveCallback;
+        _playerManagerBinding.FollowEntityCall -= FollowEntity;
+        _playerManagerBinding.WalkCall -= Walk;
 
         return Result.FromSuccess();
     }
@@ -182,5 +197,20 @@ public class NostaleLocalClient : BaseNostaleClient
             _logger.LogError("There was an error whilst handling packet");
             _logger.LogResultError(result);
         }
+    }
+
+    private bool FollowEntity(MapBaseObj? obj)
+    {
+        Task.Run
+        (
+            async () => await _controlCommands.CancelAsync
+                (ControlCommandsFilter.UserCancellable, false, (CancellationToken)_stopRequested!)
+        );
+        return true;
+    }
+
+    private bool Walk(ushort x, ushort y)
+    {
+        return _controlCommands.AllowUserActions;
     }
 }

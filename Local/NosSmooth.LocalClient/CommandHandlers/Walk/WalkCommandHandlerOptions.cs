@@ -7,25 +7,17 @@
 namespace NosSmooth.LocalClient.CommandHandlers.Walk
 {
     /// <summary>
-    /// Options for <see cref="WalkCommandHandler"/>.
+    /// Options for <see cref="PlayerWalkCommandHandler"/>.
     /// </summary>
     public class WalkCommandHandlerOptions
     {
         /// <summary>
-        /// After what time to trigger not walking for too long error in milliseconds.
-        /// </summary>
-        /// <remarks>
-        /// Use at least 2000 to avoid problems with false triggers.
-        /// </remarks>
-        public int NotWalkingTooLongTrigger { get; set; } = 2000;
-
-        /// <summary>
-        /// The command handler sleeps for this duration, then checks new info in milliseconds.
+        /// The command handler sleeps for this duration, then checks for new info. Unit is milliseconds.
         /// </summary>
         /// <remarks>
         /// The operation is done with a cancellation token, if there is an outer event, then it can be faster.
         /// Walk function is called again as well after this delay.
         /// </remarks>
-        public int CheckDelay { get; set; } = 100;
+        public int CheckDelay { get; set; } = 50;
     }
 }

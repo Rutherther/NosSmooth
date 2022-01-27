@@ -18,8 +18,4 @@
       <PackageReference Include="Reloaded.Memory.Sigscan" Version="1.2.1" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Bindings" />
-    </ItemGroup>
-
 </Project>

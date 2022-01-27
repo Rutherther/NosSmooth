@@ -14,5 +14,5 @@ namespace NosSmooth.LocalClient.CommandHandlers.Walk.Errors;
 /// <param name="X">The x coordinate where the player is. (if known)</param>
 /// <param name="Y">The y coordinate where the player is. (if known)</param>
 /// <param name="Reason"></param>
-public record WalkNotFinishedError(int? X, int? Y, WalkCancelReason Reason)
+public record WalkNotFinishedError(int? X, int? Y, WalkUnfinishedReason Reason)
     : ResultError($"Could not finish the walk to {X} {Y}, because {Reason}");
