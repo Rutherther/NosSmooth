@@ -7,6 +7,7 @@
 using NosSmooth.ChatCommands;
 using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands;
+using NosSmooth.Core.Commands.Walking;
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Chat;
 using NosSmooth.Packets.Server.Chat;
@@ -61,7 +62,7 @@ public class WalkCommands : CommandGroup
             return receiveResult;
         }
 
-        var command = new WalkCommand(x, y, isCancellable);
+        var command = new PlayerWalkCommand(x, y, AllowUserCancel: isCancellable);
         var walkResult = await _client.SendCommandAsync(command, CancellationToken);
         if (!walkResult.IsSuccess)
         {
