@@ -5,6 +5,7 @@
         <AssemblyName>NosSmooth.PacketSerializer</AssemblyName>
         <RootNamespace>NosSmooth.PacketSerializer</RootNamespace>
         <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
+        <Description>NosSmooth's packet string serializer implementation.</Description>
     </PropertyGroup>
 
     <ItemGroup>

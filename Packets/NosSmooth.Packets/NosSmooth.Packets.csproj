@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <TargetFramework>netstandard2.1</TargetFramework>
         <LangVersion>10</LangVersion>
+        <Description>Contains default NosTale packets.</Description>
     </PropertyGroup>
 
     <ItemGroup>
