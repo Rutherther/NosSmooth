@@ -19,7 +19,7 @@ using Xunit;
 namespace NosSmooth.Packets.Tests.Converters.Packets;
 
 /// <summary>
-/// Tests <see cref="InPacketConverter"/>.
+/// Tests InPacketConverter.
 /// </summary>
 public class InPacketConverterTests
 {

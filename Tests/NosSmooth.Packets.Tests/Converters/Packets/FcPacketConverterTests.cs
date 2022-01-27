@@ -14,7 +14,7 @@ using Xunit;
 namespace NosSmooth.Packets.Tests.Converters.Packets;
 
 /// <summary>
-/// Tests <see cref="FcPacketConverter"/>.
+/// Tests FcPacketConverter.
 /// </summary>
 public class FcPacketConverterTests
 {
