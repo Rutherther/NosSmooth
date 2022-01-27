@@ -5,6 +5,7 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics;
+using NosSmooth.Core.Extensions;
 using NosSmooth.LocalBinding;
 using NosSmooth.LocalBinding.Options;
 
@@ -31,7 +32,7 @@ public class Program
 
             if (int.TryParse(argument, out var processId))
             {
-                processes = new Process[] { Process.GetProcessById(processId) };
+                processes = new[] { Process.GetProcessById(processId) };
             }
             else
             {
@@ -43,16 +44,31 @@ public class Program
 
             foreach (var process in processes)
             {
-                var externalBrowser = new ExternalNosBrowser
+                var externalBrowser = new NosBrowserManager
                     (process, playerManagerOptions, sceneManagerOptions, petManagerOptions);
-                var playerManager = externalBrowser.GetPlayerManager();
-                if (!playerManager.IsSuccess)
+
+                if (!externalBrowser.IsNostaleProcess)
                 {
-                    Console.Error.WriteLine($"Could not get the player manager: {playerManager.Error.Message}");
+                    Console.Error.WriteLine($"Process {process.Id} is not a nostale process.");
                     continue;
                 }
 
-                Console.WriteLine($"Player in process {process.Id} is named {playerManager.Entity.Player.Name}");
+                var initializationResult = externalBrowser.Initialize();
+                if (!initializationResult.IsSuccess)
+                {
+                    Console.Error.WriteLine(initializationResult.ToFullString());
+                }
+
+                var length = externalBrowser.PetManagerList.Length;
+                Console.WriteLine(length);
+
+                if (!externalBrowser.IsInGame)
+                {
+                    Console.Error.WriteLine("The player is not in game, cannot get the name of the player.");
+                    continue;
+                }
+
+                Console.WriteLine($"Player in process {process.Id} is named {externalBrowser.PlayerManager.Player.Name}");
             }
         }
     }

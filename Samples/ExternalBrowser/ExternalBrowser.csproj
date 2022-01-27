@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Core\NosSmooth.Core\NosSmooth.Core.csproj" />
       <ProjectReference Include="..\..\Local\NosSmooth.LocalBinding\NosSmooth.LocalBinding.csproj" />
     </ItemGroup>
 
