@@ -48,7 +48,7 @@ public static Result<string?> ParseString(ref PacketStringEnumerator stringEnume
         return Result<string?>.FromError(tokenResult);
     }}
 
-    if (packetToken.Token[0] == '-')
+    if (packetToken.Length == 1 && packetToken.Token[0] == '-')
     {{
         return Result<string?>.FromSuccess(null);
     }}
