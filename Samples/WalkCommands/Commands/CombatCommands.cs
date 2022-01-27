@@ -21,7 +21,7 @@ namespace WalkCommands.Commands;
 public class CombatCommands : CommandGroup
 {
     private readonly UnitManagerBinding _unitManagerBinding;
-    private readonly ExternalNosBrowser _nosBrowser;
+    private readonly SceneManager _sceneManager;
     private readonly PlayerManagerBinding _playerManagerBinding;
     private readonly FeedbackService _feedbackService;
 
@@ -29,19 +29,19 @@ public class CombatCommands : CommandGroup
     /// Initializes a new instance of the <see cref="CombatCommands"/> class.
     /// </summary>
     /// <param name="unitManagerBinding">The scene manager binding.</param>
-    /// <param name="nosBrowser">The nostale browser.</param>
+    /// <param name="sceneManager">The scene manager.</param>
     /// <param name="playerManagerBinding">The character binding.</param>
     /// <param name="feedbackService">The feedback service.</param>
     public CombatCommands
     (
         UnitManagerBinding unitManagerBinding,
-        ExternalNosBrowser nosBrowser,
+        SceneManager sceneManager,
         PlayerManagerBinding playerManagerBinding,
         FeedbackService feedbackService
     )
     {
         _unitManagerBinding = unitManagerBinding;
-        _nosBrowser = nosBrowser;
+        _sceneManager = sceneManager;
         _playerManagerBinding = playerManagerBinding;
         _feedbackService = feedbackService;
     }
@@ -54,13 +54,7 @@ public class CombatCommands : CommandGroup
     [Command("focus")]
     public Task<Result> HandleFocusAsync(int entityId)
     {
-        var sceneManagerResult = _nosBrowser.GetSceneManager();
-        if (!sceneManagerResult.IsSuccess)
-        {
-            return Task.FromResult(Result.FromError(sceneManagerResult));
-        }
-
-        var entityResult = sceneManagerResult.Entity.FindEntity(entityId);
+        var entityResult = _sceneManager.FindEntity(entityId);
         if (!entityResult.IsSuccess)
         {
             return Task.FromResult(Result.FromError(entityResult));
@@ -77,13 +71,7 @@ public class CombatCommands : CommandGroup
     [Command("follow")]
     public Task<Result> HandleFollowAsync(int entityId)
     {
-        var sceneManagerResult = _nosBrowser.GetSceneManager();
-        if (!sceneManagerResult.IsSuccess)
-        {
-            return Task.FromResult(Result.FromError(sceneManagerResult));
-        }
-
-        var entityResult = sceneManagerResult.Entity.FindEntity(entityId);
+        var entityResult = _sceneManager.FindEntity(entityId);
         if (!entityResult.IsSuccess)
         {
             return Task.FromResult(Result.FromError(entityResult));
