@@ -41,4 +41,28 @@ public class MapBaseObj : NostaleObject
             return id;
         }
     }
+
+    /// <summary>
+    /// Gets the x coordinate of the entity.
+    /// </summary>
+    public ushort X
+    {
+        get
+        {
+            Memory.SafeRead(Address + 0x0C, out ushort x);
+            return x;
+        }
+    }
+
+    /// <summary>
+    /// Gets the y coordinate of the entity.
+    /// </summary>
+    public ushort Y
+    {
+        get
+        {
+            Memory.SafeRead(Address + 0x0E, out ushort y);
+            return y;
+        }
+    }
 }
