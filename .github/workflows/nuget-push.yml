@@ -1,0 +1,29 @@
+# This workflow pushes builds to the private github nuget repo on a push or merge.
+
+name: NuGet Update
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    name: Update NuGet Package
+    steps:
+    
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v1.9.0
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        
+    - name: Pack app
+      run: dotnet pack NosSmooth.sln --configuration Release -o .
+        
+    - name: Publish NuGet
+      working-directory: nuget
+      run: dotnet nuget push *.nupkg --skip-duplicate
