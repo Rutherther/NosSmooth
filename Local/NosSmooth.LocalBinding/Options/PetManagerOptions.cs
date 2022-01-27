@@ -18,11 +18,11 @@ public class PetManagerOptions
     /// Gets or sets the pattern to find static pet manager list address at.
     /// </summary>
     public string PetManagerListPattern { get; set; }
-        = "?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? FF FF FF FF 00 00 00 00 00 00 00 00 C0 E4";
+        = "8B F8 8B D3 A1 ?? ?? ?? ?? E8 ?? ?? ?? ?? 8B D0";
 
     /// <summary>
     /// Gets or sets the offsets to find the pet manager list at from the static address.
     /// </summary>
     public int[] PetManagerListOffsets { get; set; }
-        = { 0 };
+        = { 5, 0 };
 }
