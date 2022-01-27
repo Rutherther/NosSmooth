@@ -39,6 +39,27 @@ public static class ResultExtensions
         logger.LogError(stringWriter.ToString());
     }
 
+    /// <summary>
+    /// Gets the full string.
+    /// </summary>
+    /// <param name="result">The result.</param>
+    /// <returns>The final string.</returns>
+    public static string ToFullString(this IResult result)
+    {
+        if (result.IsSuccess)
+        {
+            throw new InvalidOperationException("The result was successful, only unsuccessful results are supported.");
+        }
+
+        using StringWriter stringWriter = new StringWriter();
+        using IndentedTextWriter logTextWriter = new IndentedTextWriter(stringWriter, " ");
+        logTextWriter.WriteLine("Encountered an error");
+        logTextWriter.Indent++;
+
+        LogResultError(logTextWriter, result);
+        return stringWriter.ToString();
+    }
+
     private static void LogResultError(IndentedTextWriter logTextWriter, IResult result)
     {
         switch (result.Error)
