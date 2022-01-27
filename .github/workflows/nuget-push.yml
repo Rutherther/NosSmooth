@@ -20,8 +20,6 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '6.0.x'
-      env:
-        NUGET_AUTH_TOKEN: ${{secrets.NUGET_KEY}}
         
     - name: Pack app
       run: dotnet pack NosSmooth.sln --configuration Release -o nuget
@@ -29,3 +27,5 @@ jobs:
     - name: Publish NuGet
       working-directory: nuget
       run: dotnet nuget push *.nupkg --skip-duplicate -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.NUGET_KEY}}
