@@ -24,6 +24,11 @@ public abstract class ControlManager : NostaleObject
     }
 
     /// <summary>
+    /// Gets the entity this control manager is for.
+    /// </summary>
+    public abstract MapBaseObj Entity { get; }
+
+    /// <summary>
     /// Gets the current player position x coordinate.
     /// </summary>
     public int X

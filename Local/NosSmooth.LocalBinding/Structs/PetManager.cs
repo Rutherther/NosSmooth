@@ -45,4 +45,7 @@ public class PetManager : ControlManager
             return new MapNpcObj(Memory, (IntPtr)playerAddress);
         }
     }
+
+    /// <inheritdoc />
+    public override MapBaseObj Entity => Pet;
 }

@@ -88,4 +88,7 @@ public class PlayerManager : ControlManager
             return playerId;
         }
     }
+
+    /// <inheritdoc />
+    public override MapBaseObj Entity => Player;
 }

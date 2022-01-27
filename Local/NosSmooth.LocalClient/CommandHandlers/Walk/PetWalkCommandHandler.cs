@@ -1,5 +1,5 @@
 ﻿//
-//  PlayerWalkCommandHandler.cs
+//  PetWalkCommandHandler.cs
 //
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -9,53 +9,57 @@ using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands;
 using NosSmooth.Core.Commands.Control;
 using NosSmooth.Core.Commands.Walking;
-using NosSmooth.Core.Extensions;
 using NosSmooth.LocalBinding.Objects;
-using NosSmooth.LocalClient.CommandHandlers.Walk.Errors;
 using Remora.Results;
 
 namespace NosSmooth.LocalClient.CommandHandlers.Walk;
 
 /// <summary>
-/// Handles <see cref="PlayerWalkCommand"/>.
+/// Handles <see cref="PetWalkCommand"/>.
 /// </summary>
-public class PlayerWalkCommandHandler : ICommandHandler<PlayerWalkCommand>
+public class PetWalkCommandHandler : ICommandHandler<PetWalkCommand>
 {
     /// <summary>
     /// Group that is used for <see cref="TakeControlCommand"/>.
     /// </summary>
-    public const string PlayerWalkControlGroup = "PlayerWalk";
+    public const string PetWalkControlGroup = "PetWalk";
 
-    private readonly PlayerManagerBinding _playerManagerBinding;
+    private readonly PetManagerBinding _petManagerBinding;
     private readonly INostaleClient _nostaleClient;
     private readonly WalkCommandHandlerOptions _options;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PlayerWalkCommandHandler"/> class.
+    /// Initializes a new instance of the <see cref="PetWalkCommandHandler"/> class.
     /// </summary>
-    /// <param name="playerManagerBinding">The character object binding.</param>
+    /// <param name="petManagerBinding">The character object binding.</param>
     /// <param name="nostaleClient">The nostale client.</param>
     /// <param name="options">The options.</param>
-    public PlayerWalkCommandHandler
+    public PetWalkCommandHandler
     (
-        PlayerManagerBinding playerManagerBinding,
+        PetManagerBinding petManagerBinding,
         INostaleClient nostaleClient,
         IOptions<WalkCommandHandlerOptions> options
     )
     {
         _options = options.Value;
-        _playerManagerBinding = playerManagerBinding;
+        _petManagerBinding = petManagerBinding;
         _nostaleClient = nostaleClient;
     }
 
     /// <inheritdoc/>
-    public async Task<Result> HandleCommand(PlayerWalkCommand command, CancellationToken ct = default)
+    public async Task<Result> HandleCommand(PetWalkCommand command, CancellationToken ct = default)
     {
+        if (_petManagerBinding.PetManagerList.Length < command.PetSelector + 1)
+        {
+            return new NotFoundError("Could not find the pet using the given selector.");
+        }
+        var petManager = _petManagerBinding.PetManagerList[command.PetSelector];
+
         var handler = new ControlCommandWalkHandler
         (
             _nostaleClient,
-            (x, y) => _playerManagerBinding.Walk(x, y),
-            _playerManagerBinding.PlayerManager,
+            (x, y) => _petManagerBinding.PetWalk(command.PetSelector, x, y),
+            petManager,
             _options
         );
 
@@ -64,7 +68,7 @@ public class PlayerWalkCommandHandler : ICommandHandler<PlayerWalkCommand>
             command.TargetX,
             command.TargetY,
             command,
-            PlayerWalkControlGroup,
+            PetWalkControlGroup + "_" + command.PetSelector,
             ct
         );
     }

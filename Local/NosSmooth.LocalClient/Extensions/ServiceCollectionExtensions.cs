@@ -29,7 +29,8 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddNostaleBindings();
         serviceCollection
             .AddTakeControlCommand()
-            .AddCommandHandler<PlayerWalkCommandHandler>();
+            .AddCommandHandler<PlayerWalkCommandHandler>()
+            .AddCommandHandler<PetWalkCommandHandler>();
         serviceCollection.TryAddSingleton<NostaleLocalClient>();
         serviceCollection.TryAddSingleton<INostaleClient>(p => p.GetRequiredService<NostaleLocalClient>());
 
