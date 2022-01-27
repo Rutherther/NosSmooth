@@ -20,6 +20,9 @@ public record PlayerWalkCommand
     ushort TargetY,
     bool CanBeCancelledByAnother = true,
     bool WaitForCancellation = true,
-    bool AllowUserCancel = true,
-    bool CancelOnMapChange = true
-) : ICommand, ITakeControlCommand;
+    bool AllowUserCancel = true
+) : ITakeControlCommand
+{
+    /// <inheritdoc />
+    public bool CancelOnMapChange => true;
+}
