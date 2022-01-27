@@ -12,11 +12,11 @@ namespace NosSmooth.Core.Commands.Walking;
 /// Walk the given pet to the specified position.
 /// </summary>
 /// <param name="PetSelector">Index of the pet to move.</param>
-/// <param name="TargetX"></param>
-/// <param name="TargetY"></param>
-/// <param name="CanBeCancelledByAnother"></param>
-/// <param name="WaitForCancellation"></param>
-/// <param name="AllowUserCancel"></param>
+/// <param name="TargetX">The target x coordinate.</param>
+/// <param name="TargetY">The target y coordinate.</param>
+/// <param name="CanBeCancelledByAnother">Whether the command may be cancelled by another task within the same group.</param>
+/// <param name="WaitForCancellation">Whether to wait for finish of the previous task</param>
+/// <param name="AllowUserCancel">Whether to allow the user to cancel by taking any walk/focus/unfollow action</param>
 public record PetWalkCommand
 (
     int PetSelector,

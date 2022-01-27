@@ -22,12 +22,12 @@ public interface ITakeControlCommand : ICommand
     bool WaitForCancellation { get; }
 
     /// <summary>
-    /// Whether to allow the user to cancel by taking any walk/focus/unfollow action.
+    /// Gets whether to allow the user to cancel by taking any walk/focus/unfollow action.
     /// </summary>
     bool AllowUserCancel { get; }
 
     /// <summary>
-    /// Whether the command should be cancelled on map change.
+    /// Gets whether the command should be cancelled on map change.
     /// </summary>
     bool CancelOnMapChange { get; }
 }
