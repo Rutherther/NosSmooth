@@ -24,7 +24,7 @@ jobs:
         NUGET_AUTH_TOKEN: ${{secrets.NUGET_KEY}}
         
     - name: Pack app
-      run: dotnet pack NosSmooth.sln --configuration Release -o .
+      run: dotnet pack NosSmooth.sln --configuration Release -o nuget
       
     - name: Publish NuGet
       working-directory: nuget
