@@ -8,6 +8,7 @@ using NosSmooth.ChatCommands;
 using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands;
 using NosSmooth.Core.Commands.Walking;
+using NosSmooth.Core.Extensions;
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Chat;
 using NosSmooth.Packets.Server.Chat;
@@ -42,13 +43,15 @@ public class WalkCommands : CommandGroup
     /// <param name="x">The x coordinate.</param>
     /// <param name="y">The y coordinate.</param>
     /// <param name="isCancellable">Whether the user can cancel the operation.</param>
+    /// <param name="petSelectors">The pet selectors indices.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
     [Command("walk")]
     public async Task<Result> HandleWalkToAsync
     (
         ushort x,
         ushort y,
-        bool isCancellable = true
+        bool isCancellable = true,
+        [Option('p', "pet")] params int[] petSelectors
     )
     {
         var receiveResult = await _client.ReceivePacketAsync
@@ -62,11 +65,11 @@ public class WalkCommands : CommandGroup
             return receiveResult;
         }
 
-        var command = new PlayerWalkCommand(x, y, AllowUserCancel: isCancellable);
+        var command = new WalkCommand(x, y, petSelectors, AllowUserCancel: isCancellable);
         var walkResult = await _client.SendCommandAsync(command, CancellationToken);
         if (!walkResult.IsSuccess)
         {
-            await _feedbackService.SendErrorMessageAsync($"Could not finish walking. {walkResult.Error.Message}", CancellationToken);
+            await _feedbackService.SendErrorMessageAsync($"Could not finish walking. {walkResult.ToFullString()}", CancellationToken);
             await _client.ReceivePacketAsync
             (
                 new SayPacket(EntityType.Map, 1, SayColor.Red, "Could not finish walking."),
