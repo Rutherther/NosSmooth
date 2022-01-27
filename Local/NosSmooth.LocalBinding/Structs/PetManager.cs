@@ -16,7 +16,13 @@ namespace NosSmooth.LocalBinding.Structs;
 /// </summary>
 public class PetManager : ControlManager
 {
-    private readonly IMemory _memory;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PetManager"/> class.
+    /// </summary>
+    public PetManager()
+        : base(null!, IntPtr.Zero)
+    {
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PetManager"/> class.
@@ -24,16 +30,9 @@ public class PetManager : ControlManager
     /// <param name="memory">The memory.</param>
     /// <param name="petManagerAddress">The pet manager address.</param>
     public PetManager(IMemory memory, IntPtr petManagerAddress)
-        : base(memory)
+        : base(memory, petManagerAddress)
     {
-        _memory = memory;
-        Address = petManagerAddress;
     }
-
-    /// <summary>
-    /// Gets the address of the pet manager.
-    /// </summary>
-    public override IntPtr Address { get; }
 
     /// <summary>
     /// Gets the player object.
@@ -42,8 +41,8 @@ public class PetManager : ControlManager
     {
         get
         {
-            _memory.SafeRead(Address + 0x7C, out int playerAddress);
-            return new MapNpcObj(_memory, (IntPtr)playerAddress);
+            Memory.SafeRead(Address + 0x7C, out int playerAddress);
+            return new MapNpcObj(Memory, (IntPtr)playerAddress);
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿//
-//  MapObjBaseList.cs
+//  NostaleList.cs
 //
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -11,33 +11,36 @@ using Reloaded.Memory.Sources;
 namespace NosSmooth.LocalBinding.Structs;
 
 /// <summary>
-/// List of map objects.
+/// A class representing a list from nostale.
 /// </summary>
-public class MapObjBaseList : IEnumerable<MapBaseObj>
+/// <typeparam name="T">The type.</typeparam>
+public class NostaleList<T> : IEnumerable<T>
+    where T : NostaleObject, new()
 {
     private readonly IMemory _memory;
-    private readonly IntPtr _objListPointer;
-    private readonly ArrayPtr<int> _objList;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MapObjBaseList"/> class.
+    /// Initializes a new instance of the <see cref="NostaleList{T}"/> class.
     /// </summary>
     /// <param name="memory">The memory.</param>
     /// <param name="objListPointer">The object list pointer.</param>
-    public MapObjBaseList(IMemory memory, IntPtr objListPointer)
+    public NostaleList(IMemory memory, IntPtr objListPointer)
     {
-        memory.Read(objListPointer + 0x04, out uint arrayFirst);
-        _objList = new ArrayPtr<int>(arrayFirst, source: memory);
         _memory = memory;
-        _objListPointer = objListPointer;
+        Address = objListPointer;
     }
+
+    /// <summary>
+    /// Gets the address.
+    /// </summary>
+    protected IntPtr Address { get; }
 
     /// <summary>
     /// Gets the element at the given index.
     /// </summary>
     /// <param name="index">The index of the element.</param>
     /// <exception cref="IndexOutOfRangeException">Thrown if the index is not in the bounds of the array.</exception>
-    public MapBaseObj this[int index]
+    public T this[int index]
     {
         get
         {
@@ -46,7 +49,14 @@ public class MapObjBaseList : IEnumerable<MapBaseObj>
                 throw new IndexOutOfRangeException();
             }
 
-            return new MapBaseObj(_memory, (IntPtr)_objList[index]);
+            _memory.SafeRead(Address + 0x04, out int arrayAddress);
+            _memory.SafeRead((IntPtr)arrayAddress + (0x04 * index), out int objectAddress);
+
+            return new T
+            {
+                Memory = _memory,
+                Address = (IntPtr)objectAddress
+            };
         }
     }
 
@@ -57,15 +67,15 @@ public class MapObjBaseList : IEnumerable<MapBaseObj>
     {
         get
         {
-            _memory.SafeRead(_objListPointer + 0x08, out int length);
+            _memory.SafeRead(Address + 0x08, out int length);
             return length;
         }
     }
 
     /// <inheritdoc/>
-    public IEnumerator<MapBaseObj> GetEnumerator()
+    public IEnumerator<T> GetEnumerator()
     {
-        return new MapObjBaseEnumerator(this);
+        return new NostaleListEnumerator(this);
     }
 
     /// <inheritdoc/>
@@ -74,12 +84,12 @@ public class MapObjBaseList : IEnumerable<MapBaseObj>
         return GetEnumerator();
     }
 
-    private class MapObjBaseEnumerator : IEnumerator<MapBaseObj>
+    private class NostaleListEnumerator : IEnumerator<T>
     {
-        private readonly MapObjBaseList _list;
+        private readonly NostaleList<T> _list;
         private int _index;
 
-        public MapObjBaseEnumerator(MapObjBaseList list)
+        public NostaleListEnumerator(NostaleList<T> list)
         {
             _index = -1;
             _list = list;
@@ -101,7 +111,7 @@ public class MapObjBaseList : IEnumerable<MapBaseObj>
             _index = -1;
         }
 
-        public MapBaseObj Current => _list[_index];
+        public T Current => _list[_index];
 
         object IEnumerator.Current => Current;
 

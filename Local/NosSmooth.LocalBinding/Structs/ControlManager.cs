@@ -11,23 +11,17 @@ namespace NosSmooth.LocalBinding.Structs;
 /// <summary>
 /// Base for player and pet managers.
 /// </summary>
-public abstract class ControlManager
+public abstract class ControlManager : NostaleObject
 {
-    private readonly IMemory _memory;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="ControlManager"/> class.
     /// </summary>
     /// <param name="memory">The memory.</param>
-    public ControlManager(IMemory memory)
+    /// <param name="address">The address of the manager.</param>
+    protected ControlManager(IMemory memory, IntPtr address)
+        : base(memory, address)
     {
-        _memory = memory;
     }
-
-    /// <summary>
-    /// Gets the address of the manager.
-    /// </summary>
-    public abstract IntPtr Address { get; }
 
     /// <summary>
     /// Gets the current player position x coordinate.
@@ -36,7 +30,7 @@ public abstract class ControlManager
     {
         get
         {
-            _memory.SafeRead(Address + 0x4, out short x);
+            Memory.SafeRead(Address + 0x4, out short x);
             return x;
         }
     }
@@ -48,7 +42,7 @@ public abstract class ControlManager
     {
         get
         {
-            _memory.SafeRead(Address + 0x6, out short y);
+            Memory.SafeRead(Address + 0x6, out short y);
             return y;
         }
     }
@@ -60,7 +54,7 @@ public abstract class ControlManager
     {
         get
         {
-            _memory.SafeRead(Address + 0x8, out short targetX);
+            Memory.SafeRead(Address + 0x8, out short targetX);
             return targetX;
         }
     }
@@ -72,7 +66,7 @@ public abstract class ControlManager
     {
         get
         {
-            _memory.SafeRead(Address + 0xA, out short targetX);
+            Memory.SafeRead(Address + 0xA, out short targetX);
             return targetX;
         }
     }

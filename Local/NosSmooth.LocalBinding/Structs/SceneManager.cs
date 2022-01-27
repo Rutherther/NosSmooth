@@ -20,24 +20,24 @@ public class SceneManager
     /// <summary>
     /// Create <see cref="PlayerManager"/> instance.
     /// </summary>
-    /// <param name="nosBrowser">The NosTale process browser.</param>
+    /// <param name="nosBrowserManager">The NosTale process browser.</param>
     /// <param name="options">The options.</param>
     /// <returns>The player manager or an error.</returns>
-    public static Result<SceneManager> Create(ExternalNosBrowser nosBrowser, SceneManagerOptions options)
+    public static Result<SceneManager> Create(NosBrowserManager nosBrowserManager, SceneManagerOptions options)
     {
-        var characterObjectAddress = nosBrowser.Scanner.CompiledFindPattern(options.SceneManagerObjectPattern);
+        var characterObjectAddress = nosBrowserManager.Scanner.CompiledFindPattern(options.SceneManagerObjectPattern);
         if (!characterObjectAddress.Found)
         {
             return new BindingNotFoundError(options.SceneManagerObjectPattern, "SceneManager");
         }
 
-        if (nosBrowser.Process.MainModule is null)
+        if (nosBrowserManager.Process.MainModule is null)
         {
             return new NotFoundError("Cannot find the main module of the target process.");
         }
 
-        int staticManagerAddress = (int)nosBrowser.Process.MainModule.BaseAddress + characterObjectAddress.Offset;
-        return new SceneManager(nosBrowser.Memory, staticManagerAddress, options.SceneManagerOffsets);
+        int staticManagerAddress = (int)nosBrowserManager.Process.MainModule.BaseAddress + characterObjectAddress.Offset;
+        return new SceneManager(nosBrowserManager.Memory, staticManagerAddress, options.SceneManagerOffsets);
     }
 
     private readonly int[] _sceneManagerOffsets;
@@ -65,22 +65,22 @@ public class SceneManager
     /// <summary>
     /// Gets the player list.
     /// </summary>
-    public MapObjBaseList PlayerList => new MapObjBaseList(_memory, ReadPtr(Address + 0xC));
+    public NostaleList<MapBaseObj> PlayerList => new NostaleList<MapBaseObj>(_memory, ReadPtr(Address + 0xC));
 
     /// <summary>
     /// Gets the monster list.
     /// </summary>
-    public MapObjBaseList MonsterList => new MapObjBaseList(_memory, ReadPtr(Address + 0x10));
+    public NostaleList<MapBaseObj> MonsterList => new NostaleList<MapBaseObj>(_memory, ReadPtr(Address + 0x10));
 
     /// <summary>
     /// Gets the npc list.
     /// </summary>
-    public MapObjBaseList NpcList => new MapObjBaseList(_memory, ReadPtr(Address + 0x14));
+    public NostaleList<MapBaseObj> NpcList => new NostaleList<MapBaseObj>(_memory, ReadPtr(Address + 0x14));
 
     /// <summary>
     /// Gets the item list.
     /// </summary>
-    public MapObjBaseList ItemList => new MapObjBaseList(_memory, ReadPtr(Address + 0x18));
+    public NostaleList<MapBaseObj> ItemList => new NostaleList<MapBaseObj>(_memory, ReadPtr(Address + 0x18));
 
     /// <summary>
     /// Gets the entity that is currently being followed by the player.

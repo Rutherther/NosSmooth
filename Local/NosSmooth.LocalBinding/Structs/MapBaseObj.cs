@@ -11,10 +11,14 @@ namespace NosSmooth.LocalBinding.Structs;
 /// <summary>
 /// Base map object. Common for players, monsters, npcs.
 /// </summary>
-public class MapBaseObj
+public class MapBaseObj : NostaleObject
 {
-    private readonly IMemory _memory;
-    private readonly IntPtr _mapObjPointer;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MapBaseObj"/> class.
+    /// </summary>
+    public MapBaseObj()
+    {
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MapBaseObj"/> class.
@@ -22,15 +26,9 @@ public class MapBaseObj
     /// <param name="memory">The memory.</param>
     /// <param name="mapObjPointer">The map object pointer.</param>
     public MapBaseObj(IMemory memory, IntPtr mapObjPointer)
+        : base(memory, mapObjPointer)
     {
-        _memory = memory;
-        _mapObjPointer = mapObjPointer;
     }
-
-    /// <summary>
-    /// Gets the pointer to the object.
-    /// </summary>
-    public IntPtr Address => _mapObjPointer;
 
     /// <summary>
     /// Gets the id of the entity.
@@ -39,7 +37,7 @@ public class MapBaseObj
     {
         get
         {
-            _memory.SafeRead(_mapObjPointer + 0x08, out int id);
+            Memory.SafeRead(Address + 0x08, out int id);
             return id;
         }
     }

@@ -21,24 +21,24 @@ public class PlayerManager : ControlManager
     /// <summary>
     /// Create <see cref="PlayerManager"/> instance.
     /// </summary>
-    /// <param name="nosBrowser">The NosTale process browser.</param>
+    /// <param name="nosBrowserManager">The NosTale process browser.</param>
     /// <param name="options">The options.</param>
     /// <returns>The player manager or an error.</returns>
-    public static Result<PlayerManager> Create(ExternalNosBrowser nosBrowser, PlayerManagerOptions options)
+    public static Result<PlayerManager> Create(NosBrowserManager nosBrowserManager, PlayerManagerOptions options)
     {
-        var characterObjectAddress = nosBrowser.Scanner.CompiledFindPattern(options.PlayerManagerPattern);
+        var characterObjectAddress = nosBrowserManager.Scanner.CompiledFindPattern(options.PlayerManagerPattern);
         if (!characterObjectAddress.Found)
         {
             return new BindingNotFoundError(options.PlayerManagerPattern, "PlayerManager");
         }
 
-        if (nosBrowser.Process.MainModule is null)
+        if (nosBrowserManager.Process.MainModule is null)
         {
             return new NotFoundError("Cannot find the main module of the target process.");
         }
 
-        var staticAddress = (int)nosBrowser.Process.MainModule.BaseAddress + characterObjectAddress.Offset;
-        return new PlayerManager(nosBrowser.Memory, staticAddress, options.PlayerManagerOffsets);
+        var staticAddress = (int)nosBrowserManager.Process.MainModule.BaseAddress + characterObjectAddress.Offset;
+        return new PlayerManager(nosBrowserManager.Memory, staticAddress, options.PlayerManagerOffsets);
     }
 
     private readonly IMemory _memory;
@@ -52,7 +52,7 @@ public class PlayerManager : ControlManager
     /// <param name="staticPlayerManagerAddress">The pointer to the beginning of the player manager structure.</param>
     /// <param name="playerManagerOffsets">The offsets to get the player manager address from the static one.</param>
     public PlayerManager(IMemory memory, int staticPlayerManagerAddress, int[] playerManagerOffsets)
-        : base(memory)
+        : base(memory, IntPtr.Zero)
     {
         _memory = memory;
         _staticPlayerManagerAddress = staticPlayerManagerAddress;
