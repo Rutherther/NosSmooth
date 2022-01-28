@@ -28,8 +28,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NosSmooth.Packets", "Packet
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NosSmooth.PacketSerializer.Abstractions", "Packets\NosSmooth.PacketSerializer.Abstractions\NosSmooth.PacketSerializer.Abstractions.csproj", "{CF03BCEA-EB5B-427F-8576-7DA7EB869BDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NosSmooth.ChatCommands", "Local\NosSmooth.ChatCommands\NosSmooth.ChatCommands.csproj", "{7DC7FC22-EFA6-4EB0-8E75-99F746E50F6E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{1C785A74-19B9-42D2-93B1-F4EC9D6A8CFD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NosSmooth.Data.Abstractions", "Data\NosSmooth.Data.Abstractions\NosSmooth.Data.Abstractions.csproj", "{7901F7FF-FB76-4A4C-8DCA-F74543624130}"
@@ -134,18 +132,6 @@ Global
 		{CF03BCEA-EB5B-427F-8576-7DA7EB869BDC}.Release|x64.Build.0 = Release|Any CPU
 		{CF03BCEA-EB5B-427F-8576-7DA7EB869BDC}.Release|x86.ActiveCfg = Release|Any CPU
 		{CF03BCEA-EB5B-427F-8576-7DA7EB869BDC}.Release|x86.Build.0 = Release|Any CPU
-		{7DC7FC22-EFA6-4EB0-8E75-99F746E50F6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7DC7FC22-EFA6-4EB0-8E75-99F746E50F6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7DC7FC22-EFA6-4EB0-8E75-99F746E50F6E}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{7DC7FC22-EFA6-4EB0-8E75-99F746E50F6E}.Debug|x64.Build.0 = Debug|Any CPU
-		{7DC7FC22-EFA6-4EB0-8E75-99F746E50F6E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{7DC7FC22-EFA6-4EB0-8E75-99F746E50F6E}.Debug|x86.Build.0 = Debug|Any CPU
-		{7DC7FC22-EFA6-4EB0-8E75-99F746E50F6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7DC7FC22-EFA6-4EB0-8E75-99F746E50F6E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7DC7FC22-EFA6-4EB0-8E75-99F746E50F6E}.Release|x64.ActiveCfg = Release|Any CPU
-		{7DC7FC22-EFA6-4EB0-8E75-99F746E50F6E}.Release|x64.Build.0 = Release|Any CPU
-		{7DC7FC22-EFA6-4EB0-8E75-99F746E50F6E}.Release|x86.ActiveCfg = Release|Any CPU
-		{7DC7FC22-EFA6-4EB0-8E75-99F746E50F6E}.Release|x86.Build.0 = Release|Any CPU
 		{7901F7FF-FB76-4A4C-8DCA-F74543624130}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7901F7FF-FB76-4A4C-8DCA-F74543624130}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7901F7FF-FB76-4A4C-8DCA-F74543624130}.Debug|x64.ActiveCfg = Debug|Any CPU
