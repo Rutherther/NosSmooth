@@ -3,8 +3,8 @@
 name: NuGet Update
 
 on:
-  push:
-    branches: [main]
+  release:
+    type: [published]
   workflow_dispatch:
 
 jobs:
