@@ -15,8 +15,13 @@ public class LstDecryptor : IDecryptor
     /// <inheritdoc />
     public Result<byte[]> Decrypt(ReadOnlySpan<byte> data)
     {
+        if (data.Length == 0)
+        {
+            return Array.Empty<byte>();
+        }
+
         var output = new MemoryStream();
-        int linesCount = BinaryPrimitives.ReadInt32LittleEndian(data);
+        var linesCount = BinaryPrimitives.ReadInt32LittleEndian(data);
         data = data.Slice(4);
         for (var i = 0; i < linesCount; i++)
         {
