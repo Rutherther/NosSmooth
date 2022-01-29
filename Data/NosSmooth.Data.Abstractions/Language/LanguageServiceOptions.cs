@@ -14,7 +14,7 @@ public class LanguageServiceOptions
     /// <summary>
     /// Get or sets the default language.
     /// </summary>
-    public Language Language { get; set; } = Language.En;
+    public Language Language { get; set; } = Language.Uk;
 
     /// <summary>
     /// Gets or sets whether to fill <see cref="TranslatableString"/> translations with the default language.

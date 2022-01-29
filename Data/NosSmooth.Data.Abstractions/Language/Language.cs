@@ -14,7 +14,7 @@ public enum Language
     /// <summary>
     /// English language.
     /// </summary>
-    En,
+    Uk,
 
     /// <summary>
     /// German language.

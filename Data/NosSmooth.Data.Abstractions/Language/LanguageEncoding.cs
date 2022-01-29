@@ -24,7 +24,7 @@ public class LanguageEncoding
         {
             case Language.Tr:
                 return CodePagesEncodingProvider.Instance.GetEncoding(1254) ?? Encoding.ASCII;
-            case Language.En:
+            case Language.Uk:
             case Language.Es:
                 return CodePagesEncodingProvider.Instance.GetEncoding(1252) ?? Encoding.ASCII;
             case Language.Cz:
