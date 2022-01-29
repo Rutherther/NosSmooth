@@ -49,7 +49,7 @@ public enum Language
     /// <summary>
     /// Czech language.
     /// </summary>
-    Cs,
+    Cz,
 
     /// <summary>
     /// Turkish language.
