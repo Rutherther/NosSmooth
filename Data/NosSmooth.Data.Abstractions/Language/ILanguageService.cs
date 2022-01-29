@@ -25,5 +25,13 @@ public interface ILanguageService
     /// <param name="key">The key to translate.</param>
     /// <param name="language">The language, <see cref="CurrentLanguage"/> will be used if null.</param>
     /// <returns>The translated string or an error.</returns>
-    public Result<string> GetTranslation(TranslationRoot root, LanguageKey key, Language? language = default);
+    public Result<string> GetTranslation(TranslationRoot root, string key, Language? language = default);
+
+    /// <summary>
+    /// Gets the translation of the given key.
+    /// </summary>
+    /// <param name="translatableString">The translatable string containing .</param>
+    /// <param name="language">The language, <see cref="CurrentLanguage"/> will be used if null.</param>
+    /// <returns>The translated string or an error.</returns>
+    public Result<string> GetTranslation(TranslatableString translatableString, Language? language = default);
 }
