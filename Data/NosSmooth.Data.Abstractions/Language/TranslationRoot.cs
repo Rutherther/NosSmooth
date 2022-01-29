@@ -12,11 +12,6 @@ namespace NosSmooth.Data.Abstractions.Language;
 public enum TranslationRoot
 {
     /// <summary>
-    /// The translation is for a card.
-    /// </summary>
-    Card,
-
-    /// <summary>
     /// The translation is for an item.
     /// </summary>
     Item,
