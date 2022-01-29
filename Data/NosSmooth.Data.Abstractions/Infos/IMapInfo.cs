@@ -4,13 +4,25 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using NosSmooth.Data.Abstractions.Language;
+
 namespace NosSmooth.Data.Abstractions.Infos;
 
 /// <summary>
 /// The NosTale map information.
 /// </summary>
-public interface IMapInfo : IVNumInfo
+public interface IMapInfo
 {
+    /// <summary>
+    /// Gets the Id of the map.
+    /// </summary>
+    public int Id { get; }
+
+    /// <summary>
+    /// Gets the translatable name of the map.
+    /// </summary>
+    public TranslatableString Name { get; }
+
     /// <summary>
     /// Gets the width of the grid.
     /// </summary>

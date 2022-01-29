@@ -14,5 +14,5 @@ public interface IVNumInfo
     /// <summary>
     /// Gets the VNum of the info entry.
     /// </summary>
-    public long VNum { get; }
+    public int VNum { get; }
 }
