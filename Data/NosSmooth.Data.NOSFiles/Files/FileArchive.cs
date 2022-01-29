@@ -19,12 +19,13 @@ public record FileArchive(IReadOnlyList<RawFile> Files)
     /// </summary>
     /// <param name="name">The name of the file.</param>
     /// <returns>A file or an error.</returns>
-    public Result<RawFile> Search(string name)
+    public Result<RawFile> FindFile(string name)
     {
-        var foundFile = Files.OfType<RawFile?>().FirstOrDefault(x => Path.GetFileName((RawFile)x.Path) == name, null);
+        var foundFile = Files.OfType<RawFile?>().FirstOrDefault
+            (x => Path.GetFileName(((RawFile)x!).Path) == name, null);
         if (foundFile is null)
         {
-            return new NotFoundError();
+            return new NotFoundError($"Could not find file {name} in archive.");
         }
 
         return (RawFile)foundFile;
