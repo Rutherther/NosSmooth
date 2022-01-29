@@ -13,7 +13,10 @@ namespace NosSmooth.Data.NOSFiles;
 /// <inheritdoc />
 internal class LanguageService : ILanguageService
 {
-    private readonly IReadOnlyDictionary<Language, IReadOnlyDictionary<TranslationRoot, IReadOnlyDictionary<string, string>>> _translations;
+    private readonly
+        IReadOnlyDictionary<Language, IReadOnlyDictionary<TranslationRoot, IReadOnlyDictionary<string, string>>>
+        _translations;
+
     private readonly LanguageServiceOptions _options;
 
     /// <summary>
@@ -21,7 +24,12 @@ internal class LanguageService : ILanguageService
     /// </summary>
     /// <param name="translations">The translations.</param>
     /// <param name="options">The options.</param>
-    public LanguageService(IReadOnlyDictionary<Language, IReadOnlyDictionary<TranslationRoot, IReadOnlyDictionary<string, string>>> translations, LanguageServiceOptions options)
+    public LanguageService
+    (
+        IReadOnlyDictionary<Language, IReadOnlyDictionary<TranslationRoot, IReadOnlyDictionary<string, string>>>
+            translations,
+        LanguageServiceOptions options
+    )
     {
         CurrentLanguage = options.Language;
         _translations = translations;
@@ -32,32 +40,47 @@ internal class LanguageService : ILanguageService
     public Language CurrentLanguage { get; set; }
 
     /// <inheritdoc/>
-    public Result<string> GetTranslation(TranslationRoot root, string key, Language? language = default)
+    public Task<Result<string>> GetTranslationAsync
+    (
+        TranslationRoot root,
+        string key,
+        Language? language = default,
+        CancellationToken ct = default
+    )
     {
         if (!_translations.ContainsKey(language ?? CurrentLanguage))
         {
-            return new NotFoundError($"The requested language {language ?? CurrentLanguage} is not parsed.");
+            return Task.FromResult
+            (
+                Result<string>.FromError
+                    (new NotFoundError($"The requested language {language ?? CurrentLanguage} is not parsed."))
+            );
         }
 
         var translations = _translations[language ?? CurrentLanguage];
         if (!translations.ContainsKey(root))
         {
-            return key;
+            return Task.FromResult(Result<string>.FromSuccess(key));
         }
 
         var keyTranslations = translations[root];
         if (!keyTranslations.ContainsKey(key))
         {
-            return key;
+            return Task.FromResult(Result<string>.FromSuccess(key));
         }
 
-        return keyTranslations[key];
+        return Task.FromResult(Result<string>.FromSuccess(keyTranslations[key]));
     }
 
     /// <inheritdoc/>
-    public Result<string> GetTranslation(TranslatableString translatableString, Language? language = default)
+    public async Task<Result<string>> GetTranslationAsync
+    (
+        TranslatableString translatableString,
+        Language? language = default,
+        CancellationToken ct = default
+    )
     {
-        var translation = GetTranslation(translatableString.Root, translatableString.Key, language);
+        var translation = await GetTranslationAsync(translatableString.Root, translatableString.Key, language, ct);
         if (!translation.IsSuccess)
         {
             return translation;

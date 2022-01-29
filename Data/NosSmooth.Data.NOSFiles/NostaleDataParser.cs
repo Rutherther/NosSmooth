@@ -68,9 +68,9 @@ public class NostaleDataParser
         }
 
         var languageFiles = new Dictionary<Language, FileArchive>();
-        foreach (var language in languages.Concat(_options.SupportedLanguages))
+        foreach (var language in languages.Concat(_options.SupportedLanguages).Distinct())
         {
-            var langString = language.ToString().ToLower();
+            var langString = language.ToString().ToUpper();
             var langPath = languageFilesPath.Replace("%lang%", langString);
             var languageFile = _fileReader.ReadFileSystemFile<FileArchive>(langPath);
 

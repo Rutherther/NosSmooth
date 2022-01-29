@@ -18,7 +18,7 @@ public class MonsterParser : IInfoParser<IMonsterInfo>
     /// <inheritdoc />
     public Result<Dictionary<int, IMonsterInfo>> Parse(NostaleFiles files)
     {
-        var monsterDatResult = files.DatFiles.FindFile("Monster.dat");
+        var monsterDatResult = files.DatFiles.FindFile("monster.dat");
         if (!monsterDatResult.IsSuccess)
         {
             return Result<Dictionary<int, IMonsterInfo>>.FromError(monsterDatResult);

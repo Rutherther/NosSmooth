@@ -24,12 +24,12 @@ public class MapParser : IInfoParser<IMapInfo>
             return Result<Dictionary<int, IMapInfo>>.FromError(mapDatResult);
         }
         var mapGridsArchive = files.MapGridsFiles;
-        var mapDatContent = Encoding.ASCII.GetString(mapDatResult.Entity.Content).Split('\n');
+        var mapDatContent = Encoding.ASCII.GetString(mapDatResult.Entity.Content).Split('\r', '\n');
 
         var mapNames = new Dictionary<int, TranslatableString>();
         foreach (var line in mapDatContent)
         {
-            var splitted = line.Split('\t');
+            var splitted = line.Split(' ', '\t');
             if (splitted.Length != 5)
             {
                 continue;
@@ -56,7 +56,7 @@ public class MapParser : IInfoParser<IMapInfo>
             result[id] = new MapInfo
             (
                 id,
-                mapNames[id],
+                mapNames.GetValueOrDefault(id, new TranslatableString(TranslationRoot.Map, "Map")),
                 BitConverter.ToInt16(grid.Take(2).ToArray()),
                 BitConverter.ToInt16(grid.Skip(2).Take(2).ToArray()),
                 grid.Skip(4).ToArray()

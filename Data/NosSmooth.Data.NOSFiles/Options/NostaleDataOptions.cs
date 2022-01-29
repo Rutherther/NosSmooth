@@ -16,7 +16,7 @@ public class NostaleDataOptions
     /// <summary>
     /// Gets or sets the supported languages that will be loaded into the memory..
     /// </summary>
-    public Language[] SupportedLanguages { get; set; } = new Language[] { Language.En };
+    public Language[] SupportedLanguages { get; set; } = new Language[] { Language.Uk };
 
     /// <summary>
     /// Gets or sets the path to .nos files.

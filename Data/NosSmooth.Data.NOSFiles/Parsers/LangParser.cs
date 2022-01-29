@@ -34,7 +34,7 @@ public class LangParser
         var encoding = LanguageEncoding.GetEncoding(language);
         var dictionary = new Dictionary<TranslationRoot, IReadOnlyDictionary<string, string>>();
 
-        var itemParsedResult = ParseFile(archive, encoding, $"code_{language.ToString().ToLower()}_Item.txt");
+        var itemParsedResult = ParseFile(archive, encoding, $"_code_{language.ToString().ToLower()}_Item.txt");
         if (!itemParsedResult.IsSuccess)
         {
             return Result<IReadOnlyDictionary<TranslationRoot, IReadOnlyDictionary<string, string>>>.FromError
@@ -42,7 +42,7 @@ public class LangParser
         }
         dictionary.Add(TranslationRoot.Item, itemParsedResult.Entity);
 
-        var monsterParsedResult = ParseFile(archive, encoding, $"code_{language.ToString().ToLower()}_monster.txt");
+        var monsterParsedResult = ParseFile(archive, encoding, $"_code_{language.ToString().ToLower()}_monster.txt");
         if (!monsterParsedResult.IsSuccess)
         {
             return Result<IReadOnlyDictionary<TranslationRoot, IReadOnlyDictionary<string, string>>>.FromError
@@ -50,7 +50,7 @@ public class LangParser
         }
         dictionary.Add(TranslationRoot.Monster, itemParsedResult.Entity);
 
-        var skillParsedResult = ParseFile(archive, encoding, $"code_{language.ToString().ToLower()}_Skill.txt");
+        var skillParsedResult = ParseFile(archive, encoding, $"_code_{language.ToString().ToLower()}_Skill.txt");
         if (!skillParsedResult.IsSuccess)
         {
             return Result<IReadOnlyDictionary<TranslationRoot, IReadOnlyDictionary<string, string>>>.FromError
@@ -58,7 +58,7 @@ public class LangParser
         }
         dictionary.Add(TranslationRoot.Skill, itemParsedResult.Entity);
 
-        var mapParsedResult = ParseFile(archive, encoding, $"code_{language.ToString().ToLower()}_MapIDData.txt");
+        var mapParsedResult = ParseFile(archive, encoding, $"_code_{language.ToString().ToLower()}_MapIDData.txt");
         if (!mapParsedResult.IsSuccess)
         {
             return Result<IReadOnlyDictionary<TranslationRoot, IReadOnlyDictionary<string, string>>>.FromError
@@ -79,7 +79,7 @@ public class LangParser
         var fileContent = encoding.GetString(fileResult.Entity.Content);
 
         var dictionary = new Dictionary<string, string>();
-        var lines = fileContent.Split('\n');
+        var lines = fileContent.Split('\r', '\n');
         foreach (var line in lines)
         {
             var splitted = line.Split('\t');
