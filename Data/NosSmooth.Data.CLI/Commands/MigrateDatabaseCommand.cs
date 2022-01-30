@@ -38,7 +38,7 @@ public class MigrateDatabaseCommand : CommandGroup
     /// <param name="nostaleDataPath">The directory with nostale data files.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     [Command("migrate")]
-    public async Task<Result> HandleMigrate(string nostaleDataPath)
+    public async Task<Result> HandleMigrate([Greedy] string nostaleDataPath)
     {
         var parsingResult = _parser.ParseFiles
         (
