@@ -44,7 +44,7 @@ public class DatabaseLanguageService : ILanguageService
         {
             language ??= CurrentLanguage;
             await using var context = await _dbContextFactory.CreateDbContextAsync(ct);
-            var translation = await context.Translations.FirstOrDefaultAsync
+            var translation = await context.Translations.AsNoTracking().FirstOrDefaultAsync
                 (x => x.Root == root && x.Key == key && x.Language == language, ct);
             if (translation is null)
             {
