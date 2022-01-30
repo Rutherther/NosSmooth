@@ -4,6 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Description>Nos smooth's database implementation of NosTale data using EF core.</Description>
     </PropertyGroup>
 
     <ItemGroup>
