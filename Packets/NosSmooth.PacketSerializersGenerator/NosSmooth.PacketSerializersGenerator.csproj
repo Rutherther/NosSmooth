@@ -8,6 +8,9 @@
         <IsRoslynComponent>true</IsRoslynComponent>
         <IncludeCopyLocalFilesOutputGroup>true</IncludeCopyLocalFilesOutputGroup>
         <Description>NosSmooth's source code generator that generates serializers for packets.</Description>
+        <PackageVersion>1.0.1</PackageVersion>
+        <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
 
     <ItemGroup>

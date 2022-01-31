@@ -6,6 +6,9 @@
         <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
         <Authors>Rutherther</Authors>
         <Description>NosSmooth Core library allowing implementing nostale client, handling packets and commands.</Description>
+        <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageVersion>1.0.1</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>

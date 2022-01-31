@@ -6,6 +6,9 @@
         <RootNamespace>NosSmooth.PacketSerializer</RootNamespace>
         <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
         <Description>NosSmooth's packet string serializer implementation.</Description>
+        <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageVersion>1.0.1</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>
