@@ -7,7 +7,10 @@
         <Description>Nos smooth's NosTale data implementation using .NOS files.</Description>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>1.0.1</PackageVersion>
+        <PackageVersion>1.1.0</PackageVersion>
+        <PackageReleaseNotes>
+            Fix of translations dictionary to provide correct translations for different root keys.
+        </PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
