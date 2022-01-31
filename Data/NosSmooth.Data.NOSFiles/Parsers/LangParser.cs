@@ -48,7 +48,7 @@ public class LangParser
             return Result<IReadOnlyDictionary<TranslationRoot, IReadOnlyDictionary<string, string>>>.FromError
                 (monsterParsedResult);
         }
-        dictionary.Add(TranslationRoot.Monster, itemParsedResult.Entity);
+        dictionary.Add(TranslationRoot.Monster, monsterParsedResult.Entity);
 
         var skillParsedResult = ParseFile(archive, encoding, $"_code_{language.ToString().ToLower()}_Skill.txt");
         if (!skillParsedResult.IsSuccess)
@@ -56,7 +56,7 @@ public class LangParser
             return Result<IReadOnlyDictionary<TranslationRoot, IReadOnlyDictionary<string, string>>>.FromError
                 (skillParsedResult);
         }
-        dictionary.Add(TranslationRoot.Skill, itemParsedResult.Entity);
+        dictionary.Add(TranslationRoot.Skill, skillParsedResult.Entity);
 
         var mapParsedResult = ParseFile(archive, encoding, $"_code_{language.ToString().ToLower()}_MapIDData.txt");
         if (!mapParsedResult.IsSuccess)
@@ -64,7 +64,7 @@ public class LangParser
             return Result<IReadOnlyDictionary<TranslationRoot, IReadOnlyDictionary<string, string>>>.FromError
                 (mapParsedResult);
         }
-        dictionary.Add(TranslationRoot.Map, itemParsedResult.Entity);
+        dictionary.Add(TranslationRoot.Map, mapParsedResult.Entity);
 
         return dictionary;
     }
