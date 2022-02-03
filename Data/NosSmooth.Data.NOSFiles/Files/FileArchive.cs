@@ -22,7 +22,7 @@ public record FileArchive(IReadOnlyList<RawFile> Files)
     public Result<RawFile> FindFile(string name)
     {
         var foundFile = Files.OfType<RawFile?>().FirstOrDefault
-            (x => Path.GetFileName(((RawFile)x!).Path) == name, null);
+            (x => Path.GetFileName(((RawFile)x!).Path) == name);
         if (foundFile is null)
         {
             return new NotFoundError($"Could not find file {name} in archive.");
