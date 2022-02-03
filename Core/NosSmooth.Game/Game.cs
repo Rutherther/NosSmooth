@@ -51,7 +51,6 @@ public class Game
         internal set
         {
             _currentMap = value;
-            MapChanged?.CancelAfter(TimeSpan.FromSeconds(_options.EntityCacheDuration));
         }
     }
 
@@ -62,11 +61,6 @@ public class Game
     /// May be null if there is no raid in progress.
     /// </remarks>
     public Raid? CurrentRaid { get; internal set; }
-
-    /// <summary>
-    /// Cancellation token for changing the map to use in memory cache.
-    /// </summary>
-    internal CancellationTokenSource? MapChanged { get; private set; }
 
     /// <summary>
     /// Creates the character if it is null, or updates the current character.
@@ -103,9 +97,9 @@ public class Game
     /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the map.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>The updated character.</returns>
-    internal async Task<Map> CreateMapAsync
+    internal async Task<Map?> CreateMapAsync
     (
-        Func<Map> create,
+        Func<Map?> create,
         bool releaseSemaphore = true,
         CancellationToken ct = default
     )
@@ -115,6 +109,34 @@ public class Game
             GameSemaphoreType.Map,
             m => CurrentMap = m,
             create,
+            releaseSemaphore,
+            ct
+        );
+    }
+
+    /// <summary>
+    /// Creates the map if it is null, or updates the current map.
+    /// </summary>
+    /// <param name="create">The function for creating the map.</param>
+    /// <param name="update">The function for updating the map.</param>
+    /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the map.</param>
+    /// <param name="ct">The cancellation token for cancelling the operation.</param>
+    /// <returns>The updated character.</returns>
+    internal async Task<Map?> CreateOrUpdateMapAsync
+    (
+        Func<Map?> create,
+        Func<Map?, Map?> update,
+        bool releaseSemaphore = true,
+        CancellationToken ct = default
+    )
+    {
+        return await CreateOrUpdateAsync<Map?>
+        (
+            GameSemaphoreType.Map,
+            () => CurrentMap,
+            m => CurrentMap = m,
+            create,
+            update,
             releaseSemaphore,
             ct
         );

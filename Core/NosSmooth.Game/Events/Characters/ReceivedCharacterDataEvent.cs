@@ -11,10 +11,8 @@ namespace NosSmooth.Game.Events.Characters;
 /// <summary>
 /// Represents received new updated character data.
 /// </summary>
-/// <param name="OldCharacter">The old data.</param>
 /// <param name="Character">The newly received data.</param>
 public record ReceivedCharacterDataEvent
 (
-    Character? OldCharacter,
     Character Character
 ) : IGameEvent;

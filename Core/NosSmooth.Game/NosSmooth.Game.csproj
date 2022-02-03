@@ -9,11 +9,12 @@
 
     <ItemGroup>
       <Folder Include="Apis" />
-      <Folder Include="Data\Quests" />
+      <Folder Include="Events\Players" />
       <Folder Include="PacketHandlers" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Data\NosSmooth.Data.Abstractions\NosSmooth.Data.Abstractions.csproj" />
       <ProjectReference Include="..\NosSmooth.Core\NosSmooth.Core.csproj" />
     </ItemGroup>
 

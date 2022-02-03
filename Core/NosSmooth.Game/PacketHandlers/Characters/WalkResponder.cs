@@ -38,46 +38,28 @@ public class WalkResponder : IPacketResponder<WalkPacket>
     {
         var character = _game.Character;
         var packet = packetArgs.Packet;
-        if (character is not null && character.Position is not null)
-        {
-            var oldPosition = new Position
+        var oldPosition = character?.Position;
+        var position = new Position(packet.PositionX, packet.PositionY);
+
+        character = await _game.CreateOrUpdateCharacterAsync
+        (
+            () => new Character
             {
-                X = character.Position.X,
-                Y = character.Position.Y
-            };
+                Position = position
+            },
+            (c) =>
+            {
+                c.Position = position;
+                return c;
+            },
+            ct: ct
+        );
 
-            character.Position.X = packet.PositionX;
-            character.Position.Y = packet.PositionY;
-
-            return await _eventDispatcher.DispatchEvent
-            (
-                new MovedEvent(character, character.Id, oldPosition, character.Position),
-                ct
-            );
-        }
-        else if (character?.Position is null)
-        {
-            await _game.CreateOrUpdateCharacterAsync
-            (
-                () => new Character
-                (
-                    Position: new Position()
-                    {
-                        X = packet.PositionX,
-                        Y = packet.PositionY
-                    }
-                ),
-                (c) => c with
-                {
-                    Position = new Position()
-                    {
-                        X = packet.PositionX,
-                        Y = packet.PositionY
-                    }
-                },
-                ct: ct
-            );
-        }
+        return await _eventDispatcher.DispatchEvent
+        (
+            new EntityMovedEvent(character, oldPosition, character.Position!.Value),
+            ct
+        );
 
         return Result.FromSuccess();
     }

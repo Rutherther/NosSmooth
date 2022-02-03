@@ -43,51 +43,51 @@ public class CharacterInitResponder : IPacketResponder<CInfoPacket>, IPacketResp
         var character = await _game.CreateOrUpdateCharacterAsync
         (
             () => new Character
-            (
-                Family: new Family(packet.FamilyId, packet.FamilyName, packet.FamilyLevel),
-                Group: new Group(packet.GroupId, default, default),
-                Id: packet.CharacterId,
-                Name: packet.Name,
-                AuthorityType: packet.Authority,
-                Sex: packet.Sex,
-                HairStyle: packet.HairStyle,
-                HairColor: packet.HairColor,
-                Class: packet.Class,
-                Icon: packet.Icon,
-                Compliment: packet.Compliment,
-                Morph: new Morph(packet.MorphVNum, packet.MorphUpgrade),
-                Invisible: packet.IsInvisible,
-                ArenaWinner: packet.ArenaWinner
-            ),
-            (character)
-                => character with
+            {
+                Family = new Family(packet.FamilyId, null, packet.FamilyName, packet.FamilyLevel, null),
+                Group = new Group(packet.GroupId, default, default),
+                Id = packet.CharacterId,
+                Name = packet.Name,
+                Authority = packet.Authority,
+                Sex = packet.Sex,
+                HairStyle = packet.HairStyle,
+                HairColor = packet.HairColor,
+                Class = packet.Class,
+                Icon = packet.Icon,
+                Compliment = packet.Compliment,
+                Morph = new Morph(packet.MorphVNum, packet.MorphUpgrade),
+                IsInvisible = packet.IsInvisible,
+                ArenaWinner = packet.ArenaWinner
+            },
+            (character) =>
+            {
+                character.Id = packet.CharacterId;
+                character.Authority = packet.Authority;
+                character.Sex = packet.Sex;
+                character.HairStyle = packet.HairStyle;
+                character.HairColor = packet.HairColor;
+                character.Class = packet.Class;
+                character.Icon = packet.Icon;
+                character.Compliment = packet.Compliment;
+                character.Group = (character.Group ?? new Group(packet.GroupId, null, null)) with
                 {
-                    Id = packet.CharacterId,
-                    AuthorityType = packet.Authority,
-                    Sex = packet.Sex,
-                    HairStyle = packet.HairStyle,
-                    HairColor = packet.HairColor,
-                    Class = packet.Class,
-                    Icon = packet.Icon,
-                    Compliment = packet.Compliment,
-                    Group = (character.Group ?? new Group(packet.GroupId, null, null)) with
-                    {
-                        Id = packet.GroupId
-                    },
-                    Morph = (character.Morph ?? new Morph(packet.MorphVNum, packet.MorphUpgrade)) with
-                    {
-                        VNum = packet.MorphVNum, Upgrade = packet.MorphUpgrade
-                    },
-                    ArenaWinner = packet.ArenaWinner,
-                    Invisible = packet.IsInvisible,
-                    Family = new Family(packet.FamilyId, packet.FamilyName, packet.FamilyLevel)
-                },
+                    Id = packet.GroupId
+                };
+                character.Morph = (character.Morph ?? new Morph(packet.MorphVNum, packet.MorphUpgrade)) with
+                {
+                    VNum = packet.MorphVNum, Upgrade = packet.MorphUpgrade
+                };
+                character.ArenaWinner = packet.ArenaWinner;
+                character.IsInvisible = packet.IsInvisible;
+                character.Family = new Family(packet.FamilyId, null, packet.FamilyName, packet.FamilyLevel, null);
+                return character;
+            },
             ct: ct
         );
 
         if (character != oldCharacter)
         {
-            return await _eventDispatcher.DispatchEvent(new ReceivedCharacterDataEvent(oldCharacter, character), ct);
+            return await _eventDispatcher.DispatchEvent(new ReceivedCharacterDataEvent(character), ct);
         }
 
         return Result.FromSuccess();
@@ -102,28 +102,28 @@ public class CharacterInitResponder : IPacketResponder<CInfoPacket>, IPacketResp
         var character = await _game.CreateOrUpdateCharacterAsync
         (
             () => new Character
-            (
-                SkillCp: packet.SkillCp,
-                Reputation: packet.Reputation,
-                Level: new Level(packet.Level, packet.LevelXp, packet.XpLoad),
-                JobLevel: new Level(packet.JobLevel, packet.JobLevelXp, packet.JobXpLoad),
-                HeroLevel: new Level(packet.HeroLevel, packet.HeroLevelXp, packet.HeroXpLoad)
-            ),
+            {
+                SkillCp = packet.SkillCp,
+                Reputation = packet.Reputation,
+                PlayerLevel = new Level(packet.Level, packet.LevelXp, packet.XpLoad),
+                JobLevel = new Level(packet.JobLevel, packet.JobLevelXp, packet.JobXpLoad),
+                HeroLevelStruct = new Level(packet.HeroLevel, packet.HeroLevelXp, packet.HeroXpLoad)
+            },
             (character) =>
-                character with
-                {
-                    SkillCp = packet.SkillCp,
-                    Reputation = packet.Reputation,
-                    Level = new Level(packet.Level, packet.LevelXp, packet.XpLoad),
-                    JobLevel = new Level(packet.JobLevel, packet.JobLevelXp, packet.JobXpLoad),
-                    HeroLevel = new Level(packet.HeroLevel, packet.HeroLevelXp, packet.HeroXpLoad)
-                },
+            {
+                character.SkillCp = packet.SkillCp;
+                character.Reputation = packet.Reputation;
+                character.PlayerLevel = new Level(packet.Level, packet.LevelXp, packet.XpLoad);
+                character.JobLevel = new Level(packet.JobLevel, packet.JobLevelXp, packet.JobXpLoad);
+                character.HeroLevelStruct = new Level(packet.HeroLevel, packet.HeroLevelXp, packet.HeroXpLoad);
+                return character;
+            },
             ct: ct
         );
 
         if (character != oldCharacter)
         {
-            return await _eventDispatcher.DispatchEvent(new ReceivedCharacterDataEvent(oldCharacter, character), ct);
+            return await _eventDispatcher.DispatchEvent(new ReceivedCharacterDataEvent(character), ct);
         }
 
         return Result.FromSuccess();
@@ -144,24 +144,25 @@ public class CharacterInitResponder : IPacketResponder<CInfoPacket>, IPacketResp
         (
             () => throw new NotImplementedException(),
             (character) =>
-                character with
-                {
-                    Morph = new Morph
-                    (
-                        packet.MorphVNum,
-                        packet.MorphUpgrade,
-                        packet.MorphDesign,
-                        packet.MorphBonus,
-                        packet.MorphSkin
-                    ),
-                    Size = packet.Size
-                },
+            {
+                character.Morph = new Morph
+                (
+                    packet.MorphVNum,
+                    packet.MorphUpgrade,
+                    packet.MorphDesign,
+                    packet.MorphBonus,
+                    packet.MorphSkin
+                );
+
+                character.Size = packet.Size;
+                return character;
+            },
             ct: ct
         );
 
         if (oldCharacter != character)
         {
-            return await _eventDispatcher.DispatchEvent(new ReceivedCharacterDataEvent(oldCharacter, character), ct);
+            return await _eventDispatcher.DispatchEvent(new ReceivedCharacterDataEvent(character), ct);
         }
 
         return Result.FromSuccess();
