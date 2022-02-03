@@ -38,5 +38,5 @@ public class MonsterInfo : IMonsterInfo
     public TranslatableString Name { get; set; }
 
     /// <inheritdoc />
-    public int Level { get; set; }
+    public ushort Level { get; set; }
 }

@@ -21,5 +21,5 @@ public interface IMonsterInfo : IVNumInfo
     /// <summary>
     /// Gets the default level of the monster.
     /// </summary>
-    int Level { get; }
+    ushort Level { get; }
 }

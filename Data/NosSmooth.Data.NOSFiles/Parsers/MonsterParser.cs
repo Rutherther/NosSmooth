@@ -39,7 +39,7 @@ public class MonsterParser : IInfoParser<IMonsterInfo>
                 (
                     vnum,
                     new TranslatableString(TranslationRoot.Monster, nameKey),
-                    item.GetEntry("LEVEL").Read<int>(1)
+                    item.GetEntry("LEVEL").Read<ushort>(1)
                 )
             );
         }
@@ -47,5 +47,5 @@ public class MonsterParser : IInfoParser<IMonsterInfo>
         return result;
     }
 
-    private record MonsterInfo(int VNum, TranslatableString Name, int Level) : IMonsterInfo;
+    private record MonsterInfo(int VNum, TranslatableString Name, ushort Level) : IMonsterInfo;
 }
