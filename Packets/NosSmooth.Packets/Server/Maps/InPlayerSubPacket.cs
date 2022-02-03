@@ -10,7 +10,7 @@ using NosSmooth.Packets.Server.Players;
 using NosSmooth.Packets.Server.Weapons;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 
-namespace NosSmooth.Packets.Server.Entities;
+namespace NosSmooth.Packets.Server.Maps;
 
 /// <summary>
 /// Sub packet for <see cref="InPacket"/>
@@ -94,7 +94,7 @@ public record InPlayerSubPacket
     [PacketIndex(19)]
     string? FamilyName,
     [PacketIndex(20)]
-    string ReputationIcon,
+    byte ReputationIcon,
     [PacketIndex(21)]
     bool IsInvisible,
     [PacketIndex(22)]

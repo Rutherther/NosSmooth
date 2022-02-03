@@ -34,9 +34,9 @@ public record StPacket
     [PacketIndex(3)]
     byte HeroLevel,
     [PacketIndex(4)]
-    short HpPercentage,
+    byte HpPercentage,
     [PacketIndex(5)]
-    short MpPercentage,
+    byte MpPercentage,
     [PacketIndex(6)]
     long Hp,
     [PacketIndex(7)]

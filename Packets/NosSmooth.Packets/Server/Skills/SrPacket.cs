@@ -22,5 +22,5 @@ namespace NosSmooth.Packets.Server.Skills;
 public record SrPacket
 (
     [PacketIndex(0)]
-    long SkillId
+    short SkillId
 ) : IPacket;

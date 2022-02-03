@@ -6,7 +6,7 @@
 
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 
-namespace NosSmooth.Packets.Server.Entities;
+namespace NosSmooth.Packets.Server.Maps;
 
 /// <summary>
 /// Sub packet of <see cref="InPacket"/> present if the in packet
@@ -28,21 +28,21 @@ namespace NosSmooth.Packets.Server.Entities;
 public record InEquipmentSubPacket
 (
     [PacketIndex(0)]
-    long? HatVNum,
+    int? HatVNum,
     [PacketIndex(1)]
-    long? ArmorVNum,
+    int? ArmorVNum,
     [PacketIndex(2)]
-    long? MainWeaponVNum,
+    int? MainWeaponVNum,
     [PacketIndex(3)]
-    long? SecondaryWeaponVNum,
+    int? SecondaryWeaponVNum,
     [PacketIndex(4)]
-    long? MaskVNum,
+    int? MaskVNum,
     [PacketIndex(5)]
-    long? Fairy,
+    int? FairyVNum,
     [PacketIndex(6)]
-    long? CostumeSuitVNum,
+    int? CostumeSuitVNum,
     [PacketIndex(7)]
-    long? CostumeHatVNum,
+    int? CostumeHatVNum,
     [PacketIndex(8)]
     short? WeaponSkin,
     [PacketIndex(9)]

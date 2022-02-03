@@ -19,9 +19,9 @@ namespace NosSmooth.Packets.Server.Skills;
 public record SkiPacket
 (
     [PacketIndex(0)]
-    long PrimarySkillVNum,
+    int PrimarySkillVNum,
     [PacketIndex(1)]
-    long SecondarySkillVNum,
+    int SecondarySkillVNum,
     [PacketListIndex(2, InnerSeparator = '|', ListSeparator = ' ')]
     IReadOnlyList<SkiSubPacket> SkillSubPackets
 ) : IPacket;

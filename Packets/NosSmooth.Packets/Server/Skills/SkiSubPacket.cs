@@ -18,7 +18,7 @@ namespace NosSmooth.Packets.Server.Skills;
 public record SkiSubPacket
 (
     [PacketIndex(0)]
-    long SkillVNum,
+    int SkillVNum,
     [PacketIndex(1)]
     byte Rank
 ) : IPacket;

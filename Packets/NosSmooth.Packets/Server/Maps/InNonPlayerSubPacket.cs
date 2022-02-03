@@ -9,7 +9,7 @@ using NosSmooth.Packets.Enums.Entities;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using NosSmooth.PacketSerializer.Abstractions.Common;
 
-namespace NosSmooth.Packets.Server.Entities;
+namespace NosSmooth.Packets.Server.Maps;
 
 /// <summary>
 /// Sub packet of <see cref="InPacket"/> present if the in packet

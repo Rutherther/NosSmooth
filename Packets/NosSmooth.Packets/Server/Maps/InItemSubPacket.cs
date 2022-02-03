@@ -6,7 +6,7 @@
 
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 
-namespace NosSmooth.Packets.Server.Entities;
+namespace NosSmooth.Packets.Server.Maps;
 
 /// <summary>
 /// Sub packet of <see cref="InPacket"/> present if the in packet
@@ -20,7 +20,7 @@ namespace NosSmooth.Packets.Server.Entities;
 public record InItemSubPacket
 (
     [PacketIndex(0)]
-    long Amount,
+    int Amount,
     [PacketIndex(1)]
     bool IsQuestRelative,
     [PacketIndex(2)]

@@ -8,7 +8,7 @@ using NosSmooth.Packets.Enums;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using NosSmooth.PacketSerializer.Abstractions.Common;
 
-namespace NosSmooth.Packets.Server.Entities;
+namespace NosSmooth.Packets.Server.Maps;
 
 /// <summary>
 /// There is a new entity on the map present.
@@ -33,7 +33,7 @@ public record InPacket
     [PacketConditionalIndex(1, "EntityType", false,  EntityType.Player)]
     NameString? Name,
     [PacketConditionalIndex(2, "EntityType", true, EntityType.Player)]
-    long? VNum,
+    int? VNum,
     [PacketConditionalIndex(3, "EntityType", false, EntityType.Player)]
     string? Unknown,
     [PacketIndex(4)]

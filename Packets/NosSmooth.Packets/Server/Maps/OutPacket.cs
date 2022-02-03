@@ -1,27 +1,25 @@
-//
-//  CMapPacket.cs
+﻿//
+//  OutPacket.cs
 //
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using NosSmooth.Packets.Enums;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 
 namespace NosSmooth.Packets.Server.Maps;
 
 /// <summary>
-/// Packet sent when map is changed.
+/// An entity has left the map.
 /// </summary>
-/// <param name="Type">The type of the map.</param>
-/// <param name="Id">The id of the map.</param>
-/// <param name="IsBaseType">Whether the map is a base map.</param>
+/// <param name="EntityType">The entity type.</param>
+/// <param name="EntityId">The entity id.</param>
 [PacketHeader("c_map", PacketSource.Server)]
 [GenerateSerializer(true)]
-public record CMapPacket
+public record OutPacket
 (
     [PacketIndex(0)]
-    byte Type,
+    EntityType EntityType,
     [PacketIndex(1)]
-    int Id,
-    [PacketIndex(2)]
-    bool IsBaseType
+    long EntityId
 ) : IPacket;
