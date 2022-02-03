@@ -7,8 +7,9 @@
         <LangVersion>10</LangVersion>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>1.0.1</PackageVersion>
+        <PackageVersion>2.0.0</PackageVersion>
         <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
+        <PackageReleaseNotes>Make Monster level ushort</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
