@@ -4,20 +4,23 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace NosSmooth.Game.Data.Info;
 
 /// <summary>
 /// Represents nostale position on map.
 /// </summary>
-public record Position
+[SuppressMessage("StyleCop.CSharp.NamingRules", "SA1313", MessageId = "Parameter names should begin with lower-case letter", Justification = "Standard.")]
+public record struct Position(long X, long Y)
 {
     /// <summary>
-    /// Gets the x coordinate.
+    /// Get the squared distance to the given position.
     /// </summary>
-    public long X { get; internal set; }
-
-    /// <summary>
-    /// Gets the y coordinate.
-    /// </summary>
-    public long Y { get; internal set; }
+    /// <param name="position">The position.</param>
+    /// <returns>The distance squared.</returns>
+    public long DistanceSquared(Position position)
+    {
+        return ((position.X - X) * (position.X - X)) + ((position.Y - Y) * (position.Y - Y));
+    }
 }

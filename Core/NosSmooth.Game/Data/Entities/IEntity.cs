@@ -17,17 +17,12 @@ public interface IEntity
     /// <summary>
     /// Gets the id of the entity.
     /// </summary>
-    public long Id { get; }
-
-    /// <summary>
-    /// Gets the name of the entity. May be null if unknown.
-    /// </summary>
-    public string? Name { get; }
+    public long Id { get; set; }
 
     /// <summary>
     /// Gets the position of the entity.
     /// </summary>
-    public Position? Position { get; }
+    public Position? Position { get; set; }
 
     /// <summary>
     /// Gets the type of the entity.

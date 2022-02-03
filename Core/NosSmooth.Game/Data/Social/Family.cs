@@ -12,4 +12,11 @@ namespace NosSmooth.Game.Data.Social;
 /// <param name="Id">The id of the family.</param>
 /// <param name="Name">The name of the family.</param>
 /// <param name="Level">The level of the entity.</param>
-public record Family(string? Id, string? Name, byte? Level);
+public record Family
+(
+    string? Id,
+    short? Title,
+    string? Name,
+    byte? Level,
+    IReadOnlyList<bool>? Icons
+);

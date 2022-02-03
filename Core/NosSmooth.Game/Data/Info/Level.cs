@@ -12,4 +12,4 @@ namespace NosSmooth.Game.Data.Info;
 /// <param name="Lvl">The level.</param>
 /// <param name="Xp">Current xp.</param>
 /// <param name="XpLoad">Maximum xp of the current level.</param>
-public record Level(ushort Lvl, long Xp, long XpLoad);
+public record Level(short Lvl, long Xp, long XpLoad);

@@ -5,6 +5,8 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using NosSmooth.Game.Data.Info;
+using NosSmooth.Game.Data.Items;
+using NosSmooth.Game.Data.Social;
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Players;
 
@@ -13,56 +15,128 @@ namespace NosSmooth.Game.Data.Entities;
 /// <summary>
 /// Represents nostale player entity.
 /// </summary>
-/// <param name="Id">The id of the player.</param>
-/// <param name="Name">The name of the player.</param>
-/// <param name="Position">The position the player is at.</param>
-/// <param name="Speed"></param>
-/// <param name="Level"></param>
-/// <param name="Direction"></param>
-/// <param name="Hp"></param>
-/// <param name="Mp"></param>
-/// <param name="Faction"></param>
-/// <param name="Size"></param>
-/// <param name="AuthorityType"></param>
-/// <param name="Sex"></param>
-/// <param name="HairStyle"></param>
-/// <param name="HairColor"></param>
-/// <param name="Class"></param>
-/// <param name="Icon"></param>
-/// <param name="Compliment"></param>
-/// <param name="Morph"></param>
-/// <param name="ArenaWinner"></param>
-/// <param name="Invisible"></param>
-public record Player
-(
-    long Id,
-    string? Name = default,
-    Position? Position = default,
-    byte? Speed = default,
-    Level? Level = default,
-    Level? HeroLevel = default,
-    byte? Direction = default,
-    Health? Hp = default,
-    Health? Mp = default,
-    FactionType? Faction = default,
-    short Size = default,
-    AuthorityType AuthorityType = default,
-    SexType Sex = default,
-    HairStyle HairStyle = default,
-    HairColor HairColor = default,
-    PlayerClass Class = default,
-    byte? Icon = default,
-    short? Compliment = default,
-    Morph? Morph = default,
-    bool? ArenaWinner = default,
-    bool? Invisible = default,
-    long? Reputation = default,
-    IReadOnlyList<long>? EffectsVNums = default
-) : ILivingEntity
+public class Player : ILivingEntity
 {
+    /// <summary>
+    /// Gets or sets the authority of the player.
+    /// </summary>
+    public AuthorityType Authority { get; set; }
+
+    /// <summary>
+    /// Gets or sets the sex of the player.
+    /// </summary>
+    public SexType Sex { get; set; }
+
+    /// <summary>
+    /// Gets or sets the hairstyle of the player.
+    /// </summary>
+    public HairStyle HairStyle { get; set; }
+
+    /// <summary>
+    /// Gets or sets the hair color of the player.
+    /// </summary>
+    public HairColor HairColor { get; set; }
+
+    /// <summary>
+    /// Gets or sets the class of the player.
+    /// </summary>
+    public PlayerClass Class { get; set; }
+
+    /// <summary>
+    /// Gets or sets the reputation icon. UNKNOWN TODO.
+    /// </summary>
+    public byte? Icon { get; set; }
+
+    /// <summary>
+    /// UNKNOWN TODO.
+    /// </summary>
+    public short? Compliment { get; set; }
+
+    /// <summary>
+    /// Gets or sets the morph used for sps, vehicles and such.
+    /// </summary>
+    public Morph? Morph { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the player is a champion arena winner.
+    /// </summary>
+    public bool ArenaWinner { get; set; }
+
+    /// <summary>
+    /// Gets or sets the reputation number of the player.
+    /// </summary>
+    public long? Reputation { get; set; }
+
+    /// <summary>
+    /// Gets or sets the visible title of the player.
+    /// </summary>
+    public short Title { get; set; }
+
+    /// <summary>
+    /// Gets or sets the family.
+    /// </summary>
+    public Family? Family { get; set; }
+
+    /// <summary>
+    /// Gets the VNum of the npc.
+    /// </summary>
+    public int VNum { get; set; }
+
     /// <inheritdoc/>
-    ushort? ILivingEntity.Level => Level?.Lvl;
+    public long Id { get; set; }
+
+    /// <inheritdoc/>
+    public string? Name { get; set; }
 
     /// <inheritdoc />
+    public bool IsSitting { get; set; }
+
+    /// <inheritdoc />
+    public bool CantMove { get; set; }
+
+    /// <inheritdoc />
+    public bool CantAttack { get; set; }
+
+    /// <inheritdoc/>
+    public Position? Position { get; set; }
+
+    /// <inheritdoc/>
     public EntityType Type => EntityType.Player;
+
+    /// <inheritdoc/>
+    public int? Speed { get; set; }
+
+    /// <inheritdoc />
+    public bool? IsInvisible { get; set; }
+
+    /// <inheritdoc/>
+    public ushort? Level { get; set; }
+
+    /// <inheritdoc/>
+    public byte? Direction { get; set; }
+
+    /// <inheritdoc/>
+    public Health? Hp { get; set; }
+
+    /// <inheritdoc/>
+    public Health? Mp { get; set; }
+
+    /// <inheritdoc/>
+    public FactionType? Faction { get; set; }
+
+    /// <inheritdoc/>
+    public short Size { get; set; }
+
+    /// <inheritdoc/>
+    public IReadOnlyList<long>? EffectsVNums { get; set; }
+
+    /// <summary>
+    /// Gets or sets the hero level.
+    /// </summary>
+    public virtual short? HeroLevel { get; set; }
+
+    /// <summary>
+    /// Gets or sets the equipment.
+    /// </summary>
+    public Equipment? Equipment { get; set; }
 }
