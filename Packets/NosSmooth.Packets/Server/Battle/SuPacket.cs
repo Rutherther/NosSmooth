@@ -24,6 +24,7 @@ namespace NosSmooth.Packets.Server.Battle;
 /// <param name="PositionX">The x position where the skill target is.</param>
 /// <param name="PositionY">The y position where the skill target is.</param>
 /// <param name="TargetIsAlive">Whether the target of the skill is alive.</param>
+/// <param name="HpPercentage">The hp percentage of the entity after the attack.</param>
 /// <param name="Damage">The damage the entity has taken.</param>
 /// <param name="HitMode">The hit mode.</param>
 /// <param name="SkillTypeMinusOne">The skill type of the skill.</param>

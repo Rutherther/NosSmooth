@@ -14,18 +14,19 @@ namespace NosSmooth.Packets.Server.Battle;
 /// </summary>
 /// <param name="CasterEntityType">The caster entity type.</param>
 /// <param name="CasterEntityId">The caster entity id.</param>
-/// <param name="X">The x coordinate of the skill.</param>
-/// <param name="Y"></param>
-/// <param name="Cooldown"></param>
-/// <param name="AttackAnimationId"></param>
-/// <param name="EffectId"></param>
-/// <param name="Unknown1"></param>
-/// <param name="Unknown2"></param>
-/// <param name="Unknown3"></param>
-/// <param name="Unknown4"></param>
-/// <param name="Unknown5"></param>
-/// <param name="Unknown6"></param>
-/// <param name="Unknown7"></param>
+/// <param name="X">The x coordinate where to use the skill.</param>
+/// <param name="Y">The y coordinate where to use the skill.</param>
+/// <param name="SkillVNum">The vnum of the AoE skill used.</param>
+/// <param name="Cooldown">The cooldown of the skill. (seconds time 10)</param>
+/// <param name="AttackAnimationId">The attack animation id.</param>
+/// <param name="EffectId">The effect id.</param>
+/// <param name="Unknown1">Unknown TODO.</param>
+/// <param name="Unknown2">Unknown TODO.</param>
+/// <param name="Unknown3">Unknown TODO.</param>
+/// <param name="Unknown4">Unknown TODO.</param>
+/// <param name="Unknown5">Unknown TODO.</param>
+/// <param name="Unknown6">Unknown TODO.</param>
+/// <param name="Unknown7">Unknown TODO.</param>
 [PacketHeader("bs", PacketSource.Server)]
 [GenerateSerializer(true)]
 public record BsPacket

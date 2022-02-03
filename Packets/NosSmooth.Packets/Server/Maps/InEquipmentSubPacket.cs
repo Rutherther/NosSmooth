@@ -18,7 +18,7 @@ namespace NosSmooth.Packets.Server.Maps;
 /// <param name="MainWeaponVNum">The VNum of the main weapon.</param>
 /// <param name="SecondaryWeaponVNum">The VNum of the secondary weapon.</param>
 /// <param name="MaskVNum">The VNum of the mask.</param>
-/// <param name="Fairy">Unknown TODO.</param>
+/// <param name="FairyVNum">The VNum of the fairy item.</param>
 /// <param name="CostumeSuitVNum">The VNum of the costume suit.</param>
 /// <param name="CostumeHatVNum">The VNum of the costume hat.</param>
 /// <param name="WeaponSkin">The skin of the weapon.</param>
