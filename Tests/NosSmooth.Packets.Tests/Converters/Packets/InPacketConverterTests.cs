@@ -11,6 +11,7 @@ using NosSmooth.Packets.Enums.Entities;
 using NosSmooth.Packets.Enums.Players;
 using NosSmooth.Packets.Extensions;
 using NosSmooth.Packets.Server.Entities;
+using NosSmooth.Packets.Server.Maps;
 using NosSmooth.Packets.Server.Players;
 using NosSmooth.Packets.Server.Weapons;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
@@ -90,7 +91,7 @@ public class InPacketConverterTests
                 new UpgradeRareSubPacket(10, 8),
                 new FamilySubPacket(null, null),
                 null,
-                "26",
+                26,
                 false,
                 0,
                 0,
@@ -161,7 +162,7 @@ public class InPacketConverterTests
                 new UpgradeRareSubPacket(10, 8),
                 new FamilySubPacket("-1", null),
                 null,
-                "26",
+                26,
                 false,
                 0,
                 0,

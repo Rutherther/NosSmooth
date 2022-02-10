@@ -14,7 +14,7 @@ namespace NosSmooth.Packets.Server.Maps;
 /// </summary>
 /// <param name="EntityType">The entity type.</param>
 /// <param name="EntityId">The entity id.</param>
-[PacketHeader("c_map", PacketSource.Server)]
+[PacketHeader("out", PacketSource.Server)]
 [GenerateSerializer(true)]
 public record OutPacket
 (
