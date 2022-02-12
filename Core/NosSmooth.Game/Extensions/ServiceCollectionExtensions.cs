@@ -12,6 +12,7 @@ using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.PacketHandlers.Characters;
 using NosSmooth.Game.PacketHandlers.Entities;
 using NosSmooth.Game.PacketHandlers.Map;
+using NosSmooth.Game.PacketHandlers.Specialists;
 
 namespace NosSmooth.Game.Extensions;
 
@@ -49,6 +50,7 @@ public static class ServiceCollectionExtensions
             .AddPacketResponder<StatPacketResponder>()
             .AddPacketResponder<StPacketResponder>()
             .AddPacketResponder<CondPacketResponder>()
+            .AddPacketResponder<SpResponder>()
             .AddPacketResponder<EqResponder>();
 
         serviceCollection

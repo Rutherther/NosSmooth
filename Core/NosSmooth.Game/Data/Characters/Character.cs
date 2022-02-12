@@ -19,11 +19,6 @@ namespace NosSmooth.Game.Data.Characters;
 public class Character : Player
 {
     /// <summary>
-    /// Gets or sets whether the character can't move.
-    /// </summary>
-    public bool Stunned { get; set; }
-
-    /// <summary>
     /// Gets or sets the inventory of the character.
     /// </summary>
     public Inventory.Inventory? Inventory { get; set; }
@@ -78,4 +73,20 @@ public class Character : Player
             }
         }
     }
+
+    /// <summary>
+    /// Gets or sets the sp points of the player.
+    /// </summary>
+    /// <remarks>
+    /// Resets every day, max 10 000.
+    /// </remarks>
+    public int SpPoints { get; set; }
+
+    /// <summary>
+    /// Gets or sets the additional sp points of the player.
+    /// </summary>
+    /// <remarks>
+    /// Used if <see cref="SpPoints"/> are 0. Max 1 000 000
+    /// </remarks>
+    public int AdditionalSpPoints { get; set; }
 }
