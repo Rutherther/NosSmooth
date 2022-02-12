@@ -6,6 +6,8 @@
 
 using NosSmooth.Core.Packets;
 using NosSmooth.Game.Data.Entities;
+using NosSmooth.Game.Events.Core;
+using NosSmooth.Game.Events.Entities;
 using NosSmooth.Packets.Server.Entities;
 using Remora.Results;
 
@@ -17,23 +19,26 @@ namespace NosSmooth.Game.PacketHandlers.Entities;
 public class CondPacketResponder : IPacketResponder<CondPacket>
 {
     private readonly Game _game;
+    private readonly EventDispatcher _eventDispatcher;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CondPacketResponder"/> class.
     /// </summary>
     /// <param name="game">The game.</param>
-    public CondPacketResponder(Game game)
+    /// <param name="eventDispatcher">The event dispatcher.</param>
+    public CondPacketResponder(Game game, EventDispatcher eventDispatcher)
     {
         _game = game;
+        _eventDispatcher = eventDispatcher;
     }
 
     /// <inheritdoc />
-    public Task<Result> Respond(PacketEventArgs<CondPacket> packetArgs, CancellationToken ct = default)
+    public async Task<Result> Respond(PacketEventArgs<CondPacket> packetArgs, CancellationToken ct = default)
     {
         var map = _game.CurrentMap;
         if (map is null)
         {
-            return Task.FromResult(Result.FromSuccess());
+            return Result.FromSuccess();
         }
 
         var packet = packetArgs.Packet;
@@ -41,13 +46,21 @@ public class CondPacketResponder : IPacketResponder<CondPacket>
 
         if (entity is null)
         {
-            return Task.FromResult(Result.FromSuccess());
+            return Result.FromSuccess();
         }
+
+        bool cantMove = entity.CantMove;
+        bool cantAttack = entity.CantAttack;
 
         entity.Speed = packet.Speed;
         entity.CantAttack = packet.CantAttack;
         entity.CantMove = packet.CantMove;
 
-        return Task.FromResult(Result.FromSuccess());
+        if (cantMove != packet.CantMove || cantAttack != packet.CantAttack)
+        {
+            return await _eventDispatcher.DispatchEvent(new EntityStunnedEvent(entity, packet.CantMove, packet.CantAttack), ct);
+        }
+
+        return Result.FromSuccess();
     }
 }
