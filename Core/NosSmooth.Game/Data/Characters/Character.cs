@@ -86,7 +86,7 @@ public class Character : Player
     /// Gets or sets the additional sp points of the player.
     /// </summary>
     /// <remarks>
-    /// Used if <see cref="SpPoints"/> are 0. Max 1 000 000
+    /// Used if <see cref="SpPoints"/> are 0. Max 1 000 000.
     /// </remarks>
     public int AdditionalSpPoints { get; set; }
 }
