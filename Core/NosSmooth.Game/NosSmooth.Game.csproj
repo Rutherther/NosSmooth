@@ -10,7 +10,6 @@
     <ItemGroup>
       <Folder Include="Apis" />
       <Folder Include="Events\Players" />
-      <Folder Include="PacketHandlers" />
     </ItemGroup>
 
     <ItemGroup>
