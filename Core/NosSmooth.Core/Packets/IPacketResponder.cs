@@ -29,10 +29,10 @@ public interface IPacketResponder<TPacket> : IPacketResponder
     /// <summary>
     /// Respond to the given packet.
     /// </summary>
-    /// <param name="packet">The packet to respond to.</param>
+    /// <param name="packetArgs">The packet to respond to.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Task<Result> Respond(PacketEventArgs<TPacket> packet, CancellationToken ct = default);
+    public Task<Result> Respond(PacketEventArgs<TPacket> packetArgs, CancellationToken ct = default);
 }
 
 /// <summary>
@@ -43,10 +43,10 @@ public interface IEveryPacketResponder : IPacketResponder
     /// <summary>
     /// Respond to the given packet.
     /// </summary>
-    /// <param name="packet">The packet to respond to.</param>
+    /// <param name="packetArgs">The packet to respond to.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <typeparam name="TPacket">The type of the packet.</typeparam>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Task<Result> Respond<TPacket>(PacketEventArgs<TPacket> packet, CancellationToken ct = default)
+    public Task<Result> Respond<TPacket>(PacketEventArgs<TPacket> packetArgs, CancellationToken ct = default)
         where TPacket : IPacket;
 }

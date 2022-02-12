@@ -22,7 +22,7 @@ namespace NosSmooth.Packets.Server.Players;
 /// <param name="JobXpLoad">Unknown TODO</param>
 /// <param name="Reputation">The reputation of the player.</param>
 /// <param name="SkillCp">The skill cp. (Used for learning skills)</param>
-/// <param name="HeroXp">The xp in hero level. TODO</param>
+/// <param name="HeroLevelXp">The xp in hero level. TODO</param>
 /// <param name="HeroLevel">The hero level. (shown as (+xx))</param>
 /// <param name="HeroXpLoad">Unknown TODO</param>
 [PacketHeader("lev", PacketSource.Server)]
@@ -46,7 +46,7 @@ public record LevPacket
     [PacketIndex(7)]
     int SkillCp,
     [PacketIndex(8)]
-    long HeroXp,
+    long HeroLevelXp,
     [PacketIndex(9)]
     byte HeroLevel,
     [PacketIndex(10)]
