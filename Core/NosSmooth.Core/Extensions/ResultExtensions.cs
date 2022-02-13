@@ -108,6 +108,7 @@ public static class ResultExtensions
 
     private static void AppendErrorMessage(IndentedTextWriter indentedTextWriter, IResultError error)
     {
-        indentedTextWriter.WriteLine($"{error.GetType().FullName}: {error.Message}");
+        var message = error is ExceptionError ex ? ex.Exception.ToString() : error.Message;
+        indentedTextWriter.WriteLine($"{error.GetType().FullName}: {message}");
     }
 }
