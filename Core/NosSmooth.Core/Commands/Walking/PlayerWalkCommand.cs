@@ -14,6 +14,7 @@ namespace NosSmooth.Core.Commands.Walking;
 /// </summary>
 /// <param name="TargetX">The x coordinate of the target position to move to.</param>
 /// <param name="TargetY">The y coordinate of the target position to move to.</param>
+/// <param name="ReturnDistanceTolerance">The distance tolerance to the target when to return successful result.</param>
 /// <param name="CanBeCancelledByAnother">Whether the command may be cancelled by another task within the same group.</param>
 /// <param name="WaitForCancellation">Whether to wait for finish of the previous task</param>
 /// <param name="AllowUserCancel">Whether to allow the user to cancel by taking any walk/focus/unfollow action</param>
@@ -21,6 +22,7 @@ public record PlayerWalkCommand
 (
     short TargetX,
     short TargetY,
+    ushort ReturnDistanceTolerance,
     bool CanBeCancelledByAnother = true,
     bool WaitForCancellation = true,
     bool AllowUserCancel = true

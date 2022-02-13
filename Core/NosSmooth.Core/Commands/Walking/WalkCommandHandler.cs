@@ -65,6 +65,7 @@ public class WalkCommandHandler : ICommandHandler<WalkCommand>
                         command.PetSelectors[i],
                         (short)x,
                         (short)y,
+                        command.ReturnDistanceTolerance,
                         command.CanBeCancelledByAnother,
                         command.WaitForCancellation,
                         command.AllowUserCancel
@@ -82,6 +83,7 @@ public class WalkCommandHandler : ICommandHandler<WalkCommand>
                 (
                     command.TargetX,
                     command.TargetY,
+                    command.ReturnDistanceTolerance,
                     command.CanBeCancelledByAnother,
                     command.WaitForCancellation,
                     command.AllowUserCancel
