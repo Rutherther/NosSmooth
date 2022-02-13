@@ -27,9 +27,9 @@ namespace NosSmooth.Packets.Client.Movement;
 public record WalkPacket
 (
     [PacketIndex(0)]
-    short PositionX,
+    ushort PositionX,
     [PacketIndex(1)]
-    short PositionY,
+    ushort PositionY,
     [PacketIndex(2)]
     byte CheckSum,
     [PacketIndex(3)]
