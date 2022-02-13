@@ -31,7 +31,7 @@ public static class ServiceCollectionExtensions
         serviceCollection
             .AddNostaleCore()
             .AddMemoryCache()
-            .TryAddSingleton<EventDispatcher>();
+            .TryAddScoped<EventDispatcher>();
         serviceCollection.TryAddSingleton<Game>();
 
         serviceCollection
