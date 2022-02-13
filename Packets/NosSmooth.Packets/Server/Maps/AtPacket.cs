@@ -24,7 +24,7 @@ public record AtPacket
     [PacketIndex(1)]
     int MapId,
     [PacketIndex(2)]
-    ushort X,
+    short X,
     [PacketIndex(3)]
-    ushort Y
+    short Y
 ) : IPacket;
