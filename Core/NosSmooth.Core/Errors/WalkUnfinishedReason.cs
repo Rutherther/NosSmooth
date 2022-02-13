@@ -30,6 +30,11 @@ public enum WalkUnfinishedReason
     UserAction,
 
     /// <summary>
+    /// The map has been changed.
+    /// </summary>
+    MapChanged,
+
+    /// <summary>
     /// There was another walk action that cancelled this one.
     /// </summary>
     AnotherTask
