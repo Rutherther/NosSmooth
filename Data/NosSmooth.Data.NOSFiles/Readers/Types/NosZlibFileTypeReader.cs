@@ -87,8 +87,7 @@ public class NosZlibFileTypeReader : BaseFileTypeReader<FileArchive>
                 IsStreamOwner = false
             };
             dataArray = new byte[dataSize];
-            using var outputStream = new MemoryStream(dataSize);
-            decompressionStream.CopyTo(outputStream);
+            decompressionStream.Read(dataArray, 0, dataSize);
         }
 
         // TODO: check that data size matches data.Length?
