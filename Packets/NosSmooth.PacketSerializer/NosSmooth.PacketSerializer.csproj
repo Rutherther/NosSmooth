@@ -8,7 +8,8 @@
         <Description>NosSmooth's packet string serializer implementation.</Description>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>1.0.1</PackageVersion>
+        <PackageVersion>1.0.2</PackageVersion>
+        <PackageReleaseNotes>Seek through the enumerator when null value type encountered.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>

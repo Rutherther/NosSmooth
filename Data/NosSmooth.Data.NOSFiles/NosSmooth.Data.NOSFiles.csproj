@@ -7,8 +7,8 @@
         <LangVersion>10</LangVersion>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>2.0.0</PackageVersion>
-        <PackageReleaseNotes>Make Monster level ushort</PackageReleaseNotes>
+        <PackageVersion>2.0.1</PackageVersion>
+        <PackageReleaseNotes>Read map file correctly.</PackageReleaseNotes>
         <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
     </PropertyGroup>
 

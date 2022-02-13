@@ -7,9 +7,9 @@
         <Description>Contains default NosTale packets.</Description>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>2.1.0</PackageVersion>
+        <PackageVersion>2.1.1</PackageVersion>
         <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
-        <PackageReleaseNotes>Add couple of packet types.</PackageReleaseNotes>
+        <PackageReleaseNotes>Fix packet types.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
