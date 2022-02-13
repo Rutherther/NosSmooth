@@ -162,4 +162,28 @@ public static class ServiceCollectionExtensions
 
         return serviceCollection;
     }
+
+    /// <summary>
+    /// Add the given pre execution event that will be executed before the packet responders.
+    /// </summary>
+    /// <param name="serviceCollection">The service collection.</param>
+    /// <typeparam name="TEvent">The pre execution event type.</typeparam>
+    /// <returns>The collection.</returns>
+    public static IServiceCollection AddPreExecutionEvent<TEvent>(this IServiceCollection serviceCollection)
+        where TEvent : class, IPreExecutionEvent
+    {
+        return serviceCollection.AddScoped<IPreExecutionEvent, TEvent>();
+    }
+
+    /// <summary>
+    /// Add the given post execution event that will be executed after the packet responders.
+    /// </summary>
+    /// <param name="serviceCollection">The service collection.</param>
+    /// <typeparam name="TEvent">The pre execution event type.</typeparam>
+    /// <returns>The collection.</returns>
+    public static IServiceCollection AddPostExecutionEvent<TEvent>(this IServiceCollection serviceCollection)
+        where TEvent : class, IPostExecutionEvent
+    {
+        return serviceCollection.AddScoped<IPostExecutionEvent, TEvent>();
+    }
 }
