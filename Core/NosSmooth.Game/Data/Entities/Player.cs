@@ -45,7 +45,7 @@ public class Player : ILivingEntity
     /// <summary>
     /// Gets or sets the reputation icon. UNKNOWN TODO.
     /// </summary>
-    public byte? Icon { get; set; }
+    public short? Icon { get; set; }
 
     /// <summary>
     /// UNKNOWN TODO.
