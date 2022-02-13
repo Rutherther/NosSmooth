@@ -8,9 +8,9 @@
         <Description>NosSmooth Core library allowing implementing nostale client, handling packets and commands.</Description>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>1.1.0</PackageVersion>
-        <PackageReleaseNotes>Add stateful entities for injecting different entities for different nostale clients.
-Add support for pre and post responder events.</PackageReleaseNotes>
+        <PackageVersion>1.1.1</PackageVersion>
+        <PackageReleaseNotes>Add return tolerance to walk commands
+Add attack command</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
