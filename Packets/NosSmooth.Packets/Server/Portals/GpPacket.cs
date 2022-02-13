@@ -27,11 +27,11 @@ public record GpPacket
     [PacketIndex(1)]
     short Y,
     [PacketIndex(2)]
-    short TargetMapId,
+    int TargetMapId,
     [PacketIndex(3)]
     PortalType? PortalType,
     [PacketIndex(4)]
-    int PortalId,
+    long PortalId,
     [PacketIndex(5)]
     bool IsDisabled
 ) : IPacket;
