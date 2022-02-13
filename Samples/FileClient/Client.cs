@@ -80,11 +80,11 @@ public class Client : BaseNostaleClient
             Result result;
             if (source == PacketSource.Client)
             {
-                result = await _packetHandler.HandleSentPacketAsync(packet, packetStr, stopRequested);
+                result = await _packetHandler.HandleSentPacketAsync(this, packet, packetStr, stopRequested);
             }
             else
             {
-                result = await _packetHandler.HandleReceivedPacketAsync(packet, packetStr, stopRequested);
+                result = await _packetHandler.HandleReceivedPacketAsync(this, packet, packetStr, stopRequested);
             }
 
             if (!result.IsSuccess)
@@ -99,13 +99,13 @@ public class Client : BaseNostaleClient
     /// <inheritdoc/>
     public override async Task<Result> SendPacketAsync(string packetString, CancellationToken ct = default)
     {
-        return await _packetHandler.HandleReceivedPacketAsync(CreatePacket(packetString, PacketSource.Client), packetString, ct);
+        return await _packetHandler.HandleReceivedPacketAsync(this, CreatePacket(packetString, PacketSource.Client), packetString, ct);
     }
 
     /// <inheritdoc/>
     public override async Task<Result> ReceivePacketAsync(string packetString, CancellationToken ct = default)
     {
-        return await _packetHandler.HandleReceivedPacketAsync(CreatePacket(packetString, PacketSource.Server), packetString, ct);
+        return await _packetHandler.HandleReceivedPacketAsync(this, CreatePacket(packetString, PacketSource.Server), packetString, ct);
     }
 
     private IPacket CreatePacket(string packetStr, PacketSource source)
