@@ -94,7 +94,7 @@ public record InPlayerSubPacket
     [PacketIndex(19)]
     string? FamilyName,
     [PacketIndex(20)]
-    byte ReputationIcon,
+    short ReputationIcon,
     [PacketIndex(21)]
     bool IsInvisible,
     [PacketIndex(22)]
