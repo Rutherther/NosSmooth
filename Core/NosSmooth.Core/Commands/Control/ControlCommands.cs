@@ -277,7 +277,7 @@ public class ControlCommands
         var cancelReason = filter switch
         {
             ControlCommandsFilter.UserCancellable => ControlCancelReason.UserAction,
-            ControlCommandsFilter.MapChangeCancellable => ControlCancelReason.UserAction,
+            ControlCommandsFilter.MapChangeCancellable => ControlCancelReason.MapChanged,
             _ => ControlCancelReason.AnotherTask
         };
 

@@ -28,12 +28,9 @@ public class ControlCommandPacketResponders : IPacketResponder<CMapPacket>
     public ControlCommandPacketResponders(ControlCommands controlCommands)
     {
         _controlCommands = controlCommands;
-
     }
 
     /// <inheritdoc />
     public Task<Result> Respond(PacketEventArgs<CMapPacket> packet, CancellationToken ct = default)
-    {
-        return _controlCommands.CancelAsync(ControlCommandsFilter.MapChangeCancellable);
-    }
+        => _controlCommands.CancelAsync(ControlCommandsFilter.MapChangeCancellable, ct: ct);
 }

@@ -22,6 +22,11 @@ public enum ControlCancelReason
     UserAction,
 
     /// <summary>
+    /// The map has been changed.
+    /// </summary>
+    MapChanged,
+
+    /// <summary>
     /// There was another task that cancelled this one.
     /// </summary>
     AnotherTask
