@@ -20,8 +20,8 @@ namespace NosSmooth.Core.Commands.Walking;
 public record PetWalkCommand
 (
     int PetSelector,
-    ushort TargetX,
-    ushort TargetY,
+    short TargetX,
+    short TargetY,
     bool CanBeCancelledByAnother = true,
     bool WaitForCancellation = true,
     bool AllowUserCancel = true

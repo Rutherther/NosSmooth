@@ -19,8 +19,8 @@ namespace NosSmooth.Core.Commands.Walking;
 /// <param name="AllowUserCancel">Whether to allow the user to cancel by taking any walk/focus/unfollow action</param>
 public record WalkCommand
 (
-    ushort TargetX,
-    ushort TargetY,
+    short TargetX,
+    short TargetY,
     int[] PetSelectors,
     bool CanBeCancelledByAnother = true,
     bool WaitForCancellation = true,

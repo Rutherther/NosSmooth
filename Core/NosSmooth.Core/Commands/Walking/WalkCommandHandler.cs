@@ -63,8 +63,8 @@ public class WalkCommandHandler : ICommandHandler<WalkCommand>
                     new PetWalkCommand
                     (
                         command.PetSelectors[i],
-                        (ushort)x,
-                        (ushort)y,
+                        (short)x,
+                        (short)y,
                         command.CanBeCancelledByAnother,
                         command.WaitForCancellation,
                         command.AllowUserCancel
