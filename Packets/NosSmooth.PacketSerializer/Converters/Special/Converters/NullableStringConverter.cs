@@ -53,6 +53,7 @@ public class NullableStringConverter<T> : BaseStringConverter<Nullable<T>>
 
         if (packetToken.Token.Length == 2 && packetToken.Token.StartsWith("-1"))
         {
+            stringEnumerator.GetNextToken(out _); // seek.
             return Result<T?>.FromSuccess(null);
         }
 
