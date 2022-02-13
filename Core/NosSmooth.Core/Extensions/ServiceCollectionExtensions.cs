@@ -8,10 +8,12 @@ using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands;
 using NosSmooth.Core.Commands.Control;
 using NosSmooth.Core.Commands.Walking;
 using NosSmooth.Core.Packets;
+using NosSmooth.Core.Stateful;
 using NosSmooth.Packets.Extensions;
 
 namespace NosSmooth.Core.Extensions;
@@ -88,13 +90,16 @@ public static class ServiceCollectionExtensions
             return serviceCollection.AddScoped(typeof(IEveryPacketResponder), responderType);
         }
 
-        if (!responderType.GetInterfaces().Any(
+        if (!responderType.GetInterfaces().Any
+            (
                 i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IPacketResponder<>)
             ))
         {
-            throw new ArgumentException(
+            throw new ArgumentException
+            (
                 $"{nameof(responderType)} should implement IPacketResponder.",
-                nameof(responderType));
+                nameof(responderType)
+            );
         }
 
         var responderTypeInterfaces = responderType.GetInterfaces();
@@ -140,13 +145,16 @@ public static class ServiceCollectionExtensions
         Type commandHandlerType
     )
     {
-        if (!commandHandlerType.GetInterfaces().Any(
+        if (!commandHandlerType.GetInterfaces().Any
+            (
                 i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICommandHandler<>)
             ))
         {
-            throw new ArgumentException(
+            throw new ArgumentException
+            (
                 $"{nameof(commandHandlerType)} should implement ICommandHandler.",
-                nameof(commandHandlerType));
+                nameof(commandHandlerType)
+            );
         }
 
         var handlerTypeInterfaces = commandHandlerType.GetInterfaces();
@@ -185,5 +193,81 @@ public static class ServiceCollectionExtensions
         where TEvent : class, IPostExecutionEvent
     {
         return serviceCollection.AddScoped<IPostExecutionEvent, TEvent>();
+    }
+
+    /// <summary>
+    /// Add the injector for stateful entities that may be replaced for different NosTale clients.
+    /// </summary>
+    /// <param name="serviceCollection">The service collection.</param>
+    /// <returns>The collection.</returns>
+    public static IServiceCollection AddStatefulInjector(this IServiceCollection serviceCollection)
+    {
+        serviceCollection.RemoveAll<INostaleClient>();
+        return serviceCollection
+            .AddScoped<StatefulInjector>()
+            .AddSingleton<StatefulRepository>()
+            .AddPreExecutionEvent<StatefulPreExecutionEvent>()
+            .AddScoped<INostaleClient>
+            (
+                p =>
+                {
+                    var nostaleClient = p.GetRequiredService<StatefulInjector>().Client;
+                    if (nostaleClient == null)
+                    {
+                        throw new NullReferenceException("The client cannot be null.");
+                    }
+
+                    return nostaleClient;
+                }
+            )
+            .ReplaceStatefulEntities();
+    }
+
+    /// <summary>
+    /// Replace all the stateful entities that are added in the collection.
+    /// </summary>
+    /// <param name="serviceCollection">The service collection.</param>
+    /// <returns>The collection.</returns>
+    public static IServiceCollection ReplaceStatefulEntities(this IServiceCollection serviceCollection)
+    {
+        foreach (var serviceDescriptor in serviceCollection)
+        {
+            var type = serviceDescriptor.ServiceType;
+            if (typeof(IStatefulEntity).IsAssignableFrom(type))
+            {
+                serviceCollection.AddStatefulEntity(type);
+            }
+        }
+
+        return serviceCollection;
+    }
+
+    /// <summary>
+    /// Add a stateful entity of the given type to be injectable into the scope of a client.
+    /// </summary>
+    /// <param name="serviceCollection">The service collection.</param>
+    /// <typeparam name="TEntity">The type of the stateful entity.</typeparam>
+    /// <returns>The collection.</returns>
+    public static IServiceCollection AddStatefulEntity<TEntity>(this IServiceCollection serviceCollection)
+        => serviceCollection.AddStatefulEntity(typeof(TEntity));
+
+    /// <summary>
+    /// Add a stateful entity of the given type to be injectable into the scope of a client.
+    /// </summary>
+    /// <param name="serviceCollection">The service collection.</param>
+    /// <param name="statefulEntityType">The type of the stateful entity.</param>
+    /// <returns>The collection.</returns>
+    public static IServiceCollection AddStatefulEntity
+        (this IServiceCollection serviceCollection, Type statefulEntityType)
+    {
+        serviceCollection.AddStatefulInjector();
+        serviceCollection.RemoveAll(statefulEntityType);
+        serviceCollection.Add
+        (
+            ServiceDescriptor.Scoped
+                (statefulEntityType, (p) => p.GetRequiredService<StatefulInjector>().GetEntity(p, statefulEntityType))
+        );
+
+        return serviceCollection;
     }
 }

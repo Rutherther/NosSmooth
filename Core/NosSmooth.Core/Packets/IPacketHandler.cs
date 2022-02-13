@@ -6,6 +6,7 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using NosSmooth.Core.Client;
 using NosSmooth.Packets;
 using Remora.Results;
 
@@ -19,18 +20,20 @@ public interface IPacketHandler
     /// <summary>
     /// Calls a responder for the given packet.
     /// </summary>
+    /// <param name="client">The current NosTale client.</param>
     /// <param name="packet">The packet.</param>
     /// <param name="packetString">The string of the packet.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Task<Result> HandleReceivedPacketAsync(IPacket packet, string packetString, CancellationToken ct = default);
+    public Task<Result> HandleReceivedPacketAsync(INostaleClient client, IPacket packet, string packetString, CancellationToken ct = default);
 
     /// <summary>
     /// Calls a responder for the given packet.
     /// </summary>
+    /// <param name="client">The current NosTale client.</param>
     /// <param name="packet">The packet.</param>
     /// <param name="packetString">The string of the packet.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Task<Result> HandleSentPacketAsync(IPacket packet, string packetString, CancellationToken ct = default);
+    public Task<Result> HandleSentPacketAsync(INostaleClient client, IPacket packet, string packetString, CancellationToken ct = default);
 }
