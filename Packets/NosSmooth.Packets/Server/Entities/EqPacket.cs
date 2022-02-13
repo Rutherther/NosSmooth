@@ -41,7 +41,7 @@ public record EqPacket
     HairColor HairColor,
     [PacketIndex(5)]
     PlayerClass Class,
-    [PacketIndex(6)]
+    [PacketIndex(6, InnerSeparator = '.')]
     InEquipmentSubPacket EquipmentSubPacket,
     [PacketIndex(7)]
     UpgradeRareSubPacket? WeaponUpgradeRareSubPacket,
