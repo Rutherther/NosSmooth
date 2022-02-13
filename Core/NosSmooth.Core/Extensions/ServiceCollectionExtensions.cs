@@ -172,6 +172,30 @@ public static class ServiceCollectionExtensions
     }
 
     /// <summary>
+    /// Add the given pre execution event that will be executed before the command handler.
+    /// </summary>
+    /// <param name="serviceCollection">The service collection.</param>
+    /// <typeparam name="TEvent">The pre execution event type.</typeparam>
+    /// <returns>The collection.</returns>
+    public static IServiceCollection AddPreCommandExecutionEvent<TEvent>(this IServiceCollection serviceCollection)
+        where TEvent : class, IPreCommandExecutionEvent
+    {
+        return serviceCollection.AddScoped<IPreCommandExecutionEvent, TEvent>();
+    }
+
+    /// <summary>
+    /// Add the given post execution event that will be executed after the command handler.
+    /// </summary>
+    /// <param name="serviceCollection">The service collection.</param>
+    /// <typeparam name="TEvent">The pre execution event type.</typeparam>
+    /// <returns>The collection.</returns>
+    public static IServiceCollection AddPostCommandExecutionEvent<TEvent>(this IServiceCollection serviceCollection)
+        where TEvent : class, IPostCommandExecutionEvent
+    {
+        return serviceCollection.AddScoped<IPostCommandExecutionEvent, TEvent>();
+    }
+
+    /// <summary>
     /// Add the given pre execution event that will be executed before the packet responders.
     /// </summary>
     /// <param name="serviceCollection">The service collection.</param>
@@ -207,6 +231,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<StatefulInjector>()
             .AddSingleton<StatefulRepository>()
             .AddPreExecutionEvent<StatefulPreExecutionEvent>()
+            .AddPreCommandExecutionEvent<StatefulPreExecutionEvent>()
             .AddScoped<INostaleClient>
             (
                 p =>

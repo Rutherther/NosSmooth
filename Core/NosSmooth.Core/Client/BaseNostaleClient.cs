@@ -68,6 +68,6 @@ public abstract class BaseNostaleClient : INostaleClient
     }
 
     /// <inheritdoc />
-    public Task<Result> SendCommandAsync(ICommand command, CancellationToken ct = default) =>
-        _commandProcessor.ProcessCommand(command, ct);
+    public async Task<Result> SendCommandAsync(ICommand command, CancellationToken ct = default)
+        => await _commandProcessor.ProcessCommand(this, command, ct);
 }
