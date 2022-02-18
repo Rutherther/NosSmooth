@@ -45,7 +45,7 @@ public record struct Position(short X, short Y)
     {
         return DistanceSquared(position) <= range * range;
     }
-    
+
     /// <summary>
     /// Multiply position.
     /// </summary>
