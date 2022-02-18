@@ -49,9 +49,9 @@ public record SuPacket
     [PacketIndex(7)]
     long SkillEffect,
     [PacketIndex(8)]
-    long PositionX,
+    short PositionX,
     [PacketIndex(9)]
-    long PositionY,
+    short PositionY,
     [PacketIndex(10)]
     bool TargetIsAlive,
     [PacketIndex(11)]
