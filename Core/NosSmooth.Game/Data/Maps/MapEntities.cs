@@ -26,6 +26,13 @@ public class MapEntities
     }
 
     /// <summary>
+    /// Gets the entities on the map.
+    /// </summary>
+    /// <returns>The list of the entities.</returns>
+    public ICollection<IEntity> GetEntities()
+        => _entities.Values;
+
+    /// <summary>
     /// Gets the given entity by id.
     /// </summary>
     /// <param name="id">The id of the entity.</param>
