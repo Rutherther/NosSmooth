@@ -61,7 +61,7 @@ public record CInfoPacket
     [PacketIndex(10)]
     PlayerClass Class,
     [PacketIndex(11)]
-    byte Icon,
+    short Icon,
     [PacketIndex(12)]
     short Compliment,
     [PacketIndex(13)]
