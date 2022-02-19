@@ -47,7 +47,7 @@ public record WalkInRangeOperation
         }
 
         var distance = Distance;
-        while (distance >= 1)
+        while (distance >= 0)
         {
             var position = Entity.Position;
             if (position is null)
