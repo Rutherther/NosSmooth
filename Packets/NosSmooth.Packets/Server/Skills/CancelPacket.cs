@@ -23,5 +23,5 @@ public record CancelPacket
     [PacketIndex(1)]
     long TargetId,
     [PacketIndex(2)]
-    long Unknown = -1
+    long? Unknown = null
 ) : IPacket;
