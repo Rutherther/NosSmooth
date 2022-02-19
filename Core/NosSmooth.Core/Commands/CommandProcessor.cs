@@ -97,7 +97,16 @@ public class CommandProcessor
             return result;
         }
 
-        var handlerResult = await commandHandler.HandleCommand(command, ct);
+        Result handlerResult;
+        try
+        {
+            handlerResult = await commandHandler.HandleCommand(command, ct);
+        }
+        catch (Exception e)
+        {
+            handlerResult = e;
+        }
+
         var afterResult = await ExecuteAfterExecutionAsync
         (
             scope.ServiceProvider,
@@ -129,27 +138,34 @@ public class CommandProcessor
     )
         where TCommand : ICommand
     {
-        var results = await Task.WhenAll
-        (
-            services.GetServices<IPreCommandExecutionEvent>()
-                .Select(x => x.ExecuteBeforeCommandAsync(client, command, ct))
-        );
-
-        var errorResults = new List<Result>();
-        foreach (var result in results)
+        try
         {
-            if (!result.IsSuccess)
+            var results = await Task.WhenAll
+            (
+                services.GetServices<IPreCommandExecutionEvent>()
+                    .Select(x => x.ExecuteBeforeCommandAsync(client, command, ct))
+            );
+
+            var errorResults = new List<Result>();
+            foreach (var result in results)
             {
-                errorResults.Add(result);
+                if (!result.IsSuccess)
+                {
+                    errorResults.Add(result);
+                }
             }
-        }
 
-        return errorResults.Count switch
+            return errorResults.Count switch
+            {
+                1 => errorResults[0],
+                0 => Result.FromSuccess(),
+                _ => new AggregateError(errorResults.Cast<IResult>().ToArray())
+            };
+        }
+        catch (Exception e)
         {
-            1 => errorResults[0],
-            0 => Result.FromSuccess(),
-            _ => new AggregateError(errorResults.Cast<IResult>().ToArray())
-        };
+            return e;
+        }
     }
 
     private async Task<Result> ExecuteAfterExecutionAsync<TCommand>
@@ -162,26 +178,33 @@ public class CommandProcessor
     )
         where TCommand : ICommand
     {
-        var results = await Task.WhenAll
-        (
-            services.GetServices<IPostCommandExecutionEvent>()
-                .Select(x => x.ExecuteAfterCommandAsync(client, command, handlerResult, ct))
-        );
-
-        var errorResults = new List<Result>();
-        foreach (var result in results)
+        try
         {
-            if (!result.IsSuccess)
+            var results = await Task.WhenAll
+            (
+                services.GetServices<IPostCommandExecutionEvent>()
+                    .Select(x => x.ExecuteAfterCommandAsync(client, command, handlerResult, ct))
+            );
+
+            var errorResults = new List<Result>();
+            foreach (var result in results)
             {
-                errorResults.Add(result);
+                if (!result.IsSuccess)
+                {
+                    errorResults.Add(result);
+                }
             }
-        }
 
-        return errorResults.Count switch
+            return errorResults.Count switch
+            {
+                1 => errorResults[0],
+                0 => Result.FromSuccess(),
+                _ => new AggregateError(errorResults.Cast<IResult>().ToArray())
+            };
+        }
+        catch (Exception e)
         {
-            1 => errorResults[0],
-            0 => Result.FromSuccess(),
-            _ => new AggregateError(errorResults.Cast<IResult>().ToArray())
-        };
+            return e;
+        }
     }
 }
