@@ -11,9 +11,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="NosSmooth.Core" Version="1.2.0" />
-      <PackageReference Include="NosSmooth.Game" Version="1.2.0" />
-      <PackageReference Include="NosSmooth.Packets" Version="2.2.0" />
+      <PackageReference Include="NosSmooth.Core" Version="1.2.1" />
+      <PackageReference Include="NosSmooth.Game" Version="1.2.1" />
+      <PackageReference Include="NosSmooth.Packets" Version="2.2.1" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
