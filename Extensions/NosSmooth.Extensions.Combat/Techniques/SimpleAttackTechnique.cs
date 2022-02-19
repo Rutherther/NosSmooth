@@ -20,7 +20,7 @@ namespace NosSmooth.Extensions.Combat.Techniques;
 /// </summary>
 public class SimpleAttackTechnique : ICombatTechnique
 {
-    private readonly int _targetId;
+    private readonly long _targetId;
     private readonly WalkManager _walkManager;
     private readonly ISkillSelector _skillSelector;
     private readonly IItemSelector _itemSelector;
@@ -37,7 +37,7 @@ public class SimpleAttackTechnique : ICombatTechnique
     /// <param name="itemSelector">The item selector.</param>
     public SimpleAttackTechnique
     (
-        int targetId,
+        long targetId,
         WalkManager walkManager,
         ISkillSelector skillSelector,
         IItemSelector itemSelector
