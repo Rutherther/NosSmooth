@@ -198,7 +198,10 @@ public class ControlCommands
 
         try
         {
-            data.CancellationTokenSource.Cancel();
+            if (!data.CancellationTokenSource.IsCancellationRequested)
+            {
+                data.CancellationTokenSource.Cancel();
+            }
         }
         catch
         {

@@ -49,5 +49,19 @@ public class TakeControlCommandHandler : ICommandHandler<TakeControlCommand>
         {
             return e;
         }
+        finally
+        {
+            if (!source.IsCancellationRequested)
+            {
+                try
+                {
+                    source.Cancel();
+                }
+                catch (Exception e)
+                {
+                    // ignored
+                }
+            }
+        }
     }
 }
