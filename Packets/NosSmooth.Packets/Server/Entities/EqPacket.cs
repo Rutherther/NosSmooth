@@ -47,6 +47,6 @@ public record EqPacket
     UpgradeRareSubPacket? WeaponUpgradeRareSubPacket,
     [PacketIndex(8)]
     UpgradeRareSubPacket? ArmorUpgradeRareSubPacket,
-    [PacketIndex(9)]
-    byte Size
+    [PacketIndex(9, IsOptional = true)]
+    byte? Size
 ) : IPacket;
