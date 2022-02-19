@@ -53,7 +53,10 @@ public class EqResponder : IPacketResponder<EqPacket>
 
         entity.Sex = packet.Sex;
         entity.Class = packet.Class;
-        entity.Size = packet.Size;
+        if (packet.Size is not null)
+        {
+            entity.Size = packet.Size.Value;
+        }
         entity.Authority = packet.AuthorityType;
         entity.HairColor = packet.HairColor;
         entity.HairStyle = packet.HairStyle;
