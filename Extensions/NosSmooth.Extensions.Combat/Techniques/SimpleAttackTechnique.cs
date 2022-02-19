@@ -29,12 +29,12 @@ public class SimpleAttackTechnique : ICombatTechnique
     private ILivingEntity? _target;
 
     /// <summary>
-    /// 
+    /// Initializes a new instance of the <see cref="SimpleAttackTechnique"/> class.
     /// </summary>
-    /// <param name="targetId"></param>
-    /// <param name="walkManager"></param>
-    /// <param name="skillSelector"></param>
-    /// <param name="itemSelector"></param>
+    /// <param name="targetId">The target entity id.</param>
+    /// <param name="walkManager">The walk manager.</param>
+    /// <param name="skillSelector">The skill selector.</param>
+    /// <param name="itemSelector">The item selector.</param>
     public SimpleAttackTechnique
     (
         int targetId,
@@ -59,7 +59,7 @@ public class SimpleAttackTechnique : ICombatTechnique
         }
 
         var entity = map.Entities.GetEntity<ILivingEntity>(_targetId);
-        return !(entity is null || entity.Hp is not null && (entity.Hp.Amount <= 0 || entity.Hp.Percentage <= 0));
+        return !(entity is null || (entity.Hp is not null && (entity.Hp.Amount <= 0 || entity.Hp.Percentage <= 0)));
     }
 
     /// <inheritdoc />
@@ -122,9 +122,14 @@ public class SimpleAttackTechnique : ICombatTechnique
             return new MissingInfoError("skill", currentSkill.SkillVNum);
         }
 
-        if (character.Position is null || _target.Position is null)
+        if (character.Position is null)
         {
-            return new;
+            return new CharacterNotInitializedError("Position");
+        }
+
+        if (_target.Position is null)
+        {
+            return new EntityNotFoundError();
         }
 
         if (!character.Position.Value.IsInRange(_target.Position.Value, _currentSkill.Info.Range))
