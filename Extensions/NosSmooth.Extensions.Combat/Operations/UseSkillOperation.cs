@@ -49,6 +49,8 @@ public record UseSkillOperation(Skill Skill, ILivingEntity Target) : ICombatOper
         }
 
         // TODO: support for area skills, support skills that use x, y coordinates (like dashes or teleports)
+        var linkedSource = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        await combatState.CombatManager.RegisterSkillCancellationTokenAsync(linkedSource, ct);
         var sendResponse = await combatState.Client.SendPacketAsync
         (
             new UseSkillPacket
@@ -64,13 +66,19 @@ public record UseSkillOperation(Skill Skill, ILivingEntity Target) : ICombatOper
 
         if (!sendResponse.IsSuccess)
         {
+            await combatState.CombatManager.UnregisterSkillCancellationTokenAsync(linkedSource, ct);
             return sendResponse;
         }
 
-        var linkedSource = CancellationTokenSource.CreateLinkedTokenSource(ct);
-        combatState.CombatManager.RegisterSkillCancellationToken(linkedSource);
-        await Task.Delay(Skill.Info.CastTime * 200 * 5, linkedSource.Token);
-        combatState.CombatManager.UnregisterSkillCancellationToken(linkedSource);
+        try
+        {
+            await Task.Delay(Skill.Info.CastTime * 200 * 5, linkedSource.Token);
+        }
+        catch (TaskCanceledException)
+        {
+            // ignored
+        }
+        await combatState.CombatManager.UnregisterSkillCancellationTokenAsync(linkedSource, ct);
 
         return Result.FromSuccess();
     }

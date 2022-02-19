@@ -29,7 +29,7 @@ public class SuResponder : IPacketResponder<SuPacket>
     /// <inheritdoc />
     public Task<Result> Respond(PacketEventArgs<SuPacket> packetArgs, CancellationToken ct = default)
     {
-        _combatManager.CancelSkillTokens();
+        _combatManager.CancelSkillTokensAsync(ct);
         return Task.FromResult(Result.FromSuccess());
     }
 }

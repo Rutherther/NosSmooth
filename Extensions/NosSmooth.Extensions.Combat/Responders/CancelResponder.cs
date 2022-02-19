@@ -29,7 +29,7 @@ public class CancelResponder : IPacketResponder<CancelPacket>
     /// <inheritdoc />
     public Task<Result> Respond(PacketEventArgs<CancelPacket> packetArgs, CancellationToken ct = default)
     {
-        _combatManager.CancelSkillTokens();
+        _combatManager.CancelSkillTokensAsync(ct);
         return Task.FromResult(Result.FromSuccess());
     }
 }
