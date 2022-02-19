@@ -49,7 +49,7 @@ public record UseSkillOperation(Skill Skill, ILivingEntity Target) : ICombatOper
         }
 
         // TODO: support for area skills, support skills that use x, y coordinates (like dashes or teleports)
-        var linkedSource = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        using var linkedSource = CancellationTokenSource.CreateLinkedTokenSource(ct);
         await combatState.CombatManager.RegisterSkillCancellationTokenAsync(linkedSource, ct);
         var sendResponse = await combatState.Client.SendPacketAsync
         (

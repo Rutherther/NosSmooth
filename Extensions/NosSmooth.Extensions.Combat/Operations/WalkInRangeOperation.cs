@@ -62,7 +62,7 @@ public record WalkInRangeOperation
             }
 
             var closePosition = GetClosePosition(currentPosition.Value, position.Value, distance);
-            var goToCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            using var goToCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(ct);
             var walkResultTask = WalkManager.GoToAsync(closePosition.X, closePosition.Y, goToCancellationTokenSource.Token);
 
             while (!walkResultTask.IsCompleted)
