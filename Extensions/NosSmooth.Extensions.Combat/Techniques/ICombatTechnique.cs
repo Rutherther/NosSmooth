@@ -5,7 +5,6 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using NosSmooth.Extensions.Combat.Operations;
-using OneOf.Types;
 using Remora.Results;
 
 namespace NosSmooth.Extensions.Combat.Techniques;
@@ -32,8 +31,8 @@ public interface ICombatTechnique
     /// If error is returned, the combat will be cancelled.
     /// </remarks>
     /// <param name="state">The combat state.</param>
-    /// <returns>A result that may or may not succeed.</returns>
-    public Result HandleCombatStep(ICombatState state);
+    /// <returns>An id of the current target entity or an error.</returns>
+    public Result<long?> HandleCombatStep(ICombatState state);
 
     /// <summary>
     /// Handles an error from <see cref="ICombatOperation.UseAsync"/>.

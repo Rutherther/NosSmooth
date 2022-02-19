@@ -63,7 +63,7 @@ public class SimpleAttackTechnique : ICombatTechnique
     }
 
     /// <inheritdoc />
-    public Result HandleCombatStep(ICombatState state)
+    public Result<long?> HandleCombatStep(ICombatState state)
     {
         var map = state.Game.CurrentMap;
         if (map is null)
@@ -106,10 +106,10 @@ public class SimpleAttackTechnique : ICombatTechnique
             {
                 if (skillResult.Error is SkillNotFoundError)
                 {
-                    return Result.FromSuccess();
+                    return _target.Id;
                 }
 
-                return Result.FromError(skillResult);
+                return Result<long?>.FromError(skillResult);
             }
 
             _currentSkill = skillResult.Entity;
@@ -141,7 +141,7 @@ public class SimpleAttackTechnique : ICombatTechnique
             state.UseSkill(_currentSkill, _target);
         }
 
-        return Result.FromSuccess();
+        return _target.Id;
     }
 
     /// <inheritdoc />
