@@ -38,7 +38,7 @@ internal class CombatState : ICombatState
 
     /// <inheritdoc/>
     public CombatManager CombatManager { get; }
-    
+
     /// <inheritdoc/>
     public Game.Game Game { get; }
 
