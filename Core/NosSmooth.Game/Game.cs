@@ -155,14 +155,19 @@ public class Game : IStatefulEntity
     {
         await Semaphores.AcquireSemaphore(type, ct);
 
-        var current = create();
-        set(current);
-        if (releaseSemaphore)
+        try
         {
-            Semaphores.ReleaseSemaphore(type);
+            var current = create();
+            set(current);
+            return current;
         }
-
-        return current;
+        finally
+        {
+            if (releaseSemaphore)
+            {
+                Semaphores.ReleaseSemaphore(type);
+            }
+        }
     }
 
     private async Task<T> CreateOrUpdateAsync<T>
@@ -178,22 +183,27 @@ public class Game : IStatefulEntity
     {
         await Semaphores.AcquireSemaphore(type, ct);
 
-        var current = get();
-        if (current is null)
+        try
         {
-            current = create();
-        }
-        else
-        {
-            current = update(current);
-        }
+            var current = get();
+            if (current is null)
+            {
+                current = create();
+            }
+            else
+            {
+                current = update(current);
+            }
 
-        set(current);
-        if (releaseSemaphore)
-        {
-            Semaphores.ReleaseSemaphore(type);
+            set(current);
+            return current;
         }
-
-        return current;
+        finally
+        {
+            if (releaseSemaphore)
+            {
+                Semaphores.ReleaseSemaphore(type);
+            }
+        }
     }
 }
