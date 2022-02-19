@@ -62,7 +62,24 @@ public record WalkInRangeOperation
             }
 
             var closePosition = GetClosePosition(currentPosition.Value, position.Value, distance);
-            var walkResult = await WalkManager.GoToAsync(closePosition.X, closePosition.Y, ct);
+            var goToCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            var walkResultTask = WalkManager.GoToAsync(closePosition.X, closePosition.Y, goToCancellationTokenSource.Token);
+
+            while (!walkResultTask.IsCompleted)
+            {
+                await Task.Delay(5, ct);
+                if (Entity.Position != position)
+                {
+                    goToCancellationTokenSource.Cancel();
+                }
+            }
+
+            if (Entity.Position != position)
+            {
+                continue;
+            }
+
+            var walkResult = await walkResultTask;
             if (!walkResult.IsSuccess && walkResult.Error is NotFoundError)
             {
                 distance--;
