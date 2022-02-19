@@ -109,10 +109,18 @@ public class PacketHandler : IPacketHandler
         var packetResponders = scope.ServiceProvider.GetServices<IPacketResponder<TPacket>>();
         var genericPacketResponders = scope.ServiceProvider.GetServices<IEveryPacketResponder>();
 
-        var tasks = packetResponders.Select(responder => responder.Respond(packetEventArgs, ct)).ToList();
-        tasks.AddRange(genericPacketResponders.Select(responder => responder.Respond(packetEventArgs, ct)));
+        Result[] results;
+        try
+        {
+            var tasks = packetResponders.Select(responder => responder.Respond(packetEventArgs, ct)).ToList();
+            tasks.AddRange(genericPacketResponders.Select(responder => responder.Respond(packetEventArgs, ct)));
 
-        var results = await Task.WhenAll(tasks);
+            results = await Task.WhenAll(tasks);
+        }
+        catch (Exception e)
+        {
+            results = new Result[] { e };
+        }
 
         var errors = new List<Result>();
         foreach (var result in results)
@@ -146,27 +154,34 @@ public class PacketHandler : IPacketHandler
     )
         where TPacket : IPacket
     {
-        var results = await Task.WhenAll
-        (
-            services.GetServices<IPreExecutionEvent>()
-                .Select(x => x.ExecuteBeforeExecutionAsync(client, eventArgs, ct))
-        );
-
-        var errorResults = new List<Result>();
-        foreach (var result in results)
+        try
         {
-            if (!result.IsSuccess)
+            var results = await Task.WhenAll
+            (
+                services.GetServices<IPreExecutionEvent>()
+                    .Select(x => x.ExecuteBeforeExecutionAsync(client, eventArgs, ct))
+            );
+
+            var errorResults = new List<Result>();
+            foreach (var result in results)
             {
-                errorResults.Add(result);
+                if (!result.IsSuccess)
+                {
+                    errorResults.Add(result);
+                }
             }
-        }
 
-        return errorResults.Count switch
+            return errorResults.Count switch
+            {
+                1 => errorResults[0],
+                0 => Result.FromSuccess(),
+                _ => new AggregateError(errorResults.Cast<IResult>().ToArray())
+            };
+        }
+        catch (Exception e)
         {
-            1 => errorResults[0],
-            0 => Result.FromSuccess(),
-            _ => new AggregateError(errorResults.Cast<IResult>().ToArray())
-        };
+            return e;
+        }
     }
 
     private async Task<Result> ExecuteAfterExecutionAsync<TPacket>
@@ -179,26 +194,33 @@ public class PacketHandler : IPacketHandler
     )
         where TPacket : IPacket
     {
-        var results = await Task.WhenAll
-        (
-            services.GetServices<IPostExecutionEvent>()
-                .Select(x => x.ExecuteAfterExecutionAsync(client, eventArgs, executionResults, ct))
-        );
-
-        var errorResults = new List<Result>();
-        foreach (var result in results)
+        try
         {
-            if (!result.IsSuccess)
+            var results = await Task.WhenAll
+            (
+                services.GetServices<IPostExecutionEvent>()
+                    .Select(x => x.ExecuteAfterExecutionAsync(client, eventArgs, executionResults, ct))
+            );
+
+            var errorResults = new List<Result>();
+            foreach (var result in results)
             {
-                errorResults.Add(result);
+                if (!result.IsSuccess)
+                {
+                    errorResults.Add(result);
+                }
             }
-        }
 
-        return errorResults.Count switch
+            return errorResults.Count switch
+            {
+                1 => errorResults[0],
+                0 => Result.FromSuccess(),
+                _ => new AggregateError(errorResults.Cast<IResult>().ToArray())
+            };
+        }
+        catch (Exception e)
         {
-            1 => errorResults[0],
-            0 => Result.FromSuccess(),
-            _ => new AggregateError(errorResults.Cast<IResult>().ToArray())
-        };
+            return e;
+        }
     }
 }
