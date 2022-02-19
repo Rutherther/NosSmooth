@@ -23,6 +23,7 @@ public class CombatManager : IStatefulEntity
     private readonly SemaphoreSlim _semaphore;
     private readonly INostaleClient _client;
     private readonly Game.Game _game;
+    private bool _cancelling;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CombatManager"/> class.
@@ -78,6 +79,11 @@ public class CombatManager : IStatefulEntity
 
                                 previousTarget = currentTarget;
                                 currentTarget = stepResult.Entity;
+
+                                if (previousTarget != currentTarget)
+                                {
+                                    continue;
+                                }
 
                                 operation = combatState.NextOperation();
                             }
