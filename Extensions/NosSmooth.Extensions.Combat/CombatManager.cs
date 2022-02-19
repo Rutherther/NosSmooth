@@ -5,6 +5,7 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using NosSmooth.Core.Client;
+using NosSmooth.Core.Commands.Attack;
 using NosSmooth.Core.Stateful;
 using NosSmooth.Extensions.Combat.Errors;
 using NosSmooth.Extensions.Combat.Operations;
@@ -40,66 +41,94 @@ public class CombatManager : IStatefulEntity
     /// Enter into a combat state using the given technique.
     /// </summary>
     /// <param name="technique">The technique to use.</param>
+    /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>A result that may or may not succeed.</returns>
-    public async Task<Result> EnterCombat(ICombatTechnique technique)
+    public async Task<Result> EnterCombatAsync(ICombatTechnique technique, CancellationToken ct = default)
     {
         var combatState = new CombatState(_client, _game, this);
+        long? currentTarget = null;
+        long? previousTarget = null;
 
         while (!combatState.ShouldQuit)
         {
-            if (!technique.ShouldContinue(combatState))
+            var commandResult = await _client.SendCommandAsync
+            (
+                new AttackCommand
+                (
+                    currentTarget,
+                    async (c) =>
+                    {
+                        while (!combatState.ShouldQuit && currentTarget == previousTarget)
+                        {
+                            if (!technique.ShouldContinue(combatState))
+                            {
+                                combatState.QuitCombat();
+                                continue;
+                            }
+
+                            var operation = combatState.NextOperation();
+
+                            if (operation is null)
+                            { // The operation is null and the step has to be obtained from the technique.
+                                var stepResult = technique.HandleCombatStep(combatState);
+                                if (!stepResult.IsSuccess)
+                                {
+                                    return Result.FromError(stepResult);
+                                }
+
+                                previousTarget = currentTarget;
+                                currentTarget = stepResult.Entity;
+
+                                operation = combatState.NextOperation();
+                            }
+
+                            if (operation is null)
+                            { // The operation could be null just because there is currently not a skill to be used etc.
+                                await Task.Delay(5, ct);
+                                continue;
+                            }
+
+                            Result<CanBeUsedResponse> responseResult;
+                            while ((responseResult = operation.CanBeUsed(combatState)).IsSuccess
+                                && responseResult.Entity == CanBeUsedResponse.MustWait)
+                            { // TODO: wait for just some amount of time
+                                await Task.Delay(5, ct);
+                            }
+
+                            if (!responseResult.IsSuccess)
+                            {
+                                return Result.FromError(responseResult);
+                            }
+
+                            if (responseResult.Entity == CanBeUsedResponse.WontBeUsable)
+                            {
+                                return new UnusableOperationError(operation);
+                            }
+
+                            var usageResult = await operation.UseAsync(combatState, ct);
+                            if (!usageResult.IsSuccess)
+                            {
+                                var errorHandleResult = technique.HandleError(combatState, operation, usageResult);
+                                if (!errorHandleResult.IsSuccess)
+                                {
+                                    return errorHandleResult;
+                                }
+                            }
+                        }
+
+                        return Result.FromSuccess();
+                    }
+                ),
+                ct
+            );
+
+            if (!commandResult.IsSuccess)
             {
-                combatState.QuitCombat();
-                continue;
+                return commandResult;
             }
 
-            var operation = combatState.NextOperation();
-
-            if (operation is null)
-            { // The operation is null and the step has to be obtained from the technique.
-                var stepResult = technique.HandleCombatStep(combatState);
-                if (!stepResult.IsSuccess)
-                {
-                    return stepResult;
-                }
-
-                operation = combatState.NextOperation();
-            }
-
-            if (operation is null)
-            { // The operation could be null just because there is currently not a skill to be used etc.
-                await Task.Delay(5);
-                continue;
-            }
-
-            Result<CanBeUsedResponse> responseResult;
-            while ((responseResult = operation.CanBeUsed(combatState)).IsSuccess
-                && responseResult.Entity == CanBeUsedResponse.MustWait)
-            { // TODO: wait for just some amount of time
-                await Task.Delay(5);
-            }
-
-            if (!responseResult.IsSuccess)
-            {
-                return Result.FromError(responseResult);
-            }
-
-            if (responseResult.Entity == CanBeUsedResponse.WontBeUsable)
-            {
-                return new UnusableOperationError(operation);
-            }
-
-            var usageResult = await operation.UseAsync(combatState);
-            if (!usageResult.IsSuccess)
-            {
-                var errorHandleResult = technique.HandleError(combatState, operation, usageResult);
-                if (!errorHandleResult.IsSuccess)
-                {
-                    return errorHandleResult;
-                }
-            }
+            previousTarget = currentTarget;
         }
-
         return Result.FromSuccess();
     }
 
