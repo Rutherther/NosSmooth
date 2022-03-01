@@ -34,7 +34,7 @@ public static class ServiceCollectionExtensions
     )
     {
         serviceCollection
-            .TryAddSingleton<IPacketHandler, PacketHandler>();
+            .TryAddSingleton<PacketHandler>();
 
         serviceCollection.AddPacketSerialization();
         serviceCollection.AddSingleton<CommandProcessor>();

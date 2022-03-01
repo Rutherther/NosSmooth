@@ -15,7 +15,7 @@ namespace NosSmooth.Core.Stateful;
 /// <summary>
 /// Repository holding all the stateful entities for various NosTale clients.
 /// </summary>
-public class StatefulRepository
+internal class StatefulRepository
 {
     private readonly Dictionary<INostaleClient, Dictionary<Type, object>> _statefulEntities;
 

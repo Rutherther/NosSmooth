@@ -14,7 +14,7 @@ namespace NosSmooth.Core.Commands.Control;
 /// <summary>
 /// Handles <see cref="TakeControlCommand"/>.
 /// </summary>
-public class TakeControlCommandHandler : ICommandHandler<TakeControlCommand>
+internal class TakeControlCommandHandler : ICommandHandler<TakeControlCommand>
 {
     private readonly ControlCommands _commands;
 

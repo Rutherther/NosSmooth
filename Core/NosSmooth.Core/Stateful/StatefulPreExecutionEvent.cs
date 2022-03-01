@@ -19,7 +19,7 @@ namespace NosSmooth.Core.Stateful;
 /// <summary>
 /// Event that injects stateful entities into the scope.
 /// </summary>
-public class StatefulPreExecutionEvent : IPreExecutionEvent, IPreCommandExecutionEvent
+internal class StatefulPreExecutionEvent : IPreExecutionEvent, IPreCommandExecutionEvent
 {
     private readonly StatefulInjector _injector;
 

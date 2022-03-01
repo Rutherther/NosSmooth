@@ -18,7 +18,7 @@ namespace NosSmooth.Core.Commands.Walking;
 /// <summary>
 /// Handles <see cref="WalkCommand"/>.
 /// </summary>
-public class WalkCommandHandler : ICommandHandler<WalkCommand>
+internal class WalkCommandHandler : ICommandHandler<WalkCommand>
 {
     private readonly INostaleClient _nostaleClient;
 

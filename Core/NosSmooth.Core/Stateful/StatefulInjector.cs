@@ -12,7 +12,7 @@ namespace NosSmooth.Core.Stateful;
 /// <summary>
 /// The scoped injector of stateful entities.
 /// </summary>
-public class StatefulInjector
+internal class StatefulInjector
 {
     private readonly StatefulRepository _repository;
 

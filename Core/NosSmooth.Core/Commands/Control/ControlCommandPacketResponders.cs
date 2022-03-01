@@ -17,7 +17,7 @@ namespace NosSmooth.Core.Commands.Control;
 /// <summary>
 /// Packet responder for cancellation of <see cref="TakeControlCommand"/>.
 /// </summary>
-public class ControlCommandPacketResponders : IPacketResponder<CMapPacket>
+internal class ControlCommandPacketResponders : IPacketResponder<CMapPacket>
 {
     private readonly ControlCommands _controlCommands;
 

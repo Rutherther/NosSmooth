@@ -18,8 +18,10 @@ using Remora.Results;
 
 namespace NosSmooth.Core.Packets;
 
-/// <inheritdoc />
-public class PacketHandler : IPacketHandler
+/// <summary>
+/// Calls registered responders for the packet that should be handled.
+/// </summary>
+public class PacketHandler
 {
     private readonly IServiceProvider _provider;
 
@@ -32,25 +34,53 @@ public class PacketHandler : IPacketHandler
         _provider = provider;
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Calls a responder for the given packet.
+    /// </summary>
+    /// <param name="client">The current NosTale client.</param>
+    /// <param name="packet">The packet.</param>
+    /// <param name="packetString">The string of the packet.</param>
+    /// <param name="ct">The cancellation token for cancelling the operation.</param>
+    /// <returns>A result that may or may not have succeeded.</returns>
     public Task<Result> HandleReceivedPacketAsync
     (
         INostaleClient client,
         IPacket packet,
         string packetString,
-        CancellationToken ct
+        CancellationToken ct = default
     )
-        => HandlePacketAsync(client, PacketSource.Server, packet, packetString, ct);
+        => HandlePacketAsync
+        (
+            client,
+            PacketSource.Server,
+            packet,
+            packetString,
+            ct
+        );
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Calls a responder for the given packet.
+    /// </summary>
+    /// <param name="client">The current NosTale client.</param>
+    /// <param name="packet">The packet.</param>
+    /// <param name="packetString">The string of the packet.</param>
+    /// <param name="ct">The cancellation token for cancelling the operation.</param>
+    /// <returns>A result that may or may not have succeeded.</returns>
     public Task<Result> HandleSentPacketAsync
     (
         INostaleClient client,
         IPacket packet,
         string packetString,
-        CancellationToken ct
+        CancellationToken ct = default
     )
-        => HandlePacketAsync(client, PacketSource.Client, packet, packetString, ct);
+        => HandlePacketAsync
+        (
+            client,
+            PacketSource.Client,
+            packet,
+            packetString,
+            ct
+        );
 
     private Task<Result> HandlePacketAsync
     (
@@ -131,7 +161,14 @@ public class PacketHandler : IPacketHandler
             }
         }
 
-        var postExecutionResult = await ExecuteAfterExecutionAsync(scope.ServiceProvider, client, packetEventArgs, results, ct);
+        var postExecutionResult = await ExecuteAfterExecutionAsync
+        (
+            scope.ServiceProvider,
+            client,
+            packetEventArgs,
+            results,
+            ct
+        );
         if (!postExecutionResult.IsSuccess)
         {
             errors.Add(postExecutionResult);
