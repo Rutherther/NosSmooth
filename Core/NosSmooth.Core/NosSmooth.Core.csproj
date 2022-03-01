@@ -8,9 +8,8 @@
         <Description>NosSmooth Core library allowing implementing nostale client, handling packets and commands.</Description>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>1.2.2</PackageVersion>
-        <PackageReleaseNotes>Fix unhandled exceptions in command processor.
-Fix control command cancellation of disposed tokens.</PackageReleaseNotes>
+        <PackageVersion>2.0.0</PackageVersion>
+        <PackageReleaseNotes>Make internal classes that do not need to be exposed.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
