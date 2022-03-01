@@ -13,5 +13,5 @@ namespace NosSmooth.Core.Errors;
 /// Represents an error that tells the user there is no handler for the specified command so it cannot be processed.
 /// </summary>
 /// <param name="CommandType">The type of the command.</param>
-public record CommandHandlerNotFound(Type CommandType) : ResultError(
+public record CommandHandlerNotFound(Type CommandType) : NotFoundError(
     $"Could not process the command of type {CommandType.FullName}, because there is not a handler for it.");
