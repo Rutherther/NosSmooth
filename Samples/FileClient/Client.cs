@@ -23,7 +23,7 @@ namespace FileClient;
 public class Client : BaseNostaleClient
 {
     private const string LineRegex = ".*\\[(Recv|Send)\\]\t(.*)";
-    private readonly IPacketHandler _packetHandler;
+    private readonly PacketHandler _packetHandler;
     private readonly IPacketSerializer _packetSerializer;
     private readonly ILogger<Client> _logger;
     private readonly Stream _stream;
@@ -38,7 +38,7 @@ public class Client : BaseNostaleClient
     /// <param name="logger">The logger.</param>
     public Client(
         Stream stream,
-        IPacketHandler packetHandler,
+        PacketHandler packetHandler,
         CommandProcessor commandProcessor,
         IPacketSerializer packetSerializer,
         ILogger<Client> logger

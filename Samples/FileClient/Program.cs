@@ -54,7 +54,7 @@ public static class Program
                     });
                 coll.AddSingleton<INostaleClient>(p => new Client(
                     fileStream,
-                    p.GetRequiredService<IPacketHandler>(),
+                    p.GetRequiredService<PacketHandler>(),
                     p.GetRequiredService<CommandProcessor>(),
                     p.GetRequiredService<IPacketSerializer>(),
                     p.GetRequiredService<ILogger<Client>>()
