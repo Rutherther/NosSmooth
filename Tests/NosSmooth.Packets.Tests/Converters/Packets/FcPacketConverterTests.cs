@@ -6,6 +6,8 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using NosSmooth.Packets.Enums;
+using NosSmooth.Packets.Extensions;
+using NosSmooth.Packets.Packets;
 using NosSmooth.Packets.Server.Act4;
 using NosSmooth.PacketSerializer;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
@@ -31,6 +33,7 @@ public class FcPacketConverterTests
             .BuildServiceProvider();
 
         _packetSerializer = provider.GetRequiredService<IPacketSerializer>();
+        provider.GetRequiredService<IPacketTypesRepository>().AddDefaultPackets();
     }
 
     /// <summary>

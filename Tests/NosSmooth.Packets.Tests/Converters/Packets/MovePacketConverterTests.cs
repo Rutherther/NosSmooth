@@ -31,6 +31,7 @@ public class MovePacketConverterTests
             .BuildServiceProvider();
 
         _packetSerializer = provider.GetRequiredService<IPacketSerializer>();
+        provider.GetRequiredService<IPacketTypesRepository>().AddDefaultPackets();
     }
 
     /// <summary>
