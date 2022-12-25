@@ -16,6 +16,7 @@ using NosSmooth.Core.Tests.Fakes.Commands;
 using NosSmooth.Core.Tests.Fakes.Packets;
 using NosSmooth.Core.Tests.Packets;
 using NosSmooth.Packets.Server.Maps;
+using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using Remora.Results;
 using Xunit;
 
@@ -162,8 +163,8 @@ public class StatefulInjectorTests
 
         var handler = services.GetRequiredService<PacketHandler>();
 
-        Assert.True((await handler.HandleReceivedPacketAsync(client1, new FakePacket("1"), "fake 1")).IsSuccess);
-        Assert.True((await handler.HandleReceivedPacketAsync(client2, new FakePacket("2"), "fake 2")).IsSuccess);
+        Assert.True((await handler.HandlePacketAsync(client1, PacketSource.Server, new FakePacket("1"), "fake 1")).IsSuccess);
+        Assert.True((await handler.HandlePacketAsync(client2, PacketSource.Server, new FakePacket("2"), "fake 2")).IsSuccess);
         Assert.NotNull(entity1);
         Assert.NotNull(entity2);
         Assert.NotEqual(entity1, entity2);
