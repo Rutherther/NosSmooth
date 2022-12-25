@@ -275,7 +275,7 @@ public class CommandProcessorTests
                     {
                         Assert.Equal(fakeCommand, fc);
                         Assert.False(res.IsSuccess);
-                        Assert.IsType<GenericError>(res.Error);
+                        Assert.IsType<FakeError>(res.Error);
                         called = true;
                         return Result.FromSuccess();
                     }
