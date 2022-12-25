@@ -9,7 +9,7 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageVersion>2.0.1</PackageVersion>
         <PackageReleaseNotes>Read map file correctly.</PackageReleaseNotes>
-        <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
+        <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
     </PropertyGroup>
 
     <ItemGroup>
