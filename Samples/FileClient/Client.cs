@@ -36,7 +36,8 @@ public class Client : BaseNostaleClient
     /// <param name="commandProcessor">The command processor.</param>
     /// <param name="packetSerializer">The packet serializer.</param>
     /// <param name="logger">The logger.</param>
-    public Client(
+    public Client
+    (
         Stream stream,
         PacketHandler packetHandler,
         CommandProcessor commandProcessor,
@@ -77,16 +78,14 @@ public class Client : BaseNostaleClient
 
             var source = type == "Recv" ? PacketSource.Server : PacketSource.Client;
             var packet = CreatePacket(packetStr, source);
-            Result result;
-            if (source == PacketSource.Client)
-            {
-                result = await _packetHandler.HandleSentPacketAsync(this, packet, packetStr, stopRequested);
-            }
-            else
-            {
-                result = await _packetHandler.HandleReceivedPacketAsync(this, packet, packetStr, stopRequested);
-            }
-
+            Result result = await _packetHandler.HandlePacketAsync
+            (
+                this,
+                source,
+                packet,
+                packetStr,
+                stopRequested
+            );
             if (!result.IsSuccess)
             {
                 _logger.LogResultError(result);
@@ -99,13 +98,27 @@ public class Client : BaseNostaleClient
     /// <inheritdoc/>
     public override async Task<Result> SendPacketAsync(string packetString, CancellationToken ct = default)
     {
-        return await _packetHandler.HandleReceivedPacketAsync(this, CreatePacket(packetString, PacketSource.Client), packetString, ct);
+        return await _packetHandler.HandlePacketAsync
+        (
+            this,
+            PacketSource.Client,
+            CreatePacket(packetString, PacketSource.Client),
+            packetString,
+            ct
+        );
     }
 
     /// <inheritdoc/>
     public override async Task<Result> ReceivePacketAsync(string packetString, CancellationToken ct = default)
     {
-        return await _packetHandler.HandleReceivedPacketAsync(this, CreatePacket(packetString, PacketSource.Server), packetString, ct);
+        return await _packetHandler.HandlePacketAsync
+        (
+            this,
+            PacketSource.Server,
+            CreatePacket(packetString, PacketSource.Server),
+            packetString,
+            ct
+        );
     }
 
     private IPacket CreatePacket(string packetStr, PacketSource source)

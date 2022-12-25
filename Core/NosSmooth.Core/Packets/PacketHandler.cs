@@ -38,51 +38,12 @@ public class PacketHandler
     /// Calls a responder for the given packet.
     /// </summary>
     /// <param name="client">The current NosTale client.</param>
+    /// <param name="packetType">The source of the packet.</param>
     /// <param name="packet">The packet.</param>
     /// <param name="packetString">The string of the packet.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Task<Result> HandleReceivedPacketAsync
-    (
-        INostaleClient client,
-        IPacket packet,
-        string packetString,
-        CancellationToken ct = default
-    )
-        => HandlePacketAsync
-        (
-            client,
-            PacketSource.Server,
-            packet,
-            packetString,
-            ct
-        );
-
-    /// <summary>
-    /// Calls a responder for the given packet.
-    /// </summary>
-    /// <param name="client">The current NosTale client.</param>
-    /// <param name="packet">The packet.</param>
-    /// <param name="packetString">The string of the packet.</param>
-    /// <param name="ct">The cancellation token for cancelling the operation.</param>
-    /// <returns>A result that may or may not have succeeded.</returns>
-    public Task<Result> HandleSentPacketAsync
-    (
-        INostaleClient client,
-        IPacket packet,
-        string packetString,
-        CancellationToken ct = default
-    )
-        => HandlePacketAsync
-        (
-            client,
-            PacketSource.Client,
-            packet,
-            packetString,
-            ct
-        );
-
-    private Task<Result> HandlePacketAsync
+    public Task<Result> HandlePacketAsync
     (
         INostaleClient client,
         PacketSource packetType,
