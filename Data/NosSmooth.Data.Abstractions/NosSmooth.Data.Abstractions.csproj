@@ -8,13 +8,13 @@
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageVersion>2.0.0</PackageVersion>
-        <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
+        <TargetFramework>net7.0</TargetFramework>
         <PackageReleaseNotes>Make Monster level ushort</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Remora.Results" Version="7.1.0" />
-      <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
+      <PackageReference Include="Remora.Results" Version="7.2.3" />
+      <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
     </ItemGroup>
 
 </Project>

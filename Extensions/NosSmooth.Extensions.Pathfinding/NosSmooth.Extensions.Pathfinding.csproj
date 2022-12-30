@@ -11,8 +11,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="NosSmooth.Core" Version="1.1.1" />
       <PackageReference Include="NosSmooth.Data.Abstractions" Version="2.0.0" />
+      <PackageReference Include="Remora.Results" Version="7.2.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Core\NosSmooth.Core\NosSmooth.Core.csproj" />
     </ItemGroup>
 
 </Project>
