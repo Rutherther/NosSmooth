@@ -79,6 +79,7 @@ public record UseSkillOperation(Skill Skill, ILivingEntity Target) : ICombatOper
             // ignored
         }
         await combatState.CombatManager.UnregisterSkillCancellationTokenAsync(linkedSource, ct);
+        await Task.Delay(100, ct);
 
         return Result.FromSuccess();
     }
