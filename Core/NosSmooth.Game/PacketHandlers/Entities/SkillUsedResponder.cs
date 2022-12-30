@@ -132,6 +132,7 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
 
         if (!packet.TargetIsAlive)
         {
+            target.Hp.Amount = 0;
             var diedResult = await _eventDispatcher.DispatchEvent(new EntityDiedEvent(target, skillEntity), ct);
             if (!diedResult.IsSuccess)
             {
