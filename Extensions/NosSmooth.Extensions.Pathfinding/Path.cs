@@ -85,8 +85,13 @@ public class Path
     /// <returns>A position to walk to.</returns>
     public (short X, short Y) TakeForwardPath()
     {
-        if (ReachedEnd || CurrentPartIndex + 2 >= Parts.Count)
+        if (ReachedEnd)
         {
+            return (TargetX, TargetY);
+        }
+        if (CurrentPartIndex + 2 >= Parts.Count)
+        {
+            CurrentPartIndex++;
             return (TargetX, TargetY);
         }
 
@@ -129,11 +134,11 @@ public class Path
         if (xFirstDiff != 0)
         {
             var xRatio = xCurrentDiff / (float)xFirstDiff;
-            return (yFirstDiff * xRatio) - yCurrentDiff < float.Epsilon * 10;
+            return Math.Abs((yFirstDiff * xRatio) - yCurrentDiff) < float.Epsilon;
         }
 
         var yRatio = yCurrentDiff / (float)yFirstDiff;
-        return (xFirstDiff * yRatio) - xCurrentDiff < float.Epsilon * 10;
+        return Math.Abs((xFirstDiff * yRatio) - xCurrentDiff) < float.Epsilon;
     }
 
     /// <summary>

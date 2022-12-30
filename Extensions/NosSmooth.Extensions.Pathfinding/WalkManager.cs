@@ -53,6 +53,11 @@ public class WalkManager
             return Result.FromError(pathResult);
         }
 
+        if (pathResult.Entity.Parts.Count == 0)
+        {
+            return Result.FromSuccess();
+        }
+
         var path = pathResult.Entity;
         while (!path.ReachedEnd)
         {
@@ -67,6 +72,11 @@ public class WalkManager
             {
                 if (path.ReachedEnd && walkResult.Error is WalkNotFinishedError walkNotFinishedError
                     && walkNotFinishedError.Reason == WalkUnfinishedReason.MapChanged)
+                {
+                    return Result.FromSuccess();
+                }
+
+                if (_state.X == x && _state.Y == y)
                 {
                     return Result.FromSuccess();
                 }

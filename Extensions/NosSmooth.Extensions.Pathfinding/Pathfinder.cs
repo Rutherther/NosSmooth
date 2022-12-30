@@ -90,9 +90,14 @@ public class Pathfinder
         short targetY
     )
     {
-        if (!mapInfo.IsWalkable((short)targetX, (short)targetY))
+        if (!mapInfo.IsWalkable(targetX, targetY))
         {
             return new NotFoundError("The requested target is not walkable, path cannot be found.");
+        }
+
+        if (x == targetX && y == targetY)
+        {
+            return new Path(mapInfo.Id, x, y, targetX, targetY, Array.Empty<(short X, short Y)>());
         }
 
         var target = (targetX, targetY);
