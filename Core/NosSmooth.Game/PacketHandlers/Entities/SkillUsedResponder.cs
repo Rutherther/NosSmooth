@@ -19,6 +19,7 @@ using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.Events.Entities;
 using NosSmooth.Game.Extensions;
 using NosSmooth.Game.Helpers;
+using NosSmooth.Packets.Client.Battle;
 using NosSmooth.Packets.Server.Battle;
 using NosSmooth.Packets.Server.Skills;
 using Remora.Results;
@@ -28,7 +29,8 @@ namespace NosSmooth.Game.PacketHandlers.Entities;
 /// <summary>
 /// Responds to skill used packet.
 /// </summary>
-public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<SrPacket>
+public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<SrPacket>,
+    IPacketResponder<UseSkillPacket>
 {
     private readonly Game _game;
     private readonly EventDispatcher _eventDispatcher;
@@ -164,6 +166,25 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
         else
         {
             await _eventDispatcher.DispatchEvent(new SkillReadyEvent(null, packet.SkillId), ct);
+        }
+
+        return Result.FromSuccess();
+    }
+
+    /// <inheritdoc />
+    public async Task<Result> Respond(PacketEventArgs<UseSkillPacket> packetArgs, CancellationToken ct = default)
+    {
+        var packet = packetArgs.Packet;
+        var character = _game.Character;
+
+        if (character is not null && character.Skills is not null)
+        {
+            var skillResult = character.Skills.TryGetSkillByVNum(packet.SkillId);
+
+            if (skillResult.IsDefined(out var skillEntity))
+            {
+                skillEntity.IsOnCooldown = true;
+            }
         }
 
         return Result.FromSuccess();
