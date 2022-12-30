@@ -20,7 +20,7 @@ namespace NosSmooth.Packets.Client.Battle;
 public record UseSkillPacket
 (
     [PacketIndex(0)]
-    long SkillId,
+    short CastId,
     [PacketIndex(1)]
     EntityType TargetEntityType,
     [PacketIndex(2)]

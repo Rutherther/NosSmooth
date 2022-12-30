@@ -37,7 +37,7 @@ public class NostaleSkillsPacketApi
     /// For skills that can be used only on self, use <paramref name="entityId"/> of the character.
     /// For skills that cannot be targeted on an entity, proceed to <see cref="UseSkillAt"/>.
     /// </remarks>
-    /// <param name="skillVNum">The id of the skill.</param>
+    /// <param name="castId">The cast id of the skill.</param>
     /// <param name="entityId">The id of the entity to use the skill on.</param>
     /// <param name="entityType">The type of the supplied entity.</param>
     /// <param name="mapX">The x coordinate on the map. (Used for non targeted dashes etc., says where the dash will be to.)</param>
@@ -46,7 +46,7 @@ public class NostaleSkillsPacketApi
     /// <returns>A result that may or may not have succeeded.</returns>
     public Task<Result> UseSkillOn
     (
-        long skillVNum,
+        short castId,
         long entityId,
         EntityType entityType,
         short? mapX = default,
@@ -58,7 +58,7 @@ public class NostaleSkillsPacketApi
         (
             new UseSkillPacket
             (
-                skillVNum,
+                castId,
                 entityType,
                 entityId,
                 mapX,
@@ -75,7 +75,7 @@ public class NostaleSkillsPacketApi
     /// For skills that can be used only on self, use <paramref name="entityId"/> of the character.
     /// For skills that cannot be targeted on an entity, proceed to <see cref="UseSkillAt"/>.
     /// </remarks>
-    /// <param name="skillVNum">The id of the skill.</param>
+    /// <param name="castId">The cast id of the skill.</param>
     /// <param name="entity">The entity to use the skill on.</param>
     /// <param name="mapX">The x coordinate on the map. (Used for non targeted dashes etc., says where the dash will be to.)</param>
     /// <param name="mapY">The y coordinate on the map. (Used for non targeted dashes etc., says where the dash will be to.)</param>
@@ -83,7 +83,7 @@ public class NostaleSkillsPacketApi
     /// <returns>A result that may or may not have succeeded.</returns>
     public Task<Result> UseSkillOn
     (
-        long skillVNum,
+        short castId,
         ILivingEntity entity,
         short? mapX = default,
         short? mapY = default,
@@ -94,7 +94,7 @@ public class NostaleSkillsPacketApi
         (
             new UseSkillPacket
             (
-                skillVNum,
+                castId,
                 entity.Type,
                 entity.Id,
                 mapX,
@@ -132,11 +132,16 @@ public class NostaleSkillsPacketApi
             return Task.FromResult<Result>(new SkillOnCooldownError(skill));
         }
 
+        if (skill.Info is null)
+        {
+            return Task.FromResult<Result>(new GenericError("Skill does not contain info."));
+        }
+
         return _client.SendPacketAsync
         (
             new UseSkillPacket
             (
-                skill.SkillVNum,
+                skill.Info.CastId,
                 entity.Type,
                 entity.Id,
                 mapX,
@@ -175,11 +180,16 @@ public class NostaleSkillsPacketApi
             return Task.FromResult<Result>(new SkillOnCooldownError(skill));
         }
 
+        if (skill.Info is null)
+        {
+            return Task.FromResult<Result>(new GenericError("Skill does not contain info."));
+        }
+
         return _client.SendPacketAsync
         (
             new UseSkillPacket
             (
-                skill.SkillVNum,
+                skill.Info.CastId,
                 entityType,
                 entityId,
                 mapX,

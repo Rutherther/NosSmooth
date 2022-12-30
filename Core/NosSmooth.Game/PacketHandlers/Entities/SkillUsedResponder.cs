@@ -179,7 +179,7 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
 
         if (character is not null && character.Skills is not null)
         {
-            var skillResult = character.Skills.TryGetSkillByVNum(packet.SkillId);
+            var skillResult = character.Skills.TryGetSkillByCastId(packet.CastId);
 
             if (skillResult.IsDefined(out var skillEntity))
             {
