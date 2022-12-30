@@ -5,6 +5,7 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Concurrent;
+using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Entities;
 using NosSmooth.Packets.Enums;
 
@@ -69,7 +70,19 @@ public class MapEntities
     /// <param name="entity">The entity to add.</param>
     internal void AddEntity(IEntity entity)
     {
-        _entities.AddOrUpdate(entity.Id, _ => entity, (i, e) => entity);
+        _entities.AddOrUpdate
+        (
+            entity.Id,
+            _ => entity,
+            (_, e) =>
+            {
+                if (entity is Player && e is Character)
+                { // Do not replace Character with Player!
+                    return e;
+                }
+                return entity;
+            }
+        );
     }
 
     /// <summary>
