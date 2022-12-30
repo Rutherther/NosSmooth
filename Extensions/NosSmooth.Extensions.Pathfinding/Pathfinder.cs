@@ -159,7 +159,7 @@ public class Pathfinder
             }
         }
 
-        return new NotFoundError("Could not find path to the given position.");
+        return new PathNotFoundError(targetX, targetY);
     }
 
     private Path ReconstructPath

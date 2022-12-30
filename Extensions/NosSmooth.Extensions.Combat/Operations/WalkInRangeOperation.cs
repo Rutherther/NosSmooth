@@ -6,6 +6,7 @@
 
 using NosSmooth.Extensions.Combat.Errors;
 using NosSmooth.Extensions.Pathfinding;
+using NosSmooth.Extensions.Pathfinding.Errors;
 using NosSmooth.Game.Data.Entities;
 using NosSmooth.Game.Data.Info;
 using Remora.Results;
@@ -96,7 +97,7 @@ public record WalkInRangeOperation
                 return Result.FromSuccess();
             }
 
-            if (!walkResult.IsSuccess && walkResult.Error is NotFoundError)
+            if (!walkResult.IsSuccess && walkResult.Error is PathNotFoundError)
             {
                 if (distance - 1 > 0)
                 {
