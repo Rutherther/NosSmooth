@@ -17,8 +17,7 @@ namespace NosSmooth.Packets.Server.Maps;
 /// <param name="Y">The map y.</param>
 /// <param name="Amount">The amount of the items on the ground.</param>
 /// <param name="IsQuestRelated">Whether the item is a quest related item.</param>
-/// <param name="Mode">UNKNOWN. Seems to be always 0.</param>
-/// <param name="Parameter">UNKNOWN. Seems to be always -1.</param>
+/// <param name="OwnerId">The id of the owner. (only the owner is able to pick up the item)</param>
 [PacketHeader("drop", PacketSource.Server)]
 [GenerateSerializer(true)]
 public record DropPacket
@@ -36,7 +35,5 @@ public record DropPacket
     [PacketIndex(5)]
     bool IsQuestRelated,
     [PacketIndex(6)]
-    byte Mode,
-    [PacketIndex(7)]
-    byte Parameter
+    long? OwnerId
 ) : IPacket;
