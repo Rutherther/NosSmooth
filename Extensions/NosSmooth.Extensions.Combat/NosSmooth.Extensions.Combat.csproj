@@ -4,20 +4,20 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>10</LangVersion>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
     </PropertyGroup>
-
+    
     <ItemGroup>
+        <PackageReference Include="Remora.Results" Version="7.2.3" />
+        <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="NosSmooth.Core" Version="1.2.1" />
-      <PackageReference Include="NosSmooth.Game" Version="1.2.1" />
-      <PackageReference Include="NosSmooth.Packets" Version="2.2.1" />
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-      <PackageReference Include="NosSmooth.Extensions.Pathfinding" Version="1.0.0" />
+      <ProjectReference Include="..\..\Core\NosSmooth.Core\NosSmooth.Core.csproj" />
+      <ProjectReference Include="..\..\Core\NosSmooth.Game\NosSmooth.Game.csproj" />
+      <ProjectReference Include="..\..\Data\NosSmooth.Data.Abstractions\NosSmooth.Data.Abstractions.csproj" />
+      <ProjectReference Include="..\..\Packets\NosSmooth.Packets\NosSmooth.Packets.csproj" />
+      <ProjectReference Include="..\NosSmooth.Extensions.Pathfinding\NosSmooth.Extensions.Pathfinding.csproj" />
     </ItemGroup>
 
 </Project>
