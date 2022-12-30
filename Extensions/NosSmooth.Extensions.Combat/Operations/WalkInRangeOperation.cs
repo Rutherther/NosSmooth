@@ -61,7 +61,17 @@ public record WalkInRangeOperation
                 return new CharacterNotInitializedError("Position");
             }
 
+            if (Entity.Position?.DistanceSquared(currentPosition.Value) <= Distance * Distance)
+            {
+                return Result.FromSuccess();
+            }
+
             var closePosition = GetClosePosition(currentPosition.Value, position.Value, distance);
+            if (closePosition == position)
+            {
+                return Result.FromSuccess();
+            }
+
             using var goToCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(ct);
             var walkResultTask = WalkManager.GoToAsync(closePosition.X, closePosition.Y, goToCancellationTokenSource.Token);
 
@@ -71,6 +81,7 @@ public record WalkInRangeOperation
                 if (Entity.Position != position)
                 {
                     goToCancellationTokenSource.Cancel();
+                    await walkResultTask;
                 }
             }
 
@@ -80,9 +91,22 @@ public record WalkInRangeOperation
             }
 
             var walkResult = await walkResultTask;
+            if ((character.Position - Entity.Position)?.DistanceSquared(Position.Zero) <= Distance * Distance)
+            {
+                return Result.FromSuccess();
+            }
+
             if (!walkResult.IsSuccess && walkResult.Error is NotFoundError)
             {
-                distance--;
+                if (distance - 1 > 0)
+                {
+                    distance--;
+                }
+                else
+                {
+                    distance = 0;
+                }
+
                 continue;
             }
 
@@ -95,6 +119,11 @@ public record WalkInRangeOperation
     private Position GetClosePosition(Position start, Position target, double distance)
     {
         var diff = start - target;
+        if (diff.DistanceSquared(Position.Zero) < distance * distance)
+        {
+            return start;
+        }
+
         var diffLength = Math.Sqrt(diff.DistanceSquared(Position.Zero));
         return target + ((distance / diffLength) * diff);
     }
