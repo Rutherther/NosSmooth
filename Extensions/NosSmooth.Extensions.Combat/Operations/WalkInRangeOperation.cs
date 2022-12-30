@@ -74,7 +74,7 @@ public record WalkInRangeOperation
             }
 
             using var goToCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(ct);
-            var walkResultTask = WalkManager.GoToAsync(closePosition.X, closePosition.Y, goToCancellationTokenSource.Token);
+            var walkResultTask = WalkManager.GoToAsync(closePosition.X, closePosition.Y, true, goToCancellationTokenSource.Token);
 
             while (!walkResultTask.IsCompleted)
             {
