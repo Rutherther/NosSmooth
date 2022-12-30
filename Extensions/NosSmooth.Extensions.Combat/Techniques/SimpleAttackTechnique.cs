@@ -139,6 +139,7 @@ public class SimpleAttackTechnique : ICombatTechnique
         else
         {
             state.UseSkill(_currentSkill, _target);
+            _currentSkill = null;
         }
 
         return _target.Id;
