@@ -50,7 +50,7 @@ public class CombatManager : IStatefulEntity
         long? currentTarget = null;
         long? previousTarget = null;
 
-        while (!combatState.ShouldQuit)
+        while (!combatState.ShouldQuit && !ct.IsCancellationRequested)
         {
             var commandResult = await _client.SendCommandAsync
             (
