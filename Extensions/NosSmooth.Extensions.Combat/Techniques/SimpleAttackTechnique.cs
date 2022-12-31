@@ -16,14 +16,13 @@ using Remora.Results;
 namespace NosSmooth.Extensions.Combat.Techniques;
 
 /// <summary>
-/// A combat technique that will attack on the specified enemy.
+/// A combat technique that will attack on the specified enemy, walk within range and use skill until the enemy is dead.
 /// </summary>
 public class SimpleAttackTechnique : ICombatTechnique
 {
     private readonly long _targetId;
     private readonly WalkManager _walkManager;
     private readonly ISkillSelector _skillSelector;
-    private readonly IItemSelector _itemSelector;
 
     private Skill? _currentSkill;
     private ILivingEntity? _target;
@@ -34,19 +33,16 @@ public class SimpleAttackTechnique : ICombatTechnique
     /// <param name="targetId">The target entity id.</param>
     /// <param name="walkManager">The walk manager.</param>
     /// <param name="skillSelector">The skill selector.</param>
-    /// <param name="itemSelector">The item selector.</param>
     public SimpleAttackTechnique
     (
         long targetId,
         WalkManager walkManager,
-        ISkillSelector skillSelector,
-        IItemSelector itemSelector
+        ISkillSelector skillSelector
     )
     {
         _targetId = targetId;
         _walkManager = walkManager;
         _skillSelector = skillSelector;
-        _itemSelector = itemSelector;
     }
 
     /// <inheritdoc />
