@@ -7,9 +7,9 @@
         <Description>Contains default NosTale packets.</Description>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>2.2.1</PackageVersion>
+        <PackageVersion>2.3.1</PackageVersion>
         <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
-        <PackageReleaseNotes>Fix cinfo, eq, cancel packets.</PackageReleaseNotes>
+        <PackageReleaseNotes>Update packets to 2023 versions</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
