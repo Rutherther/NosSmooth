@@ -15,6 +15,7 @@ using NosSmooth.Game.Data.Social;
 using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.Events.Entities;
 using NosSmooth.Game.Helpers;
+using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Server.Entities;
 using NosSmooth.Packets.Server.Maps;
 using Remora.Results;
@@ -83,6 +84,11 @@ public class InResponder : IPacketResponder<InPacket>
         }
         if (packet.NonPlayerSubPacket is not null)
         {
+            if (packet.EntityType == EntityType.Npc)
+            {
+                return await CreateNpc(packet, packet.NonPlayerSubPacket, ct);
+            }
+
             return await CreateMonster(packet, packet.NonPlayerSubPacket, ct);
         }
 
@@ -160,6 +166,42 @@ public class InResponder : IPacketResponder<InPacket>
                     playerSubPacket.Level,
                     playerSubPacket.FamilyIcons
                 ),
+        };
+    }
+
+    private async Task<Npc> CreateNpc
+        (InPacket packet, InNonPlayerSubPacket nonPlayerSubPacket, CancellationToken ct)
+    {
+        if (packet.VNum is null)
+        {
+            throw new Exception("The vnum from the in packet cannot be null for monsters.");
+        }
+
+        var monsterInfoResult = await _infoService.GetMonsterInfoAsync(packet.VNum.Value, ct);
+        if (!monsterInfoResult.IsDefined(out var monsterInfo))
+        {
+            _logger.LogWarning
+            (
+                "Could not obtain a monster info for vnum {vnum}: {error}",
+                packet.VNum.Value,
+                monsterInfoResult.ToFullString()
+            );
+        }
+
+        return new Npc
+        {
+            VNum = packet.VNum.Value,
+            NpcInfo = monsterInfo,
+            Id = packet.EntityId,
+            Direction = packet.Direction,
+            Faction = nonPlayerSubPacket.Faction,
+            Hp = new Health { Percentage = nonPlayerSubPacket.HpPercentage },
+            Mp = new Health { Percentage = nonPlayerSubPacket.MpPercentage },
+            Name = nonPlayerSubPacket.Name?.Name,
+            Position = new Position(packet.PositionX, packet.PositionY),
+            IsInvisible = nonPlayerSubPacket.IsInvisible,
+            Level = monsterInfo?.Level ?? null,
+            IsSitting = nonPlayerSubPacket.IsSitting
         };
     }
 
