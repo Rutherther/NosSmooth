@@ -72,14 +72,15 @@ public record UseSkillOperation(Skill Skill, ILivingEntity Target) : ICombatOper
 
         try
         {
-            await Task.Delay(Skill.Info.CastTime * 200 * 5, linkedSource.Token);
+            // wait 10 times the cast delay in case su is not received.
+            await Task.Delay(Skill.Info.CastTime * 1000, linkedSource.Token);
         }
         catch (TaskCanceledException)
         {
             // ignored
         }
         await combatState.CombatManager.UnregisterSkillCancellationTokenAsync(linkedSource, ct);
-        await Task.Delay(100, ct);
+        await Task.Delay(1000, ct);
 
         return Result.FromSuccess();
     }
