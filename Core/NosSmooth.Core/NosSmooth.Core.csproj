@@ -8,8 +8,9 @@
         <Description>NosSmooth Core library allowing implementing nostale client, handling packets and commands.</Description>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>2.0.0</PackageVersion>
-        <PackageReleaseNotes>Make internal classes that do not need to be exposed.</PackageReleaseNotes>
+        <PackageVersion>3.0.0</PackageVersion>
+        <PackageReleaseNotes>Change HandleReceivedPacket, HandleSentPacket to HandlePacket.
+Fix bugs.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>

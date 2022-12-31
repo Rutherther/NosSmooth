@@ -9,7 +9,9 @@
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageVersion>1.0.2</PackageVersion>
-        <PackageReleaseNotes>Seek through the enumerator when null value type encountered.</PackageReleaseNotes>
+        <PackageReleaseNotes>Fix UpgradeRareSubPacket to work with "0".</PackageReleaseNotes>
+        <AssemblyVersion>1.0.3</AssemblyVersion>
+        <FileVersion>1.0.3</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>

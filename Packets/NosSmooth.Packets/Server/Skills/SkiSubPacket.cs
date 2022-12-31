@@ -19,6 +19,6 @@ public record SkiSubPacket
 (
     [PacketIndex(0)]
     int SkillVNum,
-    [PacketIndex(1)]
-    byte Rank
+    [PacketIndex(1, IsOptional = true)]
+    byte? Rank
 ) : IPacket;

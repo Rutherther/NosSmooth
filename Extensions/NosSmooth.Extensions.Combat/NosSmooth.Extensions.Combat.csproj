@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>10</LangVersion>
+        <TargetFramework>net7.0</TargetFramework>
+        <Version>0.0.1</Version>
+        <Description>Manages NosSmooth combat state, currently exposing a simple technique to kill one enemy at a time.</Description>
+        <AssemblyVersion>0.0.1</AssemblyVersion>
+        <FileVersion>0.0.1</FileVersion>
+        <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Remora.Results" Version="7.2.3" />
+        <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Core\NosSmooth.Core\NosSmooth.Core.csproj" />
+      <ProjectReference Include="..\..\Core\NosSmooth.Game\NosSmooth.Game.csproj" />
+      <ProjectReference Include="..\..\Data\NosSmooth.Data.Abstractions\NosSmooth.Data.Abstractions.csproj" />
+      <ProjectReference Include="..\..\Packets\NosSmooth.Packets\NosSmooth.Packets.csproj" />
+      <ProjectReference Include="..\NosSmooth.Extensions.Pathfinding\NosSmooth.Extensions.Pathfinding.csproj" />
+    </ItemGroup>
+
+</Project>

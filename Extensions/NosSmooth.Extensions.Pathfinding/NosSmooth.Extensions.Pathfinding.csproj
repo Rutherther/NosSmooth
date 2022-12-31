@@ -8,6 +8,10 @@
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Description>NosSmooth extension allowing for finding paths on maps.</Description>
+        <Version>1.1.0</Version>
+        <PackageReleaseNotes>Fix bugs to stop returning non-existing errors.</PackageReleaseNotes>
+        <AssemblyVersion>1.1.0</AssemblyVersion>
+        <FileVersion>1.1.0</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>

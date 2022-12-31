@@ -92,7 +92,7 @@ public class Pathfinder
     {
         if (!mapInfo.IsWalkable(targetX, targetY))
         {
-            return new NotFoundError("The requested target is not walkable, path cannot be found.");
+            return new PathNotFoundError(targetX, targetY);
         }
 
         if (x == targetX && y == targetY)
@@ -159,7 +159,7 @@ public class Pathfinder
             }
         }
 
-        return new NotFoundError("Could not find path to the given position.");
+        return new PathNotFoundError(targetX, targetY);
     }
 
     private Path ReconstructPath

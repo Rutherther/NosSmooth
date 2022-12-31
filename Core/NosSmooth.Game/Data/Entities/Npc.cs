@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using NosSmooth.Data.Abstractions.Infos;
 using NosSmooth.Game.Data.Info;
 using NosSmooth.Packets.Enums;
 
@@ -14,6 +15,11 @@ namespace NosSmooth.Game.Data.Entities;
 /// </summary>
 public class Npc : ILivingEntity
 {
+    /// <summary>
+    /// Gets or sets the monster info.
+    /// </summary>
+    public IMonsterInfo? NpcInfo { get; set; }
+
     /// <summary>
     /// Gets the VNum of the npc.
     /// </summary>

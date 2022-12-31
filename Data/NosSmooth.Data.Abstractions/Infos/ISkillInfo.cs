@@ -30,12 +30,12 @@ public interface ISkillInfo : IVNumInfo
     short ZoneRange { get; }
 
     /// <summary>
-    /// Gets the time it takes to cast this skill. Units UNKNOWN TODO.
+    /// Gets the time it takes to cast this skill. The unit is Tenth of a second. (10 means one second).
     /// </summary>
     int CastTime { get; }
 
     /// <summary>
-    /// Gets the time of the cooldown. Units UNKNOWN TODO.
+    /// Gets the time of the cooldown. The unit is Tenth of a second. (10 means one second).
     /// </summary>
     int Cooldown { get; }
 
