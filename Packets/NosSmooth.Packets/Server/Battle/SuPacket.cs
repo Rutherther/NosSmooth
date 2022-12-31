@@ -47,7 +47,7 @@ public record SuPacket
     [PacketIndex(6)]
     long AttackAnimation,
     [PacketIndex(7)]
-    long SkillEffect,
+    long? SkillEffect,
     [PacketIndex(8)]
     short PositionX,
     [PacketIndex(9)]
