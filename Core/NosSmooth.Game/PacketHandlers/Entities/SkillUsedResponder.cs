@@ -20,6 +20,7 @@ using NosSmooth.Game.Events.Entities;
 using NosSmooth.Game.Extensions;
 using NosSmooth.Game.Helpers;
 using NosSmooth.Packets.Client.Battle;
+using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Server.Battle;
 using NosSmooth.Packets.Server.Skills;
 using Remora.Results;
@@ -29,8 +30,7 @@ namespace NosSmooth.Game.PacketHandlers.Entities;
 /// <summary>
 /// Responds to skill used packet.
 /// </summary>
-public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<SrPacket>,
-    IPacketResponder<UseSkillPacket>
+public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<SrPacket>
 {
     private readonly Game _game;
     private readonly EventDispatcher _eventDispatcher;
@@ -85,9 +85,9 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
         }
 
         Skill? skillEntity;
-        if (caster is Character character && character.Skills is not null)
+        if (packet.SkillVNum is not null && caster is Character character && character.Skills is not null)
         {
-            var skillResult = character.Skills.TryGetSkillByVNum(packet.SkillVNum);
+            var skillResult = character.Skills.TryGetSkillByVNum(packet.SkillVNum.Value);
 
             if (skillResult.IsDefined(out skillEntity))
             {
@@ -96,15 +96,15 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
             }
             else
             {
-                var skillInfoResult = await _infoService.GetSkillInfoAsync(packet.SkillVNum, ct);
+                var skillInfoResult = await _infoService.GetSkillInfoAsync(packet.SkillVNum.Value, ct);
                 skillEntity = new Skill
-                    (packet.SkillVNum, null, skillInfoResult.IsSuccess ? skillInfoResult.Entity : null);
+                    (packet.SkillVNum.Value, null, skillInfoResult.IsSuccess ? skillInfoResult.Entity : null);
             }
         }
-        else
+        else if (packet.SkillVNum is not null)
         {
-            var skillInfoResult = await _infoService.GetSkillInfoAsync(packet.SkillVNum, ct);
-            if (!skillInfoResult.IsSuccess)
+            var skillInfoResult = await _infoService.GetSkillInfoAsync(packet.SkillVNum.Value, ct);
+            if (!skillInfoResult.IsSuccess && packet.SkillVNum != 0)
             {
                 _logger.LogWarning
                 (
@@ -115,7 +115,11 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
             }
 
             skillEntity = new Skill
-                (packet.SkillVNum, null, skillInfoResult.IsSuccess ? skillInfoResult.Entity : null);
+                (packet.SkillVNum.Value, null, skillInfoResult.IsSuccess ? skillInfoResult.Entity : null);
+        }
+        else
+        {
+            skillEntity = new Skill(-1, null, null);
         }
 
         var dispatchResult = await _eventDispatcher.DispatchEvent
@@ -134,13 +138,20 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
 
         if (!packet.TargetIsAlive)
         {
+            if (target is not ILivingEntity living || (living.Type is not(EntityType.Player or EntityType.Npc)))
+            {
+                map?.Entities?.RemoveEntity(target.Id);
+            }
+
             target.Hp.Amount = 0;
+            target.Hp.Percentage = 0;
+
             var diedResult = await _eventDispatcher.DispatchEvent(new EntityDiedEvent(target, skillEntity), ct);
             if (!diedResult.IsSuccess)
             {
                 return dispatchResult.IsSuccess
                     ? diedResult
-                    : new AggregateError(diedResult, dispatchResult);
+                    : new AggregateError(diedResult, diedResult);
             }
         }
 
@@ -166,25 +177,6 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
         else
         {
             await _eventDispatcher.DispatchEvent(new SkillReadyEvent(null, packet.SkillId), ct);
-        }
-
-        return Result.FromSuccess();
-    }
-
-    /// <inheritdoc />
-    public async Task<Result> Respond(PacketEventArgs<UseSkillPacket> packetArgs, CancellationToken ct = default)
-    {
-        var packet = packetArgs.Packet;
-        var character = _game.Character;
-
-        if (character is not null && character.Skills is not null)
-        {
-            var skillResult = character.Skills.TryGetSkillByCastId(packet.CastId);
-
-            if (skillResult.IsDefined(out var skillEntity))
-            {
-                skillEntity.IsOnCooldown = true;
-            }
         }
 
         return Result.FromSuccess();
