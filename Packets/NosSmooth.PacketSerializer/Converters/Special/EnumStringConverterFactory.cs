@@ -8,6 +8,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using NosSmooth.PacketSerializer.Abstractions;
 using NosSmooth.PacketSerializer.Converters.Special.Converters;
+using NosSmooth.PacketSerializer.Extensions;
 using Remora.Results;
 
 namespace NosSmooth.PacketSerializer.Converters.Special;
