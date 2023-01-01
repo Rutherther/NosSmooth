@@ -45,7 +45,7 @@ public class StPacketResponder : IPacketResponder<StPacket>
             return Task.FromResult(Result.FromSuccess());
         }
 
-        entity.EffectsVNums = packet.BuffVNums;
+        entity.EffectsVNums = packet.BuffVNums?.Select(x => x.CardId).Cast<long>().ToList();
         entity.Level = packet.Level;
         if (entity is Player player)
         {
