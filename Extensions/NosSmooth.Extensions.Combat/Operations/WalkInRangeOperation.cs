@@ -68,7 +68,7 @@ public record WalkInRangeOperation
             }
 
             var closePosition = GetClosePosition(currentPosition.Value, position.Value, distance);
-            if (closePosition == position)
+            if (closePosition == currentPosition)
             {
                 return Result.FromSuccess();
             }
