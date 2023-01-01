@@ -4,14 +4,13 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using NosSmooth.Packets.Packets;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
+using NosSmooth.PacketSerializer.Packets;
 using Remora.Results;
 
-namespace NosSmooth.Packets.Errors;
+namespace NosSmooth.PacketSerializer.Errors;
 
 /// <summary>
 /// The header was ambiguous, there were at least two packets with the same header and source.

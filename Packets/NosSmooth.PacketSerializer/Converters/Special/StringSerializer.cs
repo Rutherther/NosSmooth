@@ -5,11 +5,10 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using NosSmooth.Packets.Errors;
 using NosSmooth.PacketSerializer.Abstractions;
 using Remora.Results;
 
-namespace NosSmooth.Packets.Converters.Special;
+namespace NosSmooth.PacketSerializer.Converters.Special;
 
 /// <inheritdoc />
 public class StringSerializer : IStringSerializer

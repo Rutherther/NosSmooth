@@ -11,7 +11,6 @@ using NosSmooth.Core.Commands;
 using NosSmooth.Core.Extensions;
 using NosSmooth.Core.Packets;
 using NosSmooth.Packets;
-using NosSmooth.Packets.Errors;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using Remora.Results;
 

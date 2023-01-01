@@ -6,7 +6,7 @@
 
 using Remora.Results;
 
-namespace NosSmooth.Packets.Errors;
+namespace NosSmooth.PacketSerializer.Errors;
 
 /// <summary>
 /// The converter for the given packet was not found.

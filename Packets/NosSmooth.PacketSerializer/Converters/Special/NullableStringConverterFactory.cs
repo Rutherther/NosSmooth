@@ -6,12 +6,11 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using NosSmooth.Packets.Converters.Special.Converters;
-using NosSmooth.Packets.Extensions;
 using NosSmooth.PacketSerializer.Abstractions;
+using NosSmooth.PacketSerializer.Converters.Special.Converters;
 using Remora.Results;
 
-namespace NosSmooth.Packets.Converters.Special;
+namespace NosSmooth.PacketSerializer.Converters.Special;
 
 /// <inheritdoc />
 public class NullableStringConverterFactory : IStringConverterFactory

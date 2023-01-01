@@ -6,7 +6,6 @@
 
 using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
-using NosSmooth.Packets.Extensions;
 using NosSmooth.PacketSerializer.Abstractions;
 using Xunit;
 

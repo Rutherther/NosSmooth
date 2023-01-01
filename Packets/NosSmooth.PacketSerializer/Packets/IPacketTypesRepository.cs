@@ -6,12 +6,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using NosSmooth.Packets.Errors;
+using NosSmooth.Packets;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using Remora.Results;
 
-namespace NosSmooth.Packets.Packets;
+namespace NosSmooth.PacketSerializer.Packets;
 
 /// <summary>
 /// Repository of packet types for finding information about packets.

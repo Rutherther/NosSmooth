@@ -14,7 +14,7 @@ using NosSmooth.Core.Commands.Control;
 using NosSmooth.Core.Commands.Walking;
 using NosSmooth.Core.Packets;
 using NosSmooth.Core.Stateful;
-using NosSmooth.Packets.Extensions;
+using NosSmooth.PacketSerializer.Extensions;
 
 namespace NosSmooth.Core.Extensions;
 

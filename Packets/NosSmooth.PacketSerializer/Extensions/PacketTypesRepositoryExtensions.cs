@@ -6,10 +6,11 @@
 
 using System.Linq;
 using System.Reflection;
-using NosSmooth.Packets.Packets;
+using NosSmooth.Packets;
+using NosSmooth.PacketSerializer.Packets;
 using Remora.Results;
 
-namespace NosSmooth.Packets.Extensions;
+namespace NosSmooth.PacketSerializer.Extensions;
 
 /// <summary>
 /// Extension methods for <see cref="IPacketTypesRepository"/>.

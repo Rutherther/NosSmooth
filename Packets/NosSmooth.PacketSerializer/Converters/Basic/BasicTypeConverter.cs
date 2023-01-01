@@ -8,7 +8,7 @@ using System;
 using NosSmooth.PacketSerializer.Abstractions;
 using Remora.Results;
 
-namespace NosSmooth.Packets.Converters.Basic;
+namespace NosSmooth.PacketSerializer.Converters.Basic;
 
 /// <summary>
 /// Basic type converter for converting using <see cref="Convert"/>.

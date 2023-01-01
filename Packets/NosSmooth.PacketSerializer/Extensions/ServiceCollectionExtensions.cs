@@ -8,15 +8,16 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using NosSmooth.Packets.Converters;
-using NosSmooth.Packets.Converters.Basic;
-using NosSmooth.Packets.Converters.Common;
-using NosSmooth.Packets.Converters.Packets;
-using NosSmooth.Packets.Converters.Special;
-using NosSmooth.Packets.Packets;
+using NosSmooth.Packets;
 using NosSmooth.PacketSerializer.Abstractions;
+using NosSmooth.PacketSerializer.Converters;
+using NosSmooth.PacketSerializer.Converters.Basic;
+using NosSmooth.PacketSerializer.Converters.Common;
+using NosSmooth.PacketSerializer.Converters.Packets;
+using NosSmooth.PacketSerializer.Converters.Special;
+using NosSmooth.PacketSerializer.Packets;
 
-namespace NosSmooth.Packets.Extensions;
+namespace NosSmooth.PacketSerializer.Extensions;
 
 /// <summary>
 /// Extensions for <see cref="IServiceCollection"/>.

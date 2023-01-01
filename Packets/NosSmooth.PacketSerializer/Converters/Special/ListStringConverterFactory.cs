@@ -6,20 +6,12 @@
 
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
 using Microsoft.Extensions.DependencyInjection;
-using NosSmooth.Packets.Converters.Special.Converters;
-using NosSmooth.Packets.Errors;
-using NosSmooth.Packets.Extensions;
 using NosSmooth.PacketSerializer.Abstractions;
+using NosSmooth.PacketSerializer.Converters.Special.Converters;
 using Remora.Results;
 
-namespace NosSmooth.Packets.Converters.Special;
+namespace NosSmooth.PacketSerializer.Converters.Special;
 
 /// <summary>
 /// Converts lists.

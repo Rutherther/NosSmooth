@@ -4,12 +4,11 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosSmooth.Packets.Errors;
-using NosSmooth.Packets.Packets;
+using NosSmooth.Packets;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using Remora.Results;
 
-namespace NosSmooth.Packets;
+namespace NosSmooth.PacketSerializer;
 
 /// <summary>
 /// Serializer of packets.

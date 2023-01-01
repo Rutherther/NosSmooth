@@ -7,7 +7,7 @@
 using System;
 using Remora.Results;
 
-namespace NosSmooth.Packets.Errors;
+namespace NosSmooth.PacketSerializer.Errors;
 
 /// <summary>
 /// Could not find type converter for the given type.

@@ -4,13 +4,12 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosSmooth.Packets.Errors;
 using NosSmooth.Packets.Server.Weapons;
 using NosSmooth.PacketSerializer.Abstractions;
 using NosSmooth.PacketSerializer.Abstractions.Errors;
 using Remora.Results;
 
-namespace NosSmooth.Packets.Converters.Packets;
+namespace NosSmooth.PacketSerializer.Converters.Packets;
 
 /// <summary>
 /// Converter for <see cref="UpgradeRareSubPacket"/>.

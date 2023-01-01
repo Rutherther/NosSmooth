@@ -4,12 +4,11 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosSmooth.Packets.Converters.Basic;
 using NosSmooth.PacketSerializer.Abstractions;
 using NosSmooth.PacketSerializer.Abstractions.Common;
 using Remora.Results;
 
-namespace NosSmooth.Packets.Converters.Common;
+namespace NosSmooth.PacketSerializer.Converters.Common;
 
 /// <summary>
 /// Converter of <see cref="NameString"/>.

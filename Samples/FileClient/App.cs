@@ -9,8 +9,6 @@ using Microsoft.Extensions.Logging;
 using NosSmooth.Core.Client;
 using NosSmooth.Core.Extensions;
 using NosSmooth.Data.NOSFiles;
-using NosSmooth.Packets.Extensions;
-using NosSmooth.Packets.Packets;
 using Remora.Results;
 
 namespace FileClient;

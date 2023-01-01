@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NosSmooth.Core.Commands;
 using NosSmooth.Packets;
+using NosSmooth.PacketSerializer;
 using Remora.Results;
 
 namespace NosSmooth.Core.Client;

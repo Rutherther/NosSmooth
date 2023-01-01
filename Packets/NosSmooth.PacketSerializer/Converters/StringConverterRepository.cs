@@ -9,13 +9,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using NosSmooth.Packets.Converters.Special;
-using NosSmooth.Packets.Errors;
-using NosSmooth.Packets.Extensions;
 using NosSmooth.PacketSerializer.Abstractions;
+using NosSmooth.PacketSerializer.Converters.Special;
+using NosSmooth.PacketSerializer.Errors;
 using Remora.Results;
 
-namespace NosSmooth.Packets.Converters;
+namespace NosSmooth.PacketSerializer.Converters;
 
 /// <summary>
 /// Repository for <see cref="IStringConverter"/>.

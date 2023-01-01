@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Entities;
 using NosSmooth.Packets.Enums.Players;
-using NosSmooth.Packets.Extensions;
 using NosSmooth.Packets.Server.Entities;
 using NosSmooth.Packets.Server.Maps;
 using NosSmooth.Packets.Server.Players;

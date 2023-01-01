@@ -6,7 +6,6 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using NosSmooth.Packets.Enums;
-using NosSmooth.Packets.Extensions;
 using NosSmooth.Packets.Server.Act4;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using Xunit;

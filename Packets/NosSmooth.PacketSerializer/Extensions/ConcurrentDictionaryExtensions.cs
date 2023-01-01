@@ -6,11 +6,9 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Net.Http;
 using Remora.Results;
 
-namespace NosSmooth.Packets.Extensions;
+namespace NosSmooth.PacketSerializer.Extensions;
 
 /// <summary>
 /// Extension methods for <see cref="ConcurrentDictionary{TKey,TValue}"/>.

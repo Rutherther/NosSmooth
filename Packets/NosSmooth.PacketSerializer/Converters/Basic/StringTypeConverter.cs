@@ -7,7 +7,7 @@
 using System;
 using Remora.Results;
 
-namespace NosSmooth.Packets.Converters.Basic;
+namespace NosSmooth.PacketSerializer.Converters.Basic;
 
 /// <summary>
 /// Converter of <see cref="string"/>.

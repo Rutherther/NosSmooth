@@ -8,7 +8,7 @@ using System;
 using NosSmooth.PacketSerializer.Abstractions;
 using Remora.Results;
 
-namespace NosSmooth.Packets.Converters.Special.Converters;
+namespace NosSmooth.PacketSerializer.Converters.Special.Converters;
 
 #pragma warning disable SA1125
 /// <summary>

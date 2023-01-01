@@ -5,10 +5,9 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using NosSmooth.Packets.Converters;
 using NosSmooth.PacketSerializer.Abstractions;
 
-namespace NosSmooth.Packets.Packets;
+namespace NosSmooth.PacketSerializer.Packets;
 
 /// <summary>
 /// Information about a packet type.
