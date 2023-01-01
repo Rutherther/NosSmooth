@@ -41,7 +41,7 @@ public record SuPacket
     [PacketIndex(3)]
     long TargetEntityId,
     [PacketIndex(4)]
-    int SkillVNum,
+    int? SkillVNum,
     [PacketIndex(5)]
     long SkillCooldown,
     [PacketIndex(6)]
