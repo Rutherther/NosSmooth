@@ -4,10 +4,14 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics;
 using System.Xml.XPath;
+using NosSmooth.Data.Abstractions.Enums;
+using NosSmooth.Data.Abstractions.Infos;
 using NosSmooth.Extensions.Combat.Errors;
 using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Entities;
+using NosSmooth.Packets;
 using NosSmooth.Packets.Client.Battle;
 using Remora.Results;
 
@@ -17,8 +21,9 @@ namespace NosSmooth.Extensions.Combat.Operations;
 /// A combat operation to use a skill.
 /// </summary>
 /// <param name="Skill">The skill to use.</param>
+/// <param name="Caster">The caster entity that is using the skill.</param>
 /// <param name="Target">The target entity to use the skill at.</param>
-public record UseSkillOperation(Skill Skill, ILivingEntity Target) : ICombatOperation
+public record UseSkillOperation(Skill Skill, ILivingEntity Caster, ILivingEntity Target) : ICombatOperation
 {
     /// <inheritdoc />
     public Result<CanBeUsedResponse> CanBeUsed(ICombatState combatState)
@@ -48,19 +53,11 @@ public record UseSkillOperation(Skill Skill, ILivingEntity Target) : ICombatOper
             return new MissingInfoError("skill", Skill.SkillVNum);
         }
 
-        // TODO: support for area skills, support skills that use x, y coordinates (like dashes or teleports)
         using var linkedSource = CancellationTokenSource.CreateLinkedTokenSource(ct);
         await combatState.CombatManager.RegisterSkillCancellationTokenAsync(linkedSource, ct);
         var sendResponse = await combatState.Client.SendPacketAsync
         (
-            new UseSkillPacket
-            (
-                Skill.Info.CastId,
-                Target.Type,
-                Target.Id,
-                null,
-                null
-            ),
+            CreateSkillUsePacket(Skill.Info),
             ct
         );
 
@@ -84,4 +81,48 @@ public record UseSkillOperation(Skill Skill, ILivingEntity Target) : ICombatOper
 
         return Result.FromSuccess();
     }
+
+    private IPacket CreateSkillUsePacket(ISkillInfo info)
+    {
+        switch (info.TargetType)
+        {
+            case TargetType.SelfOrTarget: // a buff?
+            case TargetType.Self:
+                return CreateSelfTargetedSkillPacket(info);
+            case TargetType.NoTarget: // area skill?
+                return CreateAreaSkillPacket(info);
+            case TargetType.Target:
+                return CreateTargetedSkillPacket(info);
+        }
+
+        throw new UnreachableException();
+    }
+
+    private IPacket CreateAreaSkillPacket(ISkillInfo info)
+        => new UseAOESkillPacket
+        (
+            info.CastId,
+            Target.Position!.Value.X,
+            Target.Position.Value.Y
+        );
+
+    private IPacket CreateTargetedSkillPacket(ISkillInfo info)
+        => new UseSkillPacket
+        (
+            info.CastId,
+            Target.Type,
+            Target.Id,
+            null,
+            null
+        );
+
+    private IPacket CreateSelfTargetedSkillPacket(ISkillInfo info)
+        => new UseSkillPacket
+        (
+            info.CastId,
+            Caster.Type,
+            Caster.Id,
+            null,
+            null
+        );
 }

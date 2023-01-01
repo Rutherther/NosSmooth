@@ -30,7 +30,12 @@ public record UsePrimarySkillOperation(ILivingEntity Target) : ICombatOperation
                 return Result<CanBeUsedResponse>.FromError(primarySkillResult);
             }
 
-            _useSkillOperation = new UseSkillOperation(primarySkill, Target);
+            if (combatState.Game.Character is null)
+            {
+                return new CharacterNotInitializedError();
+            }
+
+            _useSkillOperation = new UseSkillOperation(primarySkill, combatState.Game.Character, Target);
         }
 
         return _useSkillOperation.CanBeUsed(combatState);
@@ -47,7 +52,12 @@ public record UsePrimarySkillOperation(ILivingEntity Target) : ICombatOperation
                 return Result.FromError(primarySkillResult);
             }
 
-            _useSkillOperation = new UseSkillOperation(primarySkill, Target);
+            if (combatState.Game.Character is null)
+            {
+                return new CharacterNotInitializedError();
+            }
+
+            _useSkillOperation = new UseSkillOperation(primarySkill, combatState.Game.Character, Target);
         }
 
         return await _useSkillOperation.UseAsync(combatState, ct);

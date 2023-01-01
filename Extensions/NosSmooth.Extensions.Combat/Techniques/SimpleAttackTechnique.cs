@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using NosSmooth.Data.Abstractions.Enums;
 using NosSmooth.Extensions.Combat.Errors;
 using NosSmooth.Extensions.Combat.Extensions;
 using NosSmooth.Extensions.Combat.Operations;
@@ -95,6 +96,7 @@ public class SimpleAttackTechnique : ICombatTechnique
             var characterMp = character.Mp?.Amount ?? 0;
             var usableSkills = new[] { skills.PrimarySkill, skills.SecondarySkill }
                 .Concat(skills.OtherSkills)
+                .Where(x => x.Info is not null && x.Info.HitType != HitType.AlliesInZone)
                 .Where(x => !x.IsOnCooldown && characterMp >= (x.Info?.MpCost ?? long.MaxValue));
 
             var skillResult = _skillSelector.GetSelectedSkill(usableSkills);
@@ -128,7 +130,13 @@ public class SimpleAttackTechnique : ICombatTechnique
             return new EntityNotFoundError();
         }
 
-        if (!character.Position.Value.IsInRange(_target.Position.Value, _currentSkill.Info.Range))
+        var range = _currentSkill.Info.Range;
+        if (_currentSkill.Info.TargetType == TargetType.Self && _currentSkill.Info.HitType == HitType.EnemiesInZone)
+        {
+            range = _currentSkill.Info.ZoneRange;
+        }
+
+        if (!character.Position.Value.IsInRange(_target.Position.Value, range))
         {
             state.WalkInRange(_walkManager, _target, _currentSkill.Info.Range);
         }

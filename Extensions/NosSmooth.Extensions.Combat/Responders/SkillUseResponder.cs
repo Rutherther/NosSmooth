@@ -1,5 +1,5 @@
 ﻿//
-//  SuResponder.cs
+//  SkillUseResponder.cs
 //
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -17,27 +17,36 @@ namespace NosSmooth.Extensions.Combat.Responders;
 public class SuResponder : IPacketResponder<SuPacket>, IPacketResponder<BsPacket>
 {
     private readonly CombatManager _combatManager;
+    private readonly Game.Game _game;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SuResponder"/> class.
     /// </summary>
     /// <param name="combatManager">The combat manager.</param>
-    public SuResponder(CombatManager combatManager)
+    /// <param name="game">The game.</param>
+    public SuResponder(CombatManager combatManager, Game.Game game)
     {
         _combatManager = combatManager;
+        _game = game;
     }
 
     /// <inheritdoc />
     public Task<Result> Respond(PacketEventArgs<SuPacket> packetArgs, CancellationToken ct = default)
     {
-        _combatManager.CancelSkillTokensAsync(ct);
+        if (packetArgs.Packet.CasterEntityId == _game.Character?.Id)
+        {
+            _combatManager.CancelSkillTokensAsync(ct);
+        }
         return Task.FromResult(Result.FromSuccess());
     }
 
     /// <inheritdoc />
     public Task<Result> Respond(PacketEventArgs<BsPacket> packetArgs, CancellationToken ct = default)
     {
-        _combatManager.CancelSkillTokensAsync(ct);
+        if (packetArgs.Packet.CasterEntityId == _game.Character?.Id)
+        {
+            _combatManager.CancelSkillTokensAsync(ct);
+        }
         return Task.FromResult(Result.FromSuccess());
     }
 }

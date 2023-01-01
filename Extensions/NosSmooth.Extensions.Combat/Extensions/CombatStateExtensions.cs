@@ -65,7 +65,12 @@ public static class CombatStateExtensions
     /// <param name="target">The target to use skill at.</param>
     public static void UseSkill(this ICombatState combatState, Skill skill, ILivingEntity target)
     {
-        combatState.EnqueueOperation(new UseSkillOperation(skill, target));
+        if (combatState.Game.Character is null)
+        {
+            throw new InvalidOperationException("The character is not initialized.");
+        }
+
+        combatState.EnqueueOperation(new UseSkillOperation(skill, combatState.Game.Character, target));
     }
 
     /// <summary>
