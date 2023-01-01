@@ -16,6 +16,7 @@ using NosSmooth.Data.NOSFiles.Extensions;
 using NosSmooth.Data.NOSFiles.Options;
 using NosSmooth.Game.Extensions;
 using NosSmooth.Packets;
+using NosSmooth.PacketSerializer;
 
 namespace FileClient;
 

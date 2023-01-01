@@ -11,7 +11,9 @@ using NosSmooth.Core.Commands;
 using NosSmooth.Core.Extensions;
 using NosSmooth.Core.Packets;
 using NosSmooth.Packets;
+using NosSmooth.PacketSerializer;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
+using NosSmooth.PacketSerializer.Errors;
 using Remora.Results;
 
 namespace FileClient;
