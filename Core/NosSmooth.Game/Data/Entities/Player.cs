@@ -128,7 +128,7 @@ public class Player : ILivingEntity
     public short Size { get; set; }
 
     /// <inheritdoc/>
-    public IReadOnlyList<long>? EffectsVNums { get; set; }
+    public IReadOnlyList<short>? EffectsVNums { get; set; }
 
     /// <summary>
     /// Gets or sets the hero level.

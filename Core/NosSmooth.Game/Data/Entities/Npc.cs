@@ -71,5 +71,5 @@ public class Npc : ILivingEntity
     public short Size { get; set; }
 
     /// <inheritdoc/>
-    public IReadOnlyList<long>? EffectsVNums { get; set; }
+    public IReadOnlyList<short>? EffectsVNums { get; set; }
 }
