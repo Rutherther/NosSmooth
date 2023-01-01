@@ -5,6 +5,7 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using NosSmooth.Core.Packets;
+using NosSmooth.Packets;
 using NosSmooth.Packets.Server.Battle;
 using Remora.Results;
 
@@ -13,7 +14,7 @@ namespace NosSmooth.Extensions.Combat.Responders;
 /// <summary>
 /// Responds to su packet.
 /// </summary>
-public class SuResponder : IPacketResponder<SuPacket>
+public class SuResponder : IPacketResponder<SuPacket>, IPacketResponder<BsPacket>
 {
     private readonly CombatManager _combatManager;
 
@@ -28,6 +29,13 @@ public class SuResponder : IPacketResponder<SuPacket>
 
     /// <inheritdoc />
     public Task<Result> Respond(PacketEventArgs<SuPacket> packetArgs, CancellationToken ct = default)
+    {
+        _combatManager.CancelSkillTokensAsync(ct);
+        return Task.FromResult(Result.FromSuccess());
+    }
+
+    /// <inheritdoc />
+    public Task<Result> Respond(PacketEventArgs<BsPacket> packetArgs, CancellationToken ct = default)
     {
         _combatManager.CancelSkillTokensAsync(ct);
         return Task.FromResult(Result.FromSuccess());

@@ -57,7 +57,7 @@ public interface ILivingEntity : IEntity
     /// <summary>
     /// Gets the VNums of the effects the entity has.
     /// </summary>
-    public IReadOnlyList<long>? EffectsVNums { get; set; }
+    public IReadOnlyList<short>? EffectsVNums { get; set; }
 
     /// <summary>
     /// Gets the name of the entity. May be null if unknown.
