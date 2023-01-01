@@ -13,6 +13,8 @@ namespace NosSmooth.Packets.Server.Entities;
 /// </summary>
 /// <param name="CardId">The buff card id.</param>
 /// <param name="Level">The buff level.</param>
+[PacketHeader(null, PacketSource.Server)]
+[GenerateSerializer(true)]
 public record StSubPacket
 (
     [PacketIndex(0)]
