@@ -6,16 +6,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
-using NosSmooth.Packets.Converters;
-using NosSmooth.Packets.Errors;
+using NosSmooth.Packets;
 using NosSmooth.PacketSerializer.Abstractions;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
+using NosSmooth.PacketSerializer.Errors;
 using Remora.Results;
 
-namespace NosSmooth.Packets.Packets;
+namespace NosSmooth.PacketSerializer.Packets;
 
 /// <summary>
 /// Repository of packet types for finding information about packets.
@@ -46,13 +44,18 @@ public class PacketTypesRepository : IPacketTypesRepository
     {
         if (!typeof(IPacket).IsAssignableFrom(type))
         {
-            return new ArgumentInvalidError(nameof(type), $"The type has to be assignable to IPacket. {type.FullName} isn't.");
+            return new ArgumentInvalidError
+                (nameof(type), $"The type has to be assignable to IPacket. {type.FullName} isn't.");
         }
 
         var header = type.GetCustomAttribute<PacketHeaderAttribute>();
         if (header is null)
         {
-            return new ArgumentInvalidError(nameof(type), $"Every packet has to specify the header. {type.FullName} didn't.");
+            return new ArgumentInvalidError
+            (
+                nameof(type),
+                $"Every packet has to have a header specified using [PacketHeader] attribute. {type.FullName} doesn't have a header."
+            );
         }
 
         var converterResult = _stringConverterRepository.GetTypeConverter(type);
@@ -62,15 +65,19 @@ public class PacketTypesRepository : IPacketTypesRepository
         }
 
         var info = new PacketInfo(header.Identifier, type, converterResult.Entity);
+        if (type.FullName is not null)
+        {
+            if (_typeToPacket.ContainsKey(type.FullName))
+            { // The packet was already added.
+                return Result.FromSuccess();
+            }
+
+            _typeToPacket[type.FullName] = info;
+        }
 
         if (!_headerToPacket.ContainsKey(header.Source))
         {
             _headerToPacket[header.Source] = new Dictionary<string, PacketInfo>();
-        }
-
-        if (type.FullName is not null)
-        {
-            _typeToPacket[type.FullName] = info;
         }
 
         if (header.Identifier is not null)
