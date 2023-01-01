@@ -46,7 +46,7 @@ public record BsPacket
     [PacketIndex(6)]
     long AttackAnimationId,
     [PacketIndex(7)]
-    long EffectId,
+    long? EffectId,
     [PacketIndex(8)]
     int Unknown1,
     [PacketIndex(9)]
