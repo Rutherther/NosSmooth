@@ -114,6 +114,18 @@ public class InPacketConverterTests
     }
 
     /// <summary>
+    /// Checks that packet with UpgradeRareSubPacket 0 deserializes.
+    /// </summary>
+    [Fact]
+    public void DeserializesPlayerSuccessfully()
+    {
+        var packetString
+            = "in 1 fairy50% - 6893217 140 148 2 0 1 0 9 0 -1.12.1.8.-1.4131.-1.-1.-1.-1 100 100 0 1 4 3 0 42 1 0 0 0 -1 - 1 0 0 0 0 9 0 0|0|0 0 0 10 0 0";
+        var result = _packetSerializer.Deserialize(packetString, PacketSource.Server);
+        Assert.True(result.IsSuccess);
+    }
+
+    /// <summary>
     /// Checks that the converter serializes in player packet correctly.
     /// </summary>
     [Fact]
