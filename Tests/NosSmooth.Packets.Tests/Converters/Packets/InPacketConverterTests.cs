@@ -9,13 +9,13 @@ using Microsoft.Extensions.DependencyInjection;
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Entities;
 using NosSmooth.Packets.Enums.Players;
-using NosSmooth.Packets.Server.Entities;
 using NosSmooth.Packets.Server.Maps;
 using NosSmooth.Packets.Server.Players;
 using NosSmooth.Packets.Server.Weapons;
 using NosSmooth.PacketSerializer;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using NosSmooth.PacketSerializer.Extensions;
+using NosSmooth.PacketSerializer.Packets;
 using Xunit;
 
 namespace NosSmooth.Packets.Tests.Converters.Packets;
@@ -37,6 +37,7 @@ public class InPacketConverterTests
             .BuildServiceProvider();
 
         _packetSerializer = provider.GetRequiredService<IPacketSerializer>();
+        provider.GetRequiredService<IPacketTypesRepository>().AddDefaultPackets();
     }
 
     /// <summary>
