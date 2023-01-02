@@ -8,11 +8,10 @@
         <Description>NosSmooth's packet string serializer implementation.</Description>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>2.0.0</PackageVersion>
-        <PackageReleaseNotes>Move to PacketSerializer namespace.
-Do not try add the same packet twice</PackageReleaseNotes>
-        <AssemblyVersion>2.0.0</AssemblyVersion>
-        <FileVersion>2.0.0</FileVersion>
+        <PackageVersion>2.0.1</PackageVersion>
+        <PackageReleaseNotes>Fix UpgradeRareSubPacket to work with 0.</PackageReleaseNotes>
+        <AssemblyVersion>2.0.1</AssemblyVersion>
+        <FileVersion>2.0.1</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>

@@ -43,7 +43,7 @@ public class UpgradeRareSubPacketConverter : BaseStringConverter<UpgradeRareSubP
             return new CouldNotConvertError(this, token.ToString(), "The string is not two/three characters long.");
         }
 
-        if (token == "0")
+        if (token.Length == 1 && token[0] == '0')
         {
             return Result<UpgradeRareSubPacket?>.FromSuccess(new UpgradeRareSubPacket(0, 0));
         }
