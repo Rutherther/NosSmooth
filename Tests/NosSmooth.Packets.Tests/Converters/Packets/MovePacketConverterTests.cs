@@ -10,6 +10,7 @@ using NosSmooth.Packets.Server.Entities;
 using NosSmooth.PacketSerializer;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using NosSmooth.PacketSerializer.Extensions;
+using NosSmooth.PacketSerializer.Packets;
 using Xunit;
 
 namespace NosSmooth.Packets.Tests.Converters.Packets;

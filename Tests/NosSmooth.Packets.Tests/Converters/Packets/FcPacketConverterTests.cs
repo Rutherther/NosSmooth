@@ -6,12 +6,11 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using NosSmooth.Packets.Enums;
-using NosSmooth.Packets.Extensions;
-using NosSmooth.Packets.Packets;
 using NosSmooth.Packets.Server.Act4;
 using NosSmooth.PacketSerializer;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using NosSmooth.PacketSerializer.Extensions;
+using NosSmooth.PacketSerializer.Packets;
 using Xunit;
 
 namespace NosSmooth.Packets.Tests.Converters.Packets;
