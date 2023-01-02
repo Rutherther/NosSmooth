@@ -6,6 +6,8 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using NosSmooth.PacketSerializer.Abstractions;
+using NosSmooth.PacketSerializer.Converters.Basic;
+using NosSmooth.PacketSerializer.Extensions;
 using Xunit;
 
 namespace NosSmooth.Packets.Tests.Converters.Basic;

@@ -13,7 +13,9 @@ using NosSmooth.Packets.Server.Entities;
 using NosSmooth.Packets.Server.Maps;
 using NosSmooth.Packets.Server.Players;
 using NosSmooth.Packets.Server.Weapons;
+using NosSmooth.PacketSerializer;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
+using NosSmooth.PacketSerializer.Extensions;
 using Xunit;
 
 namespace NosSmooth.Packets.Tests.Converters.Packets;

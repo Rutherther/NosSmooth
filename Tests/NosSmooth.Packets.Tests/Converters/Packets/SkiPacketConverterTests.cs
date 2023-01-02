@@ -8,7 +8,10 @@ using Microsoft.Extensions.DependencyInjection;
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Server.Groups;
 using NosSmooth.Packets.Server.Skills;
+using NosSmooth.PacketSerializer;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
+using NosSmooth.PacketSerializer.Extensions;
+using NosSmooth.PacketSerializer.Packets;
 using Xunit;
 
 namespace NosSmooth.Packets.Tests.Converters.Packets;
