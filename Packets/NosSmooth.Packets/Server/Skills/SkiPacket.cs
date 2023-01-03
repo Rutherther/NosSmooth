@@ -11,6 +11,7 @@ namespace NosSmooth.Packets.Server.Skills;
 /// <summary>
 /// Information about skills, sent when changing sp, map etc.
 /// </summary>
+/// <param name="Unknown">Unknown TODO.</param>
 /// <param name="PrimarySkillVNum">The primary skill vnum.</param>
 /// <param name="SecondarySkillVNum">The secondary skill vnum. (may be same as primary in some cases, like for special cards).</param>
 /// <param name="SkillSubPackets">The rest of the skills.</param>
