@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using FileClient.Responders;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -48,6 +49,7 @@ public static class Program
                 coll.AddNostaleCore()
                     .AddNostaleGame()
                     .AddNostaleDataFiles()
+                    .AddPacketResponder<PacketNotFoundResponder>()
                     .Configure<LanguageServiceOptions>(o => o.Language = Language.Cz)
                     .Configure<NostaleDataOptions>(o => o.SupportedLanguages = new[]
                     {

@@ -9,10 +9,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Handlers" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\..\Core\NosSmooth.Core\NosSmooth.Core.csproj" />
       <ProjectReference Include="..\..\Core\NosSmooth.Game\NosSmooth.Game.csproj" />
       <ProjectReference Include="..\..\Data\NosSmooth.Data.Abstractions\NosSmooth.Data.Abstractions.csproj" />
