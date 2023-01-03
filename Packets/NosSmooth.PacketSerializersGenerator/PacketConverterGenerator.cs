@@ -161,6 +161,13 @@ public override Result<{_packetInfo.Name}?> Deserialize(ref PacketStringEnumerat
     private IError? GenerateDeserializer
         (IndentedTextWriter textWriter)
     {
+        if (_packetInfo.Parameters.List.Count == 0)
+        {
+            textWriter.WriteLine
+                ($"return new {_packetInfo.Name}();");
+            return null;
+        }
+
         _packetInfo.Parameters.CurrentIndex = 0;
         var lastIndex = _packetInfo.Parameters.Current.PacketIndex - 1;
         bool skipped = false;
