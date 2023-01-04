@@ -158,7 +158,7 @@ public class CombatManager : IStatefulEntity
     }
 
     /// <summary>
-    /// Unregister the given cancellation token registered using <see cref="RegisterSkillCancellationToken"/>.
+    /// Unregister the given cancellation token registered using RegisterSkillCancellationToken.
     /// </summary>
     /// <param name="tokenSource">The token source to unregister.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>

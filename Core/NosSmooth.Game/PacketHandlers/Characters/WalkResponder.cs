@@ -60,7 +60,5 @@ public class WalkResponder : IPacketResponder<WalkPacket>
             new EntityMovedEvent(character, oldPosition, character.Position!.Value),
             ct
         );
-
-        return Result.FromSuccess();
     }
 }

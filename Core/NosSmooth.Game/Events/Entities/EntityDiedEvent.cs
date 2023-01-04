@@ -6,7 +6,6 @@
 
 using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Entities;
-using NosSmooth.Game.Events.Characters;
 
 namespace NosSmooth.Game.Events.Entities;
 
@@ -15,6 +14,7 @@ namespace NosSmooth.Game.Events.Entities;
 /// </summary>
 /// <remarks>
 /// Is not emitted for the character, see <see cref="CharacterDiedEvent"/>.
+/// TODO figure CharacterDiedEvent out.
 /// </remarks>
 /// <param name="Entity">The entity that has died.</param>
 /// <param name="KillSkill">The skill that was used to kill the entity, if known.</param>

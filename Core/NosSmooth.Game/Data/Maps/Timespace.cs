@@ -6,4 +6,7 @@
 
 namespace NosSmooth.Game.Data.Maps;
 
+/// <summary>
+/// Information about a TimeSpace.
+/// </summary>
 public record Timespace();

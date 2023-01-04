@@ -7,7 +7,6 @@
 using System.Collections.Concurrent;
 using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Entities;
-using NosSmooth.Packets.Enums;
 
 namespace NosSmooth.Game.Data.Maps;
 

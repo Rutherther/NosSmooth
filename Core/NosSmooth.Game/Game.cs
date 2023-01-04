@@ -5,7 +5,6 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Extensions.Options;
-using NosSmooth.Core.Client;
 using NosSmooth.Core.Stateful;
 using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Maps;

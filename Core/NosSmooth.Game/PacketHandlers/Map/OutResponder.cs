@@ -10,7 +10,6 @@ using NosSmooth.Game.Data.Maps;
 using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.Events.Entities;
 using NosSmooth.Game.Helpers;
-using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Server.Maps;
 using Remora.Results;
 
@@ -51,7 +50,7 @@ public class OutResponder : IPacketResponder<OutPacket>
             (packet.EntityType, packet.EntityId);
 
         var position = entity.Position;
-        if (position is not null)
+        if (entity is Player && position is not null)
         {
             map.IsOnPortal(position.Value, out portal);
         }

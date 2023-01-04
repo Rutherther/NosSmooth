@@ -5,7 +5,7 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using NosSmooth.Game.Data.Info;
-using NosSmooth.Packets.Enums;
+using NosSmooth.Packets.Enums.Entities;
 
 namespace NosSmooth.Game.Data.Entities;
 

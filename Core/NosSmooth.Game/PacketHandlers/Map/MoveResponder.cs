@@ -4,7 +4,6 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Collections.Concurrent;
 using NosSmooth.Core.Packets;
 using NosSmooth.Game.Data.Entities;
 using NosSmooth.Game.Data.Info;
@@ -30,7 +29,7 @@ public class MoveResponder : IPacketResponder<MovePacket>
     }
 
     /// <inheritdoc />
-    public async Task<Result> Respond(PacketEventArgs<MovePacket> packetArgs, CancellationToken ct = default)
+    public Task<Result> Respond(PacketEventArgs<MovePacket> packetArgs, CancellationToken ct = default)
     {
         var packet = packetArgs.Packet;
         var map = _game.CurrentMap;
@@ -38,7 +37,7 @@ public class MoveResponder : IPacketResponder<MovePacket>
         // TODO: store entities somewhere else so we can store them even if the map is still null?
         if (map is null)
         {
-            return Result.FromSuccess();
+            return Task.FromResult(Result.FromSuccess());
         }
 
         var entity = map.Entities.GetEntity<ILivingEntity>(packet.EntityId);
@@ -48,6 +47,6 @@ public class MoveResponder : IPacketResponder<MovePacket>
             entity.Speed = packet.Speed;
         }
 
-        return Result.FromSuccess();
+        return Task.FromResult(Result.FromSuccess());
     }
 }

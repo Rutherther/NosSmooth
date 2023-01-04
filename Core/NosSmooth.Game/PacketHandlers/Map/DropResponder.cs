@@ -12,7 +12,6 @@ using NosSmooth.Game.Data.Entities;
 using NosSmooth.Game.Data.Info;
 using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.Events.Entities;
-using NosSmooth.Packets.Server.Entities;
 using NosSmooth.Packets.Server.Maps;
 using Remora.Results;
 

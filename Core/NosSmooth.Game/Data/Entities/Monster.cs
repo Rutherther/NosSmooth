@@ -6,7 +6,7 @@
 
 using NosSmooth.Data.Abstractions.Infos;
 using NosSmooth.Game.Data.Info;
-using NosSmooth.Packets.Enums;
+using NosSmooth.Packets.Enums.Entities;
 
 namespace NosSmooth.Game.Data.Entities;
 

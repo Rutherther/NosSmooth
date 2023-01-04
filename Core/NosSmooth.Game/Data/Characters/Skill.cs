@@ -13,6 +13,7 @@ namespace NosSmooth.Game.Data.Characters;
 /// </summary>
 /// <param name="SkillVNum">The vnum of the skill.</param>
 /// <param name="Level">The level of the skill. Unknown feature.</param>
+/// <param name="Info">The information obtained from Data assembly.</param>
 public record Skill(int SkillVNum, int? Level = default, ISkillInfo? Info = default)
 {
     /// <summary>

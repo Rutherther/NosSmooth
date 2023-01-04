@@ -13,6 +13,8 @@ namespace NosSmooth.Game.Events.Entities;
 /// An entity has left the map.
 /// </summary>
 /// <param name="Entity">The entity that has left.</param>
+/// <param name="Portal">The portal that was probably used to leave the map. (This may not be accurate, the character may as well have left or )</param>
+/// <param name="Died">Whether the entity has died. (This may not be accurate.)</param>
 public record EntityLeftMapEvent
 (
     IEntity Entity,

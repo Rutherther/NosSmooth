@@ -16,9 +16,9 @@ public class Friend
     /// </summary>
     public long CharacterId { get; internal set; }
 
-    /// <summary>
-    /// The type of the relation.
-    /// </summary>
+    // <summary>
+    // The type of the relation.
+    // </summary>
     // public CharacterRelationType RelationType { get; internal set; }
 
     /// <summary>

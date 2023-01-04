@@ -7,7 +7,6 @@
 using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Entities;
 using NosSmooth.Game.Data.Info;
-using NosSmooth.Packets.Enums.Battle;
 
 namespace NosSmooth.Game.Events.Battle;
 

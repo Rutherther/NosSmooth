@@ -35,7 +35,7 @@ public class SuResponder : IPacketResponder<SuPacket>, IPacketResponder<BsPacket
     {
         if (packetArgs.Packet.CasterEntityId == _game.Character?.Id)
         {
-            _combatManager.CancelSkillTokensAsync(ct);
+            Task.Run(() => _combatManager.CancelSkillTokensAsync(default));
         }
         return Task.FromResult(Result.FromSuccess());
     }
@@ -45,7 +45,7 @@ public class SuResponder : IPacketResponder<SuPacket>, IPacketResponder<BsPacket
     {
         if (packetArgs.Packet.CasterEntityId == _game.Character?.Id)
         {
-            _combatManager.CancelSkillTokensAsync(ct);
+            Task.Run(() => _combatManager.CancelSkillTokensAsync(default));
         }
         return Task.FromResult(Result.FromSuccess());
     }

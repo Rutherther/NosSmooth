@@ -8,4 +8,7 @@ using Remora.Results;
 
 namespace NosSmooth.Extensions.Combat.Errors;
 
+/// <summary>
+/// The combat technique set target to null, the combat cannot continue.
+/// </summary>
 public record TargetNotSetError() : ResultError("The current target is not set, the operation cannot complete.");

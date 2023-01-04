@@ -9,7 +9,7 @@ using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Entities;
 using NosSmooth.Game.Errors;
 using NosSmooth.Packets.Client.Battle;
-using NosSmooth.Packets.Enums;
+using NosSmooth.Packets.Enums.Entities;
 using Remora.Results;
 
 namespace NosSmooth.Game.Apis;
@@ -35,7 +35,7 @@ public class NostaleSkillsPacketApi
     /// </summary>
     /// <remarks>
     /// For skills that can be used only on self, use <paramref name="entityId"/> of the character.
-    /// For skills that cannot be targeted on an entity, proceed to <see cref="UseSkillAt"/>.
+    /// For skills that cannot be targeted on an entity, proceed to UseSkillAt.
     /// </remarks>
     /// <param name="castId">The cast id of the skill.</param>
     /// <param name="entityId">The id of the entity to use the skill on.</param>
@@ -72,8 +72,8 @@ public class NostaleSkillsPacketApi
     /// Use the given (targetable) skill on specified entity.
     /// </summary>
     /// <remarks>
-    /// For skills that can be used only on self, use <paramref name="entityId"/> of the character.
-    /// For skills that cannot be targeted on an entity, proceed to <see cref="UseSkillAt"/>.
+    /// For skills that can be used only on self, use <paramref name="entity"/> of the character.
+    /// For skills that cannot be targeted on an entity, proceed to UseSkillAt.
     /// </remarks>
     /// <param name="castId">The cast id of the skill.</param>
     /// <param name="entity">The entity to use the skill on.</param>
@@ -109,8 +109,8 @@ public class NostaleSkillsPacketApi
     /// </summary>
     /// <remarks>
     /// The skill won't be used if it is on cooldown.
-    /// For skills that can be used only on self, use <paramref name="entityId"/> of the character.
-    /// For skills that cannot be targeted on an entity, proceed to <see cref="UseSkillAt"/>.
+    /// For skills that can be used only on self, use <paramref name="entity"/> of the character.
+    /// For skills that cannot be targeted on an entity, proceed to UseSkillAt.
     /// </remarks>
     /// <param name="skill">The skill to use.</param>
     /// <param name="entity">The entity to use the skill on.</param>
@@ -156,7 +156,7 @@ public class NostaleSkillsPacketApi
     /// </summary>
     /// <remarks>
     /// For skills that can be used only on self, use <paramref name="entityId"/> of the character.
-    /// For skills that cannot be targeted on an entity, proceed to <see cref="UseSkillAt"/>.
+    /// For skills that cannot be targeted on an entity, proceed to UseSkillAt.
     /// </remarks>
     /// <param name="skill">The skill to use.</param>
     /// <param name="entityId">The id of the entity to use the skill on.</param>
@@ -203,7 +203,7 @@ public class NostaleSkillsPacketApi
     /// Use the given (aoe) skill on the specified place.
     /// </summary>
     /// <remarks>
-    /// For skills that can have targets, proceed to <see cref="UseSkillOn"/>.
+    /// For skills that can have targets, proceed to UseSkillOn.
     /// </remarks>
     /// <param name="skillVNum">The id of the skill.</param>
     /// <param name="mapX">The x coordinate to use the skill at.</param>
@@ -229,7 +229,7 @@ public class NostaleSkillsPacketApi
     /// Use the given (aoe) skill on the specified place.
     /// </summary>
     /// <remarks>
-    /// For skills that can have targets, proceed to <see cref="UseSkillOn"/>.
+    /// For skills that can have targets, proceed to UseSkillOn.
     /// </remarks>
     /// <param name="skill">The skill to use.</param>
     /// <param name="mapX">The x coordinate to use the skill at.</param>

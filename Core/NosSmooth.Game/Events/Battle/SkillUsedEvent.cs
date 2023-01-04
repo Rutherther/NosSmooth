@@ -17,7 +17,6 @@ namespace NosSmooth.Game.Events.Battle;
 /// <param name="Caster">The caster entity of the skill.</param>
 /// <param name="Target">The target entity of the skill.</param>
 /// <param name="Skill">The skill that has been used with the information about the skill.</param>
-/// <param name="SkillVNum">The vnum of the skill.</param>
 /// <param name="TargetPosition">The position of the target.</param>
 /// <param name="Hit"></param>
 /// <param name="Damage"></param>

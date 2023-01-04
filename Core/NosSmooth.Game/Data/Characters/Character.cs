@@ -8,8 +8,6 @@ using NosSmooth.Game.Data.Chat;
 using NosSmooth.Game.Data.Entities;
 using NosSmooth.Game.Data.Info;
 using NosSmooth.Game.Data.Social;
-using NosSmooth.Packets.Enums;
-using NosSmooth.Packets.Enums.Players;
 
 namespace NosSmooth.Game.Data.Characters;
 

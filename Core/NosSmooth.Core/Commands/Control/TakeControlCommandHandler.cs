@@ -57,7 +57,7 @@ internal class TakeControlCommandHandler : ICommandHandler<TakeControlCommand>
                 {
                     source.Cancel();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // ignored
                 }

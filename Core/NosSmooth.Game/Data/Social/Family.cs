@@ -10,8 +10,10 @@ namespace NosSmooth.Game.Data.Social;
 /// Represents nostale family entity.
 /// </summary>
 /// <param name="Id">The id of the family.</param>
+/// <param name="Title">The family's title.</param>
 /// <param name="Name">The name of the family.</param>
 /// <param name="Level">The level of the entity.</param>
+/// <param name="Icons">What icons the family has activated.</param>
 public record Family
 (
     string? Id,

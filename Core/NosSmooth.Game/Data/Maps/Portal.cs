@@ -15,6 +15,8 @@ namespace NosSmooth.Game.Data.Maps;
 /// <param name="PortalId">The portal id.</param>
 /// <param name="Position">The position of the portal.</param>
 /// <param name="TargetMapId">The id of the target map.</param>
+/// <param name="PortalType">The visual type of the portal.</param>
+/// <param name="IsDisabled">Whether the portal is disabled (locked) and thus cannot be used.</param>
 public record Portal
 (
     long PortalId,

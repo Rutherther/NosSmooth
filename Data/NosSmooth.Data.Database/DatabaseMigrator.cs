@@ -82,7 +82,7 @@ public class DatabaseMigrator
         return Result.FromSuccess();
     }
 
-    private async Task<Result> MigrateTranslations(NostaleDataContext context, NostaleData data)
+    private Task<Result> MigrateTranslations(NostaleDataContext context, NostaleData data)
     {
         foreach (var languageTranslation in data.Translations)
         {
@@ -102,7 +102,7 @@ public class DatabaseMigrator
             }
         }
 
-        return Result.FromSuccess();
+        return Task.FromResult(Result.FromSuccess());
     }
 
     private Task<Result> MigrateItems(NostaleDataContext dbContext, NostaleData data)

@@ -13,6 +13,11 @@ namespace NosSmooth.Game.Data.Maps;
 /// <summary>
 /// Represents nostale map.
 /// </summary>
+/// <param name="Id">The id of the map.</param>
+/// <param name="Type">The type of the map.</param>
+/// <param name="Info">The information about the map obtained from data assembly.</param>
+/// <param name="Entities">The entities on the map.</param>
+/// <param name="Portals">The portals on the map.</param>
 public record Map
 (
     long Id,

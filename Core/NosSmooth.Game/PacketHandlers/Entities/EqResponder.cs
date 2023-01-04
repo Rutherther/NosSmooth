@@ -7,9 +7,8 @@
 using NosSmooth.Core.Packets;
 using NosSmooth.Data.Abstractions;
 using NosSmooth.Game.Data.Entities;
-using NosSmooth.Game.Data.Items;
 using NosSmooth.Game.Helpers;
-using NosSmooth.Packets.Server.Entities;
+using NosSmooth.Packets.Server.Inventory;
 using Remora.Results;
 
 namespace NosSmooth.Game.PacketHandlers.Entities;

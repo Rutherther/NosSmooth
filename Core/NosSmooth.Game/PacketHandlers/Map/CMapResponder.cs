@@ -4,12 +4,10 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using NosSmooth.Core.Extensions;
 using NosSmooth.Core.Packets;
 using NosSmooth.Data.Abstractions;
-using NosSmooth.Game.Data.Entities;
 using NosSmooth.Game.Data.Maps;
 using NosSmooth.Packets.Server.Maps;
 using Remora.Results;

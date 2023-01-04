@@ -30,11 +30,11 @@ public class AtResponder : IPacketResponder<AtPacket>
     }
 
     /// <inheritdoc />
-    public Task<Result> Respond(PacketEventArgs<AtPacket> packetArgs, CancellationToken ct = default)
+    public async Task<Result> Respond(PacketEventArgs<AtPacket> packetArgs, CancellationToken ct = default)
     {
         var packet = packetArgs.Packet;
 
-        _game.CreateOrUpdateCharacterAsync
+        await _game.CreateOrUpdateCharacterAsync
         (
             () => new Character()
             {
@@ -45,9 +45,10 @@ public class AtResponder : IPacketResponder<AtPacket>
             {
                 c.Position = new Position(packet.X, packet.Y);
                 return c;
-            }
+            },
+            ct: ct
         );
 
-        return Task.FromResult(Result.FromSuccess());
+        return Result.FromSuccess();
     }
 }

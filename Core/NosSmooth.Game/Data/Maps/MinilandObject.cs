@@ -6,4 +6,7 @@
 
 namespace NosSmooth.Game.Data.Maps;
 
+/// <summary>
+/// An object in miniland.
+/// </summary>
 public record MinilandObject();

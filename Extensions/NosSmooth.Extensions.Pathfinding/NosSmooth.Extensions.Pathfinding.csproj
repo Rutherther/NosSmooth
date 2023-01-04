@@ -23,6 +23,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Core\NosSmooth.Core\NosSmooth.Core.csproj" />
+      <ProjectReference Include="..\..\Data\NosSmooth.Data.Abstractions\NosSmooth.Data.Abstractions.csproj" />
     </ItemGroup>
 
 </Project>
