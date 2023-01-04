@@ -5,6 +5,7 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Extensions.Logging;
+using NosSmooth.Core.Extensions;
 using NosSmooth.Core.Packets;
 using NosSmooth.Packets;
 using Remora.Results;
@@ -38,6 +39,7 @@ public class PacketNotFoundResponder : IPacketResponder<UnresolvedPacket>, IPack
     public Task<Result> Respond(PacketEventArgs<ParsingFailedPacket> packetArgs, CancellationToken ct = default)
     {
         _logger.LogWarning($"Could not parse packet {packetArgs.PacketString}");
+        _logger.LogResultError(packetArgs.Packet.SerializerResult);
         return Task.FromResult(Result.FromSuccess());
     }
 }

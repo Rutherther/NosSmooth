@@ -71,7 +71,8 @@ public class App : BackgroundService
         if (!runResult.IsSuccess)
         {
             _logger.LogResultError(runResult);
-            await _lifetime.StopAsync(default);
         }
+
+        await _lifetime.StopAsync(default);
     }
 }

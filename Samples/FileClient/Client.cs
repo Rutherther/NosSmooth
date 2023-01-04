@@ -62,7 +62,7 @@ public class Client : BaseNostaleClient
         {
             stopRequested.ThrowIfCancellationRequested();
             var line = await reader.ReadLineAsync();
-            if (line is null)
+            if (string.IsNullOrEmpty(line))
             {
                 continue;
             }

@@ -36,7 +36,7 @@ public static class Program
     public static async Task Main(string[] args)
     {
         await using FileStream stream = File.OpenRead(string.Join(' ', args));
-        await CreateHost(stream).StartAsync();
+        await CreateHost(stream).RunAsync();
     }
 
     private static IHost CreateHost(Stream fileStream)
