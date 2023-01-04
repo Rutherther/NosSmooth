@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using NosSmooth.Packets.Server.Weapons;
 using NosSmooth.PacketSerializer.Abstractions;
 using NosSmooth.PacketSerializer.Abstractions.Errors;
@@ -24,7 +25,8 @@ public class UpgradeRareSubPacketConverter : BaseStringConverter<UpgradeRareSubP
             builder.Append('-');
             return Result.FromSuccess();
         }
-        builder.Append($"{obj.Upgrade}{obj.Rare}");
+        var rare = obj.Rare != 0 ? obj.Rare.ToString() : string.Empty;
+        builder.Append($"{obj.Upgrade}{rare}");
         return Result.FromSuccess();
     }
 
@@ -43,12 +45,12 @@ public class UpgradeRareSubPacketConverter : BaseStringConverter<UpgradeRareSubP
             return new CouldNotConvertError(this, token.ToString(), "The string is not two/three characters long.");
         }
 
-        if (token.Length == 1 && token[0] == '0')
+        if (token.Length == 2 && token.StartsWith("10"))
         {
-            return Result<UpgradeRareSubPacket?>.FromSuccess(new UpgradeRareSubPacket(0, 0));
+            return Result<UpgradeRareSubPacket?>.FromSuccess(new UpgradeRareSubPacket(10, 0));
         }
 
-        var upgradeString = token.Slice(0, token.Length - 1);
+        var upgradeString = token.Slice(0, Math.Max(1, token.Length - 1));
         var rareString = token.Slice(token.Length - 1);
 
         if (!byte.TryParse(upgradeString, out var upgrade))
@@ -56,7 +58,8 @@ public class UpgradeRareSubPacketConverter : BaseStringConverter<UpgradeRareSubP
             return new CouldNotConvertError(this, upgradeString.ToString(), "Could not parse as byte");
         }
 
-        if (!sbyte.TryParse(rareString, out var rare))
+        sbyte rare = 0;
+        if (token.Length > 1 && !sbyte.TryParse(rareString, out rare))
         {
             return new CouldNotConvertError(this, rareString.ToString(), "Could not parse as byte");
         }
