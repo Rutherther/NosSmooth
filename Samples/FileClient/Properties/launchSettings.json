@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FileClient": {
+      "commandName": "Project",
+      "commandLineArgs": "D:\\Shared\\Documents\\my_projects\\cheats\\NosSmooth\\Samples\\FileClient\\bin\\Debug\\net7.0\\gf_login"
+    }
+  }
+}
