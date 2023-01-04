@@ -17,7 +17,6 @@ public ref struct PacketStringEnumerator
     private readonly ReadOnlySpan<char> _data;
     private readonly Dictionary<char, ushort> _numberOfSeparators;
     private EnumeratorLevel _currentLevel;
-    private (char Separator, uint? MaxTokens)? _preparedLevel;
     private bool _currentTokenRead;
     private PacketToken _currentToken;
     private bool _readToLast;
@@ -37,7 +36,6 @@ public ref struct PacketStringEnumerator
         _numberOfSeparators = new Dictionary<char, ushort>();
         _numberOfSeparators.Add(separator, 1);
         _currentToken = new PacketToken(default, default, default, default);
-        _preparedLevel = null;
         _readToLast = false;
         _currentTokenRead = false;
     }
@@ -70,7 +68,7 @@ public ref struct PacketStringEnumerator
     /// <param name="maxTokens">The maximum number of tokens for the level.</param>
     public void PrepareLevel(char separator, uint? maxTokens = null)
     {
-        _preparedLevel = (separator, maxTokens);
+        _currentLevel.PreparedLevel = (separator, maxTokens);
     }
 
     /// <summary>
@@ -78,7 +76,7 @@ public ref struct PacketStringEnumerator
     /// </summary>
     public void RemovePreparedLevel()
     {
-        _preparedLevel = null;
+        _currentLevel.PreparedLevel = null;
     }
 
     /// <summary>
@@ -87,23 +85,24 @@ public ref struct PacketStringEnumerator
     /// <returns>Whether there is a prepared level present.</returns>
     public bool PushPreparedLevel()
     {
-        if (_preparedLevel is null)
+        var preparedLevel = _currentLevel.PreparedLevel;
+        if (preparedLevel is null)
         {
             return false;
         }
 
         _currentTokenRead = false;
-        _currentLevel = new EnumeratorLevel(_currentLevel, _preparedLevel.Value.Separator, _preparedLevel.Value.MaxTokens)
+        _currentLevel = new EnumeratorLevel(_currentLevel, preparedLevel.Value.Separator, preparedLevel.Value.MaxTokens)
         {
             ReachedEnd = _currentLevel.ReachedEnd
         };
 
-        if (!_numberOfSeparators.ContainsKey(_preparedLevel.Value.Separator))
+        if (!_numberOfSeparators.ContainsKey(preparedLevel.Value.Separator))
         {
-            _numberOfSeparators.Add(_preparedLevel.Value.Separator, 0);
+            _numberOfSeparators.Add(preparedLevel.Value.Separator, 0);
         }
 
-        _numberOfSeparators[_preparedLevel.Value.Separator]++;
+        _numberOfSeparators[preparedLevel.Value.Separator]++;
         return true;
     }
 
@@ -118,7 +117,6 @@ public ref struct PacketStringEnumerator
     /// <param name="maxTokens">The maximum number of tokens to read.</param>
     public void PushLevel(char separator, uint? maxTokens = default)
     {
-        _preparedLevel = null;
         _currentTokenRead = false;
         _currentLevel = new EnumeratorLevel(_currentLevel, separator, maxTokens)
         {
@@ -367,5 +365,7 @@ public ref struct PacketStringEnumerator
         public uint TokensRead { get; set; }
 
         public bool? ReachedEnd { get; set; }
+
+        public (char Separator, uint? MaxTokens)? PreparedLevel { get; set; }
     }
 }
