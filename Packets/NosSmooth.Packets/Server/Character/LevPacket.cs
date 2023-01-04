@@ -6,7 +6,7 @@
 
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 
-namespace NosSmooth.Packets.Server.Players;
+namespace NosSmooth.Packets.Server.Character;
 
 /// <summary>
 /// Sent on map change.

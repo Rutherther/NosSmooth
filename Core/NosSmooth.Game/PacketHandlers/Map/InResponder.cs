@@ -10,13 +10,11 @@ using NosSmooth.Core.Packets;
 using NosSmooth.Data.Abstractions;
 using NosSmooth.Game.Data.Entities;
 using NosSmooth.Game.Data.Info;
-using NosSmooth.Game.Data.Items;
 using NosSmooth.Game.Data.Social;
 using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.Events.Entities;
 using NosSmooth.Game.Helpers;
-using NosSmooth.Packets.Enums;
-using NosSmooth.Packets.Server.Entities;
+using NosSmooth.Packets.Enums.Entities;
 using NosSmooth.Packets.Server.Maps;
 using Remora.Results;
 

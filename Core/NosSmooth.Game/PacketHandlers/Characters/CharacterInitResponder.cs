@@ -10,7 +10,7 @@ using NosSmooth.Game.Data.Info;
 using NosSmooth.Game.Data.Social;
 using NosSmooth.Game.Events.Characters;
 using NosSmooth.Game.Events.Core;
-using NosSmooth.Packets.Server.Players;
+using NosSmooth.Packets.Server.Character;
 using Remora.Results;
 
 namespace NosSmooth.Game.PacketHandlers.Characters;

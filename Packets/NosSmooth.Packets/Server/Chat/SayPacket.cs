@@ -6,6 +6,7 @@
 
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Chat;
+using NosSmooth.Packets.Enums.Entities;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 
 namespace NosSmooth.Packets.Server.Chat;

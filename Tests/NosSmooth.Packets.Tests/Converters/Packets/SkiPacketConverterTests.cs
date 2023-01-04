@@ -5,8 +5,6 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Extensions.DependencyInjection;
-using NosSmooth.Packets.Enums;
-using NosSmooth.Packets.Server.Groups;
 using NosSmooth.Packets.Server.Skills;
 using NosSmooth.PacketSerializer;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;

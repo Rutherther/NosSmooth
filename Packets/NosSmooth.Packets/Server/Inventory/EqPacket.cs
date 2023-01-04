@@ -4,13 +4,12 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Players;
 using NosSmooth.Packets.Server.Maps;
 using NosSmooth.Packets.Server.Weapons;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 
-namespace NosSmooth.Packets.Server.Entities;
+namespace NosSmooth.Packets.Server.Inventory;
 
 /// <summary>
 /// Player

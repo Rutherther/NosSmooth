@@ -5,8 +5,9 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using NosSmooth.Packets.Enums;
+using NosSmooth.Packets.Enums.Entities;
 using NosSmooth.Packets.Enums.Players;
-using NosSmooth.Packets.Server.Players;
+using NosSmooth.Packets.Server.Character;
 using NosSmooth.Packets.Server.Weapons;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 
@@ -84,7 +85,7 @@ public record InPlayerSubPacket
     [PacketIndex(14)]
     byte Unknown2,
     [PacketIndex(15)]
-    byte Unknown3,
+    short Unknown3,
     [PacketIndex(16)]
     UpgradeRareSubPacket WeaponUpgradeRareSubPacket,
     [PacketIndex(17)]

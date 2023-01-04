@@ -5,11 +5,9 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualBasic;
 using NosSmooth.Core.Extensions;
 using NosSmooth.Core.Packets;
 using NosSmooth.Data.Abstractions;
-using NosSmooth.Data.Abstractions.Enums;
 using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Entities;
 using NosSmooth.Game.Data.Info;
@@ -19,8 +17,7 @@ using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.Events.Entities;
 using NosSmooth.Game.Extensions;
 using NosSmooth.Game.Helpers;
-using NosSmooth.Packets.Client.Battle;
-using NosSmooth.Packets.Enums;
+using NosSmooth.Packets.Enums.Entities;
 using NosSmooth.Packets.Server.Battle;
 using NosSmooth.Packets.Server.Skills;
 using Remora.Results;
