@@ -44,8 +44,6 @@ public class CharacterInitResponder : IPacketResponder<CInfoPacket>, IPacketResp
         (
             () => new Character
             {
-                Family = new Family(packet.FamilyId, null, packet.FamilyName, packet.FamilyLevel, null),
-                Group = new Group(packet.GroupId, default, default),
                 Id = packet.CharacterId,
                 Name = packet.Name,
                 Authority = packet.Authority,
@@ -69,18 +67,42 @@ public class CharacterInitResponder : IPacketResponder<CInfoPacket>, IPacketResp
                 character.Class = packet.Class;
                 character.Icon = packet.Icon;
                 character.Compliment = packet.Compliment;
-                character.Group = (character.Group ?? new Group(packet.GroupId, null, null)) with
-                {
-                    Id = packet.GroupId
-                };
                 character.Morph = (character.Morph ?? new Morph(packet.MorphVNum, packet.MorphUpgrade)) with
                 {
                     VNum = packet.MorphVNum, Upgrade = packet.MorphUpgrade
                 };
                 character.ArenaWinner = packet.ArenaWinner;
                 character.IsInvisible = packet.IsInvisible;
-                character.Family = new Family(packet.FamilyId, null, packet.FamilyName, packet.FamilyLevel, null);
                 return character;
+            },
+            ct: ct
+        );
+
+        await _game.CreateOrUpdateGroupAsync
+        (
+            () => new Group(packet.GroupId, null, null),
+            g => g with
+            {
+                Id = packet.GroupId
+            },
+            ct: ct
+        );
+
+        await _game.CreateOrUpdateFamilyAsync
+        (
+            () => new Family
+            (
+                packet.FamilyId,
+                null,
+                packet.FamilyName,
+                packet.FamilyLevel,
+                null
+            ),
+            f => f with
+            {
+                Id = packet.FamilyId,
+                Name = packet.FamilyName,
+                Level = packet.FamilyLevel
             },
             ct: ct
         );

@@ -63,7 +63,7 @@ public class AoeSkillUsedResponder : IPacketResponder<BsPacket>
 
         if (caster is Character character)
         {
-            var skillResult = character.Skills?.TryGetSkillByVNum(packet.SkillVNum);
+            var skillResult = _game.Skills?.TryGetSkillByVNum(packet.SkillVNum);
             if (skillResult?.IsSuccess ?? false)
             {
                 skillEntity = skillResult.Value.Entity;

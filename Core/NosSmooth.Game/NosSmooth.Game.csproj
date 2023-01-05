@@ -18,7 +18,6 @@ Create Character in At responder if needed.</PackageReleaseNotes>
 
     <ItemGroup>
       <Folder Include="Apis" />
-      <Folder Include="Events\Players" />
     </ItemGroup>
 
     <ItemGroup>

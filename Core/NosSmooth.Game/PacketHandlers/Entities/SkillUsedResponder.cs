@@ -82,9 +82,10 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
         }
 
         Skill? skillEntity;
-        if (packet.SkillVNum is not null && caster is Character character && character.Skills is not null)
+        var skills = _game.Skills;
+        if (packet.SkillVNum is not null && caster is Character character && skills is not null)
         {
-            var skillResult = character.Skills.TryGetSkillByVNum(packet.SkillVNum.Value);
+            var skillResult = skills.TryGetSkillByVNum(packet.SkillVNum.Value);
 
             if (skillResult.IsDefined(out skillEntity))
             {
@@ -159,17 +160,19 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
     public async Task<Result> Respond(PacketEventArgs<SrPacket> packetArgs, CancellationToken ct = default)
     {
         var packet = packetArgs.Packet;
-        var character = _game.Character;
 
-        if (character is not null && character.Skills is not null)
+        var skills = _game.Skills;
+        if (skills is not null)
         {
-            var skillResult = character.Skills.TryGetSkillByCastId(packet.SkillId);
+            var skillResult = skills.TryGetSkillByCastId(packet.SkillId);
 
             if (skillResult.IsDefined(out var skillEntity))
             {
                 skillEntity.IsOnCooldown = false;
-                await _eventDispatcher.DispatchEvent(new SkillReadyEvent(skillEntity, skillEntity.SkillVNum), ct);
             }
+
+            await _eventDispatcher.DispatchEvent
+                (new SkillReadyEvent(skillEntity, skillEntity?.SkillVNum ?? packet.SkillId), ct);
         }
         else
         {

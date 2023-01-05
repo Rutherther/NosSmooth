@@ -87,7 +87,7 @@ public class SimpleAttackTechnique : ICombatTechnique
 
         if (_currentSkill is null)
         {
-            var skills = character.Skills;
+            var skills = state.Game.Skills;
             if (skills is null)
             {
                 return new CharacterNotInitializedError("Skills");

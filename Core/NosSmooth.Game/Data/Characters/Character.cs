@@ -17,26 +17,6 @@ namespace NosSmooth.Game.Data.Characters;
 public class Character : Player
 {
     /// <summary>
-    /// Gets or sets the inventory of the character.
-    /// </summary>
-    public Inventory.Inventory? Inventory { get; set; }
-
-    /// <summary>
-    /// Get or sets the friends of the character.
-    /// </summary>
-    public IReadOnlyList<Friend>? Friends { get; set; }
-
-    /// <summary>
-    /// Gets or sets the skills of the player.
-    /// </summary>
-    public Skills? Skills { get; set; }
-
-    /// <summary>
-    /// Gets or sets the group the player is in.
-    /// </summary>
-    public Group? Group { get; set; }
-
-    /// <summary>
     /// Gets or sets the c skill points.
     /// </summary>
     public int? SkillCp { get; set; }

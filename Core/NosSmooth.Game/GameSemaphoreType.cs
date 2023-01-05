@@ -12,17 +12,42 @@ namespace NosSmooth.Game;
 public enum GameSemaphoreType
 {
     /// <summary>
-    /// The semaphore for the character.
+    /// The semaphore for character.
     /// </summary>
     Character,
 
     /// <summary>
-    /// The semaphore for the map.
+    /// The semaphore for inventory.
+    /// </summary>
+    Inventory,
+
+    /// <summary>
+    /// The semaphore for friends.
+    /// </summary>
+    Friends,
+
+    /// <summary>
+    /// The semaphore for family.
+    /// </summary>
+    Family,
+
+    /// <summary>
+    /// The semaphore for group.
+    /// </summary>
+    Group,
+
+    /// <summary>
+    /// The semaphore for skills.
+    /// </summary>
+    Skills,
+
+    /// <summary>
+    /// The semaphore for map.
     /// </summary>
     Map,
 
     /// <summary>
-    /// The semaphore for the raid.
+    /// The semaphore for raid.
     /// </summary>
     Raid
 }

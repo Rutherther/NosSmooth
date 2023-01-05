@@ -65,13 +65,8 @@ public record UsePrimarySkillOperation(ILivingEntity Target) : ICombatOperation
 
     private Result<Skill> GetPrimarySkill(ICombatState combatState)
     {
-        var character = combatState.Game.Character;
-        if (character is null)
-        {
-            return new CharacterNotInitializedError();
-        }
+        var skills = combatState.Game.Skills;
 
-        var skills = character.Skills;
         if (skills is null)
         {
             return new CharacterNotInitializedError("Skills");

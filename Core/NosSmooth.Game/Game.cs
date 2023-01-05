@@ -7,8 +7,11 @@
 using Microsoft.Extensions.Options;
 using NosSmooth.Core.Stateful;
 using NosSmooth.Game.Data.Characters;
+using NosSmooth.Game.Data.Chat;
+using NosSmooth.Game.Data.Inventory;
 using NosSmooth.Game.Data.Maps;
 using NosSmooth.Game.Data.Raids;
+using NosSmooth.Game.Data.Social;
 
 namespace NosSmooth.Game;
 
@@ -41,6 +44,31 @@ public class Game : IStatefulEntity
     public Character? Character { get; internal set; }
 
     /// <summary>
+    /// Gets or sets the inventory of the character.
+    /// </summary>
+    public Inventory? Inventory { get; internal set; }
+
+    /// <summary>
+    /// Get or sets the friends of the character.
+    /// </summary>
+    public IReadOnlyList<Friend>? Friends { get; internal set; }
+
+    /// <summary>
+    /// Gets or sets the skills of the player.
+    /// </summary>
+    public Skills? Skills { get; internal set; }
+
+    /// <summary>
+    /// Gets or sets the family.
+    /// </summary>
+    public Family? Family { get; internal set; }
+
+    /// <summary>
+    /// Gets or sets the group the player is in.
+    /// </summary>
+    public Group? Group { get; internal set; }
+
+    /// <summary>
     /// Gets the current map of the client.
     /// </summary>
     /// <remarks>
@@ -49,10 +77,7 @@ public class Game : IStatefulEntity
     public Map? CurrentMap
     {
         get => _currentMap;
-        internal set
-        {
-            _currentMap = value;
-        }
+        internal set { _currentMap = value; }
     }
 
     /// <summary>
@@ -62,6 +87,134 @@ public class Game : IStatefulEntity
     /// May be null if there is no raid in progress.
     /// </remarks>
     public Raid? CurrentRaid { get; internal set; }
+
+    /// <summary>
+    /// Creates the skills if they are null, or updates the current skills.
+    /// </summary>
+    /// <param name="create">The function for creating the skills.</param>
+    /// <param name="update">The function for updating the skills.</param>
+    /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the skills.</param>
+    /// <param name="ct">The cancellation token for cancelling the operation.</param>
+    /// <returns>The updated skills.</returns>
+    internal async Task<Skills> CreateOrUpdateSkillsAsync
+    (
+        Func<Skills> create,
+        Func<Skills, Skills> update,
+        bool releaseSemaphore = true,
+        CancellationToken ct = default
+    )
+    {
+        return await CreateOrUpdateAsync
+        (
+            GameSemaphoreType.Skills,
+            () => Skills,
+            s => Skills = s,
+            create,
+            update,
+            releaseSemaphore,
+            ct
+        );
+    }
+
+    /// <summary>
+    /// Creates the inventory if it is null, or updates the current inventory.
+    /// </summary>
+    /// <param name="create">The function for creating the inventory.</param>
+    /// <param name="update">The function for updating the inventory.</param>
+    /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the inventory.</param>
+    /// <param name="ct">The cancellation token for cancelling the operation.</param>
+    /// <returns>The updated inventory.</returns>
+    internal async Task<Inventory> CreateOrUpdateInventoryAsync
+    (
+        Func<Inventory> create,
+        Func<Inventory, Inventory> update,
+        bool releaseSemaphore = true,
+        CancellationToken ct = default
+    )
+    {
+        return await CreateOrUpdateAsync
+        (
+            GameSemaphoreType.Inventory,
+            () => Inventory,
+            i => Inventory = i,
+            create,
+            update,
+            releaseSemaphore,
+            ct
+        );
+    }
+
+    /// <summary>
+    /// Creates the family if it is null, or updates the current family.
+    /// </summary>
+    /// <param name="create">The function for creating the family.</param>
+    /// <param name="update">The function for updating the family.</param>
+    /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the family.</param>
+    /// <param name="ct">The cancellation token for cancelling the operation.</param>
+    /// <returns>The updated family.</returns>
+    internal async Task<Family> CreateOrUpdateFamilyAsync
+    (
+        Func<Family> create,
+        Func<Family, Family> update,
+        bool releaseSemaphore = true,
+        CancellationToken ct = default
+    )
+    {
+        var family = await CreateOrUpdateAsync
+        (
+            GameSemaphoreType.Family,
+            () => Family,
+            c => Family = c,
+            create,
+            update,
+            releaseSemaphore,
+            ct
+        );
+
+        await CreateOrUpdateCharacterAsync
+        (
+            () => new Character
+            {
+                Family = family
+            },
+            c =>
+            {
+                c.Family = family;
+                return c;
+            },
+            ct: ct
+        );
+
+        return family;
+    }
+
+    /// <summary>
+    /// Creates the group if it is null, or updates the current group.
+    /// </summary>
+    /// <param name="create">The function for creating the group.</param>
+    /// <param name="update">The function for updating the group.</param>
+    /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the group.</param>
+    /// <param name="ct">The cancellation token for cancelling the operation.</param>
+    /// <returns>The updated group.</returns>
+    internal async Task<Group> CreateOrUpdateGroupAsync
+    (
+        Func<Group> create,
+        Func<Group, Group> update,
+        bool releaseSemaphore = true,
+        CancellationToken ct = default
+    )
+    {
+        return await CreateOrUpdateAsync
+        (
+            GameSemaphoreType.Group,
+            () => Group,
+            c => Group = c,
+            create,
+            update,
+            releaseSemaphore,
+            ct
+        );
+    }
 
     /// <summary>
     /// Creates the character if it is null, or updates the current character.
