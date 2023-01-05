@@ -64,6 +64,14 @@ public class StringConverterRepository : IStringConverterRepository
             type,
             (getType) =>
             {
+                var converterType = typeof(IStringConverter<>).MakeGenericType(type);
+                var serviceConverter = (IStringConverter?)_serviceProvider.GetService(converterType);
+
+                if (serviceConverter is not null)
+                { // prefer specific converter to generated one.
+                    return Result<IStringConverter?>.FromSuccess(serviceConverter);
+                }
+
                 foreach (var converterFactory in ConverterFactories)
                 {
                     if (converterFactory.ShouldHandle(getType))
@@ -78,9 +86,7 @@ public class StringConverterRepository : IStringConverterRepository
                     }
                 }
 
-                var converterType = typeof(IStringConverter<>).MakeGenericType(type);
-                return Result<IStringConverter?>.FromSuccess
-                    ((IStringConverter?)_serviceProvider.GetService(converterType));
+                return Result<IStringConverter?>.FromSuccess(null);
             }
         );
 
