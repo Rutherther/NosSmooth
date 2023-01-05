@@ -40,10 +40,13 @@ public class ItemInfo : IItemInfo
     public TranslatableString Name { get; set; }
 
     /// <inheritdoc />
-    public int Type { get; set; }
+    public ItemType Type { get; set; }
 
     /// <inheritdoc />
     public int SubType { get; set; }
+
+    /// <inheritdoc />
+    public EquipmentSlot? EquipmentSlot { get; set; }
 
     /// <inheritdoc />
     public BagType BagType { get; set; }

@@ -113,6 +113,7 @@ public class DatabaseMigrator
             {
                 BagType = item.BagType,
                 Data = item.Data,
+                EquipmentSlot = item.EquipmentSlot,
                 NameKey = item.Name.Key,
                 SubType = item.SubType,
                 Type = item.Type,

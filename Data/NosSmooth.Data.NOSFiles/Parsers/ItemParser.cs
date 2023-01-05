@@ -33,6 +33,34 @@ public class ItemParser : IInfoParser<IItemInfo>
 
             var vnum = item.GetEntry("VNUM").Read<int>(1);
             var nameKey = item.GetEntry("NAME").Read<string>(1);
+
+            var bagTypeData = item.GetEntry("INDEX").Read<int>(1);
+            var bagType = bagTypeData switch
+            {
+                4 or 8 => BagType.Equipment,
+                9 => BagType.Main,
+                10 => BagType.Etc,
+                _ => (BagType)bagTypeData
+            };
+
+            var itemTypeData = indexEntry.Read<int>(2);
+            var itemType = itemTypeData switch
+            {
+                -1 => ItemType.None,
+                _ => Enum.Parse<ItemType>($"{(int)bagType}{itemTypeData}")
+            };
+
+            var equipmentSlotData = indexEntry.Read<int>(4);
+            EquipmentSlot? equipmentSlot = null;
+            if (bagType is BagType.Equipment && equipmentSlotData != -1)
+            {
+                equipmentSlot = (EquipmentSlot)equipmentSlotData;
+            }
+            else if (bagType is BagType.Specialist)
+            {
+                equipmentSlot = EquipmentSlot.Sp;
+            }
+
             result.Add
             (
                 vnum,
@@ -40,9 +68,10 @@ public class ItemParser : IInfoParser<IItemInfo>
                 (
                     vnum,
                     new TranslatableString(TranslationRoot.Item, nameKey),
-                    indexEntry.Read<int>(2),
+                    itemType,
                     indexEntry.Read<int>(3),
-                    (BagType)indexEntry.Read<int>(1),
+                    equipmentSlot,
+                    bagType,
                     item.GetEntry("DATA").GetValues()
                 )
             );
@@ -55,8 +84,9 @@ public class ItemParser : IInfoParser<IItemInfo>
         (
             int VNum,
             TranslatableString Name,
-            int Type,
+            ItemType Type,
             int SubType,
+            EquipmentSlot? EquipmentSlot,
             BagType BagType,
             string[] Data
         )

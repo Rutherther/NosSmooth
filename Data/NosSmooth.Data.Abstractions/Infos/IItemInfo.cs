@@ -20,14 +20,19 @@ public interface IItemInfo : IVNumInfo
     TranslatableString Name { get; }
 
     /// <summary>
-    /// Gets the type of the item. TODO UNKNOWN.
+    /// Gets the type of the item.
     /// </summary>
-    int Type { get; }
+    ItemType Type { get; }
 
     /// <summary>
     /// Gets the subtype of the item. TODO UNKNOWN.
     /// </summary>
     int SubType { get; }
+
+    /// <summary>
+    /// Gets the equipment slot the item goes to, if any.
+    /// </summary>
+    EquipmentSlot? EquipmentSlot { get; }
 
     /// <summary>
     /// Gets the bag the item belongs to.

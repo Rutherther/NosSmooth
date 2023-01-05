@@ -7,9 +7,11 @@
         <LangVersion>10</LangVersion>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>2.0.0</PackageVersion>
+        <PackageVersion>2.1.0</PackageVersion>
         <TargetFramework>net7.0</TargetFramework>
-        <PackageReleaseNotes>Make Monster level ushort</PackageReleaseNotes>
+        <PackageReleaseNotes>Add item type and equipment slot enums.</PackageReleaseNotes>
+        <AssemblyVersion>2.1.0</AssemblyVersion>
+        <FileVersion>2.1.0</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>
