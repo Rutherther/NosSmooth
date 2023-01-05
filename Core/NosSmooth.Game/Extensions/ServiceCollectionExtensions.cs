@@ -9,8 +9,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using NosSmooth.Core.Extensions;
 using NosSmooth.Game.Apis;
 using NosSmooth.Game.Events.Core;
+using NosSmooth.Game.Events.Inventory;
 using NosSmooth.Game.PacketHandlers.Characters;
 using NosSmooth.Game.PacketHandlers.Entities;
+using NosSmooth.Game.PacketHandlers.Inventory;
 using NosSmooth.Game.PacketHandlers.Map;
 using NosSmooth.Game.PacketHandlers.Specialists;
 
@@ -39,6 +41,7 @@ public static class ServiceCollectionExtensions
             .AddPacketResponder<SkillResponder>()
             .AddPacketResponder<WalkResponder>()
             .AddPacketResponder<SkillUsedResponder>()
+            .AddPacketResponder<InventoryInitResponder>()
             .AddPacketResponder<AoeSkillUsedResponder>()
             .AddPacketResponder<AtResponder>()
             .AddPacketResponder<CMapResponder>()

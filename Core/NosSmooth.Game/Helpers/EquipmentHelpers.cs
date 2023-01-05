@@ -89,7 +89,8 @@ public static class EquipmentHelpers
             itemVNum.Value,
             itemInfo.IsSuccess ? itemInfo.Entity : null,
             upgradeRareSubPacket?.Upgrade,
-            upgradeRareSubPacket?.Rare
+            upgradeRareSubPacket?.Rare,
+            null
         );
     }
 }

@@ -1,12 +1,14 @@
 ﻿//
-//  Bag.cs
+//  InventorySlot.cs
 //
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using NosSmooth.Game.Data.Items;
+
 namespace NosSmooth.Game.Data.Inventory;
 
 /// <summary>
-/// Represents one bag in the inventory of the player.
+/// Represents item in bag inventory of the character.
 /// </summary>
-public record Bag();
+public record InventorySlot(short Slot, short Amount, Item? Item);

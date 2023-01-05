@@ -15,4 +15,5 @@ namespace NosSmooth.Game.Data.Items;
 /// <param name="Info">The information about the item.</param>
 /// <param name="Upgrade">The upgrade (0 - 10).</param>
 /// <param name="Rare">The rare nubmer (0 - 8).</param>
-public record UpgradeableItem(int ItemVNum, IItemInfo? Info, byte? Upgrade, sbyte? Rare) : Item(ItemVNum, Info);
+/// <param name="RuneCount">The number of runes.</param>
+public record UpgradeableItem(int ItemVNum, IItemInfo? Info, byte? Upgrade, sbyte? Rare, int? RuneCount) : Item(ItemVNum, Info);
