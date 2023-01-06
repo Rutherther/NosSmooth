@@ -14,13 +14,14 @@ namespace NosSmooth.Packets.Server.Groups;
 /// <remarks>
 /// Contains pet and group information.
 /// </remarks>
-/// <param name="GroupSize">The size of the group.</param>
+/// <param name="SubPacketsCount">The number of sub packets.</param>
 /// <param name="PinitSubPackets">The members of the group. (including pet and partner, if any)</param>
 [GenerateSerializer(true)]
 [PacketHeader("pinit", PacketSource.Server)]
 public record PinitPacket
 (
-    [PacketIndex(0)] int GroupSize,
+    [PacketIndex(0)]
+    byte SubPacketsCount,
     [PacketListIndex(1, ListSeparator = ' ', InnerSeparator = '|', IsOptional = true)]
     IReadOnlyList<PinitSubPacket>? PinitSubPackets
 ) : IPacket;

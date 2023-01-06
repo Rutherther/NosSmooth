@@ -6,6 +6,8 @@
 
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Entities;
+using NosSmooth.Packets.Enums.Mates;
+using NosSmooth.Packets.Enums.Players;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using NosSmooth.PacketSerializer.Abstractions.Common;
 
@@ -17,16 +19,8 @@ namespace NosSmooth.Packets.Server.Groups;
 /// </summary>
 /// <param name="EntityType">The type of the entity.</param>
 /// <param name="EntityId">The id of the entity.</param>
-/// <param name="GroupPosition">The position in the group.</param>
-/// <param name="Level">The level of the entity.</param>
-/// <param name="Name">The name of the entity.</param>
-/// <param name="Unknown">Unknown.</param>
-/// <param name="VNum">The VNum of the pet for pets.</param>
-/// <param name="Race">The race of the entity.</param>
-/// <param name="MorphVNum">The morph of the entity.</param>
-/// <param name="HeroLevel">The hero level of the entity.</param>
-/// <param name="Unknown1">Unknown.</param>
-/// <param name="Unknown2">Unknown.</param>
+/// <param name="MateSubPacket">Present for pets and partners.</param>
+/// <param name="PlayerSubPacket">Present for players.</param>
 [GenerateSerializer(true)]
 [PacketHeader(null, PacketSource.Server)]
 public record PinitSubPacket
@@ -35,24 +29,8 @@ public record PinitSubPacket
     EntityType EntityType,
     [PacketIndex(1)]
     long EntityId,
-    [PacketIndex(2)]
-    int GroupPosition,
-    [PacketIndex(3)]
-    byte Level,
-    [PacketIndex(4)]
-    NameString? Name,
-    [PacketIndex(5)]
-    int? Unknown,
-    [PacketIndex(6)]
-    long VNum,
-    [PacketIndex(7)]
-    short Race,
-    [PacketIndex(8)]
-    short MorphVNum,
-    [PacketConditionalIndex(9, "EntityType", false, EntityType.Player)]
-    byte? HeroLevel,
-    [PacketConditionalIndex(10, "EntityType", false, EntityType.Player)]
-    int? Unknown1,
-    [PacketConditionalIndex(11, "EntityType", false, EntityType.Player)]
-    int? Unknown2
+    [PacketConditionalIndex(2, "EntityType", false, EntityType.Npc, InnerSeparator = '|')]
+    PinitMateSubPacket? MateSubPacket,
+    [PacketConditionalIndex(3, "EntityType", false, EntityType.Player, InnerSeparator = '|')]
+    PinitPlayerSubPacket? PlayerSubPacket
 ) : IPacket;
