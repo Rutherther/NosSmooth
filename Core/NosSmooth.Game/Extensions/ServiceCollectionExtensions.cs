@@ -42,6 +42,7 @@ public static class ServiceCollectionExtensions
             .AddPacketResponder<PlayerSkillResponder>()
             .AddPacketResponder<WalkResponder>()
             .AddPacketResponder<SkillUsedResponder>()
+            .AddPacketResponder<FriendInitResponder>()
             .AddPacketResponder<InventoryInitResponder>()
             .AddPacketResponder<GroupInitResponder>()
             .AddPacketResponder<AoeSkillUsedResponder>()

@@ -189,6 +189,34 @@ public class Game : IStatefulEntity
     }
 
     /// <summary>
+    /// Creates the friends if it is null, or updates the current friends.
+    /// </summary>
+    /// <param name="create">The function for creating the friends.</param>
+    /// <param name="update">The function for updating the friends.</param>
+    /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the friends.</param>
+    /// <param name="ct">The cancellation token for cancelling the operation.</param>
+    /// <returns>The updated friends.</returns>
+    internal async Task<IReadOnlyList<Friend>?> CreateOrUpdateFriendsAsync
+    (
+        Func<IReadOnlyList<Friend>?> create,
+        Func<IReadOnlyList<Friend>, IReadOnlyList<Friend>?> update,
+        bool releaseSemaphore = true,
+        CancellationToken ct = default
+    )
+    {
+        return await CreateOrUpdateAsync
+        (
+            GameSemaphoreType.Friends,
+            () => Friends,
+            c => Friends = c,
+            create,
+            update,
+            releaseSemaphore,
+            ct
+        );
+    }
+
+    /// <summary>
     /// Creates the group if it is null, or updates the current group.
     /// </summary>
     /// <param name="create">The function for creating the group.</param>
