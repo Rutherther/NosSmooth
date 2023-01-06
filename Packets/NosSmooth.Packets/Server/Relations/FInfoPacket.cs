@@ -5,17 +5,23 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
+using NosSmooth.PacketSerializer.Abstractions.Common;
 
 namespace NosSmooth.Packets.Server.Relations;
 
 /// <summary>
-/// Information about friends of a character.
+/// Information update of friend of a character.
 /// </summary>
-/// <param name="FriendSubPackets">The friends list.</param>
-[PacketHeader("finfo", PacketSource.Server)]
+/// <param name="PlayerId">The id of the friend.</param>
+/// <param name="IsConnected">Whether the friend is connected.</param>
+/// <param name="Name">The name of the friend.</param>[PacketHeader("finfo", PacketSource.Server)]
 [GenerateSerializer(true)]
 public record FInfoPacket
 (
-    [PacketListIndex(0, InnerSeparator = '.', ListSeparator = ' ')]
-    IReadOnlyList<FInfoSubPacket> FriendSubPackets
+    [PacketIndex(0)]
+    long PlayerId,
+    [PacketIndex(1)]
+    bool IsConnected,
+    [PacketIndex(2)]
+    NameString Name
 ) : IPacket;
