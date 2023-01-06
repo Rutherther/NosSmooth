@@ -1,5 +1,5 @@
 ﻿//
-//  StSubPacket.cs
+//  EffectsSubPacket.cs
 //
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -15,10 +15,10 @@ namespace NosSmooth.Packets.Server.Entities;
 /// <param name="Level">The buff level.</param>
 [PacketHeader(null, PacketSource.Server)]
 [GenerateSerializer(true)]
-public record StSubPacket
+public record EffectsSubPacket
 (
     [PacketIndex(0)]
-    short CardId,
+    long CardId,
     [PacketIndex(1, IsOptional = true)]
     short? Level
 ) : IPacket;

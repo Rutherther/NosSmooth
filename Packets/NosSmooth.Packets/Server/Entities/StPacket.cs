@@ -43,5 +43,5 @@ public record StPacket
     [PacketIndex(7)]
     long Mp,
     [PacketListIndex(8, ListSeparator = ' ', InnerSeparator = '.', IsOptional = true)]
-    IReadOnlyList<StSubPacket>? BuffVNums
+    IReadOnlyList<EffectsSubPacket>? BuffVNums
 ) : IPacket;
