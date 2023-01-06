@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics;
 using NosSmooth.Core.Packets;
 using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Info;
@@ -54,6 +55,11 @@ public class WalkResponder : IPacketResponder<WalkPacket>
             },
             ct: ct
         );
+
+        if (character is null)
+        {
+            throw new UnreachableException();
+        }
 
         return await _eventDispatcher.DispatchEvent
         (

@@ -1,5 +1,5 @@
 ﻿//
-//  SkillResponder.cs
+//  PlayerSkillResponder.cs
 //
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -19,26 +19,26 @@ namespace NosSmooth.Game.PacketHandlers.Characters;
 /// <summary>
 /// Responds to SkiPacket to add skill to the character.
 /// </summary>
-public class SkillResponder : IPacketResponder<SkiPacket>
+public class PlayerSkillResponder : IPacketResponder<SkiPacket>
 {
     private readonly Game _game;
     private readonly EventDispatcher _eventDispatcher;
     private readonly IInfoService _infoService;
-    private readonly ILogger<SkillResponder> _logger;
+    private readonly ILogger<PlayerSkillResponder> _logger;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SkillResponder"/> class.
+    /// Initializes a new instance of the <see cref="PlayerSkillResponder"/> class.
     /// </summary>
     /// <param name="game">The nostale game.</param>
     /// <param name="eventDispatcher">The event dispatcher.</param>
     /// <param name="infoService">The info service.</param>
     /// <param name="logger">The logger.</param>
-    public SkillResponder
+    public PlayerSkillResponder
     (
         Game game,
         EventDispatcher eventDispatcher,
         IInfoService infoService,
-        ILogger<SkillResponder> logger
+        ILogger<PlayerSkillResponder> logger
     )
     {
         _game = game;

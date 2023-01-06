@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics;
 using NosSmooth.Core.Packets;
 using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Info;
@@ -80,7 +81,7 @@ public class CharacterInitResponder : IPacketResponder<CInfoPacket>, IPacketResp
 
         await _game.CreateOrUpdateGroupAsync
         (
-            () => new Group(packet.GroupId, null, null),
+            () => new Group(packet.GroupId, null),
             g => g with
             {
                 Id = packet.GroupId
@@ -106,6 +107,11 @@ public class CharacterInitResponder : IPacketResponder<CInfoPacket>, IPacketResp
             },
             ct: ct
         );
+
+        if (character is null)
+        {
+            throw new UnreachableException();
+        }
 
         if (character != oldCharacter)
         {
@@ -142,6 +148,11 @@ public class CharacterInitResponder : IPacketResponder<CInfoPacket>, IPacketResp
             },
             ct: ct
         );
+
+        if (character is null)
+        {
+            throw new UnreachableException();
+        }
 
         if (character != oldCharacter)
         {
@@ -181,6 +192,11 @@ public class CharacterInitResponder : IPacketResponder<CInfoPacket>, IPacketResp
             },
             ct: ct
         );
+
+        if (character is null)
+        {
+            throw new UnreachableException();
+        }
 
         if (oldCharacter != character)
         {

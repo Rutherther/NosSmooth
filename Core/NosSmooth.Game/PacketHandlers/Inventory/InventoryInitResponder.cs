@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using NosSmooth.Core.Extensions;
 using NosSmooth.Core.Packets;
@@ -91,6 +92,11 @@ public class InventoryInitResponder : IPacketResponder<InvPacket>, IPacketRespon
             ct: ct
         );
 
+        if (inventory is null)
+        {
+            throw new UnreachableException();
+        }
+
         if (packet.Bag == Packets.Enums.Inventory.BagType.Costume)
         {
             // last bag initialized. TODO solve race condition.
@@ -160,6 +166,11 @@ public class InventoryInitResponder : IPacketResponder<InvPacket>, IPacketRespon
             },
             ct: ct
         );
+
+        if (inventory is null)
+        {
+            throw new UnreachableException();
+        }
 
         return await _eventDispatcher.DispatchEvent
         (
