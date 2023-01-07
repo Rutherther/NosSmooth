@@ -16,10 +16,6 @@ Move Friends, Group, Family, Inventory to Game</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Apis" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\..\Data\NosSmooth.Data.Abstractions\NosSmooth.Data.Abstractions.csproj" />
       <ProjectReference Include="..\NosSmooth.Core\NosSmooth.Core.csproj" />
     </ItemGroup>
