@@ -96,7 +96,7 @@ public class ListInlineConverterGenerator : IInlineConverterGenerator
     private string GetMethodName(ITypeSymbol genericArgumentType)
     {
         return
-            $"ParseList{genericArgumentType.ToString().TrimEnd('?').Replace('.', '_')}{((genericArgumentType.IsNullable() ?? false) ? "Nullable" : string.Empty)}";
+            $"ParseList{genericArgumentType.ToString().TrimEnd('?').Replace('.', '_').Replace('<', '_').Replace('>', '_')}{((genericArgumentType.IsNullable() ?? false) ? "Nullable" : string.Empty)}";
     }
 
     /// <inheritdoc />
