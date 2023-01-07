@@ -13,4 +13,4 @@ namespace NosSmooth.Packets.Client.Movement;
 /// </summary>
 [PacketHeader("preq", PacketSource.Server)]
 [GenerateSerializer(true)]
-public record PreqPacket : IPacket;
+public record PreqPacket() : IPacket;
