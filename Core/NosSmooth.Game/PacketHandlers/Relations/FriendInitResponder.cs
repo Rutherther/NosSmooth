@@ -63,7 +63,7 @@ public class FriendInitResponder : IPacketResponder<FInfoPacket>, IPacketRespond
         var friends = packet.FriendSubPackets
             .Select
             (
-                x => new Friend(x.PlayerId, x.RelationType ?? CharacterRelationType.Blocked)
+                x => new Friend(x.PlayerId, x.RelationType)
                 {
                     PlayerId = x.PlayerId,
                     CharacterName = x.Name,
