@@ -7,6 +7,7 @@
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Server.Character;
 using NosSmooth.Packets.Server.Maps;
+using NosSmooth.PacketSerializer.Abstractions;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using NosSmooth.PacketSerializer.Abstractions.Common;
 
@@ -73,13 +74,13 @@ public record ScNPacket
     [PacketIndex(5)]
     long Experience,
     [PacketIndex(6, InnerSeparator = '.')]
-    ScNEquipmentSubPacket? WeaponSubPacket,
+    NullableWrapper<ScNEquipmentSubPacket> WeaponSubPacket,
     [PacketIndex(7, InnerSeparator = '.')]
-    ScNEquipmentSubPacket? ArmorSubPacket,
+    NullableWrapper<ScNEquipmentSubPacket> ArmorSubPacket,
     [PacketIndex(8, InnerSeparator = '.')]
-    ScNEquipmentSubPacket? GauntletSubPacket,
+    NullableWrapper<ScNEquipmentSubPacket> GauntletSubPacket,
     [PacketIndex(9, InnerSeparator = '.')]
-    ScNEquipmentSubPacket? BootsSubPacket,
+    NullableWrapper<ScNEquipmentSubPacket> BootsSubPacket,
     [PacketIndex(10, InnerSeparator = '.')]
     short Unknown1,
     [PacketIndex(11)]
@@ -133,11 +134,11 @@ public record ScNPacket
     [PacketIndex(35)]
     bool IsSummonable,
     [PacketIndex(36, InnerSeparator = '.')]
-    ScNSpSubPacket? SpSubPacket,
+    NullableWrapper<ScNSpSubPacket> SpSubPacket,
     [PacketIndex(37, InnerSeparator = '.')]
-    ScNSkillSubPacket? Skill1SubPacket,
+    NullableWrapper<ScNSkillSubPacket> Skill1SubPacket,
     [PacketIndex(38, InnerSeparator = '.')]
-    ScNSkillSubPacket? Skill2SubPacket,
+    NullableWrapper<ScNSkillSubPacket> Skill2SubPacket,
     [PacketIndex(39, InnerSeparator = '.')]
-    ScNSkillSubPacket? Skill3SubPacket
+    NullableWrapper<ScNSkillSubPacket> Skill3SubPacket
 ) : IPacket;

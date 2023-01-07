@@ -20,7 +20,7 @@ namespace NosSmooth.Packets.Server.Mates;
 public record ScNSpSubPacket
 (
     [PacketIndex(0)]
-    long? ItemVNum,
-    [PacketIndex(1, IsOptional = true)]
-    byte? AgilityPercentage
+    long ItemVNum,
+    [PacketIndex(1)]
+    byte AgilityPercentage
 );
