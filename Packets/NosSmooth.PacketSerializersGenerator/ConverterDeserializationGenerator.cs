@@ -188,7 +188,7 @@ if ({nullableVariableName} is null) {{
     public void DeserializeAndCheck(ParameterInfo parameter, PacketInfo packet, InlineTypeConverterGenerator inlineTypeConverter)
     {
         _textWriter.WriteLine($"var {parameter.GetResultVariableName()} = ");
-        inlineTypeConverter.CallDeserialize(_textWriter, packet);
+        inlineTypeConverter.CallDeserialize(_textWriter, packet, parameter.Nullable);
 
         _textWriter.WriteLine($"if (!{parameter.GetResultVariableName()}.IsSuccess)");
         _textWriter.Indent++;

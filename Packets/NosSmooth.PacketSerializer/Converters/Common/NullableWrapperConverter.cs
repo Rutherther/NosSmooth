@@ -28,9 +28,9 @@ public class NullableWrapperConverter<T> : BaseStringConverter<NullableWrapper<T
     }
 
     /// <inheritdoc />
-    public override Result Serialize(NullableWrapper<T>? obj, PacketStringBuilder builder)
+    public override Result Serialize(NullableWrapper<T> obj, PacketStringBuilder builder)
     {
-        if (obj is null || obj.Value is null)
+        if (obj.Value is null)
         {
             builder.Append("-1");
         }
@@ -49,29 +49,29 @@ public class NullableWrapperConverter<T> : BaseStringConverter<NullableWrapper<T
     }
 
     /// <inheritdoc />
-    public override Result<NullableWrapper<T>?> Deserialize(ref PacketStringEnumerator stringEnumerator)
+    public override Result<NullableWrapper<T>> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
     {
         var tokenResult = stringEnumerator.GetNextToken(out var packetToken, false);
         if (!tokenResult.IsSuccess)
         {
-            return Result<NullableWrapper<T>?>.FromError(tokenResult);
+            return Result<NullableWrapper<T>>.FromError(tokenResult);
         }
 
         if (packetToken.Token.Length == 2 && packetToken.Token.StartsWith("-1"))
         {
-            return Result<NullableWrapper<T>?>.FromSuccess(new NullableWrapper<T>(default));
+            return Result<NullableWrapper<T>>.FromSuccess(new NullableWrapper<T>(default));
         }
 
         var converterResult = _converterRepository.GetTypeConverter<T>();
         if (!converterResult.IsDefined(out var converter))
         {
-            return Result<NullableWrapper<T>?>.FromError(converterResult);
+            return Result<NullableWrapper<T>>.FromError(converterResult);
         }
 
-        var deserializationResult = converter.Deserialize(ref stringEnumerator);
+        var deserializationResult = converter.Deserialize(ref stringEnumerator, new DeserializeOptions(true));
         if (!deserializationResult.IsDefined(out var deserialization))
         {
-            return Result<NullableWrapper<T>?>.FromError(deserializationResult);
+            return Result<NullableWrapper<T>>.FromError(deserializationResult);
         }
 
         return new NullableWrapper<T>(deserialization);

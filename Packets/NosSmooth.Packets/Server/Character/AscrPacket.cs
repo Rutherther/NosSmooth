@@ -42,5 +42,5 @@ public record AscrPacket
     [PacketIndex(7)]
     int DieGroup,
     [PacketIndex(8)]
-    AscrPacketType? Type
+    AscrPacketType Type
 ) : IPacket;

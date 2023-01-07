@@ -42,9 +42,9 @@ public class BoolInlineConverterGenerator : IInlineConverterGenerator
     }
 
     /// <inheritdoc />
-    public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol)
+    public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol, bool nullable)
     {
-        textWriter.WriteLine($"{Constants.HelperClass}.ParseBool(ref stringEnumerator);");
+        textWriter.WriteLine($"{Constants.HelperClass}.ParseBool(ref stringEnumerator, {nullable.ToString().ToLower()});");
         return null;
     }
 
@@ -52,7 +52,7 @@ public class BoolInlineConverterGenerator : IInlineConverterGenerator
     public void GenerateHelperMethods(IndentedTextWriter textWriter)
     {
         textWriter.WriteLine(@"
-public static Result<bool?> ParseBool(ref PacketStringEnumerator stringEnumerator)
+public static Result<bool?> ParseBool(ref PacketStringEnumerator stringEnumerator, bool nullable)
 {{
     var tokenResult = stringEnumerator.GetNextToken(out var packetToken);
     if (!tokenResult.IsSuccess)
@@ -61,9 +61,12 @@ public static Result<bool?> ParseBool(ref PacketStringEnumerator stringEnumerato
     }}
 
     var token = packetToken.Token;
-    if (token.Length == 2 && token.StartsWith(""-1""))
+    if (nullable)
     {{
-        return Result<bool?>.FromSuccess(null);
+        if (token.Length == 2 && token.StartsWith(""-1""))
+        {{
+            return Result<bool?>.FromSuccess(null);
+        }}
     }}
 
     return token[0] == '1' ? true : false;

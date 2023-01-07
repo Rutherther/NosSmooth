@@ -41,8 +41,9 @@ public interface IInlineConverterGenerator
     /// <param name="textWriter">The text writer to write to.</param>
     /// <param name="typeSyntax">The type syntax.</param>
     /// <param name="typeSymbol">The type symbol.</param>
+    /// <param name="nullable">Whether the parameter is nullable.</param>
     /// <returns>An error, if any.</returns>
-    public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol);
+    public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol, bool nullable);
 
     /// <summary>
     /// Generate helper methods to HelperClass.

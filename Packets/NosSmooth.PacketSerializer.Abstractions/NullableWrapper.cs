@@ -17,7 +17,7 @@ namespace NosSmooth.PacketSerializer.Abstractions;
 /// <param name="Value">The value.</param>
 /// <typeparam name="T">The underlying type.</typeparam>
 [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1313:Parameter names should begin with lower-case letter", Justification = "Fix this, this should not happen.")]
-public record NullableWrapper<T>(T? Value)
+public record struct NullableWrapper<T>(T? Value)
 {
     /// <summary>
     /// Unwrap the underlying value.
@@ -27,5 +27,10 @@ public record NullableWrapper<T>(T? Value)
     public static implicit operator T?(NullableWrapper<T> wrapper)
     {
         return wrapper.Value;
+    }
+
+    public static implicit operator NullableWrapper<T>(T? value)
+    {
+        return new NullableWrapper<T>(value);
     }
 }

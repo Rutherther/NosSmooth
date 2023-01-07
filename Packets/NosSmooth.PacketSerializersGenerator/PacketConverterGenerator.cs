@@ -94,7 +94,7 @@ public override Result Serialize({_packetInfo.Name}? obj, PacketStringBuilder bu
 }}
 
 /// <inheritdoc />
-public override Result<{_packetInfo.Name}?> Deserialize(ref PacketStringEnumerator stringEnumerator)
+public override Result<{_packetInfo.Name}?> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
 {{
     var typeConverter = this;
 "

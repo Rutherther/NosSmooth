@@ -31,7 +31,7 @@ public class UpgradeRareSubPacketConverter : BaseStringConverter<UpgradeRareSubP
     }
 
     /// <inheritdoc />
-    public override Result<UpgradeRareSubPacket?> Deserialize(ref PacketStringEnumerator stringEnumerator)
+    public override Result<UpgradeRareSubPacket?> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
     {
         var tokenResult = stringEnumerator.GetNextToken(out var packetToken);
         if (!tokenResult.IsSuccess)

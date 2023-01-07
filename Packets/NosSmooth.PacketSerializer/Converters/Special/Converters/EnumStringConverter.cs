@@ -35,9 +35,9 @@ public class EnumStringConverter<TEnum, TUnderlyingType> : BaseStringConverter<T
     }
 
     /// <inheritdoc />
-    public override Result<TEnum?> Deserialize(ref PacketStringEnumerator stringEnumerator)
+    public override Result<TEnum?> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
     {
-        var result = _serializer.Deserialize<TUnderlyingType>(ref stringEnumerator);
+        var result = _serializer.Deserialize<TUnderlyingType>(ref stringEnumerator, options);
         if (!result.IsSuccess)
         {
             return Result<TEnum?>.FromError(result);

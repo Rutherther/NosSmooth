@@ -24,7 +24,7 @@ public abstract class BasicTypeConverter<TBasicType> : BaseStringConverter<TBasi
     }
 
     /// <inheritdoc />
-    public override Result<TBasicType?> Deserialize(ref PacketStringEnumerator stringEnumerator)
+    public override Result<TBasicType?> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
     {
         var nextTokenResult = stringEnumerator.GetNextToken(out var packetToken);
         if (!nextTokenResult.IsSuccess)
@@ -32,10 +32,13 @@ public abstract class BasicTypeConverter<TBasicType> : BaseStringConverter<TBasi
             return Result<TBasicType?>.FromError(nextTokenResult);
         }
 
-        var nullSymbol = GetNullSymbol();
-        if (packetToken.Token.Length == nullSymbol.Length && packetToken.Token.StartsWith(nullSymbol))
+        if (options.CanBeNull)
         {
-            return Result<TBasicType?>.FromSuccess(default);
+            var nullSymbol = GetNullSymbol();
+            if (packetToken.Token.Length == nullSymbol.Length && packetToken.Token.StartsWith(nullSymbol))
+            {
+                return Result<TBasicType?>.FromSuccess(default);
+            }
         }
 
         return Deserialize(packetToken.Token);

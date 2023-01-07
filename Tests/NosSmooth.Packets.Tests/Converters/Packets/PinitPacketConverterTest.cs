@@ -6,6 +6,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using NosSmooth.Packets.Enums.Entities;
+using NosSmooth.Packets.Enums.Mates;
 using NosSmooth.Packets.Server.Groups;
 using NosSmooth.PacketSerializer;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
@@ -41,11 +42,41 @@ public class PinitPacketConverterTest
     [Fact]
     public void Converter_Serialization_SerializesCorrectly()
     {
-        var packet = new PinitPacket(2, new[]
-        {
-            new PinitSubPacket(EntityType.Npc, 345377, 0, 83, "Kliff", -1, 319, 1, 0, null, null, null),
-            new PinitSubPacket(EntityType.Npc, 345384, 1, 83, "@", -1, 2105, 0, 0, null, null, null)
-        });
+        var packet = new PinitPacket
+        (
+            2,
+            new[]
+            {
+                new PinitSubPacket
+                (
+                    EntityType.Npc,
+                    345377,
+                    new PinitMateSubPacket
+                    (
+                        MateType.Partner,
+                        83,
+                        "Kliff",
+                        null,
+                        319
+                    ),
+                    null
+                ),
+                new PinitSubPacket
+                (
+                    EntityType.Npc,
+                    345384,
+                    new PinitMateSubPacket
+                    (
+                        MateType.Pet,
+                        83,
+                        "@",
+                        null,
+                        2105
+                    ),
+                    null
+                )
+            }
+        );
         var result = _packetSerializer.Serialize(packet);
         Assert.True(result.IsSuccess);
 
@@ -64,10 +95,44 @@ public class PinitPacketConverterTest
 
         var actualPacket = (PinitPacket)result.Entity;
 
-        Assert.Equal(2, actualPacket.GroupSize);
+        Assert.Equal(2, actualPacket.SubPacketsCount);
         Assert.NotNull(actualPacket.PinitSubPackets);
         Assert.Equal(2, actualPacket.PinitSubPackets!.Count);
-        Assert.StrictEqual(new PinitSubPacket(EntityType.Npc, 345377, 0, 83, "Kliff", null, 319, 1, 0, null, null, null), actualPacket.PinitSubPackets[0]);
-        Assert.StrictEqual(new PinitSubPacket(EntityType.Npc, 345384, 1, 83, "@", null, 2105, 0, 0, null, null, null), actualPacket.PinitSubPackets[1]);
+        Assert.StrictEqual
+        (
+            new PinitSubPacket
+            (
+                EntityType.Npc,
+                345377,
+                new PinitMateSubPacket
+                (
+                    MateType.Partner,
+                    83,
+                    "Kliff",
+                    null,
+                    319
+                ),
+                null
+            ),
+            actualPacket.PinitSubPackets[0]
+        );
+        Assert.StrictEqual
+        (
+            new PinitSubPacket
+            (
+                EntityType.Npc,
+                345384,
+                new PinitMateSubPacket
+                (
+                    MateType.Pet,
+                    83,
+                    "@",
+                    null,
+                    2105
+                ),
+                null
+            ),
+            actualPacket.PinitSubPackets[1]
+        );
     }
 }

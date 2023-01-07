@@ -48,12 +48,26 @@ public class StringConverterTests
     /// Tests that the serializer serializes null as -.
     /// </summary>
     [Fact]
-    public void TestsTreatsMinusAsNull()
+    public void TestsTreatsMinusAsNull_IfNullEnabled()
     {
         var deserialize = "-";
         var stringEnumerator = new PacketStringEnumerator(deserialize);
-        var deserializeResult = _stringSerializer.Deserialize<string?>(ref stringEnumerator);
+        var deserializeResult = _stringSerializer.Deserialize<string?>(ref stringEnumerator, DeserializeOptions.Nullable);
         Assert.True(deserializeResult.IsSuccess, !deserializeResult.IsSuccess ? deserializeResult.Error.Message : string.Empty);
         Assert.Null(deserializeResult.Entity);
+    }
+
+    /// <summary>
+    /// Tests that the serializer serializes - as -.
+    /// </summary>
+    [Fact]
+    public void TestsTreatsMinusAsNull_IfNullDisabled()
+    {
+        var deserialize = "-";
+        var stringEnumerator = new PacketStringEnumerator(deserialize);
+        var deserializeResult = _stringSerializer.Deserialize<string?>(ref stringEnumerator, default);
+        Assert.True(deserializeResult.IsSuccess, !deserializeResult.IsSuccess ? deserializeResult.Error.Message : string.Empty);
+        Assert.NotNull(deserializeResult.Entity);
+        Assert.Equal("-", deserializeResult.Entity);
     }
 }

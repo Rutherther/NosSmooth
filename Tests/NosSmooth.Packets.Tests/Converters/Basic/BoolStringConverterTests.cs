@@ -52,7 +52,7 @@ public class BoolStringConverterTests
     {
         var deserialize = "-1";
         var stringEnumerator = new PacketStringEnumerator(deserialize);
-        var deserializeResult = _stringSerializer.Deserialize<bool?>(ref stringEnumerator);
+        var deserializeResult = _stringSerializer.Deserialize<bool?>(ref stringEnumerator, default);
         Assert.True(deserializeResult.IsSuccess, !deserializeResult.IsSuccess ? deserializeResult.Error.Message : string.Empty);
         Assert.Null(deserializeResult.Entity);
     }
@@ -65,7 +65,7 @@ public class BoolStringConverterTests
     {
         var deserialize = "1";
         var stringEnumerator = new PacketStringEnumerator(deserialize);
-        var deserializeResult = _stringSerializer.Deserialize<bool?>(ref stringEnumerator);
+        var deserializeResult = _stringSerializer.Deserialize<bool?>(ref stringEnumerator, default);
         Assert.True(deserializeResult.IsSuccess, !deserializeResult.IsSuccess ? deserializeResult.Error.Message : string.Empty);
         Assert.True(deserializeResult.Entity);
     }
@@ -78,7 +78,7 @@ public class BoolStringConverterTests
     {
         var deserialize = "0";
         var stringEnumerator = new PacketStringEnumerator(deserialize);
-        var deserializeResult = _stringSerializer.Deserialize<bool?>(ref stringEnumerator);
+        var deserializeResult = _stringSerializer.Deserialize<bool?>(ref stringEnumerator, default);
         Assert.True(deserializeResult.IsSuccess, !deserializeResult.IsSuccess ? deserializeResult.Error.Message : string.Empty);
         Assert.False(deserializeResult.Entity);
     }

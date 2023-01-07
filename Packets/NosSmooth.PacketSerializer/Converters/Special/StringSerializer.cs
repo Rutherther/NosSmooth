@@ -25,7 +25,7 @@ public class StringSerializer : IStringSerializer
     }
 
     /// <inheritdoc />
-    public Result<object?> Deserialize(Type parseType, ref PacketStringEnumerator stringEnumerator)
+    public Result<object?> Deserialize(Type parseType, ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
     {
         var converterResult = _converterRepository.GetTypeConverter(parseType);
         if (!converterResult.IsSuccess)
@@ -33,7 +33,7 @@ public class StringSerializer : IStringSerializer
             return Result<object?>.FromError(converterResult);
         }
 
-        var deserializedResult = converterResult.Entity.Deserialize(ref stringEnumerator);
+        var deserializedResult = converterResult.Entity.Deserialize(ref stringEnumerator, options);
         if (!deserializedResult.IsSuccess)
         {
             return Result<object?>.FromError(deserializedResult);
@@ -55,7 +55,7 @@ public class StringSerializer : IStringSerializer
     }
 
     /// <inheritdoc />
-    public Result<TParseType?> Deserialize<TParseType>(ref PacketStringEnumerator stringEnumerator)
+    public Result<TParseType?> Deserialize<TParseType>(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
     {
         var converterResult = _converterRepository.GetTypeConverter<TParseType>();
         if (!converterResult.IsSuccess)
@@ -63,7 +63,7 @@ public class StringSerializer : IStringSerializer
             return Result<TParseType?>.FromError(converterResult);
         }
 
-        return converterResult.Entity.Deserialize(ref stringEnumerator);
+        return converterResult.Entity.Deserialize(ref stringEnumerator, options);
     }
 
     /// <inheritdoc />

@@ -29,7 +29,7 @@ public record GpPacket
     [PacketIndex(2)]
     int TargetMapId,
     [PacketIndex(3)]
-    PortalType? PortalType,
+    PortalType PortalType,
     [PacketIndex(4)]
     long PortalId,
     [PacketIndex(5)]

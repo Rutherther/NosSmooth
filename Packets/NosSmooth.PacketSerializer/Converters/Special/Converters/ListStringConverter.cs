@@ -57,7 +57,7 @@ public class ListStringConverter<TGeneric> : BaseStringConverter<IReadOnlyList<T
     }
 
     /// <inheritdoc />
-    public override Result<IReadOnlyList<TGeneric>?> Deserialize(ref PacketStringEnumerator stringEnumerator)
+    public override Result<IReadOnlyList<TGeneric>?> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
     {
         var list = new List<TGeneric>();
 
@@ -68,7 +68,7 @@ public class ListStringConverter<TGeneric> : BaseStringConverter<IReadOnlyList<T
                 return new ArgumentInvalidError(nameof(stringEnumerator), "The string enumerator has to have a prepared level for all lists.");
             }
 
-            var result = _serializer.Deserialize<TGeneric>(ref stringEnumerator);
+            var result = _serializer.Deserialize<TGeneric>(ref stringEnumerator, default);
 
             // If we know that we are not on the last token in the item level, just skip to the end of the item.
             // Note that if this is the case, then that means the converter is either corrupted

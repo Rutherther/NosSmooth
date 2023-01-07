@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NosSmooth.Packets.Enums.Players;
 using NosSmooth.Packets.Server.Login;
 using NosSmooth.PacketSerializer;
+using NosSmooth.PacketSerializer.Abstractions;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using NosSmooth.PacketSerializer.Extensions;
 using NosSmooth.PacketSerializer.Packets;
@@ -68,7 +69,7 @@ public class CListPacketConverterTests
             string.Empty,
             1,
             1,
-            new[]
+            new NullableWrapper<CListPetSubPacket>[]
             {
                 new CListPetSubPacket(0, 2105),
                 new CListPetSubPacket(0, 319),
@@ -141,7 +142,7 @@ public class CListPacketConverterTests
             string.Empty,
             1,
             1,
-            new[]
+            new NullableWrapper<CListPetSubPacket>[]
             {
                 new CListPetSubPacket(0, 2105),
                 new CListPetSubPacket(0, 319),

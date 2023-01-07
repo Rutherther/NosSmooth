@@ -18,8 +18,9 @@ public interface IStringSerializer
     /// </summary>
     /// <param name="parseType">The type of the object to serialize.</param>
     /// <param name="stringEnumerator">The packet string enumerator with the current position.</param>
+    /// <param name="options">The deserialization options.</param>
     /// <returns>The parsed object or an error.</returns>
-    public Result<object?> Deserialize(Type parseType, ref PacketStringEnumerator stringEnumerator);
+    public Result<object?> Deserialize(Type parseType, ref PacketStringEnumerator stringEnumerator, DeserializeOptions options);
 
     /// <summary>
     /// Serializes the given object to string by appending to the packet string builder.
@@ -35,8 +36,9 @@ public interface IStringSerializer
     /// </summary>
     /// <param name="stringEnumerator">The packet string enumerator with the current position.</param>
     /// <typeparam name="TParseType">The type of the object to serialize.</typeparam>
+    /// <param name="options">The deserialization options.</param>
     /// <returns>The parsed object or an error.</returns>
-    public Result<TParseType?> Deserialize<TParseType>(ref PacketStringEnumerator stringEnumerator);
+    public Result<TParseType?> Deserialize<TParseType>(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options);
 
     /// <summary>
     /// Serializes the given object to string by appending to the packet string builder.

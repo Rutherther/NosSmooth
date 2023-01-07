@@ -25,7 +25,7 @@ public record FInitSubPacket
     [PacketIndex(0)]
     long PlayerId,
     [PacketIndex(1)]
-    CharacterRelationType? RelationType,
+    CharacterRelationType RelationType,
     [PacketIndex(2)]
     bool IsConnected,
     [PacketIndex(3)]
