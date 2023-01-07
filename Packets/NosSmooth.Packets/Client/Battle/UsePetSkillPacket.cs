@@ -16,8 +16,8 @@ namespace NosSmooth.Packets.Client.Battle;
 /// <param name="TargetEntityType">The target entity type.</param>
 /// <param name="TargetId">The target id.</param>
 /// <param name="Unknown">Unknown, seems to always be 1.</param>
-/// <param name="Unknown1">Unknown, 6 for Otter.</param>
-/// <param name="Unknown2">Unknown, 9 for Otter.</param>
+/// <param name="MapX">The x coordinate of the pet.</param>
+/// <param name="MapY">The y coordinate of the pet.</param>
 [PacketHeader("u_pet", PacketSource.Client)]
 [GenerateSerializer(true)]
 public record UsePetSkillPacket
@@ -30,8 +30,8 @@ public record UsePetSkillPacket
     long TargetId,
     [PacketIndex(3)]
     byte Unknown,
-    [PacketIndex(4)]
-    byte Unknown1,
-    [PacketIndex(5)]
-    byte Unknown2
+    [PacketIndex(4, IsOptional = true)]
+    short? MapX,
+    [PacketIndex(5, IsOptional = true)]
+    short? MapY
 ) : IPacket;
