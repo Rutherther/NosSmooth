@@ -29,6 +29,11 @@ public record struct NullableWrapper<T>(T? Value)
         return wrapper.Value;
     }
 
+    /// <summary>
+    /// Wrap the value in nullable wrapper.
+    /// </summary>
+    /// <param name="value">The value to wrap.</param>
+    /// <returns>The wrapped value.</returns>
     public static implicit operator NullableWrapper<T>(T? value)
     {
         return new NullableWrapper<T>(value);
