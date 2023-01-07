@@ -43,7 +43,7 @@ public class NullableStringConverter<T> : BaseStringConverter<Nullable<T>>
     }
 
     /// <inheritdoc />
-    public override Result<T?> Deserialize(ref PacketStringEnumerator stringEnumerator)
+    public override Result<T?> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
     {
         var nextToken = stringEnumerator.GetNextToken(out var packetToken, false);
         if (!nextToken.IsSuccess)
@@ -57,7 +57,7 @@ public class NullableStringConverter<T> : BaseStringConverter<Nullable<T>>
             return Result<T?>.FromSuccess(null);
         }
 
-        var result = _stringSerializer.Deserialize<T>(ref stringEnumerator);
+        var result = _stringSerializer.Deserialize<T>(ref stringEnumerator, new DeserializeOptions(true));
         if (!result.IsSuccess)
         {
             return Result<T?>.FromError(result);

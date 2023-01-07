@@ -49,7 +49,7 @@ public class NullableWrapperConverter<T> : BaseStringConverter<NullableWrapper<T
     }
 
     /// <inheritdoc />
-    public override Result<NullableWrapper<T>?> Deserialize(ref PacketStringEnumerator stringEnumerator)
+    public override Result<NullableWrapper<T>?> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
     {
         var tokenResult = stringEnumerator.GetNextToken(out var packetToken, false);
         if (!tokenResult.IsSuccess)
@@ -68,7 +68,7 @@ public class NullableWrapperConverter<T> : BaseStringConverter<NullableWrapper<T
             return Result<NullableWrapper<T>?>.FromError(converterResult);
         }
 
-        var deserializationResult = converter.Deserialize(ref stringEnumerator);
+        var deserializationResult = converter.Deserialize(ref stringEnumerator, new DeserializeOptions(true));
         if (!deserializationResult.IsDefined(out var deserialization))
         {
             return Result<NullableWrapper<T>?>.FromError(deserializationResult);

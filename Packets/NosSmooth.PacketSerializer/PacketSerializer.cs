@@ -73,7 +73,7 @@ public class PacketSerializer : IPacketSerializer
         }
 
         var packetInfo = packetInfoResult.Entity;
-        var deserializedResult = packetInfo.PacketConverter.Deserialize(ref packetStringEnumerator);
+        var deserializedResult = packetInfo.PacketConverter.Deserialize(ref packetStringEnumerator, default);
         if (!deserializedResult.IsSuccess)
         {
             return Result<IPacket>.FromError(deserializedResult);

@@ -28,9 +28,9 @@ public class StringInlineConverterGenerator : IInlineConverterGenerator
     }
 
     /// <inheritdoc />
-    public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol)
+    public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol, bool nullable)
     {
-        textWriter.WriteLine($"{Constants.HelperClass}.ParseString(ref stringEnumerator);");
+        textWriter.WriteLine($"{Constants.HelperClass}.ParseString(ref stringEnumerator, {nullable.ToString().ToLower()});");
         return null;
     }
 
@@ -40,7 +40,7 @@ public class StringInlineConverterGenerator : IInlineConverterGenerator
         textWriter.WriteLine
         (
             @"
-public static Result<string?> ParseString(ref PacketStringEnumerator stringEnumerator)
+public static Result<string?> ParseString(ref PacketStringEnumerator stringEnumerator, bool nullable)
 {{
     var tokenResult = stringEnumerator.GetNextToken(out var packetToken);
     if (!tokenResult.IsSuccess)
@@ -48,9 +48,12 @@ public static Result<string?> ParseString(ref PacketStringEnumerator stringEnume
         return Result<string?>.FromError(tokenResult);
     }}
 
-    if (packetToken.Token.Length == 1 && packetToken.Token[0] == '-')
+    if (nullable)
     {{
-        return Result<string?>.FromSuccess(null);
+        if (packetToken.Token.Length == 1 && packetToken.Token[0] == '-')
+        {{
+            return Result<string?>.FromSuccess(null);
+        }}
     }}
 
     return packetToken.Token.ToString();

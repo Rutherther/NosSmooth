@@ -28,4 +28,9 @@ public record NullableWrapper<T>(T? Value)
     {
         return wrapper.Value;
     }
+
+    public static implicit operator NullableWrapper<T>(T? value)
+    {
+        return new NullableWrapper<T>(value);
+    }
 }

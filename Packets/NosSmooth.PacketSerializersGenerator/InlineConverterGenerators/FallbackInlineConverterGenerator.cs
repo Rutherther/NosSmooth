@@ -44,11 +44,12 @@ public class FallbackInlineConverterGenerator : IInlineConverterGenerator
     }
 
     /// <inheritdoc />
-    public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol)
+    public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol, bool nullable)
     {
+        var options = nullable ? "DeserializeOptions.Nullable" : "default";
         textWriter.WriteLine
         (
-            $"_stringSerializer.Deserialize<{(typeSyntax?.ToString() ?? typeSymbol!.ToString()).TrimEnd('?')}?>(ref stringEnumerator);"
+            $"_stringSerializer.Deserialize<{(typeSyntax?.ToString() ?? typeSymbol!.ToString()).TrimEnd('?')}?>(ref stringEnumerator, {options});"
         );
         return null;
     }

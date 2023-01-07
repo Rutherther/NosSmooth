@@ -47,7 +47,7 @@ public class BasicInlineConverterGenerator : IInlineConverterGenerator
     }
 
     /// <inheritdoc />
-    public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol)
+    public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol, bool nullable)
     {
         var type = typeSyntax is not null
             ? typeSyntax.ToString().TrimEnd('?')
@@ -57,7 +57,7 @@ public class BasicInlineConverterGenerator : IInlineConverterGenerator
             throw new Exception("TypeSyntax or TypeSymbol has to be non null.");
         }
 
-        textWriter.WriteLine($"{Constants.HelperClass}.ParseBasic{type}(typeConverter, ref stringEnumerator);");
+        textWriter.WriteLine($"{Constants.HelperClass}.ParseBasic{type}(typeConverter, ref stringEnumerator, {nullable.ToString().ToLower()});");
         return null;
     }
 
@@ -67,7 +67,7 @@ public class BasicInlineConverterGenerator : IInlineConverterGenerator
         foreach (var type in HandleTypes)
         {
             textWriter.WriteMultiline($@"
-public static Result<{type}?> ParseBasic{type}(IStringConverter typeConverter, ref PacketStringEnumerator stringEnumerator)
+public static Result<{type}?> ParseBasic{type}(IStringConverter typeConverter, ref PacketStringEnumerator stringEnumerator, bool nullable)
 {{
     var tokenResult = stringEnumerator.GetNextToken(out var packetToken);
     if (!tokenResult.IsSuccess)
@@ -76,9 +76,12 @@ public static Result<{type}?> ParseBasic{type}(IStringConverter typeConverter, r
     }}
 
     var token = packetToken.Token;
-    if (token.Length == 2 && token.StartsWith(""-1""))
+    if (nullable)
     {{
-        return Result<{type}?>.FromSuccess(null);
+        if (token.Length == 2 && token.StartsWith(""-1""))
+        {{
+            return Result<{type}?>.FromSuccess(null);
+        }}
     }}
 
     if (!{type}.TryParse(token, out var val))

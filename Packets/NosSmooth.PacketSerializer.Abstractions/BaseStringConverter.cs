@@ -19,12 +19,12 @@ public abstract class BaseStringConverter<TParseType> : IStringConverter<TParseT
     public abstract Result Serialize(TParseType? obj, PacketStringBuilder builder);
 
     /// <inheritdoc />
-    public abstract Result<TParseType?> Deserialize(ref PacketStringEnumerator stringEnumerator);
+    public abstract Result<TParseType?> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options);
 
     /// <inheritdoc/>
-    Result<object?> IStringConverter.Deserialize(ref PacketStringEnumerator stringEnumerator)
+    Result<object?> IStringConverter.Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
     {
-        var result = Deserialize(ref stringEnumerator);
+        var result = Deserialize(ref stringEnumerator, options);
         if (!result.IsSuccess)
         {
             return Result<object?>.FromError(result);

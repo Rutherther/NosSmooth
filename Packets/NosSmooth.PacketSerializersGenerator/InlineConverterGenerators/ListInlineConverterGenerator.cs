@@ -76,7 +76,7 @@ public class ListInlineConverterGenerator : IInlineConverterGenerator
     }
 
     /// <inheritdoc />
-    public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol)
+    public IError? CallDeserialize(IndentedTextWriter textWriter, TypeSyntax? typeSyntax, ITypeSymbol? typeSymbol, bool nullable)
     {
         ITypeSymbol genericArgument = ((INamedTypeSymbol)typeSymbol!).TypeArguments[0];
         if (_listTypes.All
@@ -89,25 +89,24 @@ public class ListInlineConverterGenerator : IInlineConverterGenerator
         }
 
         textWriter.WriteLine
-            ($"{Constants.HelperClass}.{GetMethodName(genericArgument)}(typeConverter, _stringSerializer, ref stringEnumerator);");
+            ($"{Constants.HelperClass}.{GetMethodName(genericArgument, nullable)}(typeConverter, _stringSerializer, ref stringEnumerator);");
         return null;
     }
 
-    private string GetMethodName(ITypeSymbol genericArgumentType)
+    private string GetMethodName(ITypeSymbol genericArgumentType, bool nullable)
     {
         return
-            $"ParseList{genericArgumentType.ToString().TrimEnd('?').Replace('.', '_').Replace('<', '_').Replace('>', '_')}{((genericArgumentType.IsNullable() ?? false) ? "Nullable" : string.Empty)}";
+            $"ParseList{genericArgumentType.ToString().TrimEnd('?').Replace('.', '_').Replace('<', '_').Replace('>', '_')}{((genericArgumentType.IsNullable() ?? false) ? "Nullable" : string.Empty)}{(nullable ? "NullableSupport" : string.Empty)}";
     }
 
-    /// <inheritdoc />
-    public void GenerateHelperMethods(IndentedTextWriter textWriter)
+    private void GenerateHelperMethods(IndentedTextWriter textWriter, bool nullable)
     {
         foreach (var type in _listTypes)
         {
             textWriter.WriteLine
             (
                 @$"
-public static Result<IReadOnlyList<{type.GetActualType()}>> {GetMethodName(type)}(IStringConverter typeConverter, IStringSerializer _stringSerializer, ref PacketStringEnumerator stringEnumerator)
+public static Result<IReadOnlyList<{type.GetActualType()}>> {GetMethodName(type, nullable)}(IStringConverter typeConverter, IStringSerializer _stringSerializer, ref PacketStringEnumerator stringEnumerator)
 {{
     var data = new List<{type.GetActualType()}>();
 
@@ -120,7 +119,7 @@ public static Result<IReadOnlyList<{type.GetActualType()}>> {GetMethodName(type)
 
         var result = "
             );
-            /*var error = */_inlineConverters.CallDeserialize(textWriter, null, type); // TODO handle error
+            /*var error = */_inlineConverters.CallDeserialize(textWriter, null, type, nullable); // TODO handle error
 
             textWriter.WriteMultiline(@$"
 
@@ -159,4 +158,12 @@ if (result.Entity is null)
             textWriter.WriteLine("}");
         }
     }
+
+    /// <inheritdoc />
+    public void GenerateHelperMethods(IndentedTextWriter textWriter)
+    {
+        GenerateHelperMethods(textWriter, true);
+        GenerateHelperMethods(textWriter, false);
+    }
+
 }

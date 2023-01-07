@@ -38,8 +38,9 @@ public class InlineTypeConverterGenerator
     /// </summary>
     /// <param name="textWriter">The text writer.</param>
     /// <param name="packet">The packet.</param>
+    /// <param name="nullable">Whether the parameter is nullable.</param>
     /// <returns>An error, if any.</returns>
-    public IError? CallDeserialize(IndentedTextWriter textWriter, PacketInfo packet)
+    public IError? CallDeserialize(IndentedTextWriter textWriter, PacketInfo packet, bool nullable)
     {
         var parameter = packet.Parameters.Current;
         var shouldGenerateInline = packet.GenerateAttribute.GetIndexedValue<bool>(0);
@@ -49,12 +50,12 @@ public class InlineTypeConverterGenerator
             {
                 if (generator.ShouldHandle(parameter.Parameter.Type, parameter.Type))
                 {
-                    return generator.CallDeserialize(textWriter, parameter.Parameter.Type, parameter.Type);
+                    return generator.CallDeserialize(textWriter, parameter.Parameter.Type, parameter.Type, nullable);
                 }
             }
         }
 
-        return _fallbackInlineConverterGenerator.CallDeserialize(textWriter, parameter.Parameter.Type, parameter.Type);
+        return _fallbackInlineConverterGenerator.CallDeserialize(textWriter, parameter.Parameter.Type, parameter.Type, nullable);
     }
 
     /// <summary>
@@ -63,23 +64,25 @@ public class InlineTypeConverterGenerator
     /// <param name="textWriter">The text writer.</param>
     /// <param name="typeSyntax">The type syntax.</param>
     /// <param name="typeSymbol">The type symbol.</param>
+    /// <param name="nullable">Whether the parameter is nullable.</param>
     /// <returns>An error, if any.</returns>
     public IError? CallDeserialize
     (
         IndentedTextWriter textWriter,
         TypeSyntax? typeSyntax,
-        ITypeSymbol? typeSymbol
+        ITypeSymbol? typeSymbol,
+        bool nullable
     )
     {
         foreach (var generator in _typeGenerators)
         {
             if (generator.ShouldHandle(typeSyntax, typeSymbol))
             {
-                return generator.CallDeserialize(textWriter, typeSyntax, typeSymbol);
+                return generator.CallDeserialize(textWriter, typeSyntax, typeSymbol, nullable);
             }
         }
 
-        return _fallbackInlineConverterGenerator.CallDeserialize(textWriter, typeSyntax, typeSymbol);
+        return _fallbackInlineConverterGenerator.CallDeserialize(textWriter, typeSyntax, typeSymbol, nullable);
     }
 
     /// <summary>
