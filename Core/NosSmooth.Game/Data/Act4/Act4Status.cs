@@ -22,5 +22,5 @@ public record Act4FactionStatus
     Act4Mode Mode,
     long? CurrentTime,
     long? TotalTime,
-    Act4Raid Raid
+    Act4Raid? Raid
 );
