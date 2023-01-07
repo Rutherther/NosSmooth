@@ -10,6 +10,7 @@ using NosSmooth.Core.Extensions;
 using NosSmooth.Game.Apis;
 using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.Events.Inventory;
+using NosSmooth.Game.PacketHandlers.Act4;
 using NosSmooth.Game.PacketHandlers.Characters;
 using NosSmooth.Game.PacketHandlers.Entities;
 using NosSmooth.Game.PacketHandlers.Inventory;
@@ -39,6 +40,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.TryAddSingleton<Game>();
 
         serviceCollection
+            .AddPacketResponder<FcResponder>()
             .AddPacketResponder<CharacterInitResponder>()
             .AddPacketResponder<PlayerSkillResponder>()
             .AddPacketResponder<MatesSkillResponder>()
