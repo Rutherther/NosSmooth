@@ -20,6 +20,8 @@ namespace NosSmooth.Packets.Server.Groups;
 /// <param name="Name">The name of the mate.</param>
 /// <param name="Unknown">Unknown TODO.</param>
 /// <param name="VNum">The VNum of the mate entity.</param>
+[PacketHeader(null, PacketSource.Server)]
+[GenerateSerializer(true)]
 public record PinitMateSubPacket
 (
     [PacketIndex(0)]

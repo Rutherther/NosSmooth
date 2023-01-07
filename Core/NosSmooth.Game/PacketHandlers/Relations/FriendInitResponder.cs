@@ -40,10 +40,11 @@ public class FriendInitResponder : IPacketResponder<FInfoPacket>, IPacketRespond
                 .Select(
                     x =>
                     {
-                        if (x.PlayerId == packet.PlayerId)
+                        var subPacket = packet.FriendSubPackets.FirstOrDefault(y => x.PlayerId == y.PlayerId);
+                        if (subPacket is not null)
                         {
-                            x.IsConnected = packet.IsConnected;
-                            x.CharacterName = packet.Name;
+                            x.IsConnected = subPacket.IsConnected;
+                            x.CharacterName = subPacket.Name;
                         }
 
                         return x;
