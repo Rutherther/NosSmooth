@@ -9,6 +9,10 @@ using NosSmooth.Packets.Enums.Players;
 
 namespace NosSmooth.Game.Data.Social;
 
+/// <summary>
+/// A member of a group the character is in.
+/// </summary>
+/// <param name="PlayerId">The id of the group member player.</param>
 public record GroupMember(long PlayerId)
 {
     /// <summary>
@@ -54,5 +58,5 @@ public record GroupMember(long PlayerId)
     /// <summary>
     /// Gets the effects of the member.
     /// </summary>
-    public IReadOnlyList<long>? EffectsVNums { get; internal set; }
+    public IReadOnlyList<short>? EffectsVNums { get; internal set; }
 }

@@ -15,6 +15,7 @@ using NosSmooth.Game.PacketHandlers.Entities;
 using NosSmooth.Game.PacketHandlers.Inventory;
 using NosSmooth.Game.PacketHandlers.Map;
 using NosSmooth.Game.PacketHandlers.Relations;
+using NosSmooth.Game.PacketHandlers.Skills;
 using NosSmooth.Game.PacketHandlers.Specialists;
 
 namespace NosSmooth.Game.Extensions;
@@ -40,11 +41,13 @@ public static class ServiceCollectionExtensions
         serviceCollection
             .AddPacketResponder<CharacterInitResponder>()
             .AddPacketResponder<PlayerSkillResponder>()
+            .AddPacketResponder<MatesSkillResponder>()
             .AddPacketResponder<WalkResponder>()
             .AddPacketResponder<SkillUsedResponder>()
             .AddPacketResponder<FriendInitResponder>()
             .AddPacketResponder<InventoryInitResponder>()
             .AddPacketResponder<GroupInitResponder>()
+            .AddPacketResponder<MatesInitResponder>()
             .AddPacketResponder<AoeSkillUsedResponder>()
             .AddPacketResponder<AtResponder>()
             .AddPacketResponder<CMapResponder>()

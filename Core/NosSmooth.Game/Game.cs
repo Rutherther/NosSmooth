@@ -6,10 +6,12 @@
 
 using Microsoft.Extensions.Options;
 using NosSmooth.Core.Stateful;
+using NosSmooth.Game.Data;
 using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Chat;
 using NosSmooth.Game.Data.Inventory;
 using NosSmooth.Game.Data.Maps;
+using NosSmooth.Game.Data.Mates;
 using NosSmooth.Game.Data.Raids;
 using NosSmooth.Game.Data.Social;
 
@@ -42,6 +44,11 @@ public class Game : IStatefulEntity
     /// Gets the playing character of the client.
     /// </summary>
     public Character? Character { get; internal set; }
+
+    /// <summary>
+    /// Gets the mates of the current character.
+    /// </summary>
+    public Mates? Mates { get; internal set; }
 
     /// <summary>
     /// Gets or sets the inventory of the character.
@@ -87,6 +94,34 @@ public class Game : IStatefulEntity
     /// May be null if there is no raid in progress.
     /// </remarks>
     public Raid? CurrentRaid { get; internal set; }
+
+    /// <summary>
+    /// Creates the mates if they are null, or updates the current mates.
+    /// </summary>
+    /// <param name="create">The function for creating the mates.</param>
+    /// <param name="update">The function for updating the mates.</param>
+    /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the mates.</param>
+    /// <param name="ct">The cancellation token for cancelling the operation.</param>
+    /// <returns>The updated mates.</returns>
+    internal async Task<Mates?> CreateOrUpdateMatesAsync
+    (
+        Func<Mates?> create,
+        Func<Mates, Mates?> update,
+        bool releaseSemaphore = true,
+        CancellationToken ct = default
+    )
+    {
+        return await CreateOrUpdateAsync
+        (
+            GameSemaphoreType.Mates,
+            () => Mates,
+            s => Mates = s,
+            create,
+            update,
+            releaseSemaphore,
+            ct
+        );
+    }
 
     /// <summary>
     /// Creates the skills if they are null, or updates the current skills.

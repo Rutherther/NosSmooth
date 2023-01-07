@@ -51,7 +51,7 @@ public class BasicInlineConverterGenerator : IInlineConverterGenerator
     {
         var type = typeSyntax is not null
             ? typeSyntax.ToString().TrimEnd('?')
-            : typeSymbol?.ToString();
+            : typeSymbol?.ToString().TrimEnd('?');
         if (type is null)
         {
             throw new Exception("TypeSyntax or TypeSymbol has to be non null.");

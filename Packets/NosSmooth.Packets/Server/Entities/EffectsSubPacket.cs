@@ -18,7 +18,7 @@ namespace NosSmooth.Packets.Server.Entities;
 public record EffectsSubPacket
 (
     [PacketIndex(0)]
-    long CardId,
+    short CardId,
     [PacketIndex(1, IsOptional = true)]
     short? Level
 ) : IPacket;

@@ -18,7 +18,7 @@ public class GroundItem : IEntity
     /// <summary>
     /// Gets or sets the id of the owner, if any.
     /// </summary>
-    public long? OwnerId { get; set; }
+    public long? OwnerId { get; internal set; }
 
     /// <summary>
     /// Gets or sets the amount of the item on the ground.

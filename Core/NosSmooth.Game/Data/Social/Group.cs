@@ -16,7 +16,6 @@ namespace NosSmooth.Game.Data.Social;
 /// Represents nostale group of players or pets and partners.
 /// </summary>
 /// <param name="Id">The id of the group.</param>
-/// <param name="Size">The size of the group.</param>
 /// <param name="Members">The members of the group. (excluding the character)</param>
 public record Group(short? Id, IReadOnlyList<GroupMember>? Members)
 {

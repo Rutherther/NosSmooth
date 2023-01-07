@@ -6,6 +6,7 @@
 
 using NosSmooth.Packets.Enums.Players;
 using NosSmooth.Packets.Server.Maps;
+using NosSmooth.PacketSerializer.Abstractions;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using NosSmooth.PacketSerializer.Abstractions.Common;
 
@@ -73,7 +74,7 @@ public record CListPacket
     [PacketIndex(14)]
     byte Unknown3,
     [PacketListIndex(15, ListSeparator = '.', InnerSeparator = '.')]
-    IReadOnlyList<CListPetSubPacket> PetsSubPacket,
+    IReadOnlyList<NullableWrapper<CListPetSubPacket>> PetsSubPacket,
     [PacketIndex(16)]
     byte HatDesign,
     [PacketIndex(17)]

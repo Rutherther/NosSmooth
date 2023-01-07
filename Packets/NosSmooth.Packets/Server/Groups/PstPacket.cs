@@ -16,7 +16,9 @@ namespace NosSmooth.Packets.Server.Groups;
 /// Party status packet.
 /// </summary>
 /// <param name="EntityType">The type of the entity.</param>
-/// <param name="GroupPosition">The position in the group of the entity</param>
+/// <param name="EntityId">The id of the entity.</param>
+/// <param name="GroupPosition">The position in the group of a player. Present only for players.</param>
+/// <param name="MateType">The type of a mate. Present only for mates.</param>
 /// <param name="HpPercentage">The hp percentage of the entity.</param>
 /// <param name="MpPercentage">The mp percentage of the entity.</param>
 /// <param name="Hp">The hp of the entity.</param>
