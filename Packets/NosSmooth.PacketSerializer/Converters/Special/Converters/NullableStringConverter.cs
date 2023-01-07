@@ -51,13 +51,19 @@ public class NullableStringConverter<T> : BaseStringConverter<Nullable<T>>
             return Result<T?>.FromError(nextToken);
         }
 
-        if (packetToken.Token.Length == 2 && packetToken.Token.StartsWith("-1"))
-        {
-            stringEnumerator.GetNextToken(out _); // seek.
-            return Result<T?>.FromSuccess(null);
+        if (options.CanBeNull)
+        { // even though this is nullable converter and it could be expected
+          // that only nullables will be passed, it's possible that
+          // due to easier management, a non nullable entity will be passed
+          // here.
+            if (packetToken.Token.Length == 2 && packetToken.Token.StartsWith("-1"))
+            {
+                stringEnumerator.GetNextToken(out _); // seek.
+                return Result<T?>.FromSuccess(null);
+            }
         }
 
-        var result = _stringSerializer.Deserialize<T>(ref stringEnumerator, new DeserializeOptions(true));
+        var result = _stringSerializer.Deserialize<T>(ref stringEnumerator, options);
         if (!result.IsSuccess)
         {
             return Result<T?>.FromError(result);
