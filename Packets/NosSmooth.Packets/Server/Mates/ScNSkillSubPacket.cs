@@ -21,7 +21,7 @@ namespace NosSmooth.Packets.Server.Mates;
 public record ScNSkillSubPacket
 (
     [PacketIndex(0)]
-    long? SkillVNum,
+    int? SkillVNum,
     [PacketIndex(1, IsOptional = true)]
     PartnerSkillRank? Rank
 ) : IPacket;

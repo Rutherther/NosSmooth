@@ -49,5 +49,10 @@ public enum GameSemaphoreType
     /// <summary>
     /// The semaphore for raid.
     /// </summary>
-    Raid
+    Raid,
+
+    /// <summary>
+    /// The semaphore for mates.
+    /// </summary>
+    Mates
 }

@@ -21,9 +21,9 @@ namespace NosSmooth.Packets.Server.Mates;
 public record ScNEquipmentSubPacket
 (
     [PacketIndex(0)]
-    long? ItemVNum,
+    int? ItemVNum,
     [PacketIndex(1, IsOptional = true)]
-    long? ItemRare,
+    sbyte? ItemRare,
     [PacketIndex(2, IsOptional = true)]
-    long? ItemUpgrade
+    byte? ItemUpgrade
 ) : IPacket;

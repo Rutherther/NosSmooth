@@ -75,7 +75,7 @@ public record ScNPacket
     [PacketIndex(6, InnerSeparator = '.')]
     ScNEquipmentSubPacket? WeaponSubPacket,
     [PacketIndex(7, InnerSeparator = '.')]
-    ScNEquipmentSubPacket? ArmodSubPacket,
+    ScNEquipmentSubPacket? ArmorSubPacket,
     [PacketIndex(8, InnerSeparator = '.')]
     ScNEquipmentSubPacket? GauntletSubPacket,
     [PacketIndex(9, InnerSeparator = '.')]

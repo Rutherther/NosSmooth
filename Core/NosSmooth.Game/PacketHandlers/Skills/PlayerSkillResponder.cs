@@ -14,7 +14,7 @@ using NosSmooth.Game.Events.Core;
 using NosSmooth.Packets.Server.Skills;
 using Remora.Results;
 
-namespace NosSmooth.Game.PacketHandlers.Characters;
+namespace NosSmooth.Game.PacketHandlers.Skills;
 
 /// <summary>
 /// Responds to SkiPacket to add skill to the character.
@@ -94,7 +94,7 @@ public class PlayerSkillResponder : IPacketResponder<SkiPacket>
             otherSkillsFromCharacter.Add(await CreateSkill(newSkill, default));
         }
 
-        skills = new Skills(primarySkill, secondarySkill, otherSkillsFromCharacter);
+        skills = new Data.Characters.Skills(primarySkill, secondarySkill, otherSkillsFromCharacter);
 
         await _game.CreateOrUpdateSkillsAsync
         (
