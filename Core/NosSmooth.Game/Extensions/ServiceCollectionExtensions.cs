@@ -65,6 +65,10 @@ public static class ServiceCollectionExtensions
             .AddPacketResponder<EqResponder>();
 
         serviceCollection
+            .AddTransient<NostaleMapPacketApi>()
+            .AddTransient<NostaleInventoryPacketApi>()
+            .AddTransient<NostaleMatePacketApi>()
+            .AddTransient<NostaleMateSkillsPacketApi>()
             .AddTransient<NostaleChatPacketApi>()
             .AddTransient<NostaleSkillsPacketApi>();
 
