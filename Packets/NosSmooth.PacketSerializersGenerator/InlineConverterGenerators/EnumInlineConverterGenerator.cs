@@ -89,9 +89,12 @@ public static Result<{type}?> ParseEnum{type.ToString().Replace('.', '_')}(IStri
     }}
 
     var token = packetToken.Token;
-    if (token[0] == '-')
+    if (nullable)
     {{
-        return Result<{type}?>.FromSuccess(null);
+        if (token[0] == '-')
+        {{
+            return Result<{type}?>.FromSuccess(null);
+        }}
     }}
 
     if (!{underlyingType}.TryParse(token, out var val))
