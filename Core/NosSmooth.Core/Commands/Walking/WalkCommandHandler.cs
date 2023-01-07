@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -35,26 +36,10 @@ internal class WalkCommandHandler : ICommandHandler<WalkCommand>
     public async Task<Result> HandleCommand(WalkCommand command, CancellationToken ct = default)
     {
         var tasks = new List<Task<Result>>();
-        for (var i = 0; i < command.PetSelectors.Length; i++)
+        foreach (var pet in command.Pets ?? Array.Empty<(int, short, short)>())
         {
-            short xOffset = (short)(-1 + (i % 3));
-            short yOffset = (short)(-1 + ((i / 3) % 5));
-            if (xOffset == 0 && yOffset == 0)
-            {
-                yOffset += 2;
-            }
-
-            int x = command.TargetX;
-            int y = command.TargetY;
-
-            if (x + xOffset > 0)
-            {
-                x += xOffset;
-            }
-            if (y + yOffset > 0)
-            {
-                y += yOffset;
-            }
+            int x = pet.TargetX;
+            int y = pet.TargetY;
 
             tasks.Add
             (
@@ -62,7 +47,7 @@ internal class WalkCommandHandler : ICommandHandler<WalkCommand>
                 (
                     new PetWalkCommand
                     (
-                        command.PetSelectors[i],
+                        pet.PetSelector,
                         (short)x,
                         (short)y,
                         command.ReturnDistanceTolerance,

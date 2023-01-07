@@ -44,9 +44,9 @@ public class WalkManager
     /// <param name="y">The target y coordinate.</param>
     /// <param name="allowUserActions">Whether to allow user actions during the walk operation.</param>
     /// <param name="ct">The cancellation token used for cancelling the operation.</param>
-    /// <param name="petSelectors">The pet selectors to go with.</param>
+    /// <param name="pets">The positions to walk pets to.</param>
     /// <returns>A result that may not succeed.</returns>
-    public async Task<Result> GoToAsync(short x, short y, bool allowUserActions = true, CancellationToken ct = default, params int[] petSelectors)
+    public async Task<Result> GoToAsync(short x, short y, bool allowUserActions = true, CancellationToken ct = default, params (int Selector, short TargetX, short TargetY)[] pets)
     {
         var pathResult = _pathfinder.FindPathFromCurrent(x, y);
         if (!pathResult.IsSuccess)
@@ -68,7 +68,7 @@ public class WalkManager
             }
 
             var next = path.TakeForwardPath();
-            var walkResult = await _client.SendCommandAsync(new WalkCommand(next.X, next.Y, petSelectors, 2, AllowUserCancel: allowUserActions), ct);
+            var walkResult = await _client.SendCommandAsync(new WalkCommand(next.X, next.Y, pets, 2, AllowUserCancel: allowUserActions), ct);
             if (!walkResult.IsSuccess)
             {
                 if (path.ReachedEnd && walkResult.Error is WalkNotFinishedError walkNotFinishedError
