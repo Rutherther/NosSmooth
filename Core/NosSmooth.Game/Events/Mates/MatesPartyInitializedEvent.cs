@@ -9,4 +9,9 @@ using NosSmooth.Game.Data.Social;
 
 namespace NosSmooth.Game.Events.Mates;
 
+/// <summary>
+/// A party was initialized and got information about currently present party pets.
+/// </summary>
+/// <param name="Pet">The party pet.</param>
+/// <param name="Partner">The party partner.</param>
 public record MatesPartyInitializedEvent(Pet? Pet, Partner? Partner) : IGameEvent;

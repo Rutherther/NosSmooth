@@ -10,4 +10,9 @@ using NosSmooth.Game.Data.Social;
 
 namespace NosSmooth.Game.Events.Mates;
 
+/// <summary>
+/// A pet the character owns skill was received.
+/// </summary>
+/// <param name="Pet">The pet.</param>
+/// <param name="PetSkill">The skill of the pet.</param>
 public record PetSkillReceivedEvent(Pet? Pet, Skill? PetSkill) : IGameEvent;

@@ -6,6 +6,13 @@
 
 namespace NosSmooth.Game.Data.Stats;
 
+/// <summary>
+/// Stats about resistance of character or mate.
+/// </summary>
+/// <param name="FireResistance">The fire resistance percentage.</param>
+/// <param name="WaterResistance">The water resistance percentage.</param>
+/// <param name="LightResistance">The light resistance percentage.</param>
+/// <param name="DarkResistance">The dark resistance percentage.</param>
 public record Resistance
 (
     short FireResistance,

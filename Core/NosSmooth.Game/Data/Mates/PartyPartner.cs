@@ -8,6 +8,10 @@ using NosSmooth.Game.Data.Info;
 
 namespace NosSmooth.Game.Data.Mates;
 
+/// <summary>
+/// Information about a partner that is currently in character's party.
+/// </summary>
+/// <param name="Partner">The underlying partner.</param>
 public record PartyPartner
 (
     Partner Partner

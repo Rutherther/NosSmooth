@@ -23,7 +23,7 @@ namespace NosSmooth.Packets.Server.Mates;
 /// <param name="Loyalty">The loyalty of the partner.</param>
 /// <param name="Experience">The experience of the partner.</param>
 /// <param name="WeaponSubPacket">Information about partner's weapon.</param>
-/// <param name="ArmodSubPacket">Information about partner's armor.</param>
+/// <param name="ArmorSubPacket">Information about partner's armor.</param>
 /// <param name="GauntletSubPacket">Information about partner's gauntlet.</param>
 /// <param name="BootsSubPacket">Information about partner's boots.</param>
 /// <param name="Unknown1">Unknown TODO.</param>

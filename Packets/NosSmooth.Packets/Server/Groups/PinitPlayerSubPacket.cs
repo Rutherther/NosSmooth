@@ -12,6 +12,18 @@ using NosSmooth.PacketSerializer.Abstractions.Common;
 
 namespace NosSmooth.Packets.Server.Groups;
 
+/// <summary>
+/// A sub packet of <see cref="PinitPacket"/>
+/// representing a player.
+/// </summary>
+/// <param name="GroupPosition">The position in the group.</param>
+/// <param name="Level">The level of the player.</param>
+/// <param name="Name">The name of the player.</param>
+/// <param name="GroupId">The group id of the group character is in.</param>
+/// <param name="Sex">The sex of the player.</param>
+/// <param name="Class">The class of the player.</param>
+/// <param name="MorphVNum">The morph of the player</param>
+/// <param name="HeroLevel">The hero level of the player.</param>
 [PacketHeader(null, PacketSource.Server)]
 [GenerateSerializer(true)]
 public record PinitPlayerSubPacket

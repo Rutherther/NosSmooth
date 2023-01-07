@@ -11,6 +11,15 @@ using NosSmooth.PacketSerializer.Abstractions.Common;
 
 namespace NosSmooth.Packets.Server.Groups;
 
+/// <summary>
+/// A sub packet of <see cref="PinitPacket"/>
+/// representing a mate.
+/// </summary>
+/// <param name="MateType">The type of the mate.</param>
+/// <param name="Level">The level of the mate.</param>
+/// <param name="Name">The name of the mate.</param>
+/// <param name="Unknown">Unknown TODO.</param>
+/// <param name="VNum">The VNum of the mate entity.</param>
 public record PinitMateSubPacket
 (
     [PacketIndex(0)]

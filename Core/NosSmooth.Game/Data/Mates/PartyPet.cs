@@ -8,6 +8,10 @@ using NosSmooth.Game.Data.Info;
 
 namespace NosSmooth.Game.Data.Mates;
 
+/// <summary>
+/// Information about a pet that is currently in character's party.
+/// </summary>
+/// <param name="Pet">The underlying pet.</param>
 public record PartyPet
 (
     Pet Pet

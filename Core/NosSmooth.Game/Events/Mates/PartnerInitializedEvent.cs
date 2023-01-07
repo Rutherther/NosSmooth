@@ -9,4 +9,8 @@ using NosSmooth.Game.Data.Social;
 
 namespace NosSmooth.Game.Events.Mates;
 
+/// <summary>
+/// A partner the character owns was initialized.
+/// </summary>
+/// <param name="Partner">The partner.</param>
 public record PartnerInitializedEvent(Partner Partner) : IGameEvent;

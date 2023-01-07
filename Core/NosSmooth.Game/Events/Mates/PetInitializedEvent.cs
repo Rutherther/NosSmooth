@@ -9,4 +9,8 @@ using NosSmooth.Game.Data.Social;
 
 namespace NosSmooth.Game.Events.Mates;
 
+/// <summary>
+/// A pet the character owns was initialized.
+/// </summary>
+/// <param name="Pet">The pet.</param>
 public record PetInitializedEvent(Pet Pet) : IGameEvent;

@@ -9,6 +9,13 @@ using NosSmooth.PacketSerializer.Abstractions.Attributes;
 
 namespace NosSmooth.Packets.Server.Entities;
 
+/// <summary>
+/// A packet specifying a revival
+/// of an entity, usually a player.
+/// </summary>
+/// <param name="EntityType">The type of the revived entity.</param>
+/// <param name="EntityId">The id of the revived entity.</param>
+/// <param name="TimeSpaceLives">Unknown function, seems like representing lives in a timespace.</param>
 [PacketHeader("revive", PacketSource.Server)]
 [GenerateSerializer(true)]
 public record RevivePacket
