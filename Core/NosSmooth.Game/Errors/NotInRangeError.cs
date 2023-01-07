@@ -9,6 +9,13 @@ using Remora.Results;
 
 namespace NosSmooth.Game.Errors;
 
+/// <summary>
+/// The given position is not in range of the entity.
+/// </summary>
+/// <param name="Entity">The entity.</param>
+/// <param name="EntityPosition">The entity's position.</param>
+/// <param name="TargetPosition">The target position.</param>
+/// <param name="Range">The maximum range.</param>
 public record NotInRangeError
 (
     string Entity,

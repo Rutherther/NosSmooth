@@ -15,6 +15,7 @@ namespace NosSmooth.Packets.Client.Battle;
 /// <param name="MateTransportId">The pet skill id.</param>
 /// <param name="TargetEntityType">The target entity type.</param>
 /// <param name="TargetId">The target id.</param>
+/// <param name="SkillSlot">The slot of the skill.</param>
 /// <param name="MapX">The x coordinate to target to, present if the skill is area skill.</param>
 /// <param name="MapY">The y coordinate to target to, present if the skill is area skill.</param>
 [PacketHeader("u_ps", PacketSource.Client)]
