@@ -13,7 +13,7 @@ namespace NosSmooth.Packets.Client.Battle;
 /// </summary>
 /// <param name="SkillId">The id of the skill.</param>
 /// <param name="PositionX">The x coordinate where to target to.</param>
-/// <param name="PositionY">The y coordinate where to targe to.</param>
+/// <param name="PositionY">The y coordinate where to target to.</param>
 [PacketHeader("u_as", PacketSource.Client)]
 [GenerateSerializer(true)]
 public record UseAOESkillPacket
