@@ -20,14 +20,17 @@ namespace NosSmooth.Game.Apis;
 public class NostaleSkillsPacketApi
 {
     private readonly INostaleClient _client;
+    private readonly Game _game;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NostaleSkillsPacketApi"/> class.
     /// </summary>
     /// <param name="client">The nostale client.</param>
-    public NostaleSkillsPacketApi(INostaleClient client)
+    /// <param name="game">The game.</param>
+    public NostaleSkillsPacketApi(INostaleClient client, Game game)
     {
         _client = client;
+        _game = game;
     }
 
     /// <summary>
@@ -61,6 +64,45 @@ public class NostaleSkillsPacketApi
                 castId,
                 entityType,
                 entityId,
+                mapX,
+                mapY
+            ),
+            ct
+        );
+    }
+
+    /// <summary>
+    /// Use the given (targetable) skill on character itself.
+    /// </summary>
+    /// <remarks>
+    /// For skills that cannot be targeted on an entity, proceed to UseSkillAt.
+    /// </remarks>
+    /// <param name="castId">The cast id of the skill.</param>
+    /// <param name="mapX">The x coordinate on the map. (Used for non targeted dashes etc., says where the dash will be to.)</param>
+    /// <param name="mapY">The y coordinate on the map. (Used for non targeted dashes etc., says where the dash will be to.)</param>
+    /// <param name="ct">The cancellation token for cancelling the operation.</param>
+    /// <returns>A result that may or may not have succeeded.</returns>
+    public async Task<Result> UseSkillOnCharacter
+    (
+        short castId,
+        short? mapX = default,
+        short? mapY = default,
+        CancellationToken ct = default
+    )
+    {
+        var character = _game.Character;
+        if (character is null)
+        {
+            return new NotInitializedError("Character");
+        }
+
+        return await _client.SendPacketAsync
+        (
+            new UseSkillPacket
+            (
+                castId,
+                EntityType.Player,
+                character.Id,
                 mapX,
                 mapY
             ),

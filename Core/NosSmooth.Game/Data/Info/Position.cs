@@ -89,4 +89,8 @@ public record struct Position(short X, short Y)
     {
         return new Position((short)(left.X - right.X), (short)(left.Y - right.Y));
     }
+
+    /// <inheritdoc />
+    public override string ToString()
+        => $"{X}, {Y}";
 }
