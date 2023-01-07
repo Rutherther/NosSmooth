@@ -74,7 +74,7 @@ public record CListPacket
     [PacketIndex(14)]
     byte Unknown3,
     [PacketListIndex(15, ListSeparator = '.', InnerSeparator = '.')]
-    IReadOnlyList<NullableWrapper<CListPetSubPacket>> PetsSubPacket,
+    IReadOnlyList<OptionalWrapper<NullableWrapper<CListPetSubPacket>>> PetsSubPacket,
     [PacketIndex(16)]
     byte HatDesign,
     [PacketIndex(17)]
