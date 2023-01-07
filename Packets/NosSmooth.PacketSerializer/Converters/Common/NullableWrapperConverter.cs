@@ -16,21 +16,21 @@ namespace NosSmooth.PacketSerializer.Converters.Common;
 /// <typeparam name="T">The underlying type.</typeparam>
 public class NullableWrapperConverter<T> : BaseStringConverter<NullableWrapper<T>>
 {
-    private readonly StringConverterRepository _converterRepository;
+    private readonly IStringConverterRepository _converterRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NullableWrapperConverter{T}"/> class.
     /// </summary>
     /// <param name="converterRepository">The converter repository.</param>
-    public NullableWrapperConverter(StringConverterRepository converterRepository)
+    public NullableWrapperConverter(IStringConverterRepository converterRepository)
     {
         _converterRepository = converterRepository;
     }
 
     /// <inheritdoc />
-    public override Result Serialize(NullableWrapper<T> obj, PacketStringBuilder builder)
+    public override Result Serialize(NullableWrapper<T>? obj, PacketStringBuilder builder)
     {
-        if (obj.Value is null)
+        if (obj is null || obj.Value is null)
         {
             builder.Append("-1");
         }
@@ -49,29 +49,29 @@ public class NullableWrapperConverter<T> : BaseStringConverter<NullableWrapper<T
     }
 
     /// <inheritdoc />
-    public override Result<NullableWrapper<T>> Deserialize(ref PacketStringEnumerator stringEnumerator)
+    public override Result<NullableWrapper<T>?> Deserialize(ref PacketStringEnumerator stringEnumerator)
     {
         var tokenResult = stringEnumerator.GetNextToken(out var packetToken, false);
         if (!tokenResult.IsSuccess)
         {
-            return Result<NullableWrapper<T>>.FromError(tokenResult);
+            return Result<NullableWrapper<T>?>.FromError(tokenResult);
         }
 
         if (packetToken.Token.Length == 2 && packetToken.Token.StartsWith("-1"))
         {
-            return Result<NullableWrapper<T>>.FromSuccess(new NullableWrapper<T>(default));
+            return Result<NullableWrapper<T>?>.FromSuccess(new NullableWrapper<T>(default));
         }
 
         var converterResult = _converterRepository.GetTypeConverter<T>();
         if (!converterResult.IsDefined(out var converter))
         {
-            return Result<NullableWrapper<T>>.FromError(converterResult);
+            return Result<NullableWrapper<T>?>.FromError(converterResult);
         }
 
         var deserializationResult = converter.Deserialize(ref stringEnumerator);
         if (!deserializationResult.IsDefined(out var deserialization))
         {
-            return Result<NullableWrapper<T>>.FromError(deserializationResult);
+            return Result<NullableWrapper<T>?>.FromError(deserializationResult);
         }
 
         return new NullableWrapper<T>(deserialization);

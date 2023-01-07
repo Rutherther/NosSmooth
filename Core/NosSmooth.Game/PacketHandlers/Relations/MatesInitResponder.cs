@@ -174,11 +174,11 @@ public class MatesInitResponder : IPacketResponder<ScPPacket>, IPacketResponder<
             packet.MorphVNum,
             packet.IsSummonable,
 #pragma warning disable SA1118
-            packet.SpSubPacket?.ItemVNum is not null
+            packet.SpSubPacket.Value is not null
                 ? new PartnerSp
                 (
-                    packet.SpSubPacket.ItemVNum.Value,
-                    packet.SpSubPacket.AgilityPercentage,
+                    packet.SpSubPacket.Value.ItemVNum,
+                    packet.SpSubPacket.Value.AgilityPercentage,
                     await CreateSkill(packet.Skill1SubPacket, ct),
                     await CreateSkill(packet.Skill2SubPacket, ct),
                     await CreateSkill(packet.Skill3SubPacket, ct)
@@ -318,25 +318,25 @@ public class MatesInitResponder : IPacketResponder<ScPPacket>, IPacketResponder<
 
     private async Task<UpgradeableItem?> CreatePartnerItem(ScNEquipmentSubPacket? packet, CancellationToken ct)
     {
-        if (packet is null || packet.ItemVNum is null)
+        if (packet is null)
         {
             return null;
         }
 
-        var itemInfoResult = await _infoService.GetItemInfoAsync(packet.ItemVNum.Value, ct);
+        var itemInfoResult = await _infoService.GetItemInfoAsync(packet.ItemVNum, ct);
         if (!itemInfoResult.IsDefined(out var itemInfo))
         {
             _logger.LogWarning
             (
                 "Could not obtain an item info for vnum {vnum}: {error}",
-                packet.ItemVNum.Value,
+                packet.ItemVNum,
                 itemInfoResult.ToFullString()
             );
         }
 
         return new UpgradeableItem
         (
-            packet.ItemVNum.Value,
+            packet.ItemVNum,
             itemInfo,
             packet.ItemUpgrade,
             packet.ItemRare,
@@ -346,22 +346,22 @@ public class MatesInitResponder : IPacketResponder<ScPPacket>, IPacketResponder<
 
     private async Task<PartnerSkill?> CreateSkill(ScNSkillSubPacket? packet, CancellationToken ct)
     {
-        if (packet is null || packet.SkillVNum is null)
+        if (packet is null)
         {
             return null;
         }
 
-        var skillInfoResult = await _infoService.GetSkillInfoAsync(packet.SkillVNum.Value, ct);
+        var skillInfoResult = await _infoService.GetSkillInfoAsync(packet.SkillVNum, ct);
         if (!skillInfoResult.IsDefined(out var skillInfo))
         {
             _logger.LogWarning
             (
                 "Could not obtain a skill info for vnum {vnum}: {error}",
-                packet.SkillVNum.Value,
+                packet.SkillVNum,
                 skillInfoResult.ToFullString()
             );
         }
 
-        return new PartnerSkill(packet.SkillVNum.Value, packet.Rank, skillInfo);
+        return new PartnerSkill(packet.SkillVNum, packet.Rank, skillInfo);
     }
 }
