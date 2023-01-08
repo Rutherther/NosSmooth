@@ -154,12 +154,12 @@ public class InResponder : IPacketResponder<InPacket>
             Level = playerSubPacket.Level,
             HeroLevel = playerSubPacket.HeroLevel,
             Morph = new Morph(playerSubPacket.MorphVNum, playerSubPacket.MorphUpgrade),
-            Family = playerSubPacket.FamilySubPacket.FamilyId is null
+            Family = playerSubPacket.FamilySubPacket.Value is null
                 ? null
                 : new Family
                 (
-                    playerSubPacket.FamilySubPacket.FamilyId,
-                    playerSubPacket.FamilySubPacket.Title,
+                    playerSubPacket.FamilySubPacket.Value.FamilyId,
+                    playerSubPacket.FamilySubPacket.Value.Title,
                     playerSubPacket.FamilyName,
                     playerSubPacket.Level,
                     playerSubPacket.FamilyIcons
