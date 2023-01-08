@@ -6,6 +6,7 @@
 
 using NosSmooth.Packets.Enums.Entities;
 using NosSmooth.Packets.Server.Character;
+using NosSmooth.PacketSerializer.Abstractions;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using NosSmooth.PacketSerializer.Abstractions.Common;
 
@@ -29,11 +30,11 @@ public record GidxPacket
     [PacketIndex(1)]
     long EntityId,
     [PacketIndex(2, InnerSeparator = '.')]
-    FamilySubPacket FamilySubPacket,
+    NullableWrapper<FamilySubPacket> FamilySubPacket,
     [PacketIndex(3)]
     NameString? FamilyName,
     [PacketIndex(4)]
     NameString? FamilyCustomRank,
-    [PacketListIndex(5, ListSeparator = '|')]
-    IReadOnlyList<bool> FamilyIcons
+    [PacketListIndex(5, ListSeparator = '|', IsOptional = true)]
+    IReadOnlyList<bool>? FamilyIcons
 ) : IPacket;
