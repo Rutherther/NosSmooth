@@ -33,8 +33,8 @@ public class PacketListIndexAttributeGenerator : IParameterGenerator
     /// <summary>
     /// Gets the full name of the packet index attribute.
     /// </summary>
-    public static string PacketListIndexAttributeFullName
-        => "NosSmooth.PacketSerializer.Abstractions.Attributes.PacketListIndexAttribute";
+    public string PacketListIndexAttributeFullName { get; set; }
+        = "NosSmooth.PacketSerializer.Abstractions.Attributes.PacketListIndexAttribute";
 
     /// <inheritdoc />
     public bool ShouldHandle(ParameterInfo parameter)
@@ -94,12 +94,25 @@ public class PacketListIndexAttributeGenerator : IParameterGenerator
 
     /// <inheritdoc />
     public IError? GenerateDeserializerPart(IndentedTextWriter textWriter, PacketInfo packetInfo)
+        => GenerateDeserializerPart(textWriter, packetInfo, true);
+
+    /// <summary>
+    /// Generate part for the Deserializer method to deserialize the given parameter.
+    /// </summary>
+    /// <param name="textWriter">The text writer to write the code to.</param>
+    /// <param name="packetInfo">The packet info to generate for.</param>
+    /// <param name="declare">Whether to declare the local variable.</param>
+    /// <returns>The generated source code.</returns>
+    public IError? GenerateDeserializerPart(IndentedTextWriter textWriter, PacketInfo packetInfo, bool declare)
     {
         var generator = new ConverterDeserializationGenerator(textWriter);
         var parameter = packetInfo.Parameters.Current;
         var attribute = parameter.Attributes.First(x => x.FullName == PacketListIndexAttributeFullName);
 
-        generator.DeclareLocalVariable(parameter);
+        if (declare)
+        {
+            generator.DeclareLocalVariable(parameter);
+        }
 
         // add optional if
         if (parameter.IsOptional())

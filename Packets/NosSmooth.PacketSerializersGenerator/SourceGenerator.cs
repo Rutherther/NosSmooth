@@ -54,6 +54,7 @@ public class SourceGenerator : ISourceGenerator
                 new PacketListIndexAttributeGenerator(inlineTypeConverter),
                 new PacketContextListAttributeGenerator(inlineTypeConverter),
                 new PacketConditionalIndexAttributeGenerator(inlineTypeConverter),
+                new PacketConditionalListIndexAttributeGenerator(inlineTypeConverter),
             }
         );
     }
