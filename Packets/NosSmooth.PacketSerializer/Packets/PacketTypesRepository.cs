@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using NosSmooth.Packets;
 using NosSmooth.PacketSerializer.Abstractions;
@@ -48,8 +49,8 @@ public class PacketTypesRepository : IPacketTypesRepository
                 (nameof(type), $"The type has to be assignable to IPacket. {type.FullName} isn't.");
         }
 
-        var header = type.GetCustomAttribute<PacketHeaderAttribute>();
-        if (header is null)
+        var headers = type.GetCustomAttributes<PacketHeaderAttribute>().ToList();
+        if (headers.Count == 0)
         {
             return new ArgumentInvalidError
             (
@@ -64,7 +65,32 @@ public class PacketTypesRepository : IPacketTypesRepository
             return Result.FromError(converterResult);
         }
 
-        var info = new PacketInfo(header.Identifier, type, converterResult.Entity);
+        if (headers.Count == 1)
+        {
+            return AddPacket(headers[0], type, converterResult.Entity);
+        }
+
+        var errors = new List<IResult>();
+        foreach (var header in headers)
+        {
+            var result = AddPacket(header, type, converterResult.Entity);
+            if (!result.IsSuccess)
+            {
+                errors.Add(result);
+            }
+        }
+
+        return errors.Count switch
+        {
+            0 => Result.FromSuccess(),
+            1 => (Result)errors[0],
+            _ => new AggregateError(errors)
+        };
+    }
+
+    private Result AddPacket(PacketHeaderAttribute header, Type type, IStringConverter converter)
+    {
+        var info = new PacketInfo(header.Identifier, type, converter);
         if (type.FullName is not null)
         {
             if (_typeToPacket.ContainsKey(type.FullName))

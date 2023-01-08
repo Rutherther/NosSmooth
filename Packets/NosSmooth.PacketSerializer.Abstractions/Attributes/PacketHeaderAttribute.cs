@@ -9,7 +9,7 @@ namespace NosSmooth.PacketSerializer.Abstractions.Attributes;
 /// <summary>
 /// Attribute for specifying the header identifier of the packet.
 /// </summary>
-[AttributeUsage(AttributeTargets.Class)]
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 public class PacketHeaderAttribute : Attribute
 {
     /// <summary>
