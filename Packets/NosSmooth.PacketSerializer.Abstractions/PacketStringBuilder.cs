@@ -16,7 +16,6 @@ public class PacketStringBuilder
 {
     private readonly StringBuilder _builder;
     private StringBuilderLevel _currentLevel;
-    private char? _preparedLevelSeparator;
     private char? _insertSeparator;
 
     /// <summary>
@@ -26,7 +25,7 @@ public class PacketStringBuilder
     public PacketStringBuilder(char separator = ' ')
     {
         _currentLevel = new StringBuilderLevel(null, separator);
-        _preparedLevelSeparator = _insertSeparator = null;
+        _insertSeparator = null;
         _builder = new StringBuilder();
     }
 
@@ -48,7 +47,7 @@ public class PacketStringBuilder
     /// <param name="separator">The separator of the prepared level.</param>
     public void PrepareLevel(char separator)
     {
-        _preparedLevelSeparator = separator;
+        _currentLevel.PreparedLevelSeparator = separator;
     }
 
     /// <summary>
@@ -56,7 +55,7 @@ public class PacketStringBuilder
     /// </summary>
     public void RemovePreparedLevel()
     {
-        _preparedLevelSeparator = null;
+        _currentLevel.PreparedLevelSeparator = null;
     }
 
     /// <summary>
@@ -69,12 +68,12 @@ public class PacketStringBuilder
     /// <returns>An enumerator with the new level pushed.</returns>
     public bool PushPreparedLevel()
     {
-        if (_preparedLevelSeparator is null)
+        if (_currentLevel.PreparedLevelSeparator is null)
         {
             return false;
         }
 
-        _currentLevel = new StringBuilderLevel(_currentLevel, _preparedLevelSeparator.Value);
+        _currentLevel = new StringBuilderLevel(_currentLevel, _currentLevel.PreparedLevelSeparator.Value);
         return true;
     }
 
@@ -88,7 +87,6 @@ public class PacketStringBuilder
     /// <param name="separator">The separator of the new level.</param>
     public void PushLevel(char separator)
     {
-        _preparedLevelSeparator = null;
         _currentLevel = new StringBuilderLevel(_currentLevel, separator);
     }
 
@@ -302,6 +300,8 @@ public class PacketStringBuilder
         }
 
         public StringBuilderLevel? Parent { get; }
+
+        public char? PreparedLevelSeparator { get; set; }
 
         public char Separator { get; }
 
