@@ -81,8 +81,8 @@ public record InNonPlayerSubPacket
     short SkillRank3,
     [PacketIndex(19)]
     bool IsInvisible,
-    [PacketIndex(20)]
+    [PacketIndex(20, IsOptional = true)]
     string? Unknown4,
-    [PacketIndex(21)]
+    [PacketIndex(21, IsOptional = true)]
     string? Unknown5
 ) : IPacket;
