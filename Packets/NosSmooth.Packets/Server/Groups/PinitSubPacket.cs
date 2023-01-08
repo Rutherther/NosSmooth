@@ -21,16 +21,16 @@ namespace NosSmooth.Packets.Server.Groups;
 /// <param name="EntityId">The id of the entity.</param>
 /// <param name="MateSubPacket">Present for pets and partners.</param>
 /// <param name="PlayerSubPacket">Present for players.</param>
-[GenerateSerializer(true)]
 [PacketHeader(null, PacketSource.Server)]
+[GenerateSerializer(true)]
 public record PinitSubPacket
 (
     [PacketIndex(0)]
     EntityType EntityType,
     [PacketIndex(1)]
     long EntityId,
-    [PacketConditionalIndex(2, "EntityType", false, EntityType.Npc, InnerSeparator = '|')]
+    [PacketConditionalIndex(2, "EntityType", false, EntityType.Npc, IsOptional = true)]
     PinitMateSubPacket? MateSubPacket,
-    [PacketConditionalIndex(3, "EntityType", false, EntityType.Player, InnerSeparator = '|')]
+    [PacketConditionalIndex(3, "EntityType", false, EntityType.Player, IsOptional = true)]
     PinitPlayerSubPacket? PlayerSubPacket
 ) : IPacket;

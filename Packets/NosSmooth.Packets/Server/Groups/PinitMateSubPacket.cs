@@ -20,6 +20,8 @@ namespace NosSmooth.Packets.Server.Groups;
 /// <param name="Name">The name of the mate.</param>
 /// <param name="Unknown">Unknown TODO.</param>
 /// <param name="VNum">The VNum of the mate entity.</param>
+/// <param name="Unknown1">Unknown TODO.</param>
+/// <param name="Unknown2">Unknown TODO.</param>
 [PacketHeader(null, PacketSource.Server)]
 [GenerateSerializer(true)]
 public record PinitMateSubPacket
@@ -33,5 +35,9 @@ public record PinitMateSubPacket
     [PacketIndex(3)]
     int? Unknown,
     [PacketIndex(4)]
-    long? VNum
+    long? VNum,
+    [PacketIndex(5)]
+    byte Unknown1,
+    [PacketIndex(6)]
+    byte Unknown2
 ) : IPacket;
