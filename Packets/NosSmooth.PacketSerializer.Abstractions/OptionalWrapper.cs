@@ -14,6 +14,7 @@ namespace NosSmooth.PacketSerializer.Abstractions;
 /// The converter of underlying type will be called
 /// if and only if the value is not null.
 /// </summary>
+/// <param name="Present">Whether the value is present in the packet. (to differentiate between null and not present.)</param>
 /// <param name="Value">The value.</param>
 /// <typeparam name="T">The underlying type.</typeparam>
 [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1313:Parameter names should begin with lower-case letter", Justification = "Fix this, this should not happen.")]
