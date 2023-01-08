@@ -9,6 +9,7 @@ using NosSmooth.Extensions.Pathfinding;
 using NosSmooth.Extensions.Pathfinding.Errors;
 using NosSmooth.Game.Data.Entities;
 using NosSmooth.Game.Data.Info;
+using NosSmooth.Game.Errors;
 using Remora.Results;
 
 namespace NosSmooth.Extensions.Combat.Operations;
@@ -53,7 +54,7 @@ public record WalkInRangeOperation
             var position = Entity.Position;
             if (position is null)
             {
-                return new GenericError("Entity's position is not initialized.");
+                return new NotInitializedError("entity's position");
             }
 
             var currentPosition = character.Position;

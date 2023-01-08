@@ -176,7 +176,7 @@ public class NostaleSkillsPacketApi
 
         if (skill.Info is null)
         {
-            return Task.FromResult<Result>(new GenericError("Skill does not contain info."));
+            return Task.FromResult<Result>(new NotInitializedError("skill info"));
         }
 
         return _client.SendPacketAsync
@@ -224,7 +224,7 @@ public class NostaleSkillsPacketApi
 
         if (skill.Info is null)
         {
-            return Task.FromResult<Result>(new GenericError("Skill does not contain info."));
+            return Task.FromResult<Result>(new NotInitializedError("skill info"));
         }
 
         return _client.SendPacketAsync
