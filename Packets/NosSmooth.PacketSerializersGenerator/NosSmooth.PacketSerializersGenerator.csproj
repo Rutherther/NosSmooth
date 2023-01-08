@@ -9,11 +9,12 @@
         <IncludeCopyLocalFilesOutputGroup>true</IncludeCopyLocalFilesOutputGroup>
         <Description>NosSmooth's source code generator that generates serializers for packets.</Description>
         <IncludeBuildOutput>false</IncludeBuildOutput>
-        <PackageVersion>1.0.2</PackageVersion>
+        <PackageVersion>1.0.3</PackageVersion>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <AssemblyVersion>1.0.2</AssemblyVersion>
-        <FileVersion>1.0.2</FileVersion>
+        <AssemblyVersion>1.0.3</AssemblyVersion>
+        <FileVersion>1.0.3</FileVersion>
+        <PackageReleaseNotes>Fix helper methods naming issues.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>

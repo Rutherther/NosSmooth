@@ -7,8 +7,11 @@
         <Description>NosSmooth's packet serializer abstractions that hold all interfaces, classes, errors needed for creating assemblies with packets that can have generated serializers.</Description>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>1.0.1</PackageVersion>
+        <PackageVersion>1.1.0</PackageVersion>
         <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
+        <PackageReleaseNotes>Add OptionalWrapper, NullableWrapper</PackageReleaseNotes>
+        <AssemblyVersion>1.1.0</AssemblyVersion>
+        <FileVersion>1.1.0</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>
