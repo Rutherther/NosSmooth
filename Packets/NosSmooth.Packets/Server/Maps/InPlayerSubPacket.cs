@@ -9,6 +9,7 @@ using NosSmooth.Packets.Enums.Entities;
 using NosSmooth.Packets.Enums.Players;
 using NosSmooth.Packets.Server.Character;
 using NosSmooth.Packets.Server.Weapons;
+using NosSmooth.PacketSerializer.Abstractions;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 
 namespace NosSmooth.Packets.Server.Maps;
@@ -91,7 +92,7 @@ public record InPlayerSubPacket
     [PacketIndex(17)]
     UpgradeRareSubPacket ArmorUpgradeRareSubPacket,
     [PacketIndex(18, InnerSeparator = '.')]
-    FamilySubPacket FamilySubPacket,
+    NullableWrapper<FamilySubPacket> FamilySubPacket,
     [PacketIndex(19)]
     string? FamilyName,
     [PacketIndex(20)]
