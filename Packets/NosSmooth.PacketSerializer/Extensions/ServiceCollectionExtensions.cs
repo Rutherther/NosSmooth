@@ -78,6 +78,7 @@ public static class ServiceCollectionExtensions
             .AddStringConverterFactory<NullableStringConverterFactory>()
             .AddStringConverterFactory<EnumStringConverterFactory>()
             .AddStringConverterFactory<NullableWrapperConverterFactory>()
+            .AddStringConverterFactory<OptionalWrapperConverterFactory>()
             .AddStringConverter<IntStringConverter>()
             .AddStringConverter<BoolStringConverter>()
             .AddStringConverter<UIntStringConverter>()
