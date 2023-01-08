@@ -186,19 +186,7 @@ public class CListPacketConverterTests
             0,
             0
         );
-        var packet = (CListPacket)packetResult.Entity;
-        packet.Class.ShouldBe(expectedPacket.Class);
-        packet.Level.ShouldBe(expectedPacket.Level);
-        packet.Name.ShouldBe(expectedPacket.Name);
-        packet.Sex.ShouldBe(expectedPacket.Sex);
-        packet.Slot.ShouldBe(expectedPacket.Slot);
-        packet.HairColor.ShouldBe(expectedPacket.HairColor);
-        packet.HatDesign.ShouldBe(expectedPacket.HatDesign);
-        packet.HeroLevel.ShouldBe(expectedPacket.HeroLevel);
-        packet.JobLevel.ShouldBe(expectedPacket.JobLevel);
-        packet.HairStyle.ShouldBe(expectedPacket.HairStyle);
-        packet.EquipmentSubPacket.ShouldBe(expectedPacket.EquipmentSubPacket);
-        packet.PetsSubPacket.ShouldBe(expectedPacket.PetsSubPacket);
+        packetResult.Entity.ShouldBeEquivalentTo(expectedPacket);
     }
 
     /// <summary>
