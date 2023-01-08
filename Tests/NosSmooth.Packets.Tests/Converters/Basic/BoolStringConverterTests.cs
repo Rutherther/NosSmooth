@@ -52,7 +52,7 @@ public class BoolStringConverterTests
     {
         var deserialize = "-1";
         var stringEnumerator = new PacketStringEnumerator(deserialize);
-        var deserializeResult = _stringSerializer.Deserialize<bool?>(ref stringEnumerator, default);
+        var deserializeResult = _stringSerializer.Deserialize<bool?>(ref stringEnumerator, DeserializeOptions.Nullable);
         Assert.True(deserializeResult.IsSuccess, !deserializeResult.IsSuccess ? deserializeResult.Error.Message : string.Empty);
         Assert.Null(deserializeResult.Entity);
     }

@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using NosSmooth.Packets.Enums.Players;
@@ -13,6 +14,7 @@ using NosSmooth.PacketSerializer.Abstractions;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using NosSmooth.PacketSerializer.Extensions;
 using NosSmooth.PacketSerializer.Packets;
+using Shouldly;
 using Xunit;
 
 namespace NosSmooth.Packets.Tests.Converters.Packets;
@@ -80,15 +82,24 @@ public class CListPacketConverterTests
                 new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(0, 2100)),
                 new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(0, 2102)),
                 new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(0, 317)),
-                new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(null, null)),
-                new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(null, null)),
-                new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(null, null)),
-                new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(null, null)),
-                new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(null, null)),
-                new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(null, null)),
-                new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(null, null)),
-                new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(null, null)),
-                new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(null, null)),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
             },
             0,
             0
@@ -114,7 +125,7 @@ public class CListPacketConverterTests
             "clist 1 derfy 0 1 0 106 0 2 99 80 -1.-1.4452.4468.4840.4131.-1.-1 99  1 1 0.2105.0.319.0.2106.0.2107.0.2108.0.2100.0.2102.0.317.-1.-1.-1.-1.-1.-1.-1.-1.-1.-1.-1.-1.-1.-1.-1.-1.-1.-1 0 0",
             PacketSource.Server
         );
-        Assert.True(packetResult.IsSuccess);
+        packetResult.IsSuccess.ShouldBeTrue();
 
         var expectedPacket = new CListPacket
         (
@@ -143,7 +154,7 @@ public class CListPacketConverterTests
             string.Empty,
             1,
             1,
-            new OptionalWrapper<NullableWrapper<CListPetSubPacket>>[]
+            new List<OptionalWrapper<NullableWrapper<CListPetSubPacket>>>(new OptionalWrapper<NullableWrapper<CListPetSubPacket>>[]
             {
                 new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(0, 2105)),
                 new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(0, 319)),
@@ -153,20 +164,41 @@ public class CListPacketConverterTests
                 new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(0, 2100)),
                 new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(0, 2102)),
                 new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(0, 317)),
-                new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(null, null)),
-                new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(null, null)),
-                new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(null, null)),
-                new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(null, null)),
-                new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(null, null)),
-                new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(null, null)),
-                new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(null, null)),
-                new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(null, null)),
-                new NullableWrapper<CListPetSubPacket>(new CListPetSubPacket(null, null)),
-            },
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+                new NullableWrapper<CListPetSubPacket>(null),
+            }),
             0,
             0
         );
-        Assert.Equal(expectedPacket, packetResult.Entity);
+        var packet = (CListPacket)packetResult.Entity;
+        packet.Class.ShouldBe(expectedPacket.Class);
+        packet.Level.ShouldBe(expectedPacket.Level);
+        packet.Name.ShouldBe(expectedPacket.Name);
+        packet.Sex.ShouldBe(expectedPacket.Sex);
+        packet.Slot.ShouldBe(expectedPacket.Slot);
+        packet.HairColor.ShouldBe(expectedPacket.HairColor);
+        packet.HatDesign.ShouldBe(expectedPacket.HatDesign);
+        packet.HeroLevel.ShouldBe(expectedPacket.HeroLevel);
+        packet.JobLevel.ShouldBe(expectedPacket.JobLevel);
+        packet.HairStyle.ShouldBe(expectedPacket.HairStyle);
+        packet.EquipmentSubPacket.ShouldBe(expectedPacket.EquipmentSubPacket);
+        packet.PetsSubPacket.ShouldBe(expectedPacket.PetsSubPacket);
     }
 
     /// <summary>

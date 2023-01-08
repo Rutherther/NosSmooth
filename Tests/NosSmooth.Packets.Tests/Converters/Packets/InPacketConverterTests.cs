@@ -17,6 +17,7 @@ using NosSmooth.PacketSerializer.Abstractions;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using NosSmooth.PacketSerializer.Extensions;
 using NosSmooth.PacketSerializer.Packets;
+using Shouldly;
 using Xunit;
 
 namespace NosSmooth.Packets.Tests.Converters.Packets;
@@ -111,8 +112,52 @@ public class InPacketConverterTests
             null,
             null
         );
-        Assert.True(result.IsSuccess);
-        Assert.Equal(expectedPacket, result.Entity);
+        result.IsSuccess.ShouldBeTrue();
+        var packet = (InPacket)result.Entity;
+        packet.EntityType.ShouldBe(expectedPacket.EntityType);
+        packet.EntityId.ShouldBe(expectedPacket.EntityId);
+        packet.ItemSubPacket.ShouldBe(expectedPacket.ItemSubPacket);
+        packet.Direction.ShouldBe(expectedPacket.Direction);
+        packet.Name.ShouldBe(expectedPacket.Name);
+        packet.PositionX.ShouldBe(expectedPacket.PositionX);
+        packet.PositionY.ShouldBe(expectedPacket.PositionY);
+        packet.VNum.ShouldBe(expectedPacket.VNum);
+        packet.NonPlayerSubPacket.ShouldBe(expectedPacket.NonPlayerSubPacket);
+
+        packet.PlayerSubPacket.ShouldNotBeNull();
+        var playerSubPacket = packet.PlayerSubPacket!;
+        var expectedSubPacket = packet.PlayerSubPacket!;
+
+        playerSubPacket.Level.ShouldBe(expectedSubPacket.Level);
+        playerSubPacket.FamilySubPacket.ShouldBe(expectedSubPacket.FamilySubPacket);
+        playerSubPacket.HeroLevel.ShouldBe(expectedSubPacket.HeroLevel);
+        playerSubPacket.Size.ShouldBe(expectedSubPacket.Size);
+        playerSubPacket.FamilyLevel.ShouldBe(expectedSubPacket.FamilyLevel);
+        playerSubPacket.MorphUpgrade.ShouldBe(expectedSubPacket.MorphUpgrade);
+        playerSubPacket.MorphUpgrade2.ShouldBe(expectedSubPacket.MorphUpgrade2);
+        playerSubPacket.Authority.ShouldBe(expectedSubPacket.Authority);
+        playerSubPacket.Class.ShouldBe(expectedSubPacket.Class);
+        playerSubPacket.Compliment.ShouldBe(expectedSubPacket.Compliment);
+        playerSubPacket.Equipment.ShouldBe(expectedSubPacket.Equipment);
+        playerSubPacket.Faction.ShouldBe(expectedSubPacket.Faction);
+        playerSubPacket.Fairy.ShouldBe(expectedSubPacket.Fairy);
+        playerSubPacket.Sex.ShouldBe(expectedSubPacket.Sex);
+        playerSubPacket.ArenaWinner.ShouldBe(expectedSubPacket.ArenaWinner);
+        playerSubPacket.FairyElement.ShouldBe(expectedSubPacket.FairyElement);
+        playerSubPacket.FamilyIcons.ShouldBe(expectedSubPacket.FamilyIcons);
+        playerSubPacket.FamilyName.ShouldBe(expectedSubPacket.FamilyName);
+        playerSubPacket.GroupId.ShouldBe(expectedSubPacket.GroupId);
+        playerSubPacket.HairColor.ShouldBe(expectedSubPacket.HairColor);
+        playerSubPacket.HairStyle.ShouldBe(expectedSubPacket.HairStyle);
+        playerSubPacket.HpPercentage.ShouldBe(expectedSubPacket.HpPercentage);
+        playerSubPacket.IsInvisible.ShouldBe(expectedSubPacket.IsInvisible);
+        playerSubPacket.IsSitting.ShouldBe(expectedSubPacket.IsSitting);
+        playerSubPacket.MpPercentage.ShouldBe(expectedSubPacket.MpPercentage);
+        playerSubPacket.ReputationIcon.ShouldBe(expectedSubPacket.ReputationIcon);
+        playerSubPacket.FamilySubPacket.ShouldBe(expectedSubPacket.FamilySubPacket);
+        playerSubPacket.ArmorUpgradeRareSubPacket.ShouldBe(expectedSubPacket.ArmorUpgradeRareSubPacket);
+        playerSubPacket.WeaponUpgradeRareSubPacket.ShouldBe(expectedSubPacket.WeaponUpgradeRareSubPacket);
+        playerSubPacket.MorphVNum.ShouldBe(expectedSubPacket.MorphVNum);
     }
 
     /// <summary>
@@ -235,7 +280,7 @@ public class InPacketConverterTests
                 null,
                 null,
                 "0",
-                null,
+                "-1",
                 "0",
                 0,
                 0,
@@ -250,7 +295,8 @@ public class InPacketConverterTests
         );
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(expectedPacket, result.Entity);
+        result.IsSuccess.ShouldBeTrue();
+        result.Entity.ShouldBe(expectedPacket);
     }
 
     /// <summary>

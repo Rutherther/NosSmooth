@@ -57,7 +57,9 @@ public class PinitPacketConverterTest
                         83,
                         "Kliff",
                         null,
-                        319
+                        319,
+                        1,
+                        0
                     ),
                     null
                 ),
@@ -71,7 +73,9 @@ public class PinitPacketConverterTest
                         83,
                         "@",
                         null,
-                        2105
+                        2105,
+                        0,
+                        0
                     ),
                     null
                 )
@@ -110,7 +114,9 @@ public class PinitPacketConverterTest
                     83,
                     "Kliff",
                     null,
-                    319
+                    319,
+                    1,
+                    0
                 ),
                 null
             ),
@@ -128,7 +134,9 @@ public class PinitPacketConverterTest
                     83,
                     "@",
                     null,
-                    2105
+                    2105,
+                    0,
+                    0
                 ),
                 null
             ),
