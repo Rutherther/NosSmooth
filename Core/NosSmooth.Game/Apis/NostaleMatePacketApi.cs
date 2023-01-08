@@ -41,8 +41,8 @@ public class NostaleMatePacketApi
     /// <param name="mateId">The id of the mate to have company.</param>
     /// <param name="ct">The cancellation token used for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public async Task<Result> CompanyAsync(long mateId, CancellationToken ct = default)
-        => await _client.SendPacketAsync
+    public Task<Result> CompanyAsync(long mateId, CancellationToken ct = default)
+        => _client.SendPacketAsync
         (
             new NRunPacket
             (
@@ -67,8 +67,8 @@ public class NostaleMatePacketApi
     /// <param name="mateId">The id of the mate to have company.</param>
     /// <param name="ct">The cancellation token used for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public async Task<Result> StayAsync(long mateId, CancellationToken ct = default)
-        => await _client.SendPacketAsync
+    public Task<Result> StayAsync(long mateId, CancellationToken ct = default)
+        => _client.SendPacketAsync
         (
             new NRunPacket
             (
@@ -90,8 +90,8 @@ public class NostaleMatePacketApi
     /// <param name="mateId">The id of the mate to have company.</param>
     /// <param name="ct">The cancellation token used for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public async Task<Result> SendBackAsync(long mateId, CancellationToken ct = default)
-        => await _client.SendPacketAsync
+    public Task<Result> SendBackAsync(long mateId, CancellationToken ct = default)
+        => _client.SendPacketAsync
         (
             new NRunPacket
             (

@@ -46,8 +46,8 @@ public class NostaleMapPacketApi
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
     [Unsafe("Portal position not checked.")]
-    public async Task<Result> UsePortalAsync(CancellationToken ct = default)
-        => await _client.SendPacketAsync(new PreqPacket(), ct);
+    public Task<Result> UsePortalAsync(CancellationToken ct = default)
+        => _client.SendPacketAsync(new PreqPacket(), ct);
 
     /// <summary>
     /// Pick up the given item.

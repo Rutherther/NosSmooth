@@ -151,7 +151,7 @@ public class ControlCommands
     /// <param name="waitForCancellation">Whether to wait for cancellation of non cancellable commands.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public async Task<Result> CancelAsync
+    public Task<Result> CancelAsync
         (ControlCommandsFilter filter, bool waitForCancellation = true, CancellationToken ct = default)
     {
         bool cancelUser = filter.HasFlag(ControlCommandsFilter.UserCancellable);
@@ -164,7 +164,7 @@ public class ControlCommands
                 || (cancelMapChanged && x.Command.CancelOnMapChange)
         );
 
-        return await CancelCommandsAsync(commandsToCancel, waitForCancellation, filter, ct);
+        return CancelCommandsAsync(commandsToCancel, waitForCancellation, filter, ct);
     }
 
     private async Task<Result> FinishCommandsAsync(IEnumerable<CommandData> commandsToFinish)

@@ -31,9 +31,9 @@ internal class GameSemaphores
     /// <param name="semaphoreType">The semaphore type.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>A task that may or may not have succeeded.</returns>
-    public async Task AcquireSemaphore(GameSemaphoreType semaphoreType, CancellationToken ct = default)
+    public Task AcquireSemaphore(GameSemaphoreType semaphoreType, CancellationToken ct = default)
     {
-        await _semaphores[semaphoreType].WaitAsync(ct);
+        return _semaphores[semaphoreType].WaitAsync(ct);
     }
 
     /// <summary>

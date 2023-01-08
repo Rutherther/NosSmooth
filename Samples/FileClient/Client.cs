@@ -97,9 +97,9 @@ public class Client : BaseNostaleClient
     }
 
     /// <inheritdoc/>
-    public override async Task<Result> SendPacketAsync(string packetString, CancellationToken ct = default)
+    public override Task<Result> SendPacketAsync(string packetString, CancellationToken ct = default)
     {
-        return await _packetHandler.HandlePacketAsync
+        return _packetHandler.HandlePacketAsync
         (
             this,
             PacketSource.Client,
@@ -110,9 +110,9 @@ public class Client : BaseNostaleClient
     }
 
     /// <inheritdoc/>
-    public override async Task<Result> ReceivePacketAsync(string packetString, CancellationToken ct = default)
+    public override Task<Result> ReceivePacketAsync(string packetString, CancellationToken ct = default)
     {
-        return await _packetHandler.HandlePacketAsync
+        return _packetHandler.HandlePacketAsync
         (
             this,
             PacketSource.Server,

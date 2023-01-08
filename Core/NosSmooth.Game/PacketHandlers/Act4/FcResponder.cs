@@ -30,10 +30,10 @@ public class FcResponder : IPacketResponder<FcPacket>
     }
 
     /// <inheritdoc />
-    public async Task<Result> Respond(PacketEventArgs<FcPacket> packetArgs, CancellationToken ct = default)
+    public Task<Result> Respond(PacketEventArgs<FcPacket> packetArgs, CancellationToken ct = default)
     {
         var packet = packetArgs.Packet;
-        return await _eventDispatcher.DispatchEvent
+        return _eventDispatcher.DispatchEvent
         (
             new Act4StatusReceivedEvent
             (

@@ -31,8 +31,6 @@ public record WalkOperation(WalkManager WalkManager, short X, short Y) : ICombat
     }
 
     /// <inheritdoc />
-    public async Task<Result> UseAsync(ICombatState combatState, CancellationToken ct = default)
-    {
-        return await WalkManager.GoToAsync(X, Y, true, ct);
-    }
+    public Task<Result> UseAsync(ICombatState combatState, CancellationToken ct = default)
+        => WalkManager.GoToAsync(X, Y, true, ct);
 }

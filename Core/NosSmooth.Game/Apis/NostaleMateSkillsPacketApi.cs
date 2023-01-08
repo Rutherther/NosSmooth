@@ -36,7 +36,7 @@ public class NostaleMateSkillsPacketApi
     /// <param name="mapX">The x coordinate of the partner.</param>
     /// <param name="mapY">The y coordinate of the partner.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public async Task<Result> UsePetSkillAsync
+    public Task<Result> UsePetSkillAsync
     (
         long petId,
         EntityType targetEntityType,
@@ -45,7 +45,7 @@ public class NostaleMateSkillsPacketApi
         short? mapY = default
     )
     {
-        return await _client.SendPacketAsync
+        return _client.SendPacketAsync
         (
             new UsePetSkillPacket
             (
@@ -69,7 +69,7 @@ public class NostaleMateSkillsPacketApi
     /// <param name="mapX">The x coordinate of the partner.</param>
     /// <param name="mapY">The y coordinate of the partner.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public async Task<Result> UsePartnerSkillAsync
+    public Task<Result> UsePartnerSkillAsync
     (
         long partnerId,
         byte skillSlot,
@@ -79,7 +79,7 @@ public class NostaleMateSkillsPacketApi
         short? mapY = default
     )
     {
-        return await _client.SendPacketAsync
+        return _client.SendPacketAsync
         (
             new UsePartnerSkillPacket
             (

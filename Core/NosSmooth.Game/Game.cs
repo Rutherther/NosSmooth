@@ -103,7 +103,7 @@ public class Game : IStatefulEntity
     /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the mates.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>The updated mates.</returns>
-    internal async Task<Mates?> CreateOrUpdateMatesAsync
+    internal Task<Mates?> CreateOrUpdateMatesAsync
     (
         Func<Mates?> create,
         Func<Mates, Mates?> update,
@@ -111,7 +111,7 @@ public class Game : IStatefulEntity
         CancellationToken ct = default
     )
     {
-        return await CreateOrUpdateAsync
+        return CreateOrUpdateAsync
         (
             GameSemaphoreType.Mates,
             () => Mates,
@@ -131,7 +131,7 @@ public class Game : IStatefulEntity
     /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the skills.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>The updated skills.</returns>
-    internal async Task<Skills?> CreateOrUpdateSkillsAsync
+    internal Task<Skills?> CreateOrUpdateSkillsAsync
     (
         Func<Skills?> create,
         Func<Skills, Skills?> update,
@@ -139,7 +139,7 @@ public class Game : IStatefulEntity
         CancellationToken ct = default
     )
     {
-        return await CreateOrUpdateAsync
+        return CreateOrUpdateAsync
         (
             GameSemaphoreType.Skills,
             () => Skills,
@@ -159,7 +159,7 @@ public class Game : IStatefulEntity
     /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the inventory.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>The updated inventory.</returns>
-    internal async Task<Inventory?> CreateOrUpdateInventoryAsync
+    internal Task<Inventory?> CreateOrUpdateInventoryAsync
     (
         Func<Inventory?> create,
         Func<Inventory, Inventory?> update,
@@ -167,7 +167,7 @@ public class Game : IStatefulEntity
         CancellationToken ct = default
     )
     {
-        return await CreateOrUpdateAsync
+        return CreateOrUpdateAsync
         (
             GameSemaphoreType.Inventory,
             () => Inventory,
@@ -231,7 +231,7 @@ public class Game : IStatefulEntity
     /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the friends.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>The updated friends.</returns>
-    internal async Task<IReadOnlyList<Friend>?> CreateOrUpdateFriendsAsync
+    internal Task<IReadOnlyList<Friend>?> CreateOrUpdateFriendsAsync
     (
         Func<IReadOnlyList<Friend>?> create,
         Func<IReadOnlyList<Friend>, IReadOnlyList<Friend>?> update,
@@ -239,7 +239,7 @@ public class Game : IStatefulEntity
         CancellationToken ct = default
     )
     {
-        return await CreateOrUpdateAsync
+        return CreateOrUpdateAsync
         (
             GameSemaphoreType.Friends,
             () => Friends,
@@ -259,7 +259,7 @@ public class Game : IStatefulEntity
     /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the group.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>The updated group.</returns>
-    internal async Task<Group?> CreateOrUpdateGroupAsync
+    internal Task<Group?> CreateOrUpdateGroupAsync
     (
         Func<Group?> create,
         Func<Group, Group?> update,
@@ -267,7 +267,7 @@ public class Game : IStatefulEntity
         CancellationToken ct = default
     )
     {
-        return await CreateOrUpdateAsync
+        return CreateOrUpdateAsync
         (
             GameSemaphoreType.Group,
             () => Group,
@@ -287,7 +287,7 @@ public class Game : IStatefulEntity
     /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the character.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>The updated character.</returns>
-    internal async Task<Character?> CreateOrUpdateCharacterAsync
+    internal Task<Character?> CreateOrUpdateCharacterAsync
     (
         Func<Character?> create,
         Func<Character, Character?> update,
@@ -295,7 +295,7 @@ public class Game : IStatefulEntity
         CancellationToken ct = default
     )
     {
-        return await CreateOrUpdateAsync
+        return CreateOrUpdateAsync
         (
             GameSemaphoreType.Character,
             () => Character,
@@ -314,14 +314,14 @@ public class Game : IStatefulEntity
     /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the map.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>The updated character.</returns>
-    internal async Task<Map?> CreateMapAsync
+    internal Task<Map?> CreateMapAsync
     (
         Func<Map?> create,
         bool releaseSemaphore = true,
         CancellationToken ct = default
     )
     {
-        return await CreateAsync
+        return CreateAsync
         (
             GameSemaphoreType.Map,
             m => CurrentMap = m,
@@ -339,7 +339,7 @@ public class Game : IStatefulEntity
     /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the map.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>The updated character.</returns>
-    internal async Task<Map?> CreateOrUpdateMapAsync
+    internal Task<Map?> CreateOrUpdateMapAsync
     (
         Func<Map?> create,
         Func<Map?, Map?> update,
@@ -347,7 +347,7 @@ public class Game : IStatefulEntity
         CancellationToken ct = default
     )
     {
-        return await CreateOrUpdateAsync<Map?>
+        return CreateOrUpdateAsync<Map?>
         (
             GameSemaphoreType.Map,
             () => CurrentMap,

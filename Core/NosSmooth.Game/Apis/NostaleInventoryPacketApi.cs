@@ -35,14 +35,14 @@ public class NostaleInventoryPacketApi
     /// <param name="amount">The amount to drop.</param>
     /// <param name="ct">The cancellation token used for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public async Task<Result> DropItemAsync
+    public Task<Result> DropItemAsync
     (
         BagType bag,
         short slot,
         short amount,
         CancellationToken ct = default
     )
-        => await _client.SendPacketAsync(new PutPacket(bag, slot, amount), ct);
+        => _client.SendPacketAsync(new PutPacket(bag, slot, amount), ct);
 
     /// <summary>
     /// Move the given item within one bag.
@@ -53,7 +53,7 @@ public class NostaleInventoryPacketApi
     /// <param name="amount">The amount to move.</param>
     /// <param name="ct">The cancellation token used for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public async Task<Result> MoveItemAsync
+    public Task<Result> MoveItemAsync
     (
         BagType bag,
         short sourceSlot,
@@ -61,7 +61,7 @@ public class NostaleInventoryPacketApi
         short amount,
         CancellationToken ct = default
     )
-        => await MoveItemAsync
+        => MoveItemAsync
         (
             bag,
             sourceSlot,
@@ -81,7 +81,7 @@ public class NostaleInventoryPacketApi
     /// <param name="amount">The amount to move.</param>
     /// <param name="ct">The cancellation token used for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public async Task<Result> MoveItemAsync
+    public Task<Result> MoveItemAsync
     (
         BagType sourceBag,
         short sourceSlot,
@@ -93,9 +93,9 @@ public class NostaleInventoryPacketApi
     {
         if (sourceBag == destinationBag)
         {
-            return await _client.SendPacketAsync(new MviPacket(sourceBag, sourceSlot, amount, destinationSlot), ct);
+            return _client.SendPacketAsync(new MviPacket(sourceBag, sourceSlot, amount, destinationSlot), ct);
         }
 
-        return await _client.SendPacketAsync(new MvePacket(sourceBag, sourceSlot, destinationBag, destinationSlot), ct);
+        return _client.SendPacketAsync(new MvePacket(sourceBag, sourceSlot, destinationBag, destinationSlot), ct);
     }
 }

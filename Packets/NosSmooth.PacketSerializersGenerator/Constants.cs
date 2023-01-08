@@ -9,7 +9,7 @@ namespace NosSmooth.PacketSerializersGenerator;
 /// <summary>
 /// Contains constants needed for the generation.
 /// </summary>
-public class Constants
+public static class Constants
 {
     /// <summary>
     /// Gets the full name of the generate source attribute class.
