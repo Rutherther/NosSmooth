@@ -59,9 +59,12 @@ public class InventoryInitResponder : IPacketResponder<InvPacket>, IPacketRespon
 
         var slots = new List<InventorySlot>();
 
-        foreach (var subPacket in packet.InvSubPackets)
+        if (packet.InvSubPackets is not null)
         {
-            slots.Add(await CreateSlot(subPacket, ct));
+            foreach (var subPacket in packet.InvSubPackets)
+            {
+                slots.Add(await CreateSlot(subPacket, ct));
+            }
         }
 
         void AddItems(Data.Inventory.Inventory inv)
