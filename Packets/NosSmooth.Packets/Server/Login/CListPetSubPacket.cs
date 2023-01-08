@@ -18,7 +18,7 @@ namespace NosSmooth.Packets.Server.Login;
 public record CListPetSubPacket
 (
     [PacketIndex(0)]
-    long? Skin,
+    long Skin,
     [PacketIndex(1)]
-    long? PetVNum
+    long PetVNum
 ) : IPacket;
