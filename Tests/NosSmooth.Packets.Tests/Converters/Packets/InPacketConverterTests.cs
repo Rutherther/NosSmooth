@@ -13,6 +13,7 @@ using NosSmooth.Packets.Server.Character;
 using NosSmooth.Packets.Server.Maps;
 using NosSmooth.Packets.Server.Weapons;
 using NosSmooth.PacketSerializer;
+using NosSmooth.PacketSerializer.Abstractions;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using NosSmooth.PacketSerializer.Extensions;
 using NosSmooth.PacketSerializer.Packets;
@@ -91,7 +92,7 @@ public class InPacketConverterTests
                 0,
                 new UpgradeRareSubPacket(10, 8),
                 new UpgradeRareSubPacket(10, 8),
-                new FamilySubPacket(null, null),
+                new NullableWrapper<FamilySubPacket>(null),
                 null,
                 26,
                 false,
@@ -174,7 +175,7 @@ public class InPacketConverterTests
                 0,
                 new UpgradeRareSubPacket(10, 8),
                 new UpgradeRareSubPacket(10, 8),
-                new FamilySubPacket("-1", null),
+                new NullableWrapper<FamilySubPacket>(null),
                 null,
                 26,
                 false,

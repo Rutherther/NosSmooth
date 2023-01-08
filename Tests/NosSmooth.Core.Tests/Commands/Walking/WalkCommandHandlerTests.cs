@@ -30,7 +30,17 @@ public class WalkCommandHandlerTests
     {
         var calledPetWalk = false;
         var calledPlayerWalk = false;
-        var command = new WalkCommand(0, 0, new[] { 1, 2 }, 0);
+        var command = new WalkCommand
+        (
+            0,
+            0,
+            new (int, short, short)[]
+            {
+                (1, 0, 0),
+                (2, 0, 0)
+            },
+            0
+        );
         var walkHandler = new WalkCommandHandler
         (
             new FakeNostaleClient
@@ -66,7 +76,13 @@ public class WalkCommandHandlerTests
         (
             0,
             0,
-            new[] { 2, 5, 7, 9 },
+            new (int, short, short)[]
+            {
+                (2, 0, 0),
+                (5, 0, 0),
+                (7, 0, 0),
+                (9, 0, 0),
+            },
             0,
             true,
             false,
@@ -104,7 +120,7 @@ public class WalkCommandHandlerTests
         (
             10,
             15,
-            Array.Empty<int>(),
+            null,
             0,
             true,
             false,
@@ -142,7 +158,14 @@ public class WalkCommandHandlerTests
         (
             10,
             15,
-            new[] { 1, 2, 5, 7, 8 },
+            new (int, short, short)[]
+            {
+                (1, 0, 0),
+                (2, 0, 0),
+                (5, 0, 0),
+                (7, 0, 0),
+                (8, 0, 0),
+            },
             0,
             true,
             false,
@@ -156,7 +179,7 @@ public class WalkCommandHandlerTests
                 {
                     if (c is PetWalkCommand petWalkCommand)
                     {
-                        if (command.PetSelectors.Contains(petWalkCommand.PetSelector))
+                        if (command.Pets?.Select(x => x.PetSelector).Contains(petWalkCommand.PetSelector) ?? false)
                         {
                             calledCount++;
                         }
@@ -171,7 +194,7 @@ public class WalkCommandHandlerTests
         );
 
         await walkHandler.HandleCommand(command);
-        Assert.Equal(command.PetSelectors.Length, calledCount);
+        Assert.Equal(command.Pets?.Count ?? -1, calledCount);
     }
 
     /// <summary>
@@ -185,7 +208,14 @@ public class WalkCommandHandlerTests
         (
             10,
             15,
-            new[] { 1, 2, 5, 7, 8 },
+            new (int, short, short)[]
+            {
+                (1, 0, 1),
+                (2, 1, 0),
+                (5, 0, 1),
+                (7, 1, 0),
+                (8, 0, 1),
+            },
             0,
             true,
             false,
@@ -199,8 +229,11 @@ public class WalkCommandHandlerTests
                 {
                     if (c is PetWalkCommand petWalkCommand)
                     {
-                        Assert.True((command.TargetX - petWalkCommand.TargetX) <= 3);
-                        Assert.True((command.TargetY - petWalkCommand.TargetY) <= 3);
+                        Assert.True
+                        (
+                            (petWalkCommand.TargetX == 0 && petWalkCommand.TargetY == 1)
+                            || (petWalkCommand.TargetX == 1 && petWalkCommand.TargetY == 0)
+                        );
                         Assert.Equal(command.ReturnDistanceTolerance, petWalkCommand.ReturnDistanceTolerance);
                     }
                     return Result.FromSuccess();
