@@ -32,7 +32,7 @@ public class NullableWrapperConverterFactory : IStringConverterFactory
 
     /// <inheritdoc />
     public bool ShouldHandle(Type type)
-        => type.GetGenericTypeDefinition() == typeof(NullableWrapper<>);
+        => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(NullableWrapper<>);
 
     /// <inheritdoc />
     public Result<IStringConverter> CreateTypeSerializer(Type type)
