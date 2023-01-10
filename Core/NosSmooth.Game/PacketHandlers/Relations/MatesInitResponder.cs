@@ -227,20 +227,28 @@ public class MatesInitResponder : IPacketResponder<ScPPacket>, IPacketResponder<
             {
                 if (partner is not null)
                 {
-                    gamePartner = _game.Mates?.Partners.FirstOrDefault(x => x.MateId == partner.EntityId);
+                    gamePartner = _game.Mates?.Partners.FirstOrDefault(x => x.TransportId == partner.EntityId);
                     if (gamePartner is not null && gamePartner != m.CurrentPartner?.Partner)
                     {
                         m.CurrentPartner = new PartyPartner(gamePartner);
                     }
                 }
+                else
+                {
+                    m.CurrentPartner = null;
+                }
 
                 if (pet is not null)
                 {
-                    gamePet = _game.Mates?.Pets.FirstOrDefault(x => x.MateId == pet.EntityId);
+                    gamePet = _game.Mates?.Pets.FirstOrDefault(x => x.TransportId == pet.EntityId);
                     if (gamePet is not null && gamePet != m.CurrentPet?.Pet)
                     {
                         m.CurrentPet = new PartyPet(gamePet);
                     }
+                }
+                else
+                {
+                    m.CurrentPet = null;
                 }
 
                 return m;
