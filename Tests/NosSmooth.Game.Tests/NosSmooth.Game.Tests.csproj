@@ -33,13 +33,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="Packets\Modules\Mates\Inferno_No_Partner.log">
+      <None Update="Packets\Modules\Mates\Inferno_No_Partner.plog">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="Packets\Modules\Mates\Otter_and_Graham_Yuna.log">
+      <None Update="Packets\Modules\Mates\Otter_and_Graham_Yuna.plog">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="Packets\Modules\Friends\init_off_on.log">
+      <None Update="Packets\Modules\Friends\init_off_on.plog">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>

@@ -92,7 +92,7 @@ public class PacketFileClient : BaseNostaleClient, IDisposable
             path += entry + "/";
         }
 
-        path += testName + ".log";
+        path += testName + ".plog";
 
         return Create
         (
