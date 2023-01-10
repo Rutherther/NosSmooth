@@ -86,7 +86,7 @@ public record ScNPacket
     [PacketIndex(11)]
     short Unknown2,
     [PacketIndex(12)]
-    short Unknown3,
+    short AttackType,
     [PacketIndex(13)]
     short AttackUpgrade,
     [PacketIndex(14)]
@@ -124,7 +124,7 @@ public record ScNPacket
     [PacketIndex(30)]
     int MpMax,
     [PacketIndex(31)]
-    int Unknown4,
+    bool IsTeamMember,
     [PacketIndex(32)]
     int LevelExperience,
     [PacketIndex(33)]
