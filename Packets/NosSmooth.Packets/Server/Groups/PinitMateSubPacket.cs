@@ -37,7 +37,7 @@ public record PinitMateSubPacket
     [PacketIndex(4)]
     long? VNum,
     [PacketIndex(5)]
-    byte Unknown1,
+    sbyte? Unknown1,
     [PacketIndex(6)]
-    byte Unknown2
+    sbyte? Unknown2
 ) : IPacket;
