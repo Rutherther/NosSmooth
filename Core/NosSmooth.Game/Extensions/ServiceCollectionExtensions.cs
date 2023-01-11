@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NosSmooth.Core.Extensions;
 using NosSmooth.Game.Apis;
+using NosSmooth.Game.Contracts;
 using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.Events.Inventory;
 using NosSmooth.Game.PacketHandlers.Act4;
@@ -71,6 +72,9 @@ public static class ServiceCollectionExtensions
             .AddTransient<NostaleMateSkillsPacketApi>()
             .AddTransient<NostaleChatPacketApi>()
             .AddTransient<NostaleSkillsPacketApi>();
+
+        serviceCollection
+            .AddScoped<IEveryGameResponder, ContractEventResponder>();
 
         return serviceCollection;
     }
