@@ -21,6 +21,7 @@ namespace NosSmooth.Core.Contracts;
 /// <typeparam name="TError">The errors that may be returned.</typeparam>
 public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
     where TState : struct, IComparable
+    where TError : struct
     where TData : notnull
 {
     /// <summary>
@@ -29,7 +30,8 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
     /// <param name="data">The data that led to the state.</param>
     /// <param name="ct">The cancellation token used for cancelling the operation.</param>
     /// <returns>The result that may or may not have succeeded.</returns>
-    public delegate Task<Result<(TError? Error, TState? NextState)>> StateActionAsync(object? data, CancellationToken ct);
+    public delegate Task<Result<(TError? Error, TState? NextState)>> StateActionAsync
+        (object? data, CancellationToken ct);
 
     /// <summary>
     /// An action to execute when a state that may fill the data is reached.
@@ -40,14 +42,15 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
     /// <returns>The result that may or may not have succeeded.</returns>
     public delegate Task<Result<TData>> FillDataAsync(object data, CancellationToken ct);
 
+    private readonly SemaphoreSlim _semaphore;
+
+    private readonly IDictionary<TState, (TimeSpan, TState)> _timeouts;
     private readonly IDictionary<TState, StateActionAsync> _actions;
     private readonly Contractor _contractor;
     private readonly TState _defaultState;
 
     private readonly TState _fillAtState;
     private readonly FillDataAsync _fillData;
-
-    private readonly TimeSpan? _timeout;
 
     private TError? _error;
     private Result? _resultError;
@@ -64,7 +67,7 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
     /// <param name="fillAtState">The state to fill data at.</param>
     /// <param name="fillData">The function to fill the data.</param>
     /// <param name="actions">The actions to execute at each state.</param>
-    /// <param name="timeout">The timeout.</param>
+    /// <param name="timeouts">The timeouts.</param>
     public DefaultContract
     (
         Contractor contractor,
@@ -72,11 +75,11 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
         TState fillAtState,
         FillDataAsync fillData,
         IDictionary<TState, StateActionAsync> actions,
-        TimeSpan? timeout
+        IDictionary<TState, (TimeSpan Timeout, TState NextState)> timeouts
     )
     {
-        _timeout = timeout;
-
+        _semaphore = new SemaphoreSlim(1, 1);
+        _timeouts = timeouts;
         _defaultState = defaultState;
         _contractor = contractor;
         CurrentState = defaultState;
@@ -117,6 +120,7 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
 
     /// <inheritdoc />
     public async Task<Result<ContractUpdateResponse>> Update<TAny>(TAny data, CancellationToken ct = default)
+        where TAny : notnull
     {
         if (!_actions.ContainsKey(CurrentState))
         {
@@ -135,6 +139,7 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
         {
             _error = resultData.Error;
             _waitCancellationSource?.Cancel();
+            return ContractUpdateResponse.Interested;
         }
 
         if (resultData.NextState is null)
@@ -142,36 +147,9 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
             return ContractUpdateResponse.NotInterested;
         }
 
-        CurrentState = resultData.NextState.Value;
-        if (_fillAtState.CompareTo(CurrentState) == 0)
-        {
-            var filledResult = await _fillData(data!, ct);
+        await SetCurrentState(resultData.NextState.Value, ct);
 
-            if (!filledResult.IsDefined(out var filled))
-            {
-                _resultError = Result.FromError(filledResult);
-                _waitCancellationSource?.Cancel();
-                return Result<ContractUpdateResponse>.FromError(filledResult);
-            }
-
-            Data = filled;
-        }
-
-        if (_waitingFor is not null && _waitingFor.Value.CompareTo(CurrentState) == 0)
-        {
-            IsRegistered = false; // avoid deadlock. The cancellation will trigger unregister,
-
-                                  // but we are inside of the lock now.
-            _waitCancellationSource?.Cancel();
-
-            if (_unregisterAtWaitingFor)
-            {
-                return ContractUpdateResponse.InterestedAndUnregister;
-            }
-        }
-
-        // TODO: timeouts!
-        return ContractUpdateResponse.Interested;
+        return await SetupNewState(data!, ct);
     }
 
     /// <inheritdoc />
@@ -183,6 +161,25 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
             if (!result.IsSuccess)
             {
                 return Result.FromError(result);
+            }
+
+            var (error, state) = result.Entity;
+
+            if (error is not null)
+            {
+                _error = error;
+                _waitCancellationSource?.Cancel();
+            }
+
+            if (state is not null)
+            {
+                await SetCurrentState(state.Value, ct);
+                var newStateResult = await SetupNewState<int?>(null, ct);
+
+                if (!newStateResult.IsSuccess)
+                {
+                    return Result.FromError(newStateResult);
+                }
             }
         }
 
@@ -204,11 +201,6 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
         _waitingFor = state;
         _unregisterAtWaitingFor = unregisterAfter;
         _waitCancellationSource = CancellationTokenSource.CreateLinkedTokenSource(ct);
-
-        if (_timeout is not null)
-        {
-            _waitCancellationSource.CancelAfter(_timeout.Value);
-        }
 
         Register();
 
@@ -250,7 +242,7 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
 
         if (_error is not null)
         {
-            return new ContractError<TError>(_error);
+            return new ContractError<TError>(_error.Value);
         }
 
         if (Data is null)
@@ -259,5 +251,77 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
         }
 
         return Data;
+    }
+
+    private async Task<Result<ContractUpdateResponse>> SetupNewState<TAny>(TAny data, CancellationToken ct)
+    {
+        if (_fillAtState.CompareTo(CurrentState) == 0)
+        {
+            if (data is not null)
+            {
+                var filledResult = await _fillData(data, ct);
+
+                if (!filledResult.IsDefined(out var filled))
+                {
+                    _resultError = Result.FromError(filledResult);
+                    _waitCancellationSource?.Cancel();
+                    return Result<ContractUpdateResponse>.FromError(filledResult);
+                }
+
+                Data = filled;
+            }
+            else
+            {
+                throw new InvalidOperationException
+                (
+                    $"Got to a state {CurrentState} without data, but the state should fill data. That's not possible."
+                );
+            }
+        }
+        if (_waitingFor is not null && _waitingFor.Value.CompareTo(CurrentState) == 0)
+        {
+            IsRegistered = false; // avoid deadlock. The cancellation will trigger unregister,
+
+            // but we are inside of the lock now.
+            _waitCancellationSource?.Cancel();
+
+            if (_unregisterAtWaitingFor)
+            {
+                return ContractUpdateResponse.InterestedAndUnregister;
+            }
+        }
+
+        SetupTimeout();
+        return ContractUpdateResponse.Interested;
+    }
+
+    private void SetupTimeout()
+    {
+        if (_timeouts.ContainsKey(CurrentState))
+        {
+            var currentState = CurrentState;
+            var (timeout, state) = _timeouts[CurrentState];
+
+            Task.Run
+            (
+                async () =>
+                {
+                    await Task.Delay(timeout);
+
+                    if (CurrentState.CompareTo(currentState) == 0)
+                    {
+                        await SetCurrentState(state);
+                        await SetupNewState<int?>(null!, default);
+                    }
+                }
+            );
+        }
+    }
+
+    private async Task SetCurrentState(TState state, CancellationToken ct = default)
+    {
+        await _semaphore.WaitAsync(ct);
+        CurrentState = state;
+        _semaphore.Release();
     }
 }

@@ -55,7 +55,8 @@ public interface IContract
     /// <typeparam name="TAny">The type of the data.</typeparam>
     /// <param name="ct">The cancellation token used for cancelling the operation.</param>
     /// <returns>The result that may or may not have succeeded.</returns>
-    public Task<Result<ContractUpdateResponse>> Update<TAny>(TAny data, CancellationToken ct = default);
+    public Task<Result<ContractUpdateResponse>> Update<TAny>(TAny data, CancellationToken ct = default)
+        where TAny : notnull;
 
     /// <summary>
     /// Executes the contract without registering it,

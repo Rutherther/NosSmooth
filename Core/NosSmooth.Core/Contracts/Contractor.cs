@@ -87,6 +87,7 @@ public class Contractor : IEnumerable<IContract>
     /// <typeparam name="TData">The type of the data.</typeparam>
     /// <returns>The result that may or may not have succeeded.</returns>
     public async Task<Result> Update<TData>(TData data, CancellationToken ct = default)
+        where TData : notnull
     {
         var errors = new List<IResult>();
         var toRemove = new List<ContractInfo>();
