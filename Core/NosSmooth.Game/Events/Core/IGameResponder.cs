@@ -45,5 +45,6 @@ public interface IEveryGameResponder
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <typeparam name="TEvent">The current event type.</typeparam>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Task<Result> Respond<TEvent>(TEvent gameEvent, CancellationToken ct = default);
+    public Task<Result> Respond<TEvent>(TEvent gameEvent, CancellationToken ct = default)
+            where TEvent : IGameEvent;
 }

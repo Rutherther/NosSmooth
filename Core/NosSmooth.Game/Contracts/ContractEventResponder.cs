@@ -5,6 +5,7 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using NosSmooth.Core.Contracts;
+using NosSmooth.Game.Events;
 using NosSmooth.Game.Events.Core;
 using Remora.Results;
 
@@ -29,5 +30,6 @@ public class ContractEventResponder : IEveryGameResponder
 
     /// <inheritdoc />
     public Task<Result> Respond<TEvent>(TEvent gameEvent, CancellationToken ct = default)
+        where TEvent : IGameEvent
         => _contractor.Update(gameEvent, ct);
 }
