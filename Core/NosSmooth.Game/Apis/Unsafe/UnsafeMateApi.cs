@@ -1,30 +1,29 @@
 ﻿//
-//  NostaleMatePacketApi.cs
+//  UnsafeMateApi.cs
 //
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using NosSmooth.Core.Client;
-using NosSmooth.Game.Attributes;
 using NosSmooth.Packets.Client;
 using NosSmooth.Packets.Enums.Entities;
 using NosSmooth.Packets.Enums.NRun;
 using Remora.Results;
 
-namespace NosSmooth.Game.Apis;
+namespace NosSmooth.Game.Apis.Unsafe;
 
 /// <summary>
 /// Packet api for managing mates, company, stay, sending them back.
 /// </summary>
-public class NostaleMatePacketApi
+public class UnsafeMateApi
 {
     private readonly INostaleClient _client;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="NostaleMatePacketApi"/> class.
+    /// Initializes a new instance of the <see cref="UnsafeMateApi"/> class.
     /// </summary>
     /// <param name="client">The client.</param>
-    public NostaleMatePacketApi(INostaleClient client)
+    public UnsafeMateApi(INostaleClient client)
     {
         _client = client;
     }
