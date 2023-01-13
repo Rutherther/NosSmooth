@@ -1,30 +1,40 @@
 //
-//  NostaleInventoryPacketApi.cs
+//  UnsafeInventoryApi.cs
 //
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Data;
 using NosSmooth.Core.Client;
+using NosSmooth.Core.Contracts;
+using NosSmooth.Game.Data.Entities;
+using NosSmooth.Game.Data.Inventory;
+using NosSmooth.Game.Events.Entities;
 using NosSmooth.Packets.Client.Inventory;
 using NosSmooth.Packets.Enums.Inventory;
+using NosSmooth.Packets.Server.Maps;
+using OneOf.Types;
 using Remora.Results;
 
-namespace NosSmooth.Game.Apis;
+namespace NosSmooth.Game.Apis.Unsafe;
 
 /// <summary>
 /// Packet api for managing items in inventory.
 /// </summary>
-public class NostaleInventoryPacketApi
+public class UnsafeInventoryApi
 {
     private readonly INostaleClient _client;
+    private readonly Contractor _contractor;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="NostaleInventoryPacketApi"/> class.
+    /// Initializes a new instance of the <see cref="UnsafeInventoryApi"/> class.
     /// </summary>
     /// <param name="client">The nostale client.</param>
-    public NostaleInventoryPacketApi(INostaleClient client)
+    /// <param name="contractor">The contractor.</param>
+    public UnsafeInventoryApi(INostaleClient client, Contractor contractor)
     {
         _client = client;
+        _contractor = contractor;
     }
 
     /// <summary>
@@ -43,6 +53,47 @@ public class NostaleInventoryPacketApi
         CancellationToken ct = default
     )
         => _client.SendPacketAsync(new PutPacket(bag, slot, amount), ct);
+
+    /// <summary>
+    /// Creates a contract for dropping an item.
+    /// Returns the ground item that was thrown on the ground.
+    /// </summary>
+    /// <param name="bag">The inventory bag.</param>
+    /// <param name="slot">The inventory slot.</param>
+    /// <param name="amount">The amount to drop.</param>
+    /// <returns>A contract representing the drop operation.</returns>
+    public IContract<GroundItem, DefaultStates> ContractDropItem
+    (
+        BagType bag,
+        InventorySlot slot,
+        short amount
+    )
+    {
+        // TODO: confirm dialog.
+        return new ContractBuilder<GroundItem, DefaultStates, NoErrors>(_contractor, DefaultStates.None)
+            .SetMoveAction
+            (
+                DefaultStates.None,
+                async (_, ct) =>
+                {
+                    await DropItemAsync(bag, slot.Slot, amount, ct);
+                    return true;
+                },
+                DefaultStates.Requested
+            )
+            .SetMoveFilter<ItemDroppedEvent>
+            (
+                DefaultStates.Requested,
+                data => data.Item.Amount == amount && data.Item.VNum == slot.Item?.ItemVNum,
+                DefaultStates.ResponseObtained
+            )
+            .SetFillData<ItemDroppedEvent>
+            (
+                DefaultStates.Requested,
+                data => data.Item
+            )
+            .Build();
+    }
 
     /// <summary>
     /// Move the given item within one bag.

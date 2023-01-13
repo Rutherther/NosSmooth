@@ -1,5 +1,5 @@
 ﻿//
-//  NostaleChatPacketApi.cs
+//  NostaleChatApi.cs
 //
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -10,21 +10,21 @@ using NosSmooth.Packets.Enums.Entities;
 using NosSmooth.Packets.Server.Chat;
 using Remora.Results;
 
-namespace NosSmooth.Game.Apis;
+namespace NosSmooth.Game.Apis.Safe;
 
 /// <summary>
 /// Packet api for sending and receiving messages.
 /// </summary>
-public class NostaleChatPacketApi
+public class NostaleChatApi
 {
     // TODO: check length of the messages
     private readonly INostaleClient _client;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="NostaleChatPacketApi"/> class.
+    /// Initializes a new instance of the <see cref="NostaleChatApi"/> class.
     /// </summary>
     /// <param name="client">The nostale client.</param>
-    public NostaleChatPacketApi(INostaleClient client)
+    public NostaleChatApi(INostaleClient client)
     {
         _client = client;
     }

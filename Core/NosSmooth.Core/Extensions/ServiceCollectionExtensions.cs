@@ -12,6 +12,8 @@ using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands;
 using NosSmooth.Core.Commands.Control;
 using NosSmooth.Core.Commands.Walking;
+using NosSmooth.Core.Contracts;
+using NosSmooth.Core.Contracts.Responders;
 using NosSmooth.Core.Packets;
 using NosSmooth.Core.Stateful;
 using NosSmooth.PacketSerializer.Extensions;
@@ -38,6 +40,10 @@ public static class ServiceCollectionExtensions
 
         serviceCollection.AddPacketSerialization();
         serviceCollection.AddSingleton<CommandProcessor>();
+
+        serviceCollection
+            .AddSingleton<Contractor>()
+            .AddPacketResponder<ContractPacketResponder>();
 
         return serviceCollection;
     }

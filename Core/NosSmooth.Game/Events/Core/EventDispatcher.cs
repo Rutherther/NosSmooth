@@ -36,10 +36,30 @@ public class EventDispatcher
         where TEvent : IGameEvent
     {
         using var scope = _provider.CreateScope();
-        var results = await Task.WhenAll(
+
+        async Task<Result> SafeCall(Func<Task<Result>> result)
+        {
+            try
+            {
+                return await result();
+            }
+            catch (Exception e)
+            {
+                return e;
+            }
+        }
+
+        var results = await Task.WhenAll
+        (
             scope.ServiceProvider
                 .GetServices<IGameResponder<TEvent>>()
-                .Select(responder => responder.Respond(@event, ct))
+                .Select(responder => SafeCall(() => responder.Respond(@event, ct)))
+                .Concat
+                (
+                    scope.ServiceProvider
+                        .GetServices<IEveryGameResponder>()
+                        .Select(responder => SafeCall(() => responder.Respond(@event, ct)))
+                )
         );
 
         return results.Length switch

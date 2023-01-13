@@ -8,6 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NosSmooth.Core.Extensions;
 using NosSmooth.Game.Apis;
+using NosSmooth.Game.Apis.Safe;
+using NosSmooth.Game.Apis.Unsafe;
+using NosSmooth.Game.Contracts;
 using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.Events.Inventory;
 using NosSmooth.Game.PacketHandlers.Act4;
@@ -65,12 +68,15 @@ public static class ServiceCollectionExtensions
             .AddPacketResponder<EqResponder>();
 
         serviceCollection
-            .AddTransient<NostaleMapPacketApi>()
-            .AddTransient<NostaleInventoryPacketApi>()
-            .AddTransient<NostaleMatePacketApi>()
-            .AddTransient<NostaleMateSkillsPacketApi>()
-            .AddTransient<NostaleChatPacketApi>()
-            .AddTransient<NostaleSkillsPacketApi>();
+            .AddTransient<UnsafeMapApi>()
+            .AddTransient<UnsafeInventoryApi>()
+            .AddTransient<UnsafeMateApi>()
+            .AddTransient<UnsafeMateSkillsApi>()
+            .AddTransient<NostaleChatApi>()
+            .AddTransient<UnsafeSkillsApi>();
+
+        serviceCollection
+            .AddScoped<IEveryGameResponder, ContractEventResponder>();
 
         return serviceCollection;
     }

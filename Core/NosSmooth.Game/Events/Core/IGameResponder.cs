@@ -24,10 +24,27 @@ public interface IGameResponder<TEvent> : IGameResponder
     where TEvent : IGameEvent
 {
     /// <summary>
-    /// Respond to the given packet.
+    /// Respond to the given event.
     /// </summary>
-    /// <param name="gameEvent">The packet to respond to.</param>
+    /// <param name="gameEvent">The event to respond to.</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
     public Task<Result> Respond(TEvent gameEvent, CancellationToken ct = default);
+}
+
+/// <summary>
+/// Represents interface for classes that respond to every game event.
+/// Responds to any game event.
+/// </summary>
+public interface IEveryGameResponder
+{
+    /// <summary>
+    /// Respond to any event.
+    /// </summary>
+    /// <param name="gameEvent">The event to respond to.</param>
+    /// <param name="ct">The cancellation token for cancelling the operation.</param>
+    /// <typeparam name="TEvent">The current event type.</typeparam>
+    /// <returns>A result that may or may not have succeeded.</returns>
+    public Task<Result> Respond<TEvent>(TEvent gameEvent, CancellationToken ct = default)
+            where TEvent : IGameEvent;
 }
