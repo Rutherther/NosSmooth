@@ -12,4 +12,4 @@ namespace NosSmooth.Game.Events.Entities;
 /// An item has been dropped.
 /// </summary>
 /// <param name="Item">The item that has been dropped.</param>
-public record ItemDroppedEvent(IEntity Item) : IGameEvent;
+public record ItemDroppedEvent(GroundItem Item) : IGameEvent;
