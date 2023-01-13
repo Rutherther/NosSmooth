@@ -68,6 +68,7 @@ public static class ServiceCollectionExtensions
             .AddPacketResponder<EqResponder>();
 
         serviceCollection
+            .AddTransient<DialogHandler>()
             .AddTransient<UnsafeMapApi>()
             .AddTransient<UnsafeInventoryApi>()
             .AddTransient<UnsafeMateApi>()
