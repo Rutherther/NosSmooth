@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using Remora.Results;
 
@@ -190,11 +191,11 @@ public class ContractBuilder<TData, TState, TError>
     /// <param name="nextState">The state to move to.</param>
     /// <returns>The updated builder.</returns>
     public ContractBuilder<TData, TState, TError> SetMoveAction
-        (TState state, Func<object?, Task<Result<bool>>> actionFilter, TState nextState)
+        (TState state, Func<object?, CancellationToken, Task<Result<bool>>> actionFilter, TState nextState)
     {
         _actions[state] = async (data, ct) =>
         {
-            var filterResult = await actionFilter(data);
+            var filterResult = await actionFilter(data, ct);
             if (!filterResult.IsDefined(out var filter))
             {
                 return Result<(TError?, TState?)>.FromError(filterResult);
@@ -215,7 +216,7 @@ public class ContractBuilder<TData, TState, TError>
     /// </summary>
     /// <returns>The contract.</returns>
     /// <exception cref="InvalidOperationException">Thrown in case FillAtState or FillData is null.</exception>
-    public IContract Build()
+    public IContract<TData, TState> Build()
     {
         if (_fillAtState is null)
         {
