@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using NosSmooth.Packets.Enums.Raids;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 
 namespace NosSmooth.Packets.Server.Raids;
@@ -25,7 +26,7 @@ public record RdlstPacket
     [PacketIndex(1)]
     byte MaximumLevel,
     [PacketIndex(2)]
-    byte RaidType,
+    RaidType RaidType,
     [PacketIndex(3)]
     IReadOnlyList<RdlstSubPacket> Players
 ) : IPacket;
