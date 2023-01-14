@@ -41,5 +41,5 @@ public record RdlstSubPacket
     [PacketIndex(6)]
     long Id,
     [PacketIndex(7)]
-    short? HeroLevel
+    byte? HeroLevel
 );
