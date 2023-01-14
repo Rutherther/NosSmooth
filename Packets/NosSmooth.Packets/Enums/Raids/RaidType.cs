@@ -5,13 +5,14 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics.CodeAnalysis;
+#pragma warning disable CS1591
 
 namespace NosSmooth.Packets.Enums.Raids;
 
 /// <summary>
 /// A type of a raid.
 /// </summary>
-[SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1602:Enumeration items should be documented", Justification = "Self explanatory.")]
+[SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1602:Enumeration items should be documented", Justification = "Self-explanatory.")]
 public enum RaidType
 {
     Cuby = 0,
