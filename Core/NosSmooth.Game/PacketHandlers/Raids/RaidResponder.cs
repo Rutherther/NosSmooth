@@ -104,7 +104,7 @@ public class RaidResponder : IPacketResponder<RaidPacket>
             ct: ct
         );
 
-        if (currentRaid == null && prevRaid != null)
+        if (currentRaid is null && prevRaid is not null)
         {
             return await _eventDispatcher.DispatchEvent(new RaidFinishedEvent(prevRaid), ct);
         }
