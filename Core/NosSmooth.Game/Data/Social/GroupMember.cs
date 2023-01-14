@@ -43,7 +43,7 @@ public record GroupMember(long PlayerId)
     /// <summary>
     /// Gets the morph vnum of the player.
     /// </summary>
-    public long MorphVNum { get; internal set; }
+    public int? MorphVNum { get; internal set; }
 
     /// <summary>
     /// Gets the hp of the member.

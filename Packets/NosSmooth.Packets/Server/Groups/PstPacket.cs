@@ -52,7 +52,7 @@ public record PstPacket
     [PacketIndex(9)]
     SexType? PlayerSex,
     [PacketIndex(10)]
-    long? PlayerMorphVNum,
+    int? PlayerMorphVNum,
     [PacketIndex(11, IsOptional = true)]
     IReadOnlyList<EffectsSubPacket>? Effects
 ) : IPacket;

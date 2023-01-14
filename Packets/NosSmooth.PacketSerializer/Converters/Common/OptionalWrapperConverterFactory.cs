@@ -31,7 +31,7 @@ public class OptionalWrapperConverterFactory : IStringConverterFactory
 
     /// <inheritdoc />
     public bool ShouldHandle(Type type)
-        => type.GetGenericTypeDefinition() == typeof(OptionalWrapper<>);
+        => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(OptionalWrapper<>);
 
     /// <inheritdoc />
     public Result<IStringConverter> CreateTypeSerializer(Type type)
