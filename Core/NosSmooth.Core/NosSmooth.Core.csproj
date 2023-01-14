@@ -8,20 +8,20 @@
         <Description>NosSmooth Core library allowing implementing nostale client, handling packets and commands.</Description>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>3.0.3</PackageVersion>
-        <PackageReleaseNotes>Update dependencies</PackageReleaseNotes>
-        <AssemblyVersion>3.0.3</AssemblyVersion>
-        <FileVersion>3.0.3</FileVersion>
+        <PackageVersion>3.1.0</PackageVersion>
+        <PackageReleaseNotes>Add contracts</PackageReleaseNotes>
+        <AssemblyVersion>3.1.0</AssemblyVersion>
+        <FileVersion>3.1.0</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0"/>
-        <PackageReference Include="Remora.Results" Version="7.2.3"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+        <PackageReference Include="Remora.Results" Version="7.2.3" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Packets\NosSmooth.PacketSerializer\NosSmooth.PacketSerializer.csproj"/>
-        <ProjectReference Include="..\..\Packets\NosSmooth.Packets\NosSmooth.Packets.csproj"/>
+        <ProjectReference Include="..\..\Packets\NosSmooth.PacketSerializer\NosSmooth.PacketSerializer.csproj" />
+        <ProjectReference Include="..\..\Packets\NosSmooth.Packets\NosSmooth.Packets.csproj" />
     </ItemGroup>
 
 </Project>

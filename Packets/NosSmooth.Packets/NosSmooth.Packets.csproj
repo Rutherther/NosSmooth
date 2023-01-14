@@ -7,11 +7,11 @@
         <Description>Contains default NosTale packets.</Description>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>3.1.1</PackageVersion>
+        <PackageVersion>3.2.0</PackageVersion>
         <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
-        <PackageReleaseNotes>Add missing nullable wrappers</PackageReleaseNotes>
-        <AssemblyVersion>3.1.1</AssemblyVersion>
-        <FileVersion>3.1.1</FileVersion>
+        <PackageReleaseNotes>Add some new packets.</PackageReleaseNotes>
+        <AssemblyVersion>3.2.0</AssemblyVersion>
+        <FileVersion>3.2.0</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>
