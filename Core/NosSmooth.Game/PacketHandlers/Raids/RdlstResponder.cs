@@ -72,7 +72,7 @@ public class RdlstResponder : IPacketResponder<RdlstPacket>
                 null,
                 null,
                 null,
-                null
+                UpdateMembers(null)
             ),
             raid =>
             {
