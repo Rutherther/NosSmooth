@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using NosSmooth.Packets.Enums.Raids;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 
 namespace NosSmooth.Packets.Server.Raids;
@@ -21,7 +22,7 @@ public record RaidBfPacket
     [PacketIndex(0)]
     byte Type,
     [PacketIndex(1)]
-    byte WindowType,
+    RaidBfPacketType WindowType,
     [PacketIndex(2)]
     byte Unknown
-);
+) : IPacket;
