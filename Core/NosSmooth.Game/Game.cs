@@ -359,6 +359,60 @@ public class Game : IStatefulEntity
         );
     }
 
+    /// <summary>
+    /// Updates the current raid, if it is not null.
+    /// </summary>
+    /// <param name="update">The function for updating the raid.</param>
+    /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the raid.</param>
+    /// <param name="ct">The cancellation token for cancelling the operation.</param>
+    /// <returns>The updated raid.</returns>
+    internal Task<Raid?> UpdateRaidAsync
+    (
+        Func<Raid, Raid?> update,
+        bool releaseSemaphore = true,
+        CancellationToken ct = default
+    )
+    {
+        return CreateOrUpdateAsync
+        (
+            GameSemaphoreType.Raid,
+            () => CurrentRaid,
+            m => CurrentRaid = m,
+            () => null,
+            update,
+            releaseSemaphore,
+            ct
+        );
+    }
+
+    /// <summary>
+    /// Creates the raid if it is null, or updates the current raid.
+    /// </summary>
+    /// <param name="create">The function for creating the raid.</param>
+    /// <param name="update">The function for updating the raid.</param>
+    /// <param name="releaseSemaphore">Whether to release the semaphore used for changing the raid.</param>
+    /// <param name="ct">The cancellation token for cancelling the operation.</param>
+    /// <returns>The updated raid.</returns>
+    internal Task<Raid?> CreateOrUpdateRaidAsync
+    (
+        Func<Raid?> create,
+        Func<Raid, Raid?> update,
+        bool releaseSemaphore = true,
+        CancellationToken ct = default
+    )
+    {
+        return CreateOrUpdateAsync
+        (
+            GameSemaphoreType.Raid,
+            () => CurrentRaid,
+            m => CurrentRaid = m,
+            create,
+            update,
+            releaseSemaphore,
+            ct
+        );
+    }
+
     private async Task<T> CreateAsync<T>
     (
         GameSemaphoreType type,

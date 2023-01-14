@@ -18,9 +18,11 @@ using NosSmooth.Game.PacketHandlers.Characters;
 using NosSmooth.Game.PacketHandlers.Entities;
 using NosSmooth.Game.PacketHandlers.Inventory;
 using NosSmooth.Game.PacketHandlers.Map;
+using NosSmooth.Game.PacketHandlers.Raids;
 using NosSmooth.Game.PacketHandlers.Relations;
 using NosSmooth.Game.PacketHandlers.Skills;
 using NosSmooth.Game.PacketHandlers.Specialists;
+using NosSmooth.Packets.Server.Raids;
 
 namespace NosSmooth.Game.Extensions;
 
@@ -43,17 +45,35 @@ public static class ServiceCollectionExtensions
         serviceCollection.TryAddSingleton<Game>();
 
         serviceCollection
+
+            // act4
             .AddPacketResponder<FcResponder>()
+
+            // character
             .AddPacketResponder<CharacterInitResponder>()
+            .AddPacketResponder<WalkResponder>()
+
+            // skills
             .AddPacketResponder<PlayerSkillResponder>()
             .AddPacketResponder<MatesSkillResponder>()
-            .AddPacketResponder<WalkResponder>()
             .AddPacketResponder<SkillUsedResponder>()
+
+            // friends
             .AddPacketResponder<FriendInitResponder>()
+
+            // inventory
             .AddPacketResponder<InventoryInitResponder>()
+
+            // groups
             .AddPacketResponder<GroupInitResponder>()
+
+            // mates
             .AddPacketResponder<MatesInitResponder>()
+
+            // skills
             .AddPacketResponder<AoeSkillUsedResponder>()
+
+            // map
             .AddPacketResponder<AtResponder>()
             .AddPacketResponder<CMapResponder>()
             .AddPacketResponder<DropResponder>()
@@ -61,11 +81,22 @@ public static class ServiceCollectionExtensions
             .AddPacketResponder<InResponder>()
             .AddPacketResponder<MoveResponder>()
             .AddPacketResponder<OutResponder>()
+
+            // hp, mp
             .AddPacketResponder<StatPacketResponder>()
             .AddPacketResponder<StPacketResponder>()
             .AddPacketResponder<CondPacketResponder>()
+
+            // equip
             .AddPacketResponder<SpResponder>()
-            .AddPacketResponder<EqResponder>();
+            .AddPacketResponder<EqResponder>()
+
+            // raids
+            .AddPacketResponder<RaidBfResponder>()
+            .AddPacketResponder<RaidMbfResponder>()
+            .AddPacketResponder<RaidResponder>()
+            .AddPacketResponder<RbossResponder>()
+            .AddPacketResponder<RdlstResponder>();
 
         serviceCollection
             .AddTransient<DialogHandler>()
@@ -102,13 +133,16 @@ public static class ServiceCollectionExtensions
     /// <returns>The collection.</returns>
     public static IServiceCollection AddGameResponder(this IServiceCollection serviceCollection, Type gameResponder)
     {
-        if (!gameResponder.GetInterfaces().Any(
+        if (!gameResponder.GetInterfaces().Any
+            (
                 i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IGameResponder<>)
             ))
         {
-            throw new ArgumentException(
+            throw new ArgumentException
+            (
                 $"{nameof(gameResponder)} should implement IGameResponder.",
-                nameof(gameResponder));
+                nameof(gameResponder)
+            );
         }
 
         var handlerTypeInterfaces = gameResponder.GetInterfaces();
