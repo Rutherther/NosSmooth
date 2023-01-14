@@ -28,7 +28,9 @@ public record RbossPacket
     [PacketIndex(1)]
     long? EntityId,
     [PacketIndex(2)]
-    int MaxHp,
+    int Hp,
     [PacketIndex(3)]
+    int MaxHp,
+    [PacketIndex(4)]
     int VNum
 ) : IPacket;
