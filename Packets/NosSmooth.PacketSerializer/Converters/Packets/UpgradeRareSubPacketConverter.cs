@@ -40,6 +40,11 @@ public class UpgradeRareSubPacketConverter : BaseStringConverter<UpgradeRareSubP
         }
         var token = packetToken.Token;
 
+        if (token.Length == 1 && token.StartsWith("-"))
+        {
+            return Result<UpgradeRareSubPacket?>.FromSuccess(null);
+        }
+
         if (token.Length > 3)
         {
             return new CouldNotConvertError(this, token.ToString(), "The string is not two/three characters long.");
