@@ -27,6 +27,6 @@ public record RdlstPacket
     byte MaximumLevel,
     [PacketIndex(2)]
     RaidType RaidType,
-    [PacketIndex(3)]
+    [PacketListIndex(3, ListSeparator = ' ', InnerSeparator = '.')]
     IReadOnlyList<RdlstSubPacket> Players
 ) : IPacket;
