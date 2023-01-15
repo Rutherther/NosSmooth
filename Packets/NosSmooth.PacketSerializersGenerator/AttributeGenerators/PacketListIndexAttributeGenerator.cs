@@ -144,11 +144,6 @@ public class PacketListIndexAttributeGenerator : IParameterGenerator
 
         generator.AssignLocalVariable(parameter, false);
 
-        if (!packetInfo.Parameters.IsLast)
-        {
-            generator.ValidateNotLast(parameter.Name);
-        }
-
         // end is last token if body
         if (parameter.IsOptional())
         {

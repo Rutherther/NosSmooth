@@ -68,6 +68,10 @@ public class PacketGreedyIndexAttributeGenerator : IParameterGenerator
         {
             generator.StartOptionalCheck(parameter, packetInfo.Name);
         }
+        else
+        {
+            generator.ValidateNotLast(parameter.Name);
+        }
 
         var afterSeparator = attribute.GetNamedValue<char?>("AfterSeparator", null);
         if (afterSeparator is not null)
@@ -97,11 +101,6 @@ public class PacketGreedyIndexAttributeGenerator : IParameterGenerator
         {
             generator.ReadToLastToken();
             generator.PopLevel();
-        }
-
-        if (!packetInfo.Parameters.IsLast)
-        {
-            generator.ValidateNotLast(parameter.Name);
         }
 
         // end is last token if body
