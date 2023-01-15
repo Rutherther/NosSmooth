@@ -110,8 +110,8 @@ public class PacketContextListAttributeGenerator : IParameterGenerator
         }
 
         var listSeparator = attribute.GetNamedValue<char>("ListSeparator", '|');
-        var lengthVariable = attribute.GetIndexedValue<string>(1);
-        textWriter.WriteLine(@$"stringEnumerator.PushLevel(""{listSeparator}"", {lengthVariable});");
+        var lengthVariable = attribute.GetIndexedValue<string>(1)?.Trim('"');
+        textWriter.WriteLine(@$"stringEnumerator.PushLevel('{listSeparator}', {lengthVariable});");
 
         var innerSeparator = attribute.GetNamedValue<char>("InnerSeparator", '.');
         generator.PrepareLevel(innerSeparator);
