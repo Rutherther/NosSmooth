@@ -26,7 +26,6 @@ public class ListStringConverter<TGeneric> : BaseStringConverter<IReadOnlyList<T
     public ListStringConverter(IStringSerializer serializer)
     {
         _serializer = serializer;
-
     }
 
     /// <inheritdoc />
@@ -63,6 +62,7 @@ public class ListStringConverter<TGeneric> : BaseStringConverter<IReadOnlyList<T
 
         while (!(stringEnumerator.IsOnLastToken() ?? false))
         {
+            stringEnumerator.CaptureReadTokens();
             if (!stringEnumerator.PushPreparedLevel())
             {
                 return new ArgumentInvalidError(nameof(stringEnumerator), "The string enumerator has to have a prepared level for all lists.");
@@ -79,6 +79,7 @@ public class ListStringConverter<TGeneric> : BaseStringConverter<IReadOnlyList<T
             }
 
             stringEnumerator.PopLevel();
+            stringEnumerator.IncrementReadTokens();
             if (!result.IsSuccess)
             {
                 return Result<IReadOnlyList<TGeneric>?>.FromError(new ListSerializerError(result, list.Count), result);

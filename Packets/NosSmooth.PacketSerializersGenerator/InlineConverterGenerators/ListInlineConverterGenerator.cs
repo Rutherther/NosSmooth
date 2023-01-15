@@ -112,6 +112,7 @@ public static Result<IReadOnlyList<{type.GetActualType()}>> {GetMethodName(type,
 
     while (!(stringEnumerator.IsOnLastToken() ?? false))
     {{
+        stringEnumerator.CaptureReadTokens();
         if (!stringEnumerator.PushPreparedLevel())
         {{
             return new ArgumentInvalidError(nameof(stringEnumerator), ""The string enumerator has to have a prepared level for all lists."");
@@ -132,6 +133,7 @@ public static Result<IReadOnlyList<{type.GetActualType()}>> {GetMethodName(type,
         }}
 
         stringEnumerator.PopLevel();
+        stringEnumerator.IncrementReadTokens();
         if (!result.IsSuccess)
         {{
             return Result<IReadOnlyList<{type}>>.FromError(new ListSerializerError(result, data.Count), result);

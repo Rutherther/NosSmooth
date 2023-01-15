@@ -54,6 +54,43 @@ public ref struct PacketStringEnumerator
     }
 
     /// <summary>
+    /// Capture current read tokens number.
+    /// </summary>
+    /// <remarks>
+    /// Usable for lists that may have indeterminate separators (same multiple separators).
+    /// The list converter may capture read tokens before reading an element and increment after token is read.
+    /// </remarks>
+    public void CaptureReadTokens()
+    {
+        _currentLevel.CapturedTokensRead = _currentLevel.TokensRead;
+    }
+
+    /// <summary>
+    /// Increment read tokens from the captured state taht was captured using <see cref="CaptureReadTokens"/>.
+    /// </summary>
+    /// <remarks>
+    /// Usable for lists that may have indeterminate separators (same multiple separators).
+    /// The list converter may capture read tokens before reading an element and increment after token is read.
+    /// </remarks>
+    /// <exception cref="InvalidOperationException">Thrown in case <see cref="CaptureReadTokens"/> was not called before.</exception>
+    public void IncrementReadTokens()
+    {
+        if (_currentLevel.CapturedTokensRead is null)
+        {
+            throw new InvalidOperationException
+                ("The read tokens cannot be incremented as CaptureReadTokens was not called.");
+        }
+
+        _currentLevel.TokensRead = _currentLevel.CapturedTokensRead.Value + 1;
+        _currentLevel.CapturedTokensRead = null;
+
+        if (_currentLevel.TokensRead >= _currentLevel.MaxTokens)
+        {
+            _currentLevel.ReachedEnd = true;
+        }
+    }
+
+    /// <summary>
     /// Sets that the next token should be read to the last entry in the level.
     /// </summary>
     public void SetReadToLast()
@@ -367,5 +404,7 @@ public ref struct PacketStringEnumerator
         public bool? ReachedEnd { get; set; }
 
         public (char Separator, uint? MaxTokens)? PreparedLevel { get; set; }
+
+        public uint? CapturedTokensRead { get; set; }
     }
 }
