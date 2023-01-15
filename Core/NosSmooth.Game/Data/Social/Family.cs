@@ -16,7 +16,7 @@ namespace NosSmooth.Game.Data.Social;
 /// <param name="Icons">What icons the family has activated.</param>
 public record Family
 (
-    string? Id,
+    long? Id,
     short? Title,
     string? Name,
     byte? Level,

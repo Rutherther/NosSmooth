@@ -18,7 +18,7 @@ namespace NosSmooth.Packets.Server.Character;
 public record FamilySubPacket
 (
     [PacketIndex(0)]
-    string FamilyId,
+    long FamilyId,
     [PacketIndex(1)]
     short Title
 ) : IPacket;

@@ -93,15 +93,16 @@ public class CharacterInitResponder : IPacketResponder<CInfoPacket>, IPacketResp
         (
             () => new Family
             (
-                packet.FamilyId,
-                null,
+                packet.FamilySubPacket.Value?.FamilyId,
+                packet.FamilySubPacket.Value?.Title,
                 packet.FamilyName,
                 packet.FamilyLevel,
                 null
             ),
             f => f with
             {
-                Id = packet.FamilyId,
+                Id = packet.FamilySubPacket.Value?.FamilyId,
+                Title = packet.FamilySubPacket.Value?.Title,
                 Name = packet.FamilyName,
                 Level = packet.FamilyLevel
             },

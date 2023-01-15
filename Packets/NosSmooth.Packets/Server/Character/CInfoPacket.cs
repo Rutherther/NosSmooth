@@ -5,7 +5,9 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using NosSmooth.Packets.Enums.Players;
+using NosSmooth.PacketSerializer.Abstractions;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
+using NosSmooth.PacketSerializer.Abstractions.Common;
 
 namespace NosSmooth.Packets.Server.Character;
 
@@ -43,10 +45,10 @@ public record CInfoPacket
     string? Unknown,
     [PacketIndex(2)]
     short? GroupId,
-    [PacketIndex(3)]
-    string? FamilyId,
+    [PacketIndex(3, InnerSeparator = '.')]
+    NullableWrapper<FamilySubPacket> FamilySubPacket,
     [PacketIndex(4)]
-    string? FamilyName,
+    NameString FamilyName,
     [PacketIndex(5)]
     long CharacterId,
     [PacketIndex(6)]
