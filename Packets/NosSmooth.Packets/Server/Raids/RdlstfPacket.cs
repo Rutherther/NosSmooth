@@ -1,5 +1,5 @@
-﻿//
-//  RdlstPacket.cs
+//
+//  RdlstfPacket.cs
 //
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -16,16 +16,18 @@ namespace NosSmooth.Packets.Server.Raids;
 /// <param name="MaximumLevel">The maximum needed level for the raid treasure.</param>
 /// <param name="RaidType">Unknown TODO.</param>
 /// <param name="Players">Information about members in the raid.</param>
-[PacketHeader("rdlst", PacketSource.Server)]
+[PacketHeader("rdlstf", PacketSource.Server)]
 [GenerateSerializer(true)]
-public record RdlstPacket
+public record RdlstfPacket
 (
     [PacketIndex(0)]
     short MinimumLevel,
     [PacketIndex(1)]
     short MaximumLevel,
     [PacketIndex(2)]
+    short Unknown,
+    [PacketIndex(3)]
     RaidType RaidType,
-    [PacketListIndex(3, ListSeparator = ' ', InnerSeparator = '.')]
+    [PacketListIndex(4, ListSeparator = ' ', InnerSeparator = '.')]
     IReadOnlyList<RdlstSubPacket> Players
 ) : IPacket;
