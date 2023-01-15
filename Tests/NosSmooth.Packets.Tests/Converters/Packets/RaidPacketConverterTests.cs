@@ -50,7 +50,7 @@ public class RaidPacketConverterTests
         var packet = (RaidPacket)packetResult.Entity;
         Assert.Equal(RaidPacketType.ListMembers, packet.Type);
         Assert.NotNull(packet.ListMembersPlayerIds);
-        Assert.Null(packet.LeaveType);
+        Assert.Null(packet.JoinLeaveType);
         Assert.Null(packet.LeaderId);
         Assert.Null(packet.PlayerHealths);
 
@@ -70,13 +70,13 @@ public class RaidPacketConverterTests
         );
         Assert.True(packetResult.IsSuccess);
         var packet = (RaidPacket)packetResult.Entity;
-        Assert.Equal(RaidPacketType.Leave, packet.Type);
+        Assert.Equal(RaidPacketType.JoinLeave, packet.Type);
         Assert.Null(packet.ListMembersPlayerIds);
-        Assert.NotNull(packet.LeaveType);
+        Assert.NotNull(packet.JoinLeaveType);
         Assert.Null(packet.LeaderId);
         Assert.Null(packet.PlayerHealths);
 
-        Assert.Equal(RaidLeaveType.PlayerLeft, packet.LeaveType);
+        Assert.Equal(RaidJoinLeaveType.PlayerLeft, packet.JoinLeaveType);
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ public class RaidPacketConverterTests
         var packet = (RaidPacket)packetResult.Entity;
         Assert.Equal(RaidPacketType.Leader, packet.Type);
         Assert.Null(packet.ListMembersPlayerIds);
-        Assert.Null(packet.LeaveType);
+        Assert.Null(packet.JoinLeaveType);
         Assert.NotNull(packet.LeaderId);
         Assert.Null(packet.PlayerHealths);
 
@@ -116,7 +116,7 @@ public class RaidPacketConverterTests
         var packet = (RaidPacket)packetResult.Entity;
         Assert.Equal(RaidPacketType.PlayerHealths, packet.Type);
         Assert.Null(packet.ListMembersPlayerIds);
-        Assert.Null(packet.LeaveType);
+        Assert.Null(packet.JoinLeaveType);
         Assert.Null(packet.LeaderId);
         Assert.NotNull(packet.PlayerHealths);
 

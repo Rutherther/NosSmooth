@@ -29,8 +29,8 @@ public record PinitSubPacket
     EntityType EntityType,
     [PacketIndex(1)]
     long EntityId,
-    [PacketConditionalIndex(2, "EntityType", false, EntityType.Npc, IsOptional = true)]
+    [PacketConditionalIndex(2, "EntityType", false, EntityType.Npc)]
     PinitMateSubPacket? MateSubPacket,
-    [PacketConditionalIndex(3, "EntityType", false, EntityType.Player, IsOptional = true)]
+    [PacketConditionalIndex(3, "EntityType", false, EntityType.Player)]
     PinitPlayerSubPacket? PlayerSubPacket
 ) : IPacket;

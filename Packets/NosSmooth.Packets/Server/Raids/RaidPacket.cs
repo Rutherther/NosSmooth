@@ -18,7 +18,7 @@ namespace NosSmooth.Packets.Server.Raids;
 /// </remarks>
 /// <param name="Type">The status type.</param>
 /// <param name="LeaderId">The id of the leader, null if leaving. Present only for Leader type.</param>
-/// <param name="LeaveType">The type of the leave type. Present only for Leave  type.</param>
+/// <param name="JoinLeaveType">The type of the leave type. Present only for Leave  type.</param>
 /// <param name="ListMembersPlayerIds">The ids of players in the raid. Present only for ListMembers.</param>
 /// <param name="PlayerHealths">Health of the players. Present only for PlayerHealths.</param>
 [PacketHeader("raidf", PacketSource.Server)]
@@ -28,12 +28,12 @@ public record RaidPacket
 (
     [PacketIndex(0)]
     RaidPacketType Type,
-    [PacketConditionalIndex(1, "Type", false, RaidPacketType.Leader, IsOptional = true)]
+    [PacketConditionalIndex(1, "Type", false, RaidPacketType.Leader)]
     long? LeaderId,
-    [PacketConditionalIndex(2, "Type", false, RaidPacketType.Leave, IsOptional = true)]
-    RaidLeaveType? LeaveType,
-    [PacketConditionalListIndex(3, "Type", false, RaidPacketType.ListMembers, ListSeparator = ' ', IsOptional = true)]
+    [PacketConditionalIndex(2, "Type", false, RaidPacketType.JoinLeave)]
+    RaidJoinLeaveType? JoinLeaveType,
+    [PacketConditionalListIndex(3, "Type", false, RaidPacketType.ListMembers, ListSeparator = ' ')]
     IReadOnlyList<long>? ListMembersPlayerIds,
-    [PacketConditionalListIndex(4, "Type", false, RaidPacketType.PlayerHealths, InnerSeparator = '.', ListSeparator = ' ', IsOptional = true)]
+    [PacketConditionalListIndex(4, "Type", false, RaidPacketType.PlayerHealths, InnerSeparator = '.', ListSeparator = ' ')]
     IReadOnlyList<RaidPlayerHealthsSubPacket>? PlayerHealths
 ) : IPacket;

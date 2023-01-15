@@ -24,4 +24,4 @@ public record PulsePacket
     long Seconds,
     [PacketIndex(1)]
     short Unknown
-);
+) : IPacket;

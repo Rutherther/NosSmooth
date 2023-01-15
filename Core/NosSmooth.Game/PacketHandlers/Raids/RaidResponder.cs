@@ -41,7 +41,7 @@ public class RaidResponder : IPacketResponder<RaidPacket>
     public async Task<Result> Respond(PacketEventArgs<RaidPacket> packetArgs, CancellationToken ct = default)
     {
         var packet = packetArgs.Packet;
-        if (packet.Type is not(RaidPacketType.Leader or RaidPacketType.ListMembers or RaidPacketType.PlayerHealths or RaidPacketType.Leave))
+        if (packet.Type is not(RaidPacketType.Leader or RaidPacketType.ListMembers or RaidPacketType.PlayerHealths or RaidPacketType.JoinLeave))
         {
             return Result.FromSuccess();
         }
@@ -54,8 +54,8 @@ public class RaidResponder : IPacketResponder<RaidPacket>
                 prevRaid = raid;
                 switch (packet.Type)
                 {
-                    case RaidPacketType.Leave:
-                        if (packet.LeaveType is not null && packet.LeaveType == RaidLeaveType.PlayerLeft)
+                    case RaidPacketType.JoinLeave:
+                        if (packet.JoinLeaveType is not null && packet.JoinLeaveType == RaidJoinLeaveType.PlayerLeft)
                         { // the player has left.
                             prevRaid = raid with
                             {

@@ -35,6 +35,6 @@ public record GidxPacket
     NameString? FamilyName,
     [PacketIndex(4)]
     NameString? FamilyCustomRank,
-    [PacketListIndex(5, ListSeparator = '|', IsOptional = true)]
-    IReadOnlyList<bool>? FamilyIcons
+    [PacketListIndex(5, ListSeparator = '|')]
+    IReadOnlyList<bool> FamilyIcons
 ) : IPacket;

@@ -25,6 +25,6 @@ public record InvPacket
 (
     [PacketIndex(0)]
     BagType Bag,
-    [PacketListIndex(1, InnerSeparator = '.', ListSeparator = ' ', IsOptional = true)]
+    [PacketListIndex(1, InnerSeparator = '.', ListSeparator = ' ')]
     IReadOnlyList<InvSubPacket>? InvSubPackets
 ) : IPacket;

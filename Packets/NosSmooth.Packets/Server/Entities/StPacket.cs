@@ -42,6 +42,6 @@ public record StPacket
     long Hp,
     [PacketIndex(7)]
     long Mp,
-    [PacketListIndex(8, ListSeparator = ' ', InnerSeparator = '.', IsOptional = true)]
+    [PacketListIndex(8, ListSeparator = ' ', InnerSeparator = '.')]
     IReadOnlyList<EffectsSubPacket>? BuffVNums
 ) : IPacket;

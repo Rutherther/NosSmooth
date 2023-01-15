@@ -21,7 +21,7 @@ public enum RaidPacketType
     /// <summary>
     /// Character left or the raid is finished.
     /// </summary>
-    Leave = 1,
+    JoinLeave = 1,
 
     /// <summary>
     /// Leader id follows (or -1 in case of leave).

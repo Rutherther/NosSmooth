@@ -22,6 +22,6 @@ public record PinitPacket
 (
     [PacketIndex(0)]
     byte SubPacketsCount,
-    [PacketListIndex(1, ListSeparator = ' ', InnerSeparator = '|', IsOptional = true)]
-    IReadOnlyList<PinitSubPacket>? PinitSubPackets
+    [PacketListIndex(1, ListSeparator = ' ', InnerSeparator = '|')]
+    IReadOnlyList<PinitSubPacket> PinitSubPackets
 ) : IPacket;

@@ -21,5 +21,5 @@ public record UseItemPacket
     [PacketIndex(0)]
     BagType BagType,
     [PacketIndex(1)]
-    short Slot
+    long Slot
 ) : IPacket;

@@ -11,6 +11,6 @@ namespace NosSmooth.Packets.Server.UI;
 /// <summary>
 /// Unknown TODO.
 /// </summary>
-[PacketHeader(null, PacketSource.Server)]
+[PacketHeader("act6", PacketSource.Server)]
 [GenerateSerializer(true)]
 public record Act6Packet() : IPacket;

@@ -20,8 +20,8 @@ public record CancelPacket
 (
     [PacketIndex(0)]
     short Type,
-    [PacketIndex(1)]
-    long TargetId,
-    [PacketIndex(2)]
+    [PacketIndex(1, IsOptional = true)]
+    long? TargetId,
+    [PacketIndex(2, IsOptional = true)]
     long? Unknown = null
 ) : IPacket;

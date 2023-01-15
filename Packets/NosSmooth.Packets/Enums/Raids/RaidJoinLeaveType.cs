@@ -1,5 +1,5 @@
 ﻿//
-//  RaidLeaveType.cs
+//  RaidJoinLeaveType.cs
 //
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -12,15 +12,15 @@ namespace NosSmooth.Packets.Enums.Raids;
 /// A sub type of <see cref="RaidPacket"/>
 /// in case the type of the packet is Leave.
 /// </summary>
-public enum RaidLeaveType
+public enum RaidJoinLeaveType
 {
     /// <summary>
-    /// The player has left the raid by himself.
+    /// The player has left the raid.
     /// </summary>
     PlayerLeft = 0,
 
     /// <summary>
-    /// The raid is finished.
+    /// The player has joined the raid.
     /// </summary>
-    RaidFinished = 1
+    PlayerJoined = 1
 }
