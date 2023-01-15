@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.IO.IsolatedStorage;
 using NosSmooth.Packets.Enums.Entities;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 
@@ -28,16 +29,16 @@ public record CModePacket
     EntityType EntityType,
     [PacketIndex(1)]
     long EntityId,
-    [PacketIndex(2)]
-    long MorphVNum,
-    [PacketIndex(3)]
-    byte MorphUpgrade,
-    [PacketIndex(4)]
-    short MorphDesign,
-    [PacketIndex(5)]
-    byte MorphBonus,
-    [PacketIndex(6)]
-    byte Size,
-    [PacketIndex(7)]
-    short MorphSkin
+    [PacketIndex(2, IsOptional = true)]
+    long? MorphVNum,
+    [PacketIndex(3, IsOptional = true)]
+    byte? MorphUpgrade,
+    [PacketIndex(4, IsOptional = true)]
+    short? MorphDesign,
+    [PacketIndex(5, IsOptional = true)]
+    byte? MorphBonus,
+    [PacketIndex(6, IsOptional = true)]
+    byte? Size,
+    [PacketIndex(7, IsOptional = true)]
+    short? MorphSkin
 ) : IPacket;
