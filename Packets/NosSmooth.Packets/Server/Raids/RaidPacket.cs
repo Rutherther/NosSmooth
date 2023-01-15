@@ -21,8 +21,8 @@ namespace NosSmooth.Packets.Server.Raids;
 /// <param name="LeaveType">The type of the leave type. Present only for Leave  type.</param>
 /// <param name="ListMembersPlayerIds">The ids of players in the raid. Present only for ListMembers.</param>
 /// <param name="PlayerHealths">Health of the players. Present only for PlayerHealths.</param>
-[PacketHeader("raid", PacketSource.Server)]
 [PacketHeader("raidf", PacketSource.Server)]
+[PacketHeader("raid", PacketSource.Server)]
 [GenerateSerializer(true)]
 public record RaidPacket
 (
