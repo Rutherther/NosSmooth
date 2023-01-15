@@ -57,6 +57,36 @@
       <None Update="Packets\Modules\Inventory\init_move.plog">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="Packets\Modules\Raids\cuby_success_not_in_boss_map.plog">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Packets\Modules\Raids\draco_glacer_5times_success.plog">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Packets\Modules\Raids\join_leave.plog">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Packets\Modules\Raids\belial_success.plog">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Packets\Modules\Raids\carno_leave_early.plog">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Packets\Modules\Raids\cuby_leave_early.plog">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Packets\Modules\Raids\cuby_success.plog">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Packets\Modules\Raids\fafnir_fail.plog">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Packets\Modules\Raids\hongbi_leave_early.plog">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Packets\Modules\Raids\hongbi_success.plog">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
