@@ -109,6 +109,14 @@ public class MapEntities
     }
 
     /// <summary>
+    /// Remove all entities.
+    /// </summary>
+    internal void Clear()
+    {
+        _entities.Clear();
+    }
+
+    /// <summary>
     /// Remove the given entity.
     /// </summary>
     /// <param name="entityId">The id of the entity to remove.</param>

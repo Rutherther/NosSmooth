@@ -17,7 +17,7 @@ namespace NosSmooth.Game.PacketHandlers.Raids;
 /// <summary>
 /// A responder to <see cref="RdlstPacket"/>.
 /// </summary>
-public class RdlstResponder : IPacketResponder<RdlstPacket>
+public class RdlstResponder : IPacketResponder<RdlstPacket>, IPacketResponder<RdlstfPacket>
 {
     private readonly Game _game;
     private readonly EventDispatcher _eventDispatcher;
@@ -35,6 +35,69 @@ public class RdlstResponder : IPacketResponder<RdlstPacket>
 
     /// <inheritdoc />
     public async Task<Result> Respond(PacketEventArgs<RdlstPacket> packetArgs, CancellationToken ct = default)
+    {
+        var packet = packetArgs.Packet;
+
+        IReadOnlyList<GroupMember> UpdateMembers(IReadOnlyList<GroupMember>? currentMembers)
+        {
+            return packet.Players
+                .Select
+                (
+                    packetMember =>
+                    {
+                        var newMember = currentMembers?.FirstOrDefault
+                            (member => packetMember.Id == member.PlayerId) ?? new GroupMember(packetMember.Id);
+
+                        newMember.Class = packetMember.Class;
+                        newMember.Level = packetMember.Level;
+                        newMember.HeroLevel = packetMember.HeroLevel;
+                        newMember.Sex = packetMember.Sex;
+                        newMember.MorphVNum = packetMember.MorphVNum;
+
+                        return newMember;
+                    }
+                ).ToArray();
+        }
+
+        Raid? prevRaid = null;
+        var currentRaid = await _game.CreateOrUpdateRaidAsync
+        (
+            () => new Raid
+            (
+                packet.RaidType,
+                RaidState.Waiting,
+                packet.MinimumLevel,
+                packet.MaximumLevel,
+                null,
+                null,
+                null,
+                null,
+                UpdateMembers(null)
+            ),
+            raid =>
+            {
+                prevRaid = raid;
+                return raid with
+                {
+                    Type = packet.RaidType,
+                    MinimumLevel = packet.MinimumLevel,
+                    MaximumLevel = packet.MaximumLevel,
+                    Members = UpdateMembers(raid.Members),
+                };
+            },
+            ct: ct
+        );
+
+        if (prevRaid is null && currentRaid is not null)
+        {
+            return await _eventDispatcher.DispatchEvent(new RaidJoinedEvent(currentRaid), ct);
+        }
+
+        return Result.FromSuccess();
+    }
+
+    /// <inheritdoc />
+    public async Task<Result> Respond(PacketEventArgs<RdlstfPacket> packetArgs, CancellationToken ct = default)
     {
         var packet = packetArgs.Packet;
 

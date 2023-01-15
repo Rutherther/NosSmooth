@@ -13,6 +13,7 @@ using NosSmooth.Game.Apis.Unsafe;
 using NosSmooth.Game.Contracts;
 using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.Events.Inventory;
+using NosSmooth.Game.Events.Ui;
 using NosSmooth.Game.PacketHandlers.Act4;
 using NosSmooth.Game.PacketHandlers.Characters;
 using NosSmooth.Game.PacketHandlers.Entities;
@@ -22,6 +23,7 @@ using NosSmooth.Game.PacketHandlers.Raids;
 using NosSmooth.Game.PacketHandlers.Relations;
 using NosSmooth.Game.PacketHandlers.Skills;
 using NosSmooth.Game.PacketHandlers.Specialists;
+using NosSmooth.Game.PacketHandlers.Ui;
 using NosSmooth.Packets.Server.Raids;
 
 namespace NosSmooth.Game.Extensions;
@@ -57,6 +59,7 @@ public static class ServiceCollectionExtensions
             .AddPacketResponder<PlayerSkillResponder>()
             .AddPacketResponder<MatesSkillResponder>()
             .AddPacketResponder<SkillUsedResponder>()
+            .AddPacketResponder<AoeSkillUsedResponder>()
 
             // friends
             .AddPacketResponder<FriendInitResponder>()
@@ -70,9 +73,6 @@ public static class ServiceCollectionExtensions
             // mates
             .AddPacketResponder<MatesInitResponder>()
 
-            // skills
-            .AddPacketResponder<AoeSkillUsedResponder>()
-
             // map
             .AddPacketResponder<AtResponder>()
             .AddPacketResponder<CMapResponder>()
@@ -81,6 +81,14 @@ public static class ServiceCollectionExtensions
             .AddPacketResponder<InResponder>()
             .AddPacketResponder<MoveResponder>()
             .AddPacketResponder<OutResponder>()
+            .AddPacketResponder<RestResponder>()
+            .AddPacketResponder<TpResponder>()
+            .AddPacketResponder<MapclearResponder>()
+
+            // entities
+            .AddPacketResponder<DieResponder>()
+            .AddPacketResponder<ReviveResponder>()
+            .AddPacketResponder<CharScResponder>()
 
             // hp, mp
             .AddPacketResponder<StatPacketResponder>()
@@ -92,11 +100,16 @@ public static class ServiceCollectionExtensions
             .AddPacketResponder<EqResponder>()
 
             // raids
+            .AddPacketResponder<ThrowResponder>()
             .AddPacketResponder<RaidBfResponder>()
             .AddPacketResponder<RaidMbfResponder>()
             .AddPacketResponder<RaidResponder>()
+            .AddPacketResponder<RaidHpMpResponder>()
             .AddPacketResponder<RbossResponder>()
-            .AddPacketResponder<RdlstResponder>();
+            .AddPacketResponder<RdlstResponder>()
+
+            // ui
+            .AddPacketResponder<DialogOpenResponder>();
 
         serviceCollection
             .AddTransient<DialogHandler>()
