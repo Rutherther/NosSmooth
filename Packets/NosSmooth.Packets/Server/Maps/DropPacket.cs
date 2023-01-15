@@ -31,7 +31,7 @@ public record DropPacket
     [PacketIndex(3)]
     short Y,
     [PacketIndex(4)]
-    short Amount,
+    int Amount,
     [PacketIndex(5)]
     bool IsQuestRelated,
     [PacketIndex(6)]
