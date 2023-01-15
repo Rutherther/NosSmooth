@@ -7,11 +7,11 @@
         <Description>Contains default NosTale packets.</Description>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>3.3.1</PackageVersion>
+        <PackageVersion>3.3.2</PackageVersion>
         <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
-        <PackageReleaseNotes>Fix rdlst.</PackageReleaseNotes>
-        <AssemblyVersion>3.3.1</AssemblyVersion>
-        <FileVersion>3.3.1</FileVersion>
+        <PackageReleaseNotes>Split rdlst to rdlst, rdlstf.</PackageReleaseNotes>
+        <AssemblyVersion>3.3.2</AssemblyVersion>
+        <FileVersion>3.3.2</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -20,9 +20,5 @@
     
     <ItemGroup>
         <ProjectReference Include="..\NosSmooth.PacketSerializersGenerator\NosSmooth.PacketSerializersGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-    </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="Server\Raids" />
     </ItemGroup>
 </Project>
