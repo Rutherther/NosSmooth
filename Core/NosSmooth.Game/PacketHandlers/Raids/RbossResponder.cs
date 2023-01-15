@@ -55,7 +55,7 @@ public class RbossResponder : IPacketResponder<RbossPacket>
                 {
                     return raid with
                     {
-                        Boss = bossEntity,
+                        Boss = raid.Boss ?? bossEntity,
                         Bosses = (raid.Bosses ?? Array.Empty<Monster>()).Append(bossEntity).ToList(),
                         State = RaidState.BossFight
                     };
