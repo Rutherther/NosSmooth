@@ -43,6 +43,14 @@ public class PacketTypesRepository : IPacketTypesRepository
     /// <returns>A result that may or may not have succeeded.</returns>
     public Result AddPacketType(Type type)
     {
+        if (type.FullName is not null)
+        {
+            if (_typeToPacket.ContainsKey(type.FullName))
+            { // The packet was already added.
+                return Result.FromSuccess();
+            }
+        }
+
         if (!typeof(IPacket).IsAssignableFrom(type))
         {
             return new ArgumentInvalidError
@@ -93,11 +101,6 @@ public class PacketTypesRepository : IPacketTypesRepository
         var info = new PacketInfo(header.Identifier, type, converter);
         if (type.FullName is not null)
         {
-            if (_typeToPacket.ContainsKey(type.FullName))
-            { // The packet was already added.
-                return Result.FromSuccess();
-            }
-
             _typeToPacket[type.FullName] = info;
         }
 
