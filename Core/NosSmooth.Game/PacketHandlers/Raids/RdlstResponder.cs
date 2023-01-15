@@ -72,23 +72,31 @@ public class RdlstResponder : IPacketResponder<RdlstPacket>, IPacketResponder<Rd
                 null,
                 null,
                 null,
+                null,
                 UpdateMembers(null)
             ),
             raid =>
             {
                 prevRaid = raid;
+                var members = UpdateMembers(raid.Members);
+                var leader = members.FirstOrDefault(x => x.PlayerId == raid.LeaderId);
                 return raid with
                 {
                     Type = packet.RaidType,
                     MinimumLevel = packet.MinimumLevel,
                     MaximumLevel = packet.MaximumLevel,
-                    Members = UpdateMembers(raid.Members),
+                    Members = members,
+                    Leader = leader,
+                    State = raid.State == (RaidState)(-1) ? RaidState.Waiting : raid.State
                 };
             },
             ct: ct
         );
 
-        if (prevRaid is null && currentRaid is not null)
+        // State is equal to -1 in case Leader (raid 2 <leaderId>) was sent BEFORE rdlst.
+        // Rdlst is the packet that initializes the raid, but in this case we have to make an exception
+        // and initialize it from raid packet. That is because the leader won't be sent again.
+        if ((prevRaid is null || prevRaid?.State == (RaidState)(-1)) && currentRaid is not null)
         {
             return await _eventDispatcher.DispatchEvent(new RaidJoinedEvent(currentRaid), ct);
         }
@@ -135,23 +143,31 @@ public class RdlstResponder : IPacketResponder<RdlstPacket>, IPacketResponder<Rd
                 null,
                 null,
                 null,
+                null,
                 UpdateMembers(null)
             ),
             raid =>
             {
                 prevRaid = raid;
+                var members = UpdateMembers(raid.Members);
+                var leader = members.FirstOrDefault(x => x.PlayerId == raid.LeaderId);
                 return raid with
                 {
                     Type = packet.RaidType,
                     MinimumLevel = packet.MinimumLevel,
                     MaximumLevel = packet.MaximumLevel,
-                    Members = UpdateMembers(raid.Members),
+                    Members = members,
+                    Leader = leader,
+                    State = raid.State == (RaidState)(-1) ? RaidState.Waiting : raid.State
                 };
             },
             ct: ct
         );
 
-        if (prevRaid is null && currentRaid is not null)
+        // State is equal to -1 in case Leader (raid 2 <leaderId>) was sent BEFORE rdlst.
+        // Rdlst is the packet that initializes the raid, but in this case we have to make an exception
+        // and initialize it from raid packet. That is because the leader won't be sent again.
+        if ((prevRaid is null || prevRaid?.State == (RaidState)(-1)) && currentRaid is not null)
         {
             return await _eventDispatcher.DispatchEvent(new RaidJoinedEvent(currentRaid), ct);
         }

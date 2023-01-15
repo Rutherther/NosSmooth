@@ -19,6 +19,7 @@ public record Raid
     RaidState State,
     short MinimumLevel,
     short MaximumLevel,
+    long? LeaderId,
     GroupMember? Leader,
     RaidProgress? Progress,
     Monster? Boss,

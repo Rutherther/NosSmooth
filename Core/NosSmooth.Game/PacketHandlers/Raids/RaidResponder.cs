@@ -41,31 +41,42 @@ public class RaidResponder : IPacketResponder<RaidPacket>
     public async Task<Result> Respond(PacketEventArgs<RaidPacket> packetArgs, CancellationToken ct = default)
     {
         var packet = packetArgs.Packet;
-        if (packet.Type is not(RaidPacketType.Leader or RaidPacketType.ListMembers or RaidPacketType.PlayerHealths or RaidPacketType.JoinLeave))
+        if (packet.Type is not(RaidPacketType.Leader or RaidPacketType.ListMembers or RaidPacketType.PlayerHealths))
         {
             return Result.FromSuccess();
         }
 
         Raid? prevRaid = null;
-        var currentRaid = await _game.UpdateRaidAsync
+        var currentRaid = await _game.CreateOrUpdateRaidAsync
         (
+            () =>
+            {
+                if (packet.Type == RaidPacketType.Leader)
+                { // leader was sent before raid was created. That is a problem,
+                  // we have to create the raid without correctly initialized members here.
+                  // a better way to handle this could be by creating some kind of a cache.
+                    return new Raid
+                    (
+                        (RaidType)(-1),
+                        (RaidState)(-1),
+                        -1,
+                        -1,
+                        packet.LeaderId,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                    );
+                }
+
+                return null;
+            },
             raid =>
             {
                 prevRaid = raid;
                 switch (packet.Type)
                 {
-                    case RaidPacketType.JoinLeave:
-                        if (packet.JoinLeaveType is not null && packet.JoinLeaveType == RaidJoinLeaveType.PlayerLeft)
-                        { // the player has left.
-                            prevRaid = raid with
-                            {
-                                State = RaidState.Left
-                            };
-
-                            return null;
-                        }
-
-                        return raid;
                     case RaidPacketType.Leader:
                         if (packet.LeaderId is null)
                         { // set the raid to null.
@@ -74,12 +85,14 @@ public class RaidResponder : IPacketResponder<RaidPacket>
 
                         return raid with
                         {
-                            Leader = raid.Members?.FirstOrDefault(x => x.PlayerId == packet.LeaderId.Value)
+                            Leader = raid.Members?.FirstOrDefault(x => x.PlayerId == packet.LeaderId.Value),
+                            LeaderId = packet.LeaderId
                         };
                     case RaidPacketType.ListMembers:
                         return raid with
                         {
-                            Members = raid.Members?.Where(x => packet.ListMembersPlayerIds?.Contains(x.PlayerId) ?? true).ToList()
+                            Members = raid.Members?.Where
+                                (x => packet.ListMembersPlayerIds?.Contains(x.PlayerId) ?? true).ToList()
                         };
                     case RaidPacketType.PlayerHealths:
                         // update healths
