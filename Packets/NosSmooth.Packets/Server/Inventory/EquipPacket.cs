@@ -20,9 +20,9 @@ namespace NosSmooth.Packets.Server.Inventory;
 public record EquipPacket
 (
     [PacketIndex(0)]
-    UpgradeRareSubPacket WeaponUpgradeRareSubPacket,
+    UpgradeRareSubPacket? WeaponUpgradeRareSubPacket,
     [PacketIndex(1)]
-    UpgradeRareSubPacket ArmorUpgradeRareSubPacket,
+    UpgradeRareSubPacket? ArmorUpgradeRareSubPacket,
     [PacketListIndex(2, ListSeparator = ' ', InnerSeparator = '.')]
     IReadOnlyList<EquipSubPacket> EquipSubPacket
 ) : IPacket;

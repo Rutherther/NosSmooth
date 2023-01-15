@@ -88,9 +88,9 @@ public record InPlayerSubPacket
     [PacketIndex(15)]
     short Unknown3,
     [PacketIndex(16)]
-    UpgradeRareSubPacket WeaponUpgradeRareSubPacket,
+    UpgradeRareSubPacket? WeaponUpgradeRareSubPacket,
     [PacketIndex(17)]
-    UpgradeRareSubPacket ArmorUpgradeRareSubPacket,
+    UpgradeRareSubPacket? ArmorUpgradeRareSubPacket,
     [PacketIndex(18, InnerSeparator = '.')]
     NullableWrapper<FamilySubPacket> FamilySubPacket,
     [PacketIndex(19)]
