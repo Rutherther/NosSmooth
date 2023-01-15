@@ -22,6 +22,6 @@ public record PtctlPacket
     short MapId,
     [PacketIndex(1)]
     uint? ControlsCount,
-    [PacketContextList(2, "Amount", ListSeparator = ' ')]
+    [PacketContextList(2, "ControlsCount", ListSeparator = ' ')]
     IReadOnlyList<PtctlSubPacket> Controls
 ) : IPacket;
