@@ -9,12 +9,14 @@
         <IncludeCopyLocalFilesOutputGroup>true</IncludeCopyLocalFilesOutputGroup>
         <Description>NosSmooth's source code generator that generates serializers for packets.</Description>
         <IncludeBuildOutput>false</IncludeBuildOutput>
-        <PackageVersion>1.0.3</PackageVersion>
+        <PackageVersion>1.1.0</PackageVersion>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <AssemblyVersion>1.0.3</AssemblyVersion>
-        <FileVersion>1.0.3</FileVersion>
-        <PackageReleaseNotes>Fix helper methods naming issues.</PackageReleaseNotes>
+        <AssemblyVersion>1.1.0</AssemblyVersion>
+        <FileVersion>1.1.0</FileVersion>
+        <PackageReleaseNotes>Add PacketConditionalList.
+Fix PacketContextList.
+Make not last validations inside current parameter, not previous one.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
