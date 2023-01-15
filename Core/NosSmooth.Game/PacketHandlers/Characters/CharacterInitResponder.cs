@@ -178,16 +178,26 @@ public class CharacterInitResponder : IPacketResponder<CInfoPacket>, IPacketResp
             () => throw new NotImplementedException(),
             (character) =>
             {
-                character.Morph = new Morph
-                (
-                    packet.MorphVNum,
-                    packet.MorphUpgrade,
-                    packet.MorphDesign,
-                    packet.MorphBonus,
-                    packet.MorphSkin
-                );
+                if (packet.MorphVNum is not null)
+                {
+                    character.Morph = new Morph
+                    (
+                        packet.MorphVNum.Value,
+                        packet.MorphUpgrade ?? 0,
+                        packet.MorphDesign,
+                        packet.MorphBonus,
+                        packet.MorphSkin
+                    );
+                }
+                else
+                {
+                    character.Morph = null;
+                }
 
-                character.Size = packet.Size;
+                if (packet.Size is not null)
+                {
+                    character.Size = packet.Size.Value;
+                }
                 return character;
             },
             ct: ct
