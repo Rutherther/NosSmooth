@@ -33,4 +33,4 @@ public record Sayi2Packet
     short ParametersCount,
     [PacketListIndex(5, ListSeparator = ' ')]
     IReadOnlyList<string> Parameters
-);
+) : IPacket;
