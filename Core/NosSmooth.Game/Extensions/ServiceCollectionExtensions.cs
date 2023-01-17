@@ -113,11 +113,13 @@ public static class ServiceCollectionExtensions
 
         serviceCollection
             .AddTransient<DialogHandler>()
+            .AddTransient<NostaleMapApi>()
+            .AddTransient<NostaleSkillsApi>()
+            .AddTransient<NostaleChatApi>()
             .AddTransient<UnsafeMapApi>()
             .AddTransient<UnsafeInventoryApi>()
             .AddTransient<UnsafeMateApi>()
             .AddTransient<UnsafeMateSkillsApi>()
-            .AddTransient<NostaleChatApi>()
             .AddTransient<UnsafeSkillsApi>();
 
         serviceCollection
