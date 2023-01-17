@@ -19,6 +19,6 @@ namespace NosSmooth.Packets.Server.Miniland;
 [GenerateSerializer(true)]
 public record MltObjPacket
 (
-    [PacketIndex(0)]
+    [PacketListIndex(0)]
     IReadOnlyList<MltObjSubPacket> Objects
 ) : IPacket;
