@@ -62,11 +62,16 @@ public class EventDispatcher
                 )
         );
 
-        return results.Length switch
+        var errors = results
+            .Where(x => !x.IsSuccess)
+            .Cast<IResult>()
+            .ToArray();
+
+        return errors.Length switch
         {
             0 => Result.FromSuccess(),
-            1 => results[0],
-            _ => new AggregateError(results.Cast<IResult>().ToArray()),
+            1 => (Result)errors[0],
+            _ => new AggregateError(errors),
         };
     }
 }
