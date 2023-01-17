@@ -7,11 +7,11 @@
         <Description>Contains default NosTale packets.</Description>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>3.4.2</PackageVersion>
+        <PackageVersion>3.4.3</PackageVersion>
         <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
         <PackageReleaseNotes>Add hp, max hp to su packet, st packet.</PackageReleaseNotes>
-        <AssemblyVersion>3.4.2</AssemblyVersion>
-        <FileVersion>3.4.2</FileVersion>
+        <AssemblyVersion>3.4.3</AssemblyVersion>
+        <FileVersion>3.4.3</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>
