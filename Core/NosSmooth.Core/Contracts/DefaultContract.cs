@@ -124,7 +124,8 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
     {
         if (!_actions.ContainsKey(CurrentState))
         {
-            throw new Exception(); // ?
+            Unregister();
+            return ContractUpdateResponse.NotInterested;
         }
 
         var result = await _actions[CurrentState](data, ct);
@@ -202,8 +203,6 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
         _unregisterAtWaitingFor = unregisterAfter;
         _waitCancellationSource = CancellationTokenSource.CreateLinkedTokenSource(ct);
 
-        Register();
-
         if (CurrentState.CompareTo(_defaultState) == 0)
         {
             var result = await OnlyExecuteAsync(ct);
@@ -213,6 +212,8 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
                 return Result<TData>.FromError(result);
             }
         }
+
+        Register();
 
         try
         {
