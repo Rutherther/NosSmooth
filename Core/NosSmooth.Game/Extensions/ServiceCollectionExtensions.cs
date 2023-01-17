@@ -148,6 +148,11 @@ public static class ServiceCollectionExtensions
     /// <returns>The collection.</returns>
     public static IServiceCollection AddGameResponder(this IServiceCollection serviceCollection, Type gameResponder)
     {
+        if (serviceCollection.Any(x => x.ImplementationType == gameResponder))
+        { // already added... assuming every packet responder was added even though that may not be the case.
+            return serviceCollection;
+        }
+
         if (!gameResponder.GetInterfaces().Any
             (
                 i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IGameResponder<>)
