@@ -73,12 +73,16 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
         {
             target.Hp = new Health
             {
-                Percentage = packet.HpPercentage
+                Percentage = packet.HpPercentage,
+                Maximum = packet.MaxHp,
+                Amount = packet.Hp
             };
         }
         else
         {
             target.Hp.Percentage = packet.HpPercentage;
+            target.Hp.Maximum = packet.MaxHp;
+            target.Hp.Amount = packet.Hp;
         }
 
         Skill? skillEntity;

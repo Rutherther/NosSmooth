@@ -57,13 +57,15 @@ public class StPacketResponder : IPacketResponder<StPacket>
             entity.Hp = new Health
             {
                 Amount = packet.Hp,
-                Percentage = packet.HpPercentage
+                Percentage = packet.HpPercentage,
+                Maximum = packet.MaxHp
             };
         }
         else
         {
             entity.Hp.Amount = packet.Hp;
             entity.Hp.Percentage = packet.HpPercentage;
+            entity.Hp.Maximum = packet.MaxHp;
         }
 
         if (entity.Mp is null)
@@ -71,13 +73,15 @@ public class StPacketResponder : IPacketResponder<StPacket>
             entity.Mp = new Health
             {
                 Amount = packet.Mp,
-                Percentage = packet.MpPercentage
+                Percentage = packet.MpPercentage,
+                Maximum = packet.MaxHp
             };
         }
         else
         {
             entity.Mp.Amount = packet.Mp;
             entity.Mp.Percentage = packet.MpPercentage;
+            entity.Mp.Maximum = packet.MaxMp;
         }
 
         return Task.FromResult(Result.FromSuccess());
