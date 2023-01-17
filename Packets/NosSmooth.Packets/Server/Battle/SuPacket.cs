@@ -62,5 +62,9 @@ public record SuPacket
     [PacketIndex(13)]
     HitMode? HitMode,
     [PacketIndex(14)]
-    int SkillTypeMinusOne
+    int SkillTypeMinusOne,
+    [PacketIndex(15)]
+    int Hp,
+    [PacketIndex(16)]
+    int MaxHp
 ) : IPacket;
