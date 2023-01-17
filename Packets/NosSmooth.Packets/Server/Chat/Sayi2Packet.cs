@@ -19,6 +19,8 @@ namespace NosSmooth.Packets.Server.Chat;
 /// <param name="Color">The say/message color.</param>
 /// <param name="MessageConst">The message constant.</param>
 /// <param name="Arguments">The arguments of the message.</param>
+[PacketHeader("sayi2", PacketSource.Server)]
+[GenerateSerializer(true)]
 public record Sayi2Packet
 (
     [PacketIndex(0)]
