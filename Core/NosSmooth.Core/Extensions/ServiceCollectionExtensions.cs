@@ -91,9 +91,14 @@ public static class ServiceCollectionExtensions
         Type responderType
     )
     {
+        if (serviceCollection.Any(x => x.ImplementationType == responderType))
+        { // already added... assuming every packet responder was added even though that may not be the case.
+            return serviceCollection;
+        }
+
         if (responderType.GetInterfaces().Any(i => i == typeof(IEveryPacketResponder)))
         {
-            return serviceCollection.AddScoped(typeof(IEveryPacketResponder), responderType);
+            serviceCollection.AddScoped(typeof(IEveryPacketResponder), responderType);
         }
 
         if (!responderType.GetInterfaces().Any
