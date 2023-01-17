@@ -20,7 +20,7 @@ public interface IItemSelector
     /// <param name="combatState">The combat state.</param>
     /// <param name="possibleItems">The items that may be used.</param>
     /// <returns>The selected item, or an error.</returns>
-    public Result<Item> GetSelectedItem(ICombatState combatState, ICollection<Item> possibleItems);
+    public Result<InventoryItem> GetSelectedItem(ICombatState combatState, ICollection<InventoryItem> possibleItems);
 
     /// <summary>
     /// Gets whether currently an item should be used.

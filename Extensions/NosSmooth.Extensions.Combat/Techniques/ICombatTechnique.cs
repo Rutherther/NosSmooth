@@ -18,6 +18,15 @@ namespace NosSmooth.Extensions.Combat.Techniques;
 public interface ICombatTechnique
 {
     /// <summary>
+    /// Gets the types this technique may handle.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="HandleNextCombatStep"/> will be called only for queue types
+    /// from this collection.
+    /// </remarks>
+    public IReadOnlyList<OperationQueueType> HandlingQueueTypes { get; }
+
+    /// <summary>
     /// Should check whether the technique should process more steps or quit the combat.
     /// </summary>
     /// <param name="state">The combat state.</param>
@@ -26,23 +35,33 @@ public interface ICombatTechnique
 
     /// <summary>
     /// Handle one step that should enqueue an operation.
+    /// Enqueue only operation of the given queue type.
     /// </summary>
     /// <remarks>
     /// If error is returned, the combat will be cancelled.
     /// </remarks>
+    /// <param name="queueType">The type of the operation to enqueue.</param>
     /// <param name="state">The combat state.</param>
     /// <returns>An id of the current target entity or an error.</returns>
-    public Result<long?> HandleCombatStep(ICombatState state);
+    public Result<long?> HandleNextCombatStep(OperationQueueType queueType, ICombatState state);
 
     /// <summary>
-    /// Handles an error from <see cref="ICombatOperation.UseAsync"/>.
+    /// Handle waiting for an operation.
+    /// </summary>
+    /// <param name="queueType">The type of the operation.</param>
+    /// <param name="state">The combat state.</param>
+    /// <param name="operation">The operation that needs waiting.</param>
+    /// <returns>A result that may or may not have succeeded. In case of an error, <see cref="HandleError"/> will be called with the error.</returns>
+    public Result HandleWaiting(OperationQueueType queueType, ICombatState state, ICombatOperation operation);
+
+    /// <summary>
+    /// Handles an arbitrary error.
     /// </summary>
     /// <remarks>
     /// If an error is returned, the combat will be cancelled.
     /// </remarks>
     /// <param name="state">The combat state.</param>
-    /// <param name="operation">The combat operation that returned an error.</param>
     /// <param name="result">The errorful result.</param>
     /// <returns>A result that may or may not succeed.</returns>
-    public Result HandleError(ICombatState state, ICombatOperation operation, Result result);
+    public Result HandleError(ICombatState state, Result result);
 }

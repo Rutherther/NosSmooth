@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics;
 using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands.Attack;
 using NosSmooth.Core.Stateful;
@@ -61,65 +62,26 @@ public class CombatManager : IStatefulEntity
                     {
                         while (!combatState.ShouldQuit && currentTarget == previousTarget)
                         {
-                            if (!technique.ShouldContinue(combatState))
+                            var iterationResult = await HandleAttackIterationAsync(combatState, technique, ct);
+
+                            if (!iterationResult.IsSuccess)
                             {
-                                combatState.QuitCombat();
+                                var errorResult = technique.HandleError(combatState, Result.FromError(iterationResult));
+
+                                if (!errorResult.IsSuccess)
+                                { // end the attack.
+                                    return errorResult;
+                                }
+                            }
+
+                            var result = iterationResult.Entity;
+                            if (!result.TargetChanged)
+                            {
                                 continue;
                             }
 
-                            var operation = combatState.NextOperation();
-
-                            if (operation is null)
-                            { // The operation is null and the step has to be obtained from the technique.
-                                var stepResult = technique.HandleCombatStep(combatState);
-                                if (!stepResult.IsSuccess)
-                                {
-                                    return Result.FromError(stepResult);
-                                }
-
-                                previousTarget = currentTarget;
-                                currentTarget = stepResult.Entity;
-
-                                if (previousTarget != currentTarget)
-                                {
-                                    continue;
-                                }
-
-                                operation = combatState.NextOperation();
-                            }
-
-                            if (operation is null)
-                            { // The operation could be null just because there is currently not a skill to be used etc.
-                                await Task.Delay(5, ct);
-                                continue;
-                            }
-
-                            Result<CanBeUsedResponse> responseResult;
-                            while ((responseResult = operation.CanBeUsed(combatState)).IsSuccess
-                                && responseResult.Entity == CanBeUsedResponse.MustWait)
-                            { // TODO: wait for just some amount of time
-                                await Task.Delay(5, ct);
-                            }
-
-                            if (!responseResult.IsSuccess)
-                            {
-                                return Result.FromError(responseResult);
-                            }
-
-                            if (responseResult.Entity == CanBeUsedResponse.WontBeUsable)
-                            {
-                                return new UnusableOperationError(operation);
-                            }
-
-                            var usageResult = await operation.UseAsync(combatState, ct);
-                            if (!usageResult.IsSuccess)
-                            {
-                                var errorHandleResult = technique.HandleError(combatState, operation, usageResult);
-                                if (!errorHandleResult.IsSuccess)
-                                {
-                                    return errorHandleResult;
-                                }
-                            }
+                            previousTarget = currentTarget;
+                            currentTarget = result.TargetId;
                         }
 
                         return Result.FromSuccess();
@@ -136,6 +98,108 @@ public class CombatManager : IStatefulEntity
             previousTarget = currentTarget;
         }
         return Result.FromSuccess();
+    }
+
+    private async Task<Result<(bool TargetChanged, long? TargetId)>> HandleAttackIterationAsync
+        (CombatState combatState, ICombatTechnique technique, CancellationToken ct)
+    {
+        if (!technique.ShouldContinue(combatState))
+        {
+            combatState.QuitCombat();
+            return Result<(bool, long?)>.FromSuccess((false, null));
+        }
+
+        // the operations need time for execution and/or
+        // wait.
+        await Task.Delay(50, ct);
+
+        var tasks = technique.HandlingQueueTypes
+            .Select(x => HandleTypeIterationAsync(x, combatState, technique, ct))
+            .ToArray();
+
+        var results = await Task.WhenAll(tasks);
+        var errors = results.Where(x => !x.IsSuccess).Cast<IResult>().ToArray();
+
+        return errors.Length switch
+        {
+            0 => results.FirstOrDefault
+                (x => x.Entity.TargetChanged, Result<(bool TargetChanged, long?)>.FromSuccess((false, null))),
+            1 => (Result<(bool, long?)>)errors[0],
+            _ => new AggregateError()
+        };
+    }
+
+    private async Task<Result<(bool TargetChanged, long? TargetId)>> HandleTypeIterationAsync
+    (
+        OperationQueueType queueType,
+        CombatState combatState,
+        ICombatTechnique technique,
+        CancellationToken ct
+    )
+    {
+        var currentOperation = combatState.GetCurrentOperation(queueType);
+        if (currentOperation?.IsFinished() ?? false)
+        {
+            var operationResult = await currentOperation.WaitForFinishedAsync(combatState, ct);
+            currentOperation.Dispose();
+
+            if (!operationResult.IsSuccess)
+            {
+                return Result<(bool, long?)>.FromError(operationResult);
+            }
+
+            currentOperation = null;
+        }
+
+        if (currentOperation is null)
+        { // waiting for an operation.
+            currentOperation = combatState.NextOperation(queueType);
+
+            if (currentOperation is null)
+            { // The operation is null and the step has to be obtained from the technique.
+                var stepResult = technique.HandleNextCombatStep(queueType, combatState);
+                if (!stepResult.IsSuccess)
+                {
+                    return Result<(bool, long?)>.FromError(stepResult);
+                }
+
+                return Result<(bool, long?)>.FromSuccess((true, stepResult.Entity));
+            }
+        }
+
+        if (!currentOperation.IsExecuting())
+        { // not executing, check can be used, execute if can.
+            var canBeUsedResult = currentOperation.CanBeUsed(combatState);
+            if (!canBeUsedResult.IsDefined(out var canBeUsed))
+            {
+                return Result<(bool, long?)>.FromError(canBeUsedResult);
+            }
+
+            switch (canBeUsed)
+            {
+                case CanBeUsedResponse.WontBeUsable:
+                    return new UnusableOperationError(currentOperation);
+                case CanBeUsedResponse.MustWait:
+                    var waitingResult = technique.HandleWaiting(queueType, combatState, currentOperation);
+
+                    if (!waitingResult.IsSuccess)
+                    {
+                        return Result<(bool, long?)>.FromError(waitingResult);
+                    }
+
+                    return Result<(bool, long?)>.FromSuccess((false, null));
+                case CanBeUsedResponse.CanBeUsed:
+                    var executingResult = await currentOperation.BeginExecution(combatState, ct);
+
+                    if (!executingResult.IsSuccess)
+                    {
+                        return Result<(bool, long?)>.FromError(executingResult);
+                    }
+                    break;
+            }
+        }
+
+        return (false, null);
     }
 
     /// <summary>

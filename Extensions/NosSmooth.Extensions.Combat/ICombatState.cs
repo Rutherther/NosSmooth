@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
 using NosSmooth.Core.Client;
 using NosSmooth.Extensions.Combat.Operations;
 using NosSmooth.Game.Data.Entities;
@@ -29,6 +30,36 @@ public interface ICombatState
     /// Gets the NosTale client.
     /// </summary>
     public INostaleClient Client { get; }
+
+    /// <summary>
+    /// Gets whether there is an operation that cannot be used
+    /// and we must wait for it to be usable.
+    /// </summary>
+    public bool IsWaitingOnOperation { get; }
+
+    /// <summary>
+    /// Get the operations the state is waiting for to to be usable.
+    /// </summary>
+    /// <returns>The operations needed to wait for.</returns>
+    public IReadOnlyList<ICombatOperation> GetWaitingForOperations();
+
+    /// <summary>
+    /// Gets the current operation of the given queue type.
+    /// </summary>
+    /// <param name="queueType">The queue type to get the current operation of.</param>
+    /// <returns>The operation of the given queue, if any.</returns>
+    public ICombatOperation? GetCurrentOperation(OperationQueueType queueType);
+
+    /// <summary>
+    /// Checks whether an operation is being executed in the given queue.
+    /// </summary>
+    /// <remarks>
+    /// If not, either waiting for the operation or there is no operation enqueued.
+    /// </remarks>
+    /// <param name="queueType">The type of queue to look at.</param>
+    /// <param name="operation">The operation currently being executed.</param>
+    /// <returns>Whether an operation is being executed.</returns>
+    public bool IsExecutingOperation(OperationQueueType queueType, [NotNullWhen(true)] out ICombatOperation? operation);
 
     /// <summary>
     /// Cancel the combat technique, quit the combat state.

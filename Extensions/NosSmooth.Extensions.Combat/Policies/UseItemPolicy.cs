@@ -30,7 +30,7 @@ public record UseItemPolicy
 ) : IItemSelector
 {
     /// <inheritdoc />
-    public Result<Item> GetSelectedItem(ICombatState combatState, ICollection<Item> possibleItems)
+    public Result<InventoryItem> GetSelectedItem(ICombatState combatState, ICollection<InventoryItem> possibleItems)
     {
         var character = combatState.Game.Character;
         if (character is null)
@@ -40,19 +40,21 @@ public record UseItemPolicy
 
         if (ShouldUseHpItem(character))
         {
-            var item = possibleItems.FirstOrDefault(x => UseHealthItemsVNums.Contains(x.ItemVNum));
+            var item = possibleItems.Cast<InventoryItem?>().FirstOrDefault
+                (x => UseHealthItemsVNums.Contains(x?.Item.Item?.ItemVNum ?? -1));
             if (item is not null)
             {
-                return item;
+                return item.Value;
             }
         }
 
         if (ShouldUseMpItem(character))
         {
-            var item = possibleItems.FirstOrDefault(x => UseManaItemsVNums.Contains(x.ItemVNum));
+            var item = possibleItems.Cast<InventoryItem?>().FirstOrDefault
+                (x => UseManaItemsVNums.Contains(x?.Item.Item?.ItemVNum ?? -1));
             if (item is not null)
             {
-                return item;
+                return item.Value;
             }
         }
 

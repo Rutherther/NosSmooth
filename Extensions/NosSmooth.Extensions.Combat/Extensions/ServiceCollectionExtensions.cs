@@ -5,8 +5,6 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Extensions.DependencyInjection;
-using NosSmooth.Core.Extensions;
-using NosSmooth.Extensions.Combat.Responders;
 
 namespace NosSmooth.Extensions.Combat.Extensions;
 
@@ -23,8 +21,6 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddNostaleCombat(this IServiceCollection serviceCollection)
     {
         return serviceCollection
-            .AddPacketResponder<CancelResponder>()
-            .AddPacketResponder<SuResponder>()
             .AddSingleton<CombatManager>();
     }
 }
