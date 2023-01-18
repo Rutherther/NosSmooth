@@ -8,10 +8,10 @@
         <Description>NosSmooth's packet string serializer implementation.</Description>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>2.2.4</PackageVersion>
+        <PackageVersion>2.2.5</PackageVersion>
         <PackageReleaseNotes>Update dependencies.</PackageReleaseNotes>
-        <AssemblyVersion>2.2.4</AssemblyVersion>
-        <FileVersion>2.2.4</FileVersion>
+        <AssemblyVersion>2.2.5</AssemblyVersion>
+        <FileVersion>2.2.5</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>
