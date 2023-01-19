@@ -199,6 +199,11 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
             );
         }
 
+        if (CurrentState.CompareTo(state) >= 0)
+        { // already reached.
+            return Data;
+        }
+
         _waitingFor = state;
         _unregisterAtWaitingFor = unregisterAfter;
         _waitCancellationSource = CancellationTokenSource.CreateLinkedTokenSource(ct);
@@ -281,8 +286,6 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
         }
         if (_waitingFor is not null && _waitingFor.Value.CompareTo(CurrentState) == 0)
         {
-            IsRegistered = false; // avoid deadlock. The cancellation will trigger unregister,
-
             // but we are inside of the lock now.
             _waitCancellationSource?.Cancel();
 
