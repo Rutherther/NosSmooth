@@ -27,14 +27,14 @@ public class Contractor : IEnumerable<IContract>
     public static readonly TimeSpan Timeout = new TimeSpan(0, 5, 0);
 
     private readonly List<ContractInfo> _contracts;
-    private readonly SemaphoreSlim _semaphore;
+    private readonly ReaderWriterLockSlim _semaphore;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Contractor"/> class.
     /// </summary>
     public Contractor()
     {
-        _semaphore = new SemaphoreSlim(1, 1);
+        _semaphore = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
         _contracts = new List<ContractInfo>();
     }
 
@@ -46,12 +46,12 @@ public class Contractor : IEnumerable<IContract>
     {
         try
         {
-            _semaphore.Wait();
+            _semaphore.EnterWriteLock();
             _contracts.Add(new ContractInfo(contract, DateTime.Now));
         }
         finally
         {
-            _semaphore.Release();
+            _semaphore.ExitWriteLock();
         }
     }
 
@@ -63,12 +63,12 @@ public class Contractor : IEnumerable<IContract>
     {
         try
         {
-            _semaphore.Wait();
-            _contracts.RemoveAll(ci => ci.contract == contract);
+            _semaphore.EnterWriteLock();
+            _contracts.RemoveAll(x => x.contract == contract);
         }
         finally
         {
-            _semaphore.Release();
+            _semaphore.ExitWriteLock();
         }
     }
 
@@ -91,51 +91,66 @@ public class Contractor : IEnumerable<IContract>
     {
         var errors = new List<IResult>();
         var toRemove = new List<ContractInfo>();
+        ContractInfo[] contracts;
+
         try
         {
-            await _semaphore.WaitAsync(ct);
-            foreach (var info in _contracts)
-            {
-                if (DateTime.Now - info.addedAt > Timeout)
-                {
-                    errors.Add
-                    (
-                        (Result)new GenericError
-                        (
-                            $"A contract {info.contract} has been registered for too long and was unregistered automatically."
-                        )
-                    );
-                    continue;
-                }
-
-                var result = await info.contract.Update(data);
-                if (!result.IsDefined(out var response))
-                {
-                    errors.Add(result);
-                }
-
-                if (response == ContractUpdateResponse.InterestedAndUnregister)
-                {
-                    toRemove.Add(info);
-                }
-            }
-
-            foreach (var contract in toRemove)
-            {
-                _contracts.Remove(contract);
-            }
-
-            return errors.Count switch
-            {
-                0 => Result.FromSuccess(),
-                1 => (Result)errors[0],
-                _ => new AggregateError(errors)
-            };
+            _semaphore.EnterReadLock();
+            contracts = _contracts.ToArray();
         }
         finally
         {
-            _semaphore.Release();
+            _semaphore.ExitReadLock();
         }
+
+        foreach (var info in contracts)
+        {
+            if (DateTime.Now - info.addedAt > Timeout)
+            {
+                errors.Add
+                (
+                    (Result)new GenericError
+                    (
+                        $"A contract {info.contract} has been registered for too long and was unregistered automatically."
+                    )
+                );
+                continue;
+            }
+
+            var result = await info.contract.Update(data, ct);
+            if (!result.IsDefined(out var response))
+            {
+                errors.Add(result);
+            }
+
+            if (response == ContractUpdateResponse.InterestedAndUnregister)
+            {
+                toRemove.Add(info);
+            }
+        }
+
+        if (toRemove.Count > 0)
+        {
+            try
+            {
+                _semaphore.EnterWriteLock();
+                foreach (var contract in toRemove)
+                {
+                    _contracts.Remove(contract);
+                }
+            }
+            finally
+            {
+                _semaphore.ExitWriteLock();
+            }
+        }
+
+        return errors.Count switch
+        {
+            0 => Result.FromSuccess(),
+            1 => (Result)errors[0],
+            _ => new AggregateError(errors)
+        };
     }
 
     /// <inheritdoc />
