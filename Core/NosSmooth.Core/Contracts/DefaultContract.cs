@@ -128,6 +128,12 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
         {
             return ContractUpdateResponse.NotInterested;
         }
+
+        if (CurrentState.CompareTo(_defaultState) == 0)
+        { // cannot update with default state. OnlyExecute has to be called first and update the state.
+            return ContractUpdateResponse.NotInterested;
+        }
+
         if (!_actions.ContainsKey(CurrentState))
         {
             Unregister();
