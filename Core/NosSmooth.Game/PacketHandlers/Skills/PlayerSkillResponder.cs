@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using NosSmooth.Core.Extensions;
 using NosSmooth.Core.Packets;
 using NosSmooth.Data.Abstractions;
+using NosSmooth.Data.Abstractions.Enums;
 using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Events.Characters;
 using NosSmooth.Game.Events.Core;
@@ -95,6 +96,7 @@ public class PlayerSkillResponder : IPacketResponder<SkiPacket>
         }
 
         otherSkillsFromCharacter.RemoveAll(x => x.SkillVNum == primarySkill.SkillVNum || x.SkillVNum == secondarySkill.SkillVNum);
+        otherSkillsFromCharacter.RemoveAll(x => x.Info?.SkillType != SkillType.Player);
         skills = new Data.Characters.Skills(primarySkill, secondarySkill, otherSkillsFromCharacter);
 
         await _game.CreateOrUpdateSkillsAsync
