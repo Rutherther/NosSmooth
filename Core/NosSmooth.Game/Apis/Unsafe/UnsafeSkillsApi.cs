@@ -421,6 +421,7 @@ public class UnsafeSkillsApi
                 skillUseEvent => skillUseEvent
             )
             .SetError<CancelPacket>(UseSkillStates.SkillUseRequested, _ => UseSkillErrors.Unknown)
+            .SetTimeout(UseSkillStates.SkillUseRequested, TimeSpan.FromSeconds(1.5), UseSkillErrors.NoResponse)
             .SetTimeout(UseSkillStates.SkillUsedResponse, TimeSpan.FromSeconds(1), UseSkillStates.CharacterRestored)
             .Build();
     }

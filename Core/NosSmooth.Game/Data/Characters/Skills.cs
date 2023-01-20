@@ -17,4 +17,10 @@ public record Skills
     Skill PrimarySkill,
     Skill SecondarySkill,
     IReadOnlyList<Skill> OtherSkills
-);
+)
+{
+    /// <summary>
+    /// Gets all skills contained in this collection.
+    /// </summary>
+    public IEnumerable<Skill> AllSkills => new[] { PrimarySkill, SecondarySkill }.Concat(OtherSkills);
+}

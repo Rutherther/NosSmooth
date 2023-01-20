@@ -94,6 +94,7 @@ public class PlayerSkillResponder : IPacketResponder<SkiPacket>
             otherSkillsFromCharacter.Add(await CreateSkill(newSkill, default));
         }
 
+        otherSkillsFromCharacter.RemoveAll(x => x.SkillVNum == primarySkill.SkillVNum || x.SkillVNum == secondarySkill.SkillVNum);
         skills = new Data.Characters.Skills(primarySkill, secondarySkill, otherSkillsFromCharacter);
 
         await _game.CreateOrUpdateSkillsAsync

@@ -116,4 +116,11 @@ public interface IContract<TData, TState> : IContract
     /// <returns>The data of the contract or an error.</returns>
     /// <exception cref="InvalidOperationError">Thrown in case the given state cannot fill the data.</exception>
     public Task<Result<TData>> WaitForAsync(TState state, bool unregisterAfter = true, CancellationToken ct = default);
+
+    /// <summary>
+    /// Gets whether the given state has been reached already.
+    /// </summary>
+    /// <param name="state">The state to check has been reached.</param>
+    /// <returns>True in case the given state has been reached or there was an error.</returns>
+    public bool HasReachedState(TState state);
 }

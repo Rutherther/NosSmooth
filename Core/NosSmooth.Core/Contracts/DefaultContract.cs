@@ -44,7 +44,7 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
 
     private readonly SemaphoreSlim _semaphore;
 
-    private readonly IDictionary<TState, (TimeSpan, TState)> _timeouts;
+    private readonly IDictionary<TState, (TimeSpan, TState?, TError?)> _timeouts;
     private readonly IDictionary<TState, StateActionAsync> _actions;
     private readonly Contractor _contractor;
     private readonly TState _defaultState;
@@ -75,7 +75,7 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
         TState fillAtState,
         FillDataAsync fillData,
         IDictionary<TState, StateActionAsync> actions,
-        IDictionary<TState, (TimeSpan Timeout, TState NextState)> timeouts
+        IDictionary<TState, (TimeSpan Timeout, TState? NextState, TError? Error)> timeouts
     )
     {
         _semaphore = new SemaphoreSlim(1, 1);
@@ -139,8 +139,16 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
         if (resultData.Error is not null)
         {
             _error = resultData.Error;
-            _waitCancellationSource?.Cancel();
-            return ContractUpdateResponse.Interested;
+            try
+            {
+                _waitCancellationSource?.Cancel();
+            }
+            catch
+            {
+                // ignored
+            }
+
+            return ContractUpdateResponse.InterestedAndUnregister;
         }
 
         if (resultData.NextState is null)
@@ -170,6 +178,7 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
             {
                 _error = error;
                 _waitCancellationSource?.Cancel();
+                return new ContractError<TError>(error.Value);
             }
 
             if (state is not null)
@@ -197,6 +206,16 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
             (
                 $"The requested state {state} does not guarantee data filled. The state that fills data is {_defaultState}"
             );
+        }
+
+        if (_error is not null)
+        {
+            return new ContractError<TError>(_error.Value);
+        }
+
+        if (_resultError is not null)
+        {
+            return Result<TData>.FromError(_resultError.Value);
         }
 
         if (CurrentState.CompareTo(state) >= 0)
@@ -234,6 +253,8 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
             {
                 Unregister();
             }
+
+            _waitCancellationSource?.Dispose();
         }
 
         if (ct.IsCancellationRequested)
@@ -258,6 +279,10 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
 
         return Data;
     }
+
+    /// <inheritdoc />
+    public bool HasReachedState(TState state)
+        => _error is not null || _resultError is not null || CurrentState.CompareTo(state) >= 0;
 
     private async Task<Result<ContractUpdateResponse>> SetupNewState<TAny>(TAny data, CancellationToken ct)
     {
@@ -304,7 +329,7 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
         if (_timeouts.ContainsKey(CurrentState))
         {
             var currentState = CurrentState;
-            var (timeout, state) = _timeouts[CurrentState];
+            var (timeout, state, error) = _timeouts[CurrentState];
 
             Task.Run
             (
@@ -314,8 +339,16 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
 
                     if (CurrentState.CompareTo(currentState) == 0)
                     {
-                        await SetCurrentState(state);
-                        await SetupNewState<int?>(null!, default);
+                        if (state is not null)
+                        {
+                            await SetCurrentState(state.Value);
+                            await SetupNewState<int?>(null!, default);
+                        }
+                        else if (error is not null)
+                        {
+                            _error = error;
+                            _waitCancellationSource?.Cancel();
+                        }
                     }
                 }
             );

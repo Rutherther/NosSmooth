@@ -114,6 +114,7 @@ public class Contractor : IEnumerable<IContract>
                         $"A contract {info.contract} has been registered for too long and was unregistered automatically."
                     )
                 );
+                toRemove.Add(info);
                 continue;
             }
 
@@ -148,7 +149,7 @@ public class Contractor : IEnumerable<IContract>
         return errors.Count switch
         {
             0 => Result.FromSuccess(),
-            1 => (Result)errors[0],
+            1 => Result.FromError((Result<ContractUpdateResponse>)errors[0]),
             _ => new AggregateError(errors)
         };
     }

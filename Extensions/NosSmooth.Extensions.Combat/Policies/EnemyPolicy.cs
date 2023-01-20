@@ -35,6 +35,7 @@ public record EnemyPolicy
         {
             targets = targets.Where(x => MonsterVNums.Contains(x.VNum));
         }
+        targets = targets.ToArray();
 
         if (!targets.Any())
         {

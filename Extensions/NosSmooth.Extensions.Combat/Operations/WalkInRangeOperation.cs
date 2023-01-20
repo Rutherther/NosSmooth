@@ -4,12 +4,14 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics;
 using NosSmooth.Extensions.Combat.Errors;
 using NosSmooth.Extensions.Pathfinding;
 using NosSmooth.Extensions.Pathfinding.Errors;
 using NosSmooth.Game.Data.Entities;
 using NosSmooth.Game.Data.Info;
 using NosSmooth.Game.Errors;
+using NosSmooth.Packets.Client.Inventory;
 using Remora.Results;
 
 namespace NosSmooth.Extensions.Combat.Operations;
@@ -27,6 +29,52 @@ public record WalkInRangeOperation
     float Distance
 ) : ICombatOperation
 {
+    private Task<Result>? _walkInRangeOperation;
+
+    /// <inheritdoc />
+    public OperationQueueType QueueType => OperationQueueType.TotalControl;
+
+    /// <inheritdoc />
+    public Task<Result> BeginExecution(ICombatState combatState, CancellationToken ct = default)
+    {
+        if (_walkInRangeOperation is not null)
+        {
+            return Task.FromResult(Result.FromSuccess());
+        }
+
+        _walkInRangeOperation = Task.Run
+        (
+            () => UseAsync(combatState, ct),
+            ct
+        );
+        return Task.FromResult(Result.FromSuccess());
+    }
+
+    /// <inheritdoc />
+    public async Task<Result> WaitForFinishedAsync(ICombatState combatState, CancellationToken ct = default)
+    {
+        if (IsFinished())
+        {
+            return Result.FromSuccess();
+        }
+
+        await BeginExecution(combatState, ct);
+        if (_walkInRangeOperation is null)
+        {
+            throw new UnreachableException();
+        }
+
+        return await _walkInRangeOperation;
+    }
+
+    /// <inheritdoc />
+    public bool IsExecuting()
+        => _walkInRangeOperation is not null && !IsFinished();
+
+    /// <inheritdoc />
+    public bool IsFinished()
+        => _walkInRangeOperation?.IsCompleted ?? false;
+
     /// <inheritdoc />
     public Result<CanBeUsedResponse> CanBeUsed(ICombatState combatState)
     {
@@ -39,8 +87,7 @@ public record WalkInRangeOperation
         return character.CantMove ? CanBeUsedResponse.MustWait : CanBeUsedResponse.CanBeUsed;
     }
 
-    /// <inheritdoc />
-    public async Task<Result> UseAsync(ICombatState combatState, CancellationToken ct = default)
+    private async Task<Result> UseAsync(ICombatState combatState, CancellationToken ct = default)
     {
         var character = combatState.Game.Character;
         if (character is null)
@@ -75,7 +122,8 @@ public record WalkInRangeOperation
             }
 
             using var goToCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(ct);
-            var walkResultTask = WalkManager.GoToAsync(closePosition.X, closePosition.Y, true, goToCancellationTokenSource.Token);
+            var walkResultTask = WalkManager.GoToAsync
+                (closePosition.X, closePosition.Y, true, goToCancellationTokenSource.Token);
 
             while (!walkResultTask.IsCompleted)
             {
@@ -128,5 +176,11 @@ public record WalkInRangeOperation
 
         var diffLength = Math.Sqrt(diff.DistanceSquared(Position.Zero));
         return target + ((distance / diffLength) * diff);
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        _walkInRangeOperation?.Dispose();
     }
 }

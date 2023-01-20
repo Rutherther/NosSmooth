@@ -29,7 +29,7 @@ public class ContractBuilder<TData, TState, TError>
     private readonly TState _defaultState;
 
     private readonly Dictionary<TState, DefaultContract<TData, TState, TError>.StateActionAsync> _actions;
-    private readonly Dictionary<TState, (TimeSpan, TState)> _timeouts;
+    private readonly Dictionary<TState, (TimeSpan, TState?, TError?)> _timeouts;
 
     private TState? _fillAtState;
     private DefaultContract<TData, TState, TError>.FillDataAsync? _fillData;
@@ -44,7 +44,7 @@ public class ContractBuilder<TData, TState, TError>
         _contractor = contractor;
         _defaultState = defaultState;
         _actions = new Dictionary<TState, DefaultContract<TData, TState, TError>.StateActionAsync>();
-        _timeouts = new Dictionary<TState, (TimeSpan, TState)>();
+        _timeouts = new Dictionary<TState, (TimeSpan, TState?, TError?)>();
     }
 
     /// <summary>
@@ -56,7 +56,20 @@ public class ContractBuilder<TData, TState, TError>
     /// <returns>The updated builder.</returns>
     public ContractBuilder<TData, TState, TError> SetTimeout(TState state, TimeSpan timeout, TState nextState)
     {
-        _timeouts[state] = (timeout, nextState);
+        _timeouts[state] = (timeout, nextState, null);
+        return this;
+    }
+
+    /// <summary>
+    /// Sets timeout of the given state.
+    /// </summary>
+    /// <param name="state">The state to set timeout for.</param>
+    /// <param name="timeout">The timeout span.</param>
+    /// <param name="error">The error to set.</param>
+    /// <returns>The updated builder.</returns>
+    public ContractBuilder<TData, TState, TError> SetTimeout(TState state, TimeSpan timeout, TError error)
+    {
+        _timeouts[state] = (timeout, null, error);
         return this;
     }
 

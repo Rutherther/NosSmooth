@@ -4,18 +4,17 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Xml;
+using System.Diagnostics.CodeAnalysis;
 using NosSmooth.Core.Client;
 using NosSmooth.Extensions.Combat.Operations;
-using NosSmooth.Game.Data.Entities;
 
 namespace NosSmooth.Extensions.Combat;
 
 /// <inheritdoc />
 internal class CombatState : ICombatState
 {
-    private readonly LinkedList<ICombatOperation> _operations;
-    private ICombatOperation? _currentOperation;
+    private readonly Dictionary<OperationQueueType, LinkedList<ICombatOperation>> _operations;
+    private readonly Dictionary<OperationQueueType, ICombatOperation> _currentOperations;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CombatState"/> class.
@@ -28,7 +27,8 @@ internal class CombatState : ICombatState
         Client = client;
         Game = game;
         CombatManager = combatManager;
-        _operations = new LinkedList<ICombatOperation>();
+        _operations = new Dictionary<OperationQueueType, LinkedList<ICombatOperation>>();
+        _currentOperations = new Dictionary<OperationQueueType, ICombatOperation>();
     }
 
     /// <summary>
@@ -45,63 +45,108 @@ internal class CombatState : ICombatState
     /// <inheritdoc/>
     public INostaleClient Client { get; }
 
+    /// <summary>
+    /// Gets whether the manager may currently quit.
+    /// </summary>
+    /// <remarks>
+    /// Used for finishing the current operations.
+    /// </remarks>
+    public bool CanQuit => _currentOperations.Values.All(x => !x.IsExecuting() || x.IsFinished());
+
+    /// <inheritdoc/>
+    public bool IsWaitingOnOperation => _currentOperations.Any(x => !x.Value.IsExecuting());
+
+    /// <summary>
+    /// Move to next operation, if available.
+    /// </summary>
+    /// <param name="queueType">The queue type to move to next operation in.</param>
+    /// <returns>Next operation, if any.</returns>
+    public ICombatOperation? NextOperation(OperationQueueType queueType)
+    {
+        if (_operations.ContainsKey(queueType))
+        {
+            var nextOperation = _operations[queueType].FirstOrDefault();
+
+            if (nextOperation is not null)
+            {
+                _operations[queueType].RemoveFirst();
+                _currentOperations[queueType] = nextOperation;
+                return nextOperation;
+            }
+        }
+
+        return null;
+    }
+
+    /// <inheritdoc/>
+    public IReadOnlyList<ICombatOperation> GetWaitingForOperations()
+    {
+        return _currentOperations.Values.Where(x => !x.IsExecuting()).ToList();
+    }
+
+    /// <inheritdoc/>
+    public ICombatOperation? GetCurrentOperation(OperationQueueType queueType)
+        => _currentOperations.GetValueOrDefault(queueType);
+
+    /// <inheritdoc/>
+    public bool IsExecutingOperation(OperationQueueType queueType, [NotNullWhen(true)] out ICombatOperation? operation)
+    {
+        operation = GetCurrentOperation(queueType);
+        return operation is not null && operation.IsExecuting();
+    }
+
     /// <inheritdoc/>
     public void QuitCombat()
     {
         ShouldQuit = true;
     }
 
-    /// <summary>
-    /// Make a step in the queue.
-    /// </summary>
-    /// <returns>The current operation, if any.</returns>
-    public ICombatOperation? NextOperation()
-    {
-        var operation = _currentOperation = _operations.First?.Value;
-        if (operation is not null)
-        {
-            _operations.RemoveFirst();
-        }
-
-        return operation;
-    }
-
     /// <inheritdoc/>
     public void SetCurrentOperation
         (ICombatOperation operation, bool emptyQueue = false, bool prependCurrentOperationToQueue = false)
     {
-        var current = _currentOperation;
-        _currentOperation = operation;
+        var type = operation.QueueType;
+
+        if (!_operations.ContainsKey(type))
+        {
+            _operations[type] = new LinkedList<ICombatOperation>();
+        }
 
         if (emptyQueue)
         {
-            _operations.Clear();
+            _operations[type].Clear();
         }
 
-        if (prependCurrentOperationToQueue && current is not null)
+        if (prependCurrentOperationToQueue)
         {
-            _operations.AddFirst(current);
+            _operations[type].AddFirst(operation);
+            return;
         }
+
+        if (_currentOperations.ContainsKey(type))
+        {
+            _currentOperations[type].Dispose();
+        }
+
+        _currentOperations[type] = operation;
     }
 
     /// <inheritdoc/>
     public void EnqueueOperation(ICombatOperation operation)
     {
-        _operations.AddLast(operation);
+        var type = operation.QueueType;
+
+        if (!_operations.ContainsKey(type))
+        {
+            _operations[type] = new LinkedList<ICombatOperation>();
+        }
+
+        _operations[type].AddLast(operation);
     }
 
     /// <inheritdoc/>
     public void RemoveOperations(Func<ICombatOperation, bool> filter)
     {
-        var node = _operations.First;
-        while (node != null)
-        {
-            var next = node.Next;
-            if (filter(node.Value))
-            {
-                _operations.Remove(node);
-            }
-            node = next;
-        }
+        throw new NotImplementedException();
     }
 }
