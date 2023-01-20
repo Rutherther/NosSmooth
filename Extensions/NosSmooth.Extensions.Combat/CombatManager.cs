@@ -47,16 +47,16 @@ public class CombatManager : IStatefulEntity
         long? currentTarget = null;
         long? previousTarget = null;
 
-        while (!combatState.ShouldQuit && !ct.IsCancellationRequested)
+        while (!(combatState.ShouldQuit && combatState.CanQuit) && !ct.IsCancellationRequested)
         {
             var commandResult = await _client.SendCommandAsync
             (
                 new AttackCommand
                 (
                     currentTarget,
-                    async (c) =>
+                    async (ct) =>
                     {
-                        while (!combatState.ShouldQuit && currentTarget == previousTarget)
+                        while (!(combatState.ShouldQuit && combatState.CanQuit) && currentTarget == previousTarget)
                         {
                             var iterationResult = await HandleAttackIterationAsync(combatState, technique, ct);
 
@@ -102,7 +102,6 @@ public class CombatManager : IStatefulEntity
         if (!technique.ShouldContinue(combatState))
         {
             combatState.QuitCombat();
-            return Result<(bool, long?)>.FromSuccess((false, null));
         }
 
         // the operations need time for execution and/or
@@ -147,7 +146,7 @@ public class CombatManager : IStatefulEntity
             currentOperation = null;
         }
 
-        if (currentOperation is null)
+        if (currentOperation is null && !combatState.ShouldQuit)
         { // waiting for an operation.
             currentOperation = combatState.NextOperation(queueType);
 
@@ -161,6 +160,11 @@ public class CombatManager : IStatefulEntity
 
                 return Result<(bool, long?)>.FromSuccess((true, stepResult.Entity));
             }
+        }
+
+        if (currentOperation is null)
+        { // should quit, do nothing.
+            return (false, null);
         }
 
         if (!currentOperation.IsExecuting())

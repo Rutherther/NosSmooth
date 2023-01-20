@@ -45,6 +45,14 @@ internal class CombatState : ICombatState
     /// <inheritdoc/>
     public INostaleClient Client { get; }
 
+    /// <summary>
+    /// Gets whether the manager may currently quit.
+    /// </summary>
+    /// <remarks>
+    /// Used for finishing the current operations.
+    /// </remarks>
+    public bool CanQuit => _currentOperations.Values.All(x => !x.IsExecuting() || x.IsFinished());
+
     /// <inheritdoc/>
     public bool IsWaitingOnOperation => _currentOperations.Any(x => !x.Value.IsExecuting());
 
@@ -61,6 +69,7 @@ internal class CombatState : ICombatState
 
             if (nextOperation is not null)
             {
+                _operations[queueType].RemoveFirst();
                 _currentOperations[queueType] = nextOperation;
                 return nextOperation;
             }
