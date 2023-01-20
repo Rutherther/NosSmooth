@@ -68,7 +68,10 @@ public record UseSkillOperation
 
         _contract = contract;
         var executed = await _contract.OnlyExecuteAsync(ct);
-        _contract.Register();
+        if (executed.IsSuccess)
+        {
+            _contract.Register();
+        }
 
         return executed;
     }
