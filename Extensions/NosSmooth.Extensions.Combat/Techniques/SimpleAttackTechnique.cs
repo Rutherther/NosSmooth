@@ -171,7 +171,7 @@ public class SimpleAttackTechnique : ICombatTechnique
 
         if (!character.Position.Value.IsInRange(_target.Position.Value, range))
         {
-            state.WalkInRange(_walkManager, _target, _currentSkill.Info.Range);
+            state.WalkInRange(_walkManager, _target, range);
         }
         else
         {
