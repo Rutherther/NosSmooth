@@ -15,6 +15,7 @@ using NosSmooth.Game.Apis.Safe;
 using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Entities;
 using NosSmooth.Game.Data.Inventory;
+using NosSmooth.Game.Extensions;
 using Remora.Results;
 
 namespace NosSmooth.Extensions.Combat.Techniques;
@@ -129,9 +130,10 @@ public class SimpleAttackTechnique : ICombatTechnique
             .Where
             (
                 x => x.Info is not null && x.Info.HitType != HitType.AlliesInZone
-                    && x.Info.SkillType == SkillType.Player
-            )
-            .Where(x => !x.IsOnCooldown && characterMp >= (x.Info?.MpCost ?? long.MaxValue));
+                    && x.Info.SkillType == SkillType.Player &&
+                    !x.IsOnCooldown && characterMp >= (x.Info?.MpCost ?? long.MaxValue) &&
+                    !x.Info!.IsComboSkill()
+            );
 
         var skillResult = _skillSelector.GetSelectedSkill(usableSkills);
         if (!skillResult.IsDefined(out var currentSkill))
