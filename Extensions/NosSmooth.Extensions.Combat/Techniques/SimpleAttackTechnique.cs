@@ -124,8 +124,8 @@ public class SimpleAttackTechnique : ICombatTechnique
             }
 
             var characterMp = character.Mp?.Amount ?? 0;
-            var usableSkills = skills.OtherSkills
-                .Where(x => x.Info is not null && x.Info.HitType != HitType.AlliesInZone)
+            var usableSkills = skills.AllSkills
+                .Where(x => x.Info is not null && x.Info.HitType != HitType.AlliesInZone && x.Info.SkillType == SkillType.Player)
                 .Where(x => !x.IsOnCooldown && characterMp >= (x.Info?.MpCost ?? long.MaxValue));
 
             var skillResult = _skillSelector.GetSelectedSkill(usableSkills);
