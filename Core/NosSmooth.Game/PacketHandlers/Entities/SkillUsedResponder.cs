@@ -85,6 +85,11 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
             target.Hp.Amount = packet.Hp;
         }
 
+        if (packet.PositionX != 0 && packet.PositionY != 0)
+        {
+            caster.Position = new Position(packet.PositionX, packet.PositionY);
+        }
+
         Skill? skillEntity;
         var skills = _game.Skills;
         if (packet.SkillVNum is not null && caster is Character character && skills is not null)
