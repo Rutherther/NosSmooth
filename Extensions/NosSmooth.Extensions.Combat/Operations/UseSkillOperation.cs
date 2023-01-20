@@ -29,7 +29,13 @@ namespace NosSmooth.Extensions.Combat.Operations;
 /// <param name="Skill">The skill to use.</param>
 /// <param name="Caster">The caster entity that is using the skill.</param>
 /// <param name="Target">The target entity to use the skill at.</param>
-public record UseSkillOperation(NostaleSkillsApi SkillsApi, Skill Skill, ILivingEntity Caster, ILivingEntity Target) : ICombatOperation
+public record UseSkillOperation
+(
+    NostaleSkillsApi SkillsApi,
+    Skill Skill,
+    ILivingEntity Caster,
+    ILivingEntity Target
+) : ICombatOperation
 {
     private IContract<SkillUsedEvent, UseSkillStates>? _contract;
 
@@ -122,7 +128,13 @@ public record UseSkillOperation(NostaleSkillsApi SkillsApi, Skill Skill, ILiving
     {
         if (info.AttackType == AttackType.Dash)
         {
-            return SkillsApi.ContractUseSkillOn(Skill, Target, Target.Position!.Value.X, Target.Position!.Value.Y);
+            return SkillsApi.ContractUseSkillOn
+            (
+                Skill,
+                info.TargetType == TargetType.Self ? Caster : Target,
+                Target.Position!.Value.X,
+                Target.Position!.Value.Y
+            );
         }
 
         switch (info.TargetType)
