@@ -5,10 +5,8 @@
         <Nullable>enable</Nullable>
         <LangVersion>10</LangVersion>
         <TargetFramework>net7.0</TargetFramework>
-        <Version>0.0.6</Version>
+        <VersionPrefix>1.0.0</VersionPrefix>
         <Description>Manages NosSmooth combat state, currently exposing a simple technique to kill one enemy at a time.</Description>
-        <AssemblyVersion>0.0.5</AssemblyVersion>
-        <FileVersion>0.0.5</FileVersion>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReleaseNotes>Update dependencies</PackageReleaseNotes>
