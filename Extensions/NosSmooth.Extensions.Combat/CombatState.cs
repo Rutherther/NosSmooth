@@ -85,6 +85,24 @@ internal class CombatState : ICombatState
     }
 
     /// <inheritdoc/>
+    public ICombatOperation? RemoveCurrentOperation(OperationQueueType queueType, bool emptyQueue = false)
+    {
+        if (emptyQueue && _operations.TryGetValue(queueType, out var queue))
+        {
+            queue.Clear();
+        }
+
+        if (_currentOperations.TryGetValue(queueType, out var operation))
+        {
+            operation.Dispose();
+            _currentOperations.Remove(queueType);
+            return operation;
+        }
+
+        return null;
+    }
+
+    /// <inheritdoc/>
     public ICombatOperation? GetCurrentOperation(OperationQueueType queueType)
         => _currentOperations.GetValueOrDefault(queueType);
 
