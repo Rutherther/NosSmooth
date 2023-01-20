@@ -7,9 +7,9 @@
         <Description>Contains default NosTale packets.</Description>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <VersionPrefix>3.4.4</VersionPrefix>
+        <VersionPrefix>3.5.0</VersionPrefix>
         <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
-        <PackageReleaseNotes>Update dependencies.</PackageReleaseNotes>
+        <PackageReleaseNotes>Make su packet position nullable.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
