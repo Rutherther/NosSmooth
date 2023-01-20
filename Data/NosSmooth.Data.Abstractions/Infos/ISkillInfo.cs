@@ -52,7 +52,7 @@ public interface ISkillInfo : IVNumInfo
     /// <summary>
     /// Gets whether the skill uses secondary weapon, primary weapon is used if false.
     /// </summary>
-    public bool UsesSecondaryWeapon { get; }
+    bool UsesSecondaryWeapon { get; }
 
     /// <summary>
     /// Gets the mana points the skill cast costs.
@@ -77,5 +77,30 @@ public interface ISkillInfo : IVNumInfo
     /// <summary>
     /// Gets the element of the skill.
     /// </summary>
-    public Element Element { get; }
+    Element Element { get; }
+
+    /// <summary>
+    /// Gets the cost of the skill.
+    /// </summary>
+    int SpecialCost { get; }
+
+    /// <summary>
+    /// Gets the upgrade skill.
+    /// </summary>
+    short Upgrade { get; }
+
+    /// <summary>
+    /// Gets the upgrade type (morph).
+    /// </summary>
+    short MorphOrUpgrade { get; }
+
+    /// <summary>
+    /// Gets the speed of the dash.
+    /// </summary>
+    short DashSpeed { get; }
+
+    /// <summary>
+    /// Gets vnum of an item that is consumed by the skill.
+    /// </summary>
+    int ItemVNum { get; }
 }

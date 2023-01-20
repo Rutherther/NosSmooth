@@ -7,9 +7,9 @@
         <LangVersion>10</LangVersion>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <VersionPrefix>2.1.0</VersionPrefix>
+        <VersionPrefix>2.1.1</VersionPrefix>
         <TargetFramework>net7.0</TargetFramework>
-        <PackageReleaseNotes>Add new skill fields.</PackageReleaseNotes>
+        <PackageReleaseNotes>Add skill morph, special cost, upgrade, dash speed, item vnum.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>

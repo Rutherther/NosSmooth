@@ -34,9 +34,11 @@ public class SkillParser : IInfoParser<ISkillInfo>
             var typeEntry = item.GetEntry("TYPE");
             var targetEntry = item.GetEntry("TARGET");
             var dataEntry = item.GetEntry("DATA");
+            var costEntry = item.GetEntry("COST");
 
             var vnum = item.GetEntry("VNUM").Read<int>(1);
             var nameKey = item.GetEntry("NAME").Read<string>(1);
+
             result.Add
             (
                 vnum,
@@ -55,7 +57,12 @@ public class SkillParser : IInfoParser<ISkillInfo>
                     typeEntry.Read<short>(2),
                     (TargetType)targetEntry.Read<int>(1),
                     (HitType)targetEntry.Read<int>(2),
-                    (Element)typeEntry.Read<int>(6)
+                    (Element)typeEntry.Read<int>(6),
+                    costEntry.Read<int>(1),
+                    dataEntry.Read<short>(1),
+                    dataEntry.Read<short>(2),
+                    dataEntry.Read<short>(10),
+                    dataEntry.Read<int>(11)
                 )
             );
         }
@@ -78,6 +85,11 @@ public class SkillParser : IInfoParser<ISkillInfo>
         short CastId,
         TargetType TargetType,
         HitType HitType,
-        Element Element
+        Element Element,
+        int SpecialCost,
+        short Upgrade,
+        short MorphOrUpgrade,
+        short DashSpeed,
+        int ItemVNum
     ) : ISkillInfo;
 }

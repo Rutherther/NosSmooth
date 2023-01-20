@@ -60,6 +60,21 @@ public class SkillInfo : ISkillInfo
     public Element Element { get; set; }
 
     /// <inheritdoc />
+    public int SpecialCost { get; set; }
+
+    /// <inheritdoc />
+    public short Upgrade { get; set; }
+
+    /// <inheritdoc />
+    public short MorphOrUpgrade { get; set; }
+
+    /// <inheritdoc />
+    public short DashSpeed { get; set; }
+
+    /// <inheritdoc />
+    public int ItemVNum { get; set; }
+
+    /// <inheritdoc />
     public bool UsesSecondaryWeapon { get; set; }
 
     /// <inheritdoc />

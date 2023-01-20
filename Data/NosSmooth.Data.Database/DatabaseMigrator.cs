@@ -144,7 +144,13 @@ public class DatabaseMigrator
                 ZoneRange = skill.ZoneRange,
                 AttackType = skill.AttackType,
                 Element = skill.Element,
-                UsesSecondaryWeapon = skill.UsesSecondaryWeapon
+                UsesSecondaryWeapon = skill.UsesSecondaryWeapon,
+                DashSpeed = skill.DashSpeed,
+                ItemVNum = skill.ItemVNum,
+                MorphOrUpgrade = skill.MorphOrUpgrade,
+                Name = skill.Name,
+                SpecialCost = skill.SpecialCost,
+                Upgrade = skill.Upgrade
             };
             dbContext.Add(skillInfo);
         }
