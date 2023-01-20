@@ -129,18 +129,19 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
             return ContractUpdateResponse.NotInterested;
         }
 
-        if (CurrentState.CompareTo(_defaultState) == 0)
+        var currentState = CurrentState;
+        if (currentState.CompareTo(_defaultState) == 0)
         { // cannot update with default state. OnlyExecute has to be called first and update the state.
             return ContractUpdateResponse.NotInterested;
         }
 
-        if (!_actions.ContainsKey(CurrentState))
+        if (!_actions.ContainsKey(currentState))
         {
             Unregister();
             return ContractUpdateResponse.NotInterested;
         }
 
-        var result = await _actions[CurrentState](data, ct);
+        var result = await _actions[currentState](data, ct);
         if (!result.IsDefined(out var resultData))
         {
             _shouldReact = false;
@@ -246,7 +247,6 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
             var result = await OnlyExecuteAsync(ct);
             if (!result.IsSuccess)
             {
-                Unregister();
                 return Result<TData>.FromError(result);
             }
         }
