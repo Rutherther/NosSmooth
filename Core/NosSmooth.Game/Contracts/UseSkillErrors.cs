@@ -24,5 +24,10 @@ public enum UseSkillErrors
     /// <summary>
     /// The character does not have enough mana.
     /// </summary>
-    NoMana
+    NoMana,
+
+    /// <summary>
+    /// There was no response from the server.
+    /// </summary>
+    NoResponse
 }
