@@ -7,6 +7,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using NosSmooth.Core.Extensions;
 using NosSmooth.Extensions.Pathfinding.Responders;
+using NosSmooth.Packets.Server.Character;
 using NosSmooth.Packets.Server.Maps;
 
 namespace NosSmooth.Extensions.Pathfinding.Extensions;
@@ -30,6 +31,9 @@ public static class ServiceCollectionExtensions
             .AddPacketResponder<AtResponder>()
             .AddPacketResponder<CMapResponder>()
             .AddPacketResponder<WalkResponder>()
+            .AddPacketResponder<SuPacketResponder>()
+            .AddPacketResponder<TpPacketResponder>()
+            .AddPacketResponder<CInfoPacketResponder>()
             .AddSingleton<WalkManager>()
             .AddSingleton<Pathfinder>()
             .AddSingleton<PathfinderState>();

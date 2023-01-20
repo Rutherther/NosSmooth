@@ -8,8 +8,8 @@
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Description>NosSmooth extension allowing for finding paths on maps.</Description>
-        <VersionPrefix>1.1.3</VersionPrefix>
-        <PackageReleaseNotes>Update dependencies</PackageReleaseNotes>
+        <VersionPrefix>1.2.0</VersionPrefix>
+        <PackageReleaseNotes>React to su and tp packet by changing character position.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>

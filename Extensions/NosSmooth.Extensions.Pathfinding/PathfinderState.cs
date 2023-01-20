@@ -34,4 +34,9 @@ public class PathfinderState : IStatefulEntity
     /// Gets or sets the current y.
     /// </summary>
     internal short Y { get; set; }
+
+    /// <summary>
+    /// Gets or sets the id of the charcter.
+    /// </summary>
+    internal long CharacterId { get; set; }
 }
