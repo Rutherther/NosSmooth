@@ -129,7 +129,11 @@ public class SimpleAttackTechnique : ICombatTechnique
 
             var characterMp = character.Mp?.Amount ?? 0;
             var usableSkills = skills.AllSkills
-                .Where(x => x.Info is not null && x.Info.HitType != HitType.AlliesInZone && x.Info.SkillType == SkillType.Player)
+                .Where
+                (
+                    x => x.Info is not null && x.Info.HitType != HitType.AlliesInZone
+                        && x.Info.SkillType == SkillType.Player
+                )
                 .Where(x => !x.IsOnCooldown && characterMp >= (x.Info?.MpCost ?? long.MaxValue));
 
             var skillResult = _skillSelector.GetSelectedSkill(usableSkills);
@@ -164,7 +168,8 @@ public class SimpleAttackTechnique : ICombatTechnique
         }
 
         var range = _currentSkill.Info.Range;
-        if (_currentSkill.Info.TargetType == TargetType.Self && _currentSkill.Info.HitType == HitType.EnemiesInZone)
+        if (_currentSkill.Info.TargetType == TargetType.Self && _currentSkill.Info.HitType == HitType.EnemiesInZone
+            && _currentSkill.Info.AttackType != AttackType.Dash)
         {
             range = _currentSkill.Info.ZoneRange;
         }
