@@ -74,8 +74,12 @@ public class SimpleAttackTechnique : ICombatTechnique
             return false;
         }
 
-        var entity = map.Entities.GetEntity<ILivingEntity>(_targetId);
-        return !(entity is null || (entity.Hp is not null && (entity.Hp.Amount <= 0 || entity.Hp.Percentage <= 0)));
+        if (_target is null)
+        {
+            _target = map.Entities.GetEntity<ILivingEntity>(_targetId);
+        }
+
+        return !(_target is null || (_target.Hp is not null && (_target.Hp.Amount <= 0 || _target.Hp.Percentage <= 0)));
     }
 
     /// <inheritdoc />
