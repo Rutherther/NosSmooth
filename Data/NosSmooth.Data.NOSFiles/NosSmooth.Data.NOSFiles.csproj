@@ -7,7 +7,7 @@
         <LangVersion>10</LangVersion>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <VersionPrefix>2.2.0</VersionPrefix>
+        <VersionPrefix>2.2.1</VersionPrefix>
         <PackageReleaseNotes>Add new skill fields.</PackageReleaseNotes>
         <TargetFramework>net7.0</TargetFramework>
     </PropertyGroup>

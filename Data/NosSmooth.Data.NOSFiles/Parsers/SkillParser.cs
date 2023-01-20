@@ -50,7 +50,7 @@ public class SkillParser : IInfoParser<ISkillInfo>
                     dataEntry.Read<int>(6),
                     (SkillType)typeEntry.Read<int>(1),
                     (AttackType)typeEntry.Read<int>(4),
-                    typeEntry.Read<bool>(5),
+                    typeEntry.Read<int>(5) == 1,
                     dataEntry.Read<int>(9),
                     typeEntry.Read<short>(2),
                     (TargetType)targetEntry.Read<int>(1),
