@@ -58,7 +58,7 @@ public class SkillParser : IInfoParser<ISkillInfo>
                     (TargetType)targetEntry.Read<int>(1),
                     (HitType)targetEntry.Read<int>(2),
                     (Element)typeEntry.Read<int>(6),
-                    costEntry.Read<int>(1),
+                    costEntry.Read<int>(3),
                     dataEntry.Read<short>(1),
                     dataEntry.Read<short>(2),
                     dataEntry.Read<short>(10),
