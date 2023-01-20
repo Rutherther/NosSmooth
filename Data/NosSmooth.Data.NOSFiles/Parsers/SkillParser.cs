@@ -49,10 +49,13 @@ public class SkillParser : IInfoParser<ISkillInfo>
                     dataEntry.Read<int>(5),
                     dataEntry.Read<int>(6),
                     (SkillType)typeEntry.Read<int>(1),
+                    (AttackType)typeEntry.Read<int>(4),
+                    typeEntry.Read<bool>(5),
                     dataEntry.Read<int>(9),
                     typeEntry.Read<short>(2),
                     (TargetType)targetEntry.Read<int>(1),
-                    (HitType)targetEntry.Read<int>(2)
+                    (HitType)targetEntry.Read<int>(2),
+                    (Element)typeEntry.Read<int>(6)
                 )
             );
         }
@@ -69,9 +72,12 @@ public class SkillParser : IInfoParser<ISkillInfo>
         int CastTime,
         int Cooldown,
         SkillType SkillType,
+        AttackType AttackType,
+        bool UsesSecondaryWeapon,
         int MpCost,
         short CastId,
         TargetType TargetType,
-        HitType HitType
+        HitType HitType,
+        Element Element
     ) : ISkillInfo;
 }

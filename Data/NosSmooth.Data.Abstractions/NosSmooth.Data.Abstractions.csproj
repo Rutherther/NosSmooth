@@ -7,9 +7,9 @@
         <LangVersion>10</LangVersion>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>2.1.0</PackageVersion>
+        <PackageVersion>2.2.0</PackageVersion>
         <TargetFramework>net7.0</TargetFramework>
-        <PackageReleaseNotes>Add item type and equipment slot enums.</PackageReleaseNotes>
+        <PackageReleaseNotes>Add new skill information: uses secondary weapon, attack type, element</PackageReleaseNotes>
         <AssemblyVersion>2.1.0</AssemblyVersion>
         <FileVersion>2.1.0</FileVersion>
     </PropertyGroup>

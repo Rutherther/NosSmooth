@@ -36,32 +36,41 @@ public class SkillInfo : ISkillInfo
     }
 
     /// <inheritdoc />
-    public TranslatableString Name { get;  set; }
+    public TranslatableString Name { get; set; }
 
     /// <inheritdoc />
-    public short Range { get;  set; }
+    public short Range { get; set; }
 
     /// <inheritdoc />
-    public short ZoneRange { get; set;  }
+    public short ZoneRange { get; set; }
 
     /// <inheritdoc />
-    public int CastTime { get; set;  }
+    public int CastTime { get; set; }
 
     /// <inheritdoc />
-    public int Cooldown { get; set;  }
+    public int Cooldown { get; set; }
 
     /// <inheritdoc />
-    public SkillType SkillType { get; set;  }
+    public SkillType SkillType { get; set; }
 
     /// <inheritdoc />
-    public int MpCost { get;  set; }
+    public AttackType AttackType { get; set; }
 
     /// <inheritdoc />
-    public short CastId { get; set;  }
+    public Element Element { get; set; }
 
     /// <inheritdoc />
-    public TargetType TargetType { get; set;  }
+    public bool UsesSecondaryWeapon { get; set; }
 
     /// <inheritdoc />
-    public HitType HitType { get; set;  }
+    public int MpCost { get; set; }
+
+    /// <inheritdoc />
+    public short CastId { get; set; }
+
+    /// <inheritdoc />
+    public TargetType TargetType { get; set; }
+
+    /// <inheritdoc />
+    public HitType HitType { get; set; }
 }

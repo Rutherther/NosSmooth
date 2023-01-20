@@ -7,11 +7,11 @@
         <LangVersion>10</LangVersion>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>2.0.1</PackageVersion>
+        <PackageVersion>2.1.0</PackageVersion>
         <TargetFramework>net7.0</TargetFramework>
-        <PackageReleaseNotes>Make Monster level ushort</PackageReleaseNotes>
-        <AssemblyVersion>2.0.1</AssemblyVersion>
-        <FileVersion>2.0.1</FileVersion>
+        <PackageReleaseNotes>Add new skill fields.</PackageReleaseNotes>
+        <AssemblyVersion>2.1.0</AssemblyVersion>
+        <FileVersion>2.1.0</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>

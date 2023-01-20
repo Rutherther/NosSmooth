@@ -45,6 +45,16 @@ public interface ISkillInfo : IVNumInfo
     SkillType SkillType { get; }
 
     /// <summary>
+    /// Gets the attack type of the skill.
+    /// </summary>
+    AttackType AttackType { get; }
+
+    /// <summary>
+    /// Gets whether the skill uses secondary weapon, primary weapon is used if false.
+    /// </summary>
+    public bool UsesSecondaryWeapon { get; }
+
+    /// <summary>
     /// Gets the mana points the skill cast costs.
     /// </summary>
     int MpCost { get; }
@@ -63,4 +73,9 @@ public interface ISkillInfo : IVNumInfo
     /// Gets the hit type of the skill.
     /// </summary>
     HitType HitType { get; }
+
+    /// <summary>
+    /// Gets the element of the skill.
+    /// </summary>
+    public Element Element { get; }
 }

@@ -7,11 +7,11 @@
         <LangVersion>10</LangVersion>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>2.1.0</PackageVersion>
-        <PackageReleaseNotes>Make correct parsing of item bag, type, equipment slot</PackageReleaseNotes>
+        <PackageVersion>2.2.0</PackageVersion>
+        <PackageReleaseNotes>Add new skill fields.</PackageReleaseNotes>
         <TargetFramework>net7.0</TargetFramework>
-        <AssemblyVersion>2.1.0</AssemblyVersion>
-        <FileVersion>2.1.0</FileVersion>
+        <AssemblyVersion>2.2.0</AssemblyVersion>
+        <FileVersion>2.2.0</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>

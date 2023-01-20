@@ -141,7 +141,10 @@ public class DatabaseMigrator
                 SkillType = skill.SkillType,
                 TargetType = skill.TargetType,
                 VNum = skill.VNum,
-                ZoneRange = skill.ZoneRange
+                ZoneRange = skill.ZoneRange,
+                AttackType = skill.AttackType,
+                Element = skill.Element,
+                UsesSecondaryWeapon = skill.UsesSecondaryWeapon
             };
             dbContext.Add(skillInfo);
         }
