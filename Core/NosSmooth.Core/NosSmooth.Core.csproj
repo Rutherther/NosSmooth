@@ -8,11 +8,9 @@
         <Description>NosSmooth Core library allowing implementing nostale client, handling packets and commands.</Description>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>3.2.0</PackageVersion>
+        <VersionPrefix>3.2.0</VersionPrefix>
         <PackageReleaseNotes>Add contract reached state.
 Avoid deadlocks.</PackageReleaseNotes>
-        <AssemblyVersion>3.2.0</AssemblyVersion>
-        <FileVersion>3.2.0</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>
