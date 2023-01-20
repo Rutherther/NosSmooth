@@ -20,8 +20,6 @@ namespace NosSmooth.Extensions.Combat;
 /// </summary>
 public class CombatManager : IStatefulEntity
 {
-    private readonly List<CancellationTokenSource> _tokenSource;
-    private readonly SemaphoreSlim _semaphore;
     private readonly INostaleClient _client;
     private readonly Game.Game _game;
     private bool _cancelling;
@@ -33,8 +31,6 @@ public class CombatManager : IStatefulEntity
     /// <param name="game">The game.</param>
     public CombatManager(INostaleClient client, Game.Game game)
     {
-        _semaphore = new SemaphoreSlim(1, 1);
-        _tokenSource = new List<CancellationTokenSource>();
         _client = client;
         _game = game;
     }
@@ -200,80 +196,5 @@ public class CombatManager : IStatefulEntity
         }
 
         return (false, null);
-    }
-
-    /// <summary>
-    /// Register the given cancellation token source to be cancelled on skill use/cancel.
-    /// </summary>
-    /// <param name="tokenSource">The token source to register.</param>
-    /// <param name="ct">The cancellation token for cancelling the operation.</param>
-    /// <returns>A task.</returns>
-    public async Task RegisterSkillCancellationTokenAsync(CancellationTokenSource tokenSource, CancellationToken ct)
-    {
-        await _semaphore.WaitAsync(ct);
-        try
-        {
-            _tokenSource.Add(tokenSource);
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
-    }
-
-    /// <summary>
-    /// Unregister the given cancellation token registered using RegisterSkillCancellationToken.
-    /// </summary>
-    /// <param name="tokenSource">The token source to unregister.</param>
-    /// <param name="ct">The cancellation token for cancelling the operation.</param>
-    /// <returns>A task.</returns>
-    public async Task UnregisterSkillCancellationTokenAsync(CancellationTokenSource tokenSource, CancellationToken ct)
-    {
-        if (_cancelling)
-        {
-            return;
-        }
-
-        await _semaphore.WaitAsync(ct);
-        try
-        {
-            _tokenSource.Remove(tokenSource);
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
-    }
-
-    /// <summary>
-    /// Cancel all of the skill tokens.
-    /// </summary>
-    /// <param name="ct">The cancellation token for cancelling the operation.</param>
-    /// <returns>A task.</returns>
-    internal async Task CancelSkillTokensAsync(CancellationToken ct)
-    {
-        await _semaphore.WaitAsync(ct);
-        _cancelling = true;
-        try
-        {
-            foreach (var tokenSource in _tokenSource)
-            {
-                try
-                {
-                    tokenSource.Cancel();
-                }
-                catch
-                {
-                    // ignored
-                }
-            }
-
-            _tokenSource.Clear();
-        }
-        finally
-        {
-            _cancelling = false;
-            _semaphore.Release();
-        }
     }
 }
