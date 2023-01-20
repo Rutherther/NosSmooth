@@ -17,6 +17,7 @@ using NosSmooth.Game.Events.Core;
 using NosSmooth.Game.Events.Entities;
 using NosSmooth.Game.Extensions;
 using NosSmooth.Game.Helpers;
+using NosSmooth.Packets.Client.Battle;
 using NosSmooth.Packets.Enums.Entities;
 using NosSmooth.Packets.Server.Battle;
 using NosSmooth.Packets.Server.Skills;
@@ -27,7 +28,7 @@ namespace NosSmooth.Game.PacketHandlers.Entities;
 /// <summary>
 /// Responds to skill used packet.
 /// </summary>
-public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<SrPacket>
+public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<SrPacket>, IPacketResponder<UseAOESkillPacket>, IPacketResponder<UseSkillPacket>
 {
     private readonly Game _game;
     private readonly EventDispatcher _eventDispatcher;
@@ -93,14 +94,19 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
 
         Skill? skillEntity;
         var skills = _game.Skills;
-        if (packet.SkillVNum is not null && caster is Character character && skills is not null)
+        if (packet.SkillVNum is not null && caster is Character && skills is not null)
         {
             var skillResult = skills.TryGetSkillByVNum(packet.SkillVNum.Value);
 
             if (skillResult.IsDefined(out skillEntity))
             {
                 skillEntity.LastUseTime = DateTimeOffset.Now;
-                skillEntity.IsOnCooldown = true;
+
+                if (skillEntity.LastUseRequestTime is null || skillEntity.LastCooldownReset is null
+                    || skillEntity.LastUseRequestTime > skillEntity.LastCooldownReset)
+                {
+                    skillEntity.IsOnCooldown = true;
+                }
             }
             else
             {
@@ -179,6 +185,7 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
             if (skillResult.IsDefined(out var skillEntity))
             {
                 skillEntity.IsOnCooldown = false;
+                skillEntity.LastCooldownReset = DateTime.Now;
             }
 
             await _eventDispatcher.DispatchEvent
@@ -190,5 +197,43 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
         }
 
         return Result.FromSuccess();
+    }
+
+    /// <inheritdoc />
+    public Task<Result> Respond(PacketEventArgs<UseAOESkillPacket> packetArgs, CancellationToken ct = default)
+    {
+        var packet = packetArgs.Packet;
+
+        var skills = _game.Skills;
+        if (skills is not null)
+        {
+            var skillResult = skills.TryGetSkillByCastId((short)packet.SkillId);
+
+            if (skillResult.IsDefined(out var skillEntity))
+            {
+                skillEntity.LastUseRequestTime = DateTime.Now;
+            }
+        }
+
+        return Task.FromResult(Result.FromSuccess());
+    }
+
+    /// <inheritdoc />
+    public Task<Result> Respond(PacketEventArgs<UseSkillPacket> packetArgs, CancellationToken ct = default)
+    {
+        var packet = packetArgs.Packet;
+
+        var skills = _game.Skills;
+        if (skills is not null)
+        {
+            var skillResult = skills.TryGetSkillByCastId(packet.CastId);
+
+            if (skillResult.IsDefined(out var skillEntity))
+            {
+                skillEntity.LastUseRequestTime = DateTime.Now;
+            }
+        }
+
+        return Task.FromResult(Result.FromSuccess());
     }
 }

@@ -17,9 +17,14 @@ namespace NosSmooth.Game.Data.Characters;
 public record Skill(int SkillVNum, int? Level = default, ISkillInfo? Info = default)
 {
     /// <summary>
-    /// Gets the last time this skill was used.
+    /// Gets the last time this skill was used. (su received).
     /// </summary>
     public DateTimeOffset LastUseTime { get; internal set; }
+
+    /// <summary>
+    /// Gets the last time this skill was requested to be used. (u_s sent).
+    /// </summary>
+    public DateTimeOffset? LastUseRequestTime { get; internal set; }
 
     /// <summary>
     /// Gets whether the skill is on cooldown.
@@ -29,4 +34,9 @@ public record Skill(int SkillVNum, int? Level = default, ISkillInfo? Info = defa
     /// prefer to use this instead of checking the LastUseTime and Cooldown.
     /// </remarks>
     public bool IsOnCooldown { get; internal set; }
+
+    /// <summary>
+    /// Gets the last time the cooldown was reset.
+    /// </summary>
+    public DateTimeOffset? LastCooldownReset { get; internal set; }
 }
