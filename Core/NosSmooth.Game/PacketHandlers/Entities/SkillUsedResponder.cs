@@ -85,9 +85,10 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
             target.Hp.Amount = packet.Hp;
         }
 
-        if (packet.PositionX != 0 && packet.PositionY != 0)
+        if (packet.PositionX is not null && packet.PositionY is not null && packet.PositionX != 0
+            && packet.PositionY != 0)
         {
-            caster.Position = new Position(packet.PositionX, packet.PositionY);
+            caster.Position = new Position(packet.PositionX.Value, packet.PositionY.Value);
         }
 
         Skill? skillEntity;
@@ -136,7 +137,7 @@ public class SkillUsedResponder : IPacketResponder<SuPacket>, IPacketResponder<S
                 caster,
                 target,
                 skillEntity,
-                new Position(packet.PositionX, packet.PositionY),
+                packet.PositionX is null || packet.PositionY is null ? null : new Position(packet.PositionX.Value, packet.PositionY.Value),
                 packet.HitMode,
                 packet.Damage
             ),
