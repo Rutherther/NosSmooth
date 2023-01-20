@@ -45,11 +45,15 @@ public class NostaleSkillsApi
     /// Use the given (targetable) skill on character himself.
     /// </summary>
     /// <param name="skill">The skill to use.</param>
+    /// <param name="mapX">The x coordinate on the map. (Used for non targeted dashes etc., says where the dash will be to.)</param>
+    /// <param name="mapY">The y coordinate on the map. (Used for non targeted dashes etc., says where the dash will be to.)</param>
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
     public Task<Result> UseSkillOnCharacter
     (
         Skill skill,
+        short? mapX = default,
+        short? mapY = default,
         CancellationToken ct = default
     )
     {
@@ -85,9 +89,37 @@ public class NostaleSkillsApi
             return Task.FromResult<Result>(new WrongSkillTypeError(SkillType.Player, skill.Info.SkillType));
         }
 
-        if (skill.Info.AttackType == AttackType.Dash)
+        if (skill.Info.AttackType == AttackType.Dash && (mapX is null || mapY is null))
         {
             return Task.FromResult<Result>(new WrongSkillPositionError(skill.Info.AttackType));
+        }
+        if (skill.Info.AttackType != AttackType.Dash && (mapX is not null || mapY is not null))
+        {
+            return Task.FromResult<Result>(new WrongSkillPositionError(skill.Info.AttackType));
+        }
+
+        var characterPosition = _game.Character?.Position;
+        if (characterPosition is null)
+        {
+            return Task.FromResult<Result>(new NotInitializedError("character position"));
+        }
+
+        if (mapX != null && mapY != null)
+        {
+            var mapPosition = new Position(mapX.Value, mapY.Value);
+            if (!mapPosition.IsInRange(characterPosition.Value, skill.Info.Range))
+            {
+                return Task.FromResult<Result>
+                (
+                    new NotInRangeError
+                    (
+                        "Character",
+                        characterPosition.Value,
+                        mapPosition,
+                        skill.Info.Range
+                    )
+                );
+            }
         }
 
         return _client.SendPacketAsync
@@ -97,8 +129,8 @@ public class NostaleSkillsApi
                 skill.Info.CastId,
                 character.Type,
                 character.Id,
-                null,
-                null
+                mapX,
+                mapY
             ),
             ct
         );
@@ -129,7 +161,7 @@ public class NostaleSkillsApi
     {
         if (entity == _game.Character)
         {
-            return UseSkillOnCharacter(skill, ct);
+            return UseSkillOnCharacter(skill, mapX, mapY, ct);
         }
 
         var skills = _game.Skills;
@@ -162,7 +194,7 @@ public class NostaleSkillsApi
         {
             return Task.FromResult<Result>(new WrongSkillPositionError(skill.Info.AttackType));
         }
-        else if (skill.Info.AttackType != AttackType.Dash && (mapX is not null || mapY is not null))
+        if (skill.Info.AttackType != AttackType.Dash && (mapX is not null || mapY is not null))
         {
             return Task.FromResult<Result>(new WrongSkillPositionError(skill.Info.AttackType));
         }
@@ -346,10 +378,14 @@ public class NostaleSkillsApi
     /// Creates a contract for using a skill on character himself.
     /// </summary>
     /// <param name="skill">The skill to use.</param>
+    /// <param name="mapX">The x coordinate to use the skill at.</param>
+    /// <param name="mapY">The y coordinate to use the skill at.</param>
     /// <returns>The contract or an error.</returns>
     public Result<IContract<SkillUsedEvent, UseSkillStates>> ContractUseSkillOnCharacter
     (
-        Skill skill
+        Skill skill,
+        short? mapX = default,
+        short? mapY = default
     )
     {
         var characterId = _game?.Character?.Id;
@@ -368,6 +404,8 @@ public class NostaleSkillsApi
                 ct => UseSkillOnCharacter
                 (
                     skill,
+                    mapX,
+                    mapY,
                     ct
                 )
             )

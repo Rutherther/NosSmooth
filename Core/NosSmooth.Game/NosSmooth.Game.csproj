@@ -8,8 +8,8 @@
         <Description>NosSmooth Game library handling the current game state by responding to packets.</Description>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <VersionPrefix>2.4.0</VersionPrefix>
-        <PackageReleaseNotes>Add safe checks for skill attack type</PackageReleaseNotes>
+        <VersionPrefix>2.4.1</VersionPrefix>
+        <PackageReleaseNotes>Fix using dash on character itself.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
