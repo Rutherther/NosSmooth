@@ -120,6 +120,11 @@ public record UseSkillOperation(NostaleSkillsApi SkillsApi, Skill Skill, ILiving
 
     private Result<IContract<SkillUsedEvent, UseSkillStates>> ContractSkill(ISkillInfo info)
     {
+        if (info.AttackType == AttackType.Dash)
+        {
+            return SkillsApi.ContractUseSkillOn(Skill, Target, Target.Position!.Value.X, Target.Position!.Value.Y);
+        }
+
         switch (info.TargetType)
         {
             case TargetType.SelfOrTarget: // a buff?
