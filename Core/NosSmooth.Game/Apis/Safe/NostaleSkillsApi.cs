@@ -80,6 +80,16 @@ public class NostaleSkillsApi
             return Task.FromResult<Result>(new WrongSkillTargetError(skill, character));
         }
 
+        if (skill.Info.SkillType != SkillType.Player)
+        {
+            return Task.FromResult<Result>(new WrongSkillTypeError(SkillType.Player, skill.Info.SkillType));
+        }
+
+        if (skill.Info.AttackType == AttackType.Dash)
+        {
+            return Task.FromResult<Result>(new WrongSkillPositionError(skill.Info.AttackType));
+        }
+
         return _client.SendPacketAsync
         (
             new UseSkillPacket
@@ -141,6 +151,20 @@ public class NostaleSkillsApi
         if (skill.Info.TargetType is not(TargetType.Target or TargetType.SelfOrTarget))
         {
             return Task.FromResult<Result>(new WrongSkillTargetError(skill, entity));
+        }
+
+        if (skill.Info.SkillType != SkillType.Player)
+        {
+            return Task.FromResult<Result>(new WrongSkillTypeError(SkillType.Player, skill.Info.SkillType));
+        }
+
+        if (skill.Info.AttackType == AttackType.Dash && (mapX is null || mapY is null))
+        {
+            return Task.FromResult<Result>(new WrongSkillPositionError(skill.Info.AttackType));
+        }
+        else if (skill.Info.AttackType != AttackType.Dash && (mapX is not null || mapY is not null))
+        {
+            return Task.FromResult<Result>(new WrongSkillPositionError(skill.Info.AttackType));
         }
 
         var entityPosition = entity.Position;
@@ -283,6 +307,11 @@ public class NostaleSkillsApi
         if (skill.Info.TargetType is not TargetType.NoTarget)
         {
             return Task.FromResult<Result>(new WrongSkillTargetError(skill, null));
+        }
+
+        if (skill.Info.SkillType != SkillType.Player)
+        {
+            return Task.FromResult<Result>(new WrongSkillTypeError(SkillType.Player, skill.Info.SkillType));
         }
 
         var characterPosition = _game.Character?.Position;
