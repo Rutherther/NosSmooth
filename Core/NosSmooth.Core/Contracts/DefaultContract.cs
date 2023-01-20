@@ -59,6 +59,8 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
     private bool _unregisterAtWaitingFor;
     private CancellationTokenSource? _waitCancellationSource;
 
+    private bool _shouldReact = true;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DefaultContract{TData, TState, TError}"/> class.
     /// </summary>
@@ -122,6 +124,10 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
     public async Task<Result<ContractUpdateResponse>> Update<TAny>(TAny data, CancellationToken ct = default)
         where TAny : notnull
     {
+        if (!_shouldReact || !IsRegistered)
+        {
+            return ContractUpdateResponse.NotInterested;
+        }
         if (!_actions.ContainsKey(CurrentState))
         {
             Unregister();
@@ -131,13 +137,15 @@ public class DefaultContract<TData, TState, TError> : IContract<TData, TState>
         var result = await _actions[CurrentState](data, ct);
         if (!result.IsDefined(out var resultData))
         {
+            _shouldReact = false;
             _resultError = Result.FromError(result);
             _waitCancellationSource?.Cancel();
-            return Result<ContractUpdateResponse>.FromError(result);
+            return ContractUpdateResponse.InterestedAndUnregister;
         }
 
         if (resultData.Error is not null)
         {
+            _shouldReact = false;
             _error = resultData.Error;
             try
             {
