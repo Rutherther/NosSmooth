@@ -31,9 +31,10 @@ jobs:
 
     - name: Pack app
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: dotnet pack -c Release --no-restore --no-build --version-suffix "main$GITHUB_RUN_ID"
+      run: dotnet pack -c Release --no-restore --version-suffix "main$GITHUB_RUN_ID" -o nuget
 
     - name: Publish NuGet on MyGet
+      working-directory: nuget
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: dotnet nuget push *.nupkg --skip-duplicate -k $MYGET_AUTH_TOKEN -s https://www.myget.org/F/nossmooth/api/v3/index.json
       env:
