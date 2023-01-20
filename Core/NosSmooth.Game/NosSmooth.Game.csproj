@@ -8,10 +8,10 @@
         <Description>NosSmooth Game library handling the current game state by responding to packets.</Description>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageVersion>2.3.4</PackageVersion>
-        <PackageReleaseNotes>Update dependencies</PackageReleaseNotes>
-        <AssemblyVersion>2.3.4</AssemblyVersion>
-        <FileVersion>2.3.4</FileVersion>
+        <PackageVersion>2.3.5</PackageVersion>
+        <PackageReleaseNotes>Add safe checks for skill attack type</PackageReleaseNotes>
+        <AssemblyVersion>2.3.5</AssemblyVersion>
+        <FileVersion>2.3.5</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>
