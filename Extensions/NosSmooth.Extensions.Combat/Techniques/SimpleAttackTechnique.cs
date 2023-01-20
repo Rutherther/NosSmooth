@@ -35,7 +35,6 @@ public class SimpleAttackTechnique : ICombatTechnique
     private readonly ISkillSelector _skillSelector;
     private readonly IItemSelector _itemSelector;
 
-    private Skill? _currentSkill;
     private ILivingEntity? _target;
 
     /// <summary>
@@ -119,41 +118,34 @@ public class SimpleAttackTechnique : ICombatTechnique
             return new CharacterNotInitializedError();
         }
 
-        if (_currentSkill is null)
+        var skills = state.Game.Skills;
+        if (skills is null)
         {
-            var skills = state.Game.Skills;
-            if (skills is null)
-            {
-                return new CharacterNotInitializedError("Skills");
-            }
-
-            var characterMp = character.Mp?.Amount ?? 0;
-            var usableSkills = skills.AllSkills
-                .Where
-                (
-                    x => x.Info is not null && x.Info.HitType != HitType.AlliesInZone
-                        && x.Info.SkillType == SkillType.Player
-                )
-                .Where(x => !x.IsOnCooldown && characterMp >= (x.Info?.MpCost ?? long.MaxValue));
-
-            var skillResult = _skillSelector.GetSelectedSkill(usableSkills);
-            if (!skillResult.IsSuccess)
-            {
-                if (skillResult.Error is SkillNotFoundError)
-                {
-                    return _target.Id;
-                }
-
-                return Result<long?>.FromError(skillResult);
-            }
-
-            _currentSkill = skillResult.Entity;
+            return new CharacterNotInitializedError("Skills");
         }
 
-        if (_currentSkill.Info is null)
+        var characterMp = character.Mp?.Amount ?? 0;
+        var usableSkills = skills.AllSkills
+            .Where
+            (
+                x => x.Info is not null && x.Info.HitType != HitType.AlliesInZone
+                    && x.Info.SkillType == SkillType.Player
+            )
+            .Where(x => !x.IsOnCooldown && characterMp >= (x.Info?.MpCost ?? long.MaxValue));
+
+        var skillResult = _skillSelector.GetSelectedSkill(usableSkills);
+        if (!skillResult.IsDefined(out var currentSkill))
         {
-            var currentSkill = _currentSkill;
-            _currentSkill = null;
+            if (skillResult.Error is SkillNotFoundError)
+            {
+                return _target.Id;
+            }
+
+            return Result<long?>.FromError(skillResult);
+        }
+
+        if (currentSkill.Info is null)
+        {
             return new MissingInfoError("skill", currentSkill.SkillVNum);
         }
 
@@ -167,23 +159,22 @@ public class SimpleAttackTechnique : ICombatTechnique
             return new EntityNotFoundError();
         }
 
-        var range = _currentSkill.Info.Range;
-        if (_currentSkill.Info.TargetType == TargetType.Self && _currentSkill.Info.HitType == HitType.EnemiesInZone
-            && _currentSkill.Info.AttackType != AttackType.Dash)
+        var range = currentSkill.Info.Range;
+        if (currentSkill.Info.TargetType == TargetType.Self && currentSkill.Info.HitType == HitType.EnemiesInZone
+            && currentSkill.Info.AttackType != AttackType.Dash)
         {
-            range = _currentSkill.Info.ZoneRange;
+            range = currentSkill.Info.ZoneRange;
         }
 
-        if (!character.Position.Value.IsInRange(_target.Position.Value, range))
-        {
-            state.WalkInRange(_walkManager, _target, range);
-        }
-        else
-        {
-            state.UseSkill(_skillsApi, _currentSkill, _target);
-            _currentSkill = null;
-        }
-
+        state.EnqueueOperation
+        (
+            new CompoundOperation
+            (
+                OperationQueueType.TotalControl,
+                new WalkInRangeOperation(_walkManager, _target, range),
+                new UseSkillOperation(_skillsApi, currentSkill, character, _target)
+            )
+        );
         return _target.Id;
     }
 
