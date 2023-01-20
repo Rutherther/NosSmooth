@@ -91,7 +91,7 @@ public record UseSkillOperation(NostaleSkillsApi SkillsApi, Skill Skill, ILiving
 
     /// <inheritdoc />
     public bool IsFinished()
-        => _contract?.CurrentState == UseSkillStates.CharacterRestored;
+        => _contract?.HasReachedState(UseSkillStates.CharacterRestored) ?? false;
 
     /// <inheritdoc />
     public Result<CanBeUsedResponse> CanBeUsed(ICombatState combatState)
