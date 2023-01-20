@@ -25,7 +25,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore --version-suffix "main$GITHUB_RUN_ID"
     - name: Test
       run: dotnet test --no-build --verbosity normal --filter FullyQualifiedName!~NosSmooth.Game.Tests
 
@@ -36,6 +36,6 @@ jobs:
     - name: Publish NuGet on MyGet
       working-directory: nuget
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: dotnet nuget push *.nupkg --skip-duplicate -k $MYGET_AUTH_TOKEN -s https://www.myget.org/F/nossmooth/api/v3/index.json
+      run: dotnet nuget push *.nupkg --skip-duplicate --version-suffix "main$GITHUB_RUN_ID" -k $MYGET_AUTH_TOKEN -s https://www.myget.org/F/nossmooth/api/v3/index.json
       env:
         MYGET_AUTH_TOKEN: ${{secrets.MYGET_KEY}}
