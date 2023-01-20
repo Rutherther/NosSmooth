@@ -44,6 +44,14 @@ public interface ICombatState
     public IReadOnlyList<ICombatOperation> GetWaitingForOperations();
 
     /// <summary>
+    /// Remove the current operation for the given queue.
+    /// </summary>
+    /// <param name="queueType">The queue type to get the current operation of.</param>
+    /// <param name="emptyQueue">Whether to empty the rest of the queue.</param>
+    /// <returns>The operation of the given queue, if any.</returns>
+    public ICombatOperation? RemoveCurrentOperation(OperationQueueType queueType, bool emptyQueue = false);
+
+    /// <summary>
     /// Gets the current operation of the given queue type.
     /// </summary>
     /// <param name="queueType">The queue type to get the current operation of.</param>
