@@ -19,6 +19,7 @@ public class CompoundOperation : ICombatOperation
     private readonly ICombatTechnique _technique;
     private readonly ICombatOperation[] _operations;
     private readonly OperationQueueType _queueType;
+    private CancellationTokenSource? _ct;
     private Task<Result>? _compoundOperation;
 
     /// <summary>
@@ -50,7 +51,7 @@ public class CompoundOperation : ICombatOperation
     }
 
     /// <inheritdoc />
-    public OperationQueueType QueueType { get; }
+    public OperationQueueType QueueType => _queueType;
 
     /// <inheritdoc />
     public Task<Result> BeginExecution(ICombatState combatState, CancellationToken ct = default)
@@ -60,10 +61,11 @@ public class CompoundOperation : ICombatOperation
             return Task.FromResult(Result.FromSuccess());
         }
 
+        _ct = new CancellationTokenSource();
         _compoundOperation = Task.Run
         (
-            () => UseAsync(combatState, ct),
-            ct
+            () => UseAsync(combatState, _ct.Token),
+            _ct.Token
         );
         return Task.FromResult(Result.FromSuccess());
     }
@@ -82,7 +84,18 @@ public class CompoundOperation : ICombatOperation
             throw new UnreachableException();
         }
 
-        return await _compoundOperation;
+        try
+        {
+            return await _compoundOperation;
+        }
+        catch (OperationCanceledException)
+        {
+            return Result.FromSuccess();
+        }
+        catch (Exception e)
+        {
+            return e;
+        }
     }
 
     /// <inheritdoc />

@@ -21,6 +21,7 @@ namespace NosSmooth.Extensions.Combat.Operations;
 public record UseItemOperation(InventoryItem Item) : ICombatOperation
 {
     private Task<Result>? _useItemOperation;
+    private CancellationTokenSource? _ct;
 
     /// <inheritdoc />
     public OperationQueueType QueueType => OperationQueueType.Item;
@@ -33,19 +34,20 @@ public record UseItemOperation(InventoryItem Item) : ICombatOperation
             return Task.FromResult(Result.FromSuccess());
         }
 
+        _ct = new CancellationTokenSource();
         _useItemOperation = Task.Run(
-            () => combatState.Client.SendPacketAsync(new UseItemPacket(Item.Bag.Convert(), Item.Item.Slot), ct),
-            ct
+            () => combatState.Client.SendPacketAsync(new UseItemPacket(Item.Bag.Convert(), Item.Item.Slot), _ct.Token),
+            _ct.Token
         );
         return Task.FromResult(Result.FromSuccess());
     }
 
     /// <inheritdoc />
-    public Task<Result> WaitForFinishedAsync(ICombatState combatState, CancellationToken ct = default)
+    public async Task<Result> WaitForFinishedAsync(ICombatState combatState, CancellationToken ct = default)
     {
         if (IsFinished())
         {
-            return Task.FromResult(Result.FromSuccess());
+            return Result.FromSuccess();
         }
 
         BeginExecution(combatState, ct);
@@ -54,7 +56,18 @@ public record UseItemOperation(InventoryItem Item) : ICombatOperation
             throw new UnreachableException();
         }
 
-        return _useItemOperation;
+        try
+        {
+            return await _useItemOperation;
+        }
+        catch (OperationCanceledException)
+        {
+            return Result.FromSuccess();
+        }
+        catch (Exception e)
+        {
+            return e;
+        }
     }
 
     /// <inheritdoc />
@@ -72,6 +85,7 @@ public record UseItemOperation(InventoryItem Item) : ICombatOperation
     /// <inheritdoc />
     public void Dispose()
     {
+        _ct?.Cancel();
         _useItemOperation?.Dispose();
     }
 }

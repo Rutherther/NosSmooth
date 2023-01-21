@@ -20,6 +20,7 @@ namespace NosSmooth.Extensions.Combat.Operations;
 public record WalkOperation(WalkManager WalkManager, short X, short Y) : ICombatOperation
 {
     private Task<Result>? _walkOperation;
+    private CancellationTokenSource? _ct;
 
     /// <inheritdoc />
     public OperationQueueType QueueType => OperationQueueType.TotalControl;
@@ -32,10 +33,11 @@ public record WalkOperation(WalkManager WalkManager, short X, short Y) : ICombat
             return Task.FromResult(Result.FromSuccess());
         }
 
+        _ct = new CancellationTokenSource();
         _walkOperation = Task.Run
         (
-            () => UseAsync(combatState, ct),
-            ct
+            () => UseAsync(combatState, _ct.Token),
+            _ct.Token
         );
         return Task.FromResult(Result.FromSuccess());
     }
@@ -54,7 +56,18 @@ public record WalkOperation(WalkManager WalkManager, short X, short Y) : ICombat
             throw new UnreachableException();
         }
 
-        return await _walkOperation;
+        try
+        {
+            return await _walkOperation;
+        }
+        catch (OperationCanceledException)
+        {
+            return Result.FromSuccess();
+        }
+        catch (Exception e)
+        {
+            return e;
+        }
     }
 
     /// <inheritdoc />
@@ -88,6 +101,7 @@ public record WalkOperation(WalkManager WalkManager, short X, short Y) : ICombat
     /// <inheritdoc />
     public void Dispose()
     {
+        _ct?.Cancel();
         _walkOperation?.Dispose();
     }
 }

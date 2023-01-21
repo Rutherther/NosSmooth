@@ -30,6 +30,7 @@ public record WalkInRangeOperation
 ) : ICombatOperation
 {
     private Task<Result>? _walkInRangeOperation;
+    private CancellationTokenSource? _ct;
 
     /// <inheritdoc />
     public OperationQueueType QueueType => OperationQueueType.TotalControl;
@@ -42,10 +43,11 @@ public record WalkInRangeOperation
             return Task.FromResult(Result.FromSuccess());
         }
 
+        _ct = new CancellationTokenSource();
         _walkInRangeOperation = Task.Run
         (
-            () => UseAsync(combatState, ct),
-            ct
+            () => UseAsync(combatState, _ct.Token),
+            _ct.Token
         );
         return Task.FromResult(Result.FromSuccess());
     }
@@ -64,7 +66,18 @@ public record WalkInRangeOperation
             throw new UnreachableException();
         }
 
-        return await _walkInRangeOperation;
+        try
+        {
+            return await _walkInRangeOperation;
+        }
+        catch (OperationCanceledException)
+        {
+            return Result.FromSuccess();
+        }
+        catch (Exception e)
+        {
+            return e;
+        }
     }
 
     /// <inheritdoc />
@@ -186,6 +199,7 @@ public record WalkInRangeOperation
     /// <inheritdoc />
     public void Dispose()
     {
+        _ct?.Cancel();
         _walkInRangeOperation?.Dispose();
     }
 }
