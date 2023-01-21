@@ -36,6 +36,8 @@ The migration will migrate all languages NosTale supports.
 
 See the sample `DataBrowser` for more details about the usage.
 
+### Packets
+
 ### Core (Low level)
 The core contains abstractions for the NosTale client, packets and commands.
 You can register your packet responders (IPacketResponder)
@@ -47,13 +49,27 @@ and can be handled by the user. If there is other parsing error,
 
 ### Game state (High level)
 The game state is built using the core, it stores useful information about the state
-such as the current map, entities, information about the current character.
+such as the current map, entities, information about the current character, mates, skills, family, group.
 The game project also has custom events that contain more information
 than packets would. In some cases, there would be no gain in information,
 for these packets there is no event and a packet responder should be registered instead.
 It uses NosTale data for a few features, so setting up the data provider
 is required. If no provider is found, an exception will be thrown
 as `ILanguageService` and `IInfoService` will not be found.
+
+## Extensions
+
+### Combat
+Attacks entities, players using techniques that execute operations.
+See `SimpleAttackTechnique` for example on how to make a technique.
+Simple technique just attacks one target by walking to it and using skills
+from a skill selector.
+
+### Pathfinding
+Finds paths on NosTale maps using A* algorithm.
+May take (walk) the given path, using `WalkCommand` in the process.
+
+Will support walking through more maps in the future.
 
 ## Commands
 The library uses commands for features that may be implemented
@@ -72,3 +88,7 @@ whereas on the remote client just packets have to be sent directly.
   - This is a TakeControlCommand
   - Used for walking in straight lines
   - IMPORTANT: doesn't support obstacles, pathfinding mechanism must be used
+- AttackCommand
+  - This is a TakeControlCommand
+  - Usually a long-running command that controls the client, walks, kills entities
+  - `NosSmooth.Combat.Extensions` uses `AttackCommand`
