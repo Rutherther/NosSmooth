@@ -7,6 +7,7 @@
 using NosSmooth.Packets.Enums;
 using NosSmooth.Packets.Enums.Chat;
 using NosSmooth.Packets.Enums.Entities;
+using NosSmooth.Packets.Server.Battle;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 
 namespace NosSmooth.Packets.Server.Chat;
@@ -26,7 +27,7 @@ public record Sayi2Packet
 (
     [PacketIndex(0)]
     EntityType EntityType,
-    [PacketIndex(1)]
+    [PacketIndex(1, AllowMultipleSeparators = true)]
     long EntityId,
     [PacketIndex(2)]
     SayColor Color,
