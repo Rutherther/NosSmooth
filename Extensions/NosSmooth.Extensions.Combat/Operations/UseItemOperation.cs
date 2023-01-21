@@ -22,6 +22,7 @@ public record UseItemOperation(InventoryItem Item) : ICombatOperation
 {
     private Task<Result>? _useItemOperation;
     private CancellationTokenSource? _ct;
+    private bool _disposed;
 
     /// <inheritdoc />
     public OperationQueueType QueueType => OperationQueueType.Item;
@@ -94,6 +95,11 @@ public record UseItemOperation(InventoryItem Item) : ICombatOperation
     /// <inheritdoc />
     public void Dispose()
     {
+        if (_disposed)
+        {
+            return;
+        }
+        _disposed = true;
         _ct?.Cancel();
         _useItemOperation?.Dispose();
         _ct?.Dispose();

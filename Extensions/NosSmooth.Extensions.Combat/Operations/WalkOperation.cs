@@ -21,6 +21,7 @@ public record WalkOperation(WalkManager WalkManager, short X, short Y) : ICombat
 {
     private Task<Result>? _walkOperation;
     private CancellationTokenSource? _ct;
+    private bool _disposed;
 
     /// <inheritdoc />
     public OperationQueueType QueueType => OperationQueueType.TotalControl;
@@ -110,6 +111,11 @@ public record WalkOperation(WalkManager WalkManager, short X, short Y) : ICombat
     /// <inheritdoc />
     public void Dispose()
     {
+        if (_disposed)
+        {
+            return;
+        }
+        _disposed = true;
         _ct?.Cancel();
         _walkOperation?.Dispose();
         _ct?.Dispose();

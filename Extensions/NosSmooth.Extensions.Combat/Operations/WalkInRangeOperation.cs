@@ -31,6 +31,7 @@ public record WalkInRangeOperation
 {
     private Task<Result>? _walkInRangeOperation;
     private CancellationTokenSource? _ct;
+    private bool _disposed;
 
     /// <inheritdoc />
     public OperationQueueType QueueType => OperationQueueType.TotalControl;
@@ -208,6 +209,11 @@ public record WalkInRangeOperation
     /// <inheritdoc />
     public void Dispose()
     {
+        if (_disposed)
+        {
+            return;
+        }
+        _disposed = true;
         _ct?.Cancel();
         _walkInRangeOperation?.Dispose();
         _ct?.Dispose();

@@ -22,6 +22,7 @@ public class CompoundOperation : ICombatOperation
     private ICombatOperation? _currentOperation;
     private CancellationTokenSource? _ct;
     private Task<Result>? _compoundOperation;
+    private bool _disposed;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CompoundOperation"/> class.
@@ -117,6 +118,11 @@ public class CompoundOperation : ICombatOperation
     /// <inheritdoc />
     public void Cancel()
     {
+        if (_disposed)
+        {
+            return;
+        }
+        _disposed = true;
         _currentOperation?.Cancel();
         _ct?.Cancel();
     }
