@@ -86,6 +86,17 @@ public class PacketIndexAttributeGenerator : IParameterGenerator
             generator.PopLevel();
         }
 
+        var allowMultipleSeparators = attribute.GetNamedValue("AllowMultipleSeparators", false);
+        var multipleSeparatorsCount = attribute.GetNamedValue<int>("MultipleSeparatorsCount", 1);
+
+        if (allowMultipleSeparators)
+        {
+            for (var i = 0; i < multipleSeparatorsCount; i++)
+            {
+                textWriter.WriteLine("builder.Append(string.Empty);");
+            }
+        }
+
         // end optional if
         if (parameter.IsOptional())
         {
@@ -141,6 +152,16 @@ public class PacketIndexAttributeGenerator : IParameterGenerator
         {
             generator.ReadToLastToken();
             generator.PopLevel();
+        }
+
+        var allowMultipleSeparators = attribute.GetNamedValue<bool>("AllowMultipleSeparators", false);
+
+        if (allowMultipleSeparators)
+        {
+            textWriter.WriteLine("while (stringEnumerator.IsOnSeparator())");
+            textWriter.WriteLine("{");
+            textWriter.WriteLine("stringEnumerator.GetNextToken(out _);");
+            textWriter.WriteLine("}");
         }
 
         // end is last token if body

@@ -324,6 +324,15 @@ public ref struct PacketStringEnumerator
     }
 
     /// <summary>
+    /// Checks whether the current character is a separator.
+    /// </summary>
+    /// <returns>Whether the current character is a separator.</returns>
+    public bool IsOnSeparator()
+    {
+        return IsSeparator(_data[_cursor], out _, out _);
+    }
+
+    /// <summary>
     /// Checks if the given character is a separator.
     /// </summary>
     /// <param name="c">The character to check.</param>

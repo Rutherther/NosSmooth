@@ -49,4 +49,17 @@ public class PacketIndexAttribute : Attribute
     /// more complex decision making about using parameters.
     /// </remarks>
     public bool IsOptional { get; set; } = false;
+
+    /// <summary>
+    /// Gets or sets whether there may be multiple separators after the field.
+    /// </summary>
+    public bool AllowMultipleSeparators { get; set; } = false;
+
+    /// <summary>
+    /// Gets or sets the number of multiple separators after the field.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="AllowMultipleSeparators"/> has to be true to make this work.
+    /// </remarks>
+    public short MultipleSeparatorsCount { get; set; } = 1;
 }
