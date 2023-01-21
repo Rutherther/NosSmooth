@@ -69,7 +69,6 @@ public class CListPacketConverterTests
                 null
             ),
             99,
-            string.Empty,
             1,
             1,
             new OptionalWrapper<NullableWrapper<CListPetSubPacket>>[]
@@ -151,7 +150,6 @@ public class CListPacketConverterTests
                 null
             ),
             99,
-            string.Empty,
             1,
             1,
             new List<OptionalWrapper<NullableWrapper<CListPetSubPacket>>>(new OptionalWrapper<NullableWrapper<CListPetSubPacket>>[]

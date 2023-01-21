@@ -33,7 +33,6 @@ namespace NosSmooth.Packets.Server.Login;
 /// <param name="HeroLevel">The hero level of the character.</param>
 /// <param name="EquipmentSubPacket">The equipment of the player.</param>
 /// <param name="JobLevel">The job level of the character.</param>
-/// <param name="ExtraSpace">There is an extra space in the packet, for the converter to work correctly, this should be an empty string. TODO add Prefix field to PacketIndex and put Prefix ' ' on Unknown2.</param>
 /// <param name="Unknown2">Unknown, seems to be always 1.</param>
 /// <param name="Unknown3">Unknown, seems to be always 1.</param>
 /// <param name="PetsSubPacket">The pets of the character.</param>
@@ -65,18 +64,16 @@ public record CListPacket
     byte HeroLevel,
     [PacketIndex(10, InnerSeparator = '.')]
     CListEquipmentSubPacket EquipmentSubPacket,
-    [PacketIndex(11)]
+    [PacketIndex(11, AllowMultipleSeparators = true)]
     byte JobLevel,
     [PacketIndex(12)]
-    string ExtraSpace,
-    [PacketIndex(13)]
     byte Unknown2,
-    [PacketIndex(14)]
+    [PacketIndex(13)]
     byte Unknown3,
-    [PacketListIndex(15, ListSeparator = '.', InnerSeparator = '.')]
+    [PacketListIndex(14, ListSeparator = '.', InnerSeparator = '.')]
     IReadOnlyList<OptionalWrapper<NullableWrapper<CListPetSubPacket>>> PetsSubPacket,
-    [PacketIndex(16)]
+    [PacketIndex(15)]
     byte HatDesign,
-    [PacketIndex(17)]
+    [PacketIndex(16)]
     byte Unknown4
 ) : IPacket;
