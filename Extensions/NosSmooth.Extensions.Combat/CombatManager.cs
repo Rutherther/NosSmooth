@@ -22,7 +22,6 @@ public class CombatManager : IStatefulEntity
 {
     private readonly INostaleClient _client;
     private readonly Game.Game _game;
-    private bool _cancelling;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CombatManager"/> class.

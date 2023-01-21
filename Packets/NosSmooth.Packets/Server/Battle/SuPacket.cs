@@ -29,6 +29,8 @@ namespace NosSmooth.Packets.Server.Battle;
 /// <param name="Damage">The damage the entity has taken.</param>
 /// <param name="HitMode">The hit mode.</param>
 /// <param name="SkillTypeMinusOne">The skill type of the skill.</param>
+/// <param name="Hp">Current hp of the target.</param>
+/// <param name="MaxHp">Maximum hp of the target.</param>
 [PacketHeader("su", PacketSource.Server)]
 [GenerateSerializer(true)]
 public record SuPacket

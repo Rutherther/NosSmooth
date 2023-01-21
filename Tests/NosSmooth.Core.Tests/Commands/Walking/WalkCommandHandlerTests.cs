@@ -70,7 +70,7 @@ public class WalkCommandHandlerTests
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
     [Fact]
-    public async Task Handle_PreservesTakeHandlerCommandProperties()
+    public Task Handle_PreservesTakeHandlerCommandProperties()
     {
         var command = new WalkCommand
         (
@@ -106,7 +106,7 @@ public class WalkCommandHandlerTests
             )
         );
 
-        await walkHandler.HandleCommand(command);
+        return walkHandler.HandleCommand(command);
     }
 
     /// <summary>
@@ -114,7 +114,7 @@ public class WalkCommandHandlerTests
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
     [Fact]
-    public async Task Handle_PreservesPlayerWalkPosition()
+    public Task Handle_PreservesPlayerWalkPosition()
     {
         var command = new WalkCommand
         (
@@ -143,7 +143,7 @@ public class WalkCommandHandlerTests
             )
         );
 
-        await walkHandler.HandleCommand(command);
+        return walkHandler.HandleCommand(command);
     }
 
     /// <summary>
@@ -202,7 +202,7 @@ public class WalkCommandHandlerTests
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
     [Fact]
-    public async Task Handle_WithPets_UsesNearbyPositionForPetCommands()
+    public Task Handle_WithPets_UsesNearbyPositionForPetCommands()
     {
         var command = new WalkCommand
         (
@@ -241,6 +241,6 @@ public class WalkCommandHandlerTests
             )
         );
 
-        await walkHandler.HandleCommand(command);
+        return walkHandler.HandleCommand(command);
     }
 }

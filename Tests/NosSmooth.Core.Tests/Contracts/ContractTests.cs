@@ -11,6 +11,7 @@ using NosSmooth.Core.Contracts;
 using Remora.Results;
 using Shouldly;
 using Xunit;
+#pragma warning disable CS4014
 
 namespace NosSmooth.Core.Tests.Contracts;
 

@@ -66,7 +66,7 @@ public interface IContract
     /// For example, to use skill, create a contract for
     /// using a skill and call this method.
     /// If you want to wait for response from the server,
-    /// use <see cref="WaitForAsync"/> instead.
+    /// use <see cref="IContract{T, U}.WaitForAsync"/> instead.
     /// That will register the contract and wait for response.
     /// </remarks>
     /// <param name="ct">The cancellation token used for cancelling the operation.</param>
@@ -81,7 +81,7 @@ public interface IContract
 /// Could be used for operations that may end successfully or fail
 /// after some time, with response from the server.
 ///
-/// Look at <see cref="ContractBuilder"/> for example usage.
+/// Look at <see cref="ContractBuilder{TData,TState,TError}"/> for example usage.
 /// </remarks>
 /// <typeparam name="TData">The data returned by the contract in case of success.</typeparam>
 /// <typeparam name="TState">Type containing the states of the contract.</typeparam>

@@ -6,6 +6,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using NosSmooth.Packets.Server.UI;
+#pragma warning disable CS1591
 
 namespace NosSmooth.Packets.Enums;
 

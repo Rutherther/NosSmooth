@@ -29,12 +29,11 @@ namespace NosSmooth.Game.Tests;
 /// <summary>
 /// A client used for tests. Supports loading just part of a file with packets.
 /// </summary>
+// TODO: make this class cleaner
 public class PacketFileClient : BaseNostaleClient, IDisposable
 {
     private const string LineRegex = ".*\\[(Recv|Send)\\]\t(.*)";
     private const string LabelRegex = "##(.*)";
-
-    // TODO: make this class cleaner
 
     private readonly FileStream _stream;
     private readonly StreamReader _reader;

@@ -21,6 +21,8 @@ namespace NosSmooth.Packets.Server.Entities;
 /// <param name="MpPercentage">The current mp percentage.</param>
 /// <param name="Hp">The current amount of hp.</param>
 /// <param name="Mp">The current amount of mp.</param>
+/// <param name="MaxHp">The current amount of hp.</param>
+/// <param name="MaxMp">The maximum amount of mp.</param>
 /// <param name="BuffVNums">The list of the buffs the entity has.</param>
 [PacketHeader("st", PacketSource.Server)]
 [GenerateSerializer(true)]

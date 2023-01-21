@@ -29,7 +29,7 @@ namespace NosSmooth.Packets.Server.Mates;
 /// <param name="BootsSubPacket">Information about partner's boots.</param>
 /// <param name="Unknown1">Unknown TODO.</param>
 /// <param name="Unknown2">Unknown TODO.</param>
-/// <param name="Unknown3">Unknown TODO.</param>
+/// <param name="AttackType">Unknown TODO.</param>
 /// <param name="AttackUpgrade">The upgrade of attack.</param>
 /// <param name="MinimumAttack">The minimum attack amount.</param>
 /// <param name="MaximumAttack">The maximum attack amount.</param>
@@ -48,7 +48,7 @@ namespace NosSmooth.Packets.Server.Mates;
 /// <param name="HpMax">The maximum hp of the partner.</param>
 /// <param name="Mp">The current mp of the partner.</param>
 /// <param name="MpMax">The maximum mp of the partner.</param>
-/// <param name="Unknown4">Unknown TODO.</param>
+/// <param name="IsTeamMember">Unknown TODO.</param>
 /// <param name="LevelExperience">The maximum experience in current level of the partner.</param>
 /// <param name="Name">The name of the partner.</param>
 /// <param name="MorphVNum">The morph vnum of the partner, if any.</param>

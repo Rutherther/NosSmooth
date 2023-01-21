@@ -9,6 +9,18 @@ using NosSmooth.PacketSerializer.Abstractions.Attributes;
 
 namespace NosSmooth.Packets.Server.UI;
 
+/// <summary>
+/// Question and answer dialog that can have a location in the UI specified using <see cref="Type"/>.
+/// Uses i18n message.
+/// </summary>
+/// <remarks>
+/// To deny the dialog, just ignore it.
+/// </remarks>
+/// <param name="Type">The ui location.</param>
+/// <param name="AcceptCommand">The command/packet to send to accept the dialog.</param>
+/// <param name="MessageConst">The i18n message.</param>
+/// <param name="ParametersCount">The count of parameters for the mssage.</param>
+/// <param name="Parameters">The parameters for the message.</param>
 [PacketHeader("qnamli2", PacketSource.Server)]
 [GenerateSerializer(true)]
 public record Qnamli2Packet

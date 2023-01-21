@@ -8,4 +8,8 @@ using NosSmooth.Game.Data.Raids;
 
 namespace NosSmooth.Game.Events.Raids;
 
+/// <summary>
+/// The character has joined a raid.
+/// </summary>
+/// <param name="Raid">The joined raid.</param>
 public record RaidJoinedEvent(Raid Raid) : IGameEvent;

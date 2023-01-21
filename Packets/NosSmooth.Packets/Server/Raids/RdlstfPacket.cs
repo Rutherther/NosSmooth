@@ -14,7 +14,8 @@ namespace NosSmooth.Packets.Server.Raids;
 /// </summary>
 /// <param name="MinimumLevel">The minimum needed level for the raid treasure.</param>
 /// <param name="MaximumLevel">The maximum needed level for the raid treasure.</param>
-/// <param name="RaidType">Unknown TODO.</param>
+/// <param name="Unknown">Unknown TODO.</param>
+/// <param name="RaidType">The raid, <see cref="RaidType"/>.</param>
 /// <param name="Players">Information about members in the raid.</param>
 [PacketHeader("rdlstf", PacketSource.Server)]
 [GenerateSerializer(true)]

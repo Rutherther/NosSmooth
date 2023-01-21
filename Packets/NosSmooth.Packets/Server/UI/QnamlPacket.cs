@@ -9,7 +9,16 @@ using NosSmooth.PacketSerializer.Abstractions.Attributes;
 
 namespace NosSmooth.Packets.Server.UI;
 
-[PacketHeader("qnaml", PacketSource.Server)]
+/// <summary>
+/// Question and answer dialog that can have a location in the UI specified using <see cref="Type"/>.
+/// Uses string message.
+/// </summary>
+/// <remarks>
+/// To deny the dialog, just ignore it.
+/// </remarks>
+/// <param name="Type">The ui location.</param>
+/// <param name="AcceptCommand">The command/packet to send to accept the dialog.</param>
+/// <param name="Message">The message of the dialog.</param>
 [GenerateSerializer(true)]
 public record QnamlPacket
 (

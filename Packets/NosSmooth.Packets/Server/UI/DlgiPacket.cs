@@ -9,6 +9,13 @@ using NosSmooth.PacketSerializer.Abstractions.Attributes;
 
 namespace NosSmooth.Packets.Server.UI;
 
+/// <summary>
+/// A dialog with i18n message.
+/// </summary>
+/// <param name="AcceptCommand">The command/packet to send to accept the dialog.</param>
+/// <param name="DenyCommand">The command/packet to send to deny the dialog.</param>
+/// <param name="MessageConst">The i18n message.</param>
+/// <param name="Parameters">The parameters of the message.</param>
 [PacketHeader("dlgi", PacketSource.Server)]
 [GenerateSerializer(true)]
 public record DlgiPacket

@@ -413,9 +413,9 @@ public class CommandProcessorTests
         Assert.NotNull(aggregateError);
         if (aggregateError is not null)
         {
-            Assert.True(aggregateError.Errors.Any(x => x.Error == error1));
+            Assert.Contains(aggregateError.Errors, x => (FakeError)x.Error! == error1);
 
-            Assert.True(aggregateError.Errors.Any(x => x.Error == error2));
+            Assert.Contains(aggregateError.Errors, x => (FakeError)x.Error! == error2);
             Assert.Equal(2, aggregateError.Errors.Count);
         }
     }
@@ -425,7 +425,7 @@ public class CommandProcessorTests
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
     [Fact]
-    public async Task ProcessCommand_HavingExceptionInHandler_ShouldNotThrow()
+    public Task ProcessCommand_HavingExceptionInHandler_ShouldNotThrow()
     {
         var fakeCommand = new FakeCommand("asdf");
         var provider = new ServiceCollection()
@@ -447,7 +447,7 @@ public class CommandProcessorTests
             )
             .BuildServiceProvider();
 
-        await provider.GetRequiredService<CommandProcessor>().ProcessCommand
+        return provider.GetRequiredService<CommandProcessor>().ProcessCommand
             (new FakeEmptyNostaleClient(), fakeCommand);
     }
 
@@ -456,7 +456,7 @@ public class CommandProcessorTests
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
     [Fact]
-    public async Task ProcessCommand_HavingExceptionInPreEvent_ShouldNotThrow()
+    public Task ProcessCommand_HavingExceptionInPreEvent_ShouldNotThrow()
     {
         var fakeCommand = new FakeCommand("asdf");
         var provider = new ServiceCollection()
@@ -478,7 +478,7 @@ public class CommandProcessorTests
             )
             .BuildServiceProvider();
 
-        await provider.GetRequiredService<CommandProcessor>().ProcessCommand
+        return provider.GetRequiredService<CommandProcessor>().ProcessCommand
             (new FakeEmptyNostaleClient(), fakeCommand);
     }
 
@@ -487,7 +487,7 @@ public class CommandProcessorTests
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
     [Fact]
-    public async Task ProcessCommand_HavingExceptionInPostEvent_ShouldNotThrow()
+    public Task ProcessCommand_HavingExceptionInPostEvent_ShouldNotThrow()
     {
         var fakeCommand = new FakeCommand("asdf");
         var provider = new ServiceCollection()
@@ -509,7 +509,7 @@ public class CommandProcessorTests
             )
             .BuildServiceProvider();
 
-        await provider.GetRequiredService<CommandProcessor>().ProcessCommand
+        return provider.GetRequiredService<CommandProcessor>().ProcessCommand
             (new FakeEmptyNostaleClient(), fakeCommand);
     }
 }

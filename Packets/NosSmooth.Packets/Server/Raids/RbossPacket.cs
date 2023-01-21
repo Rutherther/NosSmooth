@@ -17,6 +17,7 @@ namespace NosSmooth.Packets.Server.Raids;
 /// </remarks>
 /// <param name="EntityType">The boss entity type.</param>
 /// <param name="EntityId">The boss entity id.</param>
+/// <param name="Hp">The current hp of the boss.</param>
 /// <param name="MaxHp">The max hp of the boss.</param>
 /// <param name="VNum">The vnum of the boss entity.</param>
 [PacketHeader("rboss", PacketSource.Server)]

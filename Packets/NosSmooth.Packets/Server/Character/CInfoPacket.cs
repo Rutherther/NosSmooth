@@ -20,7 +20,7 @@ namespace NosSmooth.Packets.Server.Character;
 /// <param name="Name">The name of the character.</param>
 /// <param name="Unknown">Unknown TODO</param>
 /// <param name="GroupId">The id of the group the player is in, if any.</param>
-/// <param name="FamilyId">The id of the family the player is in, if any.</param>
+/// <param name="FamilySubPacket">Information about family the player is in, if any.</param>
 /// <param name="FamilyName">The name of the family the player is in, if any.</param>
 /// <param name="CharacterId">The id of the character.</param>
 /// <param name="Authority">The authority of the character.</param>
