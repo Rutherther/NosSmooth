@@ -19,6 +19,7 @@ namespace NosSmooth.Packets.Server.UI;
 /// <param name="Type">The ui location.</param>
 /// <param name="AcceptCommand">The command/packet to send to accept the dialog.</param>
 /// <param name="Message">The message of the dialog.</param>
+[PacketHeader("qnaml", PacketSource.Server)]
 [GenerateSerializer(true)]
 public record QnamlPacket
 (
