@@ -12,6 +12,7 @@ using NosSmooth.Extensions.Combat.Selectors;
 using NosSmooth.Extensions.Pathfinding;
 using NosSmooth.Game.Apis.Safe;
 using NosSmooth.Game.Data.Entities;
+using NosSmooth.Game.Errors;
 using NosSmooth.Game.Extensions;
 using Remora.Results;
 
@@ -83,13 +84,13 @@ public class SimpleAttackTechnique : ICombatTechnique
     public Result HandleWaiting(OperationQueueType queueType, ICombatState state, ICombatOperation operation, CannotBeUsedError cannotBeUsedError)
     {
         if (cannotBeUsedError.UnderlyingError is TargetDeadError)
-        {
+        { // target is dead, that means exiting the technique. For that, remove the operation.
             state.RemoveCurrentOperation(queueType, true);
             return Result.FromSuccess();
         }
 
         if (cannotBeUsedError.Response == CanBeUsedResponse.WontBeUsable)
-        {
+        { // Unfortunately we cannot handle that error.
             return cannotBeUsedError;
         }
 
@@ -98,7 +99,14 @@ public class SimpleAttackTechnique : ICombatTechnique
 
     /// <inheritdoc />
     public Result HandleError(ICombatState state, Result result)
-    { // no handling of errors is done
+    {
+        if (result.Error is NotInRangeError)
+        { // the entity has moved between WalkInRange and UseSkill operations. That is unlikely
+          // but it's better to be sure in case that happens it gets solved
+            state.RemoveCurrentOperation(OperationQueueType.TotalControl, true);
+            return Result.FromSuccess();
+        }
+
         return result;
     }
 
