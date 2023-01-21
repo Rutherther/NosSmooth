@@ -37,6 +37,11 @@ The migration will migrate all languages NosTale supports.
 See the sample `DataBrowser` for more details about the usage.
 
 ### Packets
+NosTale packets are located inside of `NosSmooth.Packets`.
+Serializers and deserializers are generated using source generators.
+The source generator is located in `NosSmooth.PacketSerializersGenerator`.
+
+Serializing the packets may be done using `NosSmooth.PacketSerializer`.
 
 ### Core (Low level)
 The core contains abstractions for the NosTale client, packets and commands.
