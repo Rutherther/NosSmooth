@@ -40,6 +40,9 @@ public record UseSkillOperation
     public OperationQueueType QueueType => OperationQueueType.TotalControl;
 
     /// <inheritdoc />
+    public bool MayBeCancelled => false;
+
+    /// <inheritdoc />
     public async Task<Result> BeginExecution(ICombatState combatState, CancellationToken ct = default)
     {
         if (_contract is not null)
@@ -141,6 +144,12 @@ public record UseSkillOperation
         }
 
         return Result.FromSuccess();
+    }
+
+    /// <inheritdoc />
+    public void Cancel()
+    {
+        throw new InvalidOperationException();
     }
 
     private Result<IContract<SkillUsedEvent, UseSkillStates>> ContractSkill(ISkillInfo info)

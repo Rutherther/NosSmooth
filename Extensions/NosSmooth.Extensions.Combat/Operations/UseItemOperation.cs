@@ -27,6 +27,9 @@ public record UseItemOperation(InventoryItem Item) : ICombatOperation
     public OperationQueueType QueueType => OperationQueueType.Item;
 
     /// <inheritdoc />
+    public bool MayBeCancelled => true;
+
+    /// <inheritdoc />
     public Task<Result> BeginExecution(ICombatState combatState, CancellationToken ct = default)
     {
         if (_useItemOperation is not null)
@@ -50,7 +53,7 @@ public record UseItemOperation(InventoryItem Item) : ICombatOperation
             return Result.FromSuccess();
         }
 
-        BeginExecution(combatState, ct);
+        await BeginExecution(combatState, ct);
         if (_useItemOperation is null)
         {
             throw new UnreachableException();
@@ -83,9 +86,16 @@ public record UseItemOperation(InventoryItem Item) : ICombatOperation
         => Result.FromSuccess();
 
     /// <inheritdoc />
+    public void Cancel()
+    {
+        _ct?.Cancel();
+    }
+
+    /// <inheritdoc />
     public void Dispose()
     {
         _ct?.Cancel();
         _useItemOperation?.Dispose();
+        _ct?.Dispose();
     }
 }

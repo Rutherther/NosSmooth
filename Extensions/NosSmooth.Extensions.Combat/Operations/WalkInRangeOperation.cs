@@ -36,6 +36,9 @@ public record WalkInRangeOperation
     public OperationQueueType QueueType => OperationQueueType.TotalControl;
 
     /// <inheritdoc />
+    public bool MayBeCancelled => true;
+
+    /// <inheritdoc />
     public Task<Result> BeginExecution(ICombatState combatState, CancellationToken ct = default)
     {
         if (_walkInRangeOperation is not null)
@@ -103,6 +106,12 @@ public record WalkInRangeOperation
         }
 
         return Result.FromSuccess();
+    }
+
+    /// <inheritdoc />
+    public void Cancel()
+    {
+        _ct?.Cancel();
     }
 
     private async Task<Result> UseAsync(ICombatState combatState, CancellationToken ct = default)
@@ -201,5 +210,6 @@ public record WalkInRangeOperation
     {
         _ct?.Cancel();
         _walkInRangeOperation?.Dispose();
+        _ct?.Dispose();
     }
 }

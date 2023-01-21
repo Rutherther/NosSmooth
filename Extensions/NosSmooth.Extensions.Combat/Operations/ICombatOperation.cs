@@ -26,6 +26,11 @@ public interface ICombatOperation : IDisposable
     public OperationQueueType QueueType { get; }
 
     /// <summary>
+    /// Gets whether the operation may currently be cancelled (disposed).
+    /// </summary>
+    public bool MayBeCancelled { get; }
+
+    /// <summary>
     /// Begin the execution without waiting for the finished state.
     /// </summary>
     /// <param name="combatState">The combat state.</param>
@@ -63,4 +68,9 @@ public interface ICombatOperation : IDisposable
     /// <param name="combatState">The combat state.</param>
     /// <returns>Whether the operation can be used right away.</returns>
     public Result CanBeUsed(ICombatState combatState);
+
+    /// <summary>
+    /// Cancel the current operation.
+    /// </summary>
+    public void Cancel();
 }

@@ -145,6 +145,20 @@ public class CombatManager : IStatefulEntity
             currentOperation = null;
         }
 
+        if (combatState.ShouldQuit)
+        {
+            if (currentOperation is not null && !currentOperation.IsExecuting())
+            {
+                currentOperation.Dispose();
+                currentOperation = null;
+            }
+
+            if (currentOperation is not null && currentOperation.MayBeCancelled)
+            {
+                currentOperation.Cancel();
+            }
+        }
+
         if (currentOperation is null && !combatState.ShouldQuit)
         { // waiting for an operation.
             currentOperation = combatState.NextOperation(queueType);
@@ -181,7 +195,8 @@ public class CombatManager : IStatefulEntity
             {
                 case CanBeUsedResponse.WontBeUsable:
                 case CanBeUsedResponse.MustWait:
-                    var waitingResult = technique.HandleWaiting(queueType, combatState, currentOperation, canBeUsedError!);
+                    var waitingResult = technique.HandleWaiting
+                        (queueType, combatState, currentOperation, canBeUsedError!);
 
                     if (!waitingResult.IsSuccess)
                     {

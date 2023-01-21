@@ -19,6 +19,7 @@ public class CompoundOperation : ICombatOperation
     private readonly ICombatTechnique _technique;
     private readonly ICombatOperation[] _operations;
     private readonly OperationQueueType _queueType;
+    private ICombatOperation? _currentOperation;
     private CancellationTokenSource? _ct;
     private Task<Result>? _compoundOperation;
 
@@ -52,6 +53,9 @@ public class CompoundOperation : ICombatOperation
 
     /// <inheritdoc />
     public OperationQueueType QueueType => _queueType;
+
+    /// <inheritdoc />
+    public bool MayBeCancelled => _currentOperation?.MayBeCancelled ?? true;
 
     /// <inheritdoc />
     public Task<Result> BeginExecution(ICombatState combatState, CancellationToken ct = default)
@@ -110,10 +114,18 @@ public class CompoundOperation : ICombatOperation
     public Result CanBeUsed(ICombatState combatState)
         => _operations[0].CanBeUsed(combatState);
 
+    /// <inheritdoc />
+    public void Cancel()
+    {
+        _currentOperation?.Cancel();
+        _ct?.Cancel();
+    }
+
     private async Task<Result> UseAsync(ICombatState combatState, CancellationToken ct)
     {
         foreach (var operation in _operations)
         {
+            _currentOperation = operation;
             CanBeUsedResponse canBeUsed = CanBeUsedResponse.MustWait;
 
             while (canBeUsed != CanBeUsedResponse.CanBeUsed)

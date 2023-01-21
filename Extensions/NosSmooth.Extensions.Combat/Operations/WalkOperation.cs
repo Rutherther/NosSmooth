@@ -26,6 +26,9 @@ public record WalkOperation(WalkManager WalkManager, short X, short Y) : ICombat
     public OperationQueueType QueueType => OperationQueueType.TotalControl;
 
     /// <inheritdoc />
+    public bool MayBeCancelled => true;
+
+    /// <inheritdoc />
     public Task<Result> BeginExecution(ICombatState combatState, CancellationToken ct = default)
     {
         if (_walkOperation is not null)
@@ -95,6 +98,12 @@ public record WalkOperation(WalkManager WalkManager, short X, short Y) : ICombat
         return Result.FromSuccess();
     }
 
+    /// <inheritdoc />
+    public void Cancel()
+    {
+        _ct?.Cancel();
+    }
+
     private Task<Result> UseAsync(ICombatState combatState, CancellationToken ct = default)
         => WalkManager.GoToAsync(X, Y, true, ct);
 
@@ -103,5 +112,6 @@ public record WalkOperation(WalkManager WalkManager, short X, short Y) : ICombat
     {
         _ct?.Cancel();
         _walkOperation?.Dispose();
+        _ct?.Dispose();
     }
 }
