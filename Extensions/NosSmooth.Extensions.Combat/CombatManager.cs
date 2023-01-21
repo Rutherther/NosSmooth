@@ -169,17 +169,19 @@ public class CombatManager : IStatefulEntity
         if (!currentOperation.IsExecuting())
         { // not executing, check can be used, execute if can.
             var canBeUsedResult = currentOperation.CanBeUsed(combatState);
-            if (!canBeUsedResult.IsDefined(out var canBeUsed))
+            if (canBeUsedResult is { IsSuccess: false, Error: not CannotBeUsedError })
             {
                 return Result<(bool, long?)>.FromError(canBeUsedResult);
             }
 
+            var canBeUsedError = canBeUsedResult.Error as CannotBeUsedError;
+            var canBeUsed = canBeUsedError?.Response ?? CanBeUsedResponse.CanBeUsed;
+
             switch (canBeUsed)
             {
                 case CanBeUsedResponse.WontBeUsable:
-                    return new UnusableOperationError(currentOperation);
                 case CanBeUsedResponse.MustWait:
-                    var waitingResult = technique.HandleWaiting(queueType, combatState, currentOperation);
+                    var waitingResult = technique.HandleWaiting(queueType, combatState, currentOperation, canBeUsedError!);
 
                     if (!waitingResult.IsSuccess)
                     {

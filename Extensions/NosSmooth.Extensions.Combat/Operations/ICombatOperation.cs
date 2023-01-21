@@ -15,14 +15,6 @@ namespace NosSmooth.Extensions.Combat.Operations;
 /// </summary>
 public interface ICombatOperation : IDisposable
 {
-    // 1. wait for CanBeUsed
-    // 2. use OnlyExecute
-    // 3. periodically check IsFinished
-    // 4. Finished
-    // 5. Call Dispose
-    // 6. Go to next operation in queue
-    // go to step 1
-
     /// <summary>
     /// Gets the queue type the operation belongs to.
     /// </summary>
@@ -70,5 +62,5 @@ public interface ICombatOperation : IDisposable
     /// </remarks>
     /// <param name="combatState">The combat state.</param>
     /// <returns>Whether the operation can be used right away.</returns>
-    public Result<CanBeUsedResponse> CanBeUsed(ICombatState combatState);
+    public Result CanBeUsed(ICombatState combatState);
 }

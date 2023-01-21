@@ -76,7 +76,7 @@ public record WalkInRangeOperation
         => _walkInRangeOperation?.IsCompleted ?? false;
 
     /// <inheritdoc />
-    public Result<CanBeUsedResponse> CanBeUsed(ICombatState combatState)
+    public Result CanBeUsed(ICombatState combatState)
     {
         var character = combatState.Game.Character;
         if (character is null)
@@ -84,7 +84,12 @@ public record WalkInRangeOperation
             return new CharacterNotInitializedError();
         }
 
-        return character.CantMove ? CanBeUsedResponse.MustWait : CanBeUsedResponse.CanBeUsed;
+        if (character.CantMove)
+        {
+            return new CannotBeUsedError(CanBeUsedResponse.MustWait, new CharacterCannotMoveError());
+        }
+
+        return Result.FromSuccess();
     }
 
     private async Task<Result> UseAsync(ICombatState combatState, CancellationToken ct = default)

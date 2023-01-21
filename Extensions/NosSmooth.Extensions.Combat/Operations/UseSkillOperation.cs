@@ -5,7 +5,6 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics;
-using System.Xml.XPath;
 using NosSmooth.Core.Contracts;
 using NosSmooth.Data.Abstractions.Enums;
 using NosSmooth.Data.Abstractions.Infos;
@@ -16,8 +15,6 @@ using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Entities;
 using NosSmooth.Game.Errors;
 using NosSmooth.Game.Events.Battle;
-using NosSmooth.Packets;
-using NosSmooth.Packets.Client.Battle;
 using Remora.Results;
 
 namespace NosSmooth.Extensions.Combat.Operations;
@@ -103,7 +100,7 @@ public record UseSkillOperation
         => _contract?.HasReachedState(UseSkillStates.CharacterRestored) ?? false;
 
     /// <inheritdoc />
-    public Result<CanBeUsedResponse> CanBeUsed(ICombatState combatState)
+    public Result CanBeUsed(ICombatState combatState)
     {
         if (Skill.Info is null)
         {
@@ -113,18 +110,37 @@ public record UseSkillOperation
         var character = combatState.Game.Character;
         if (Target.Hp is not null && Target.Hp.Amount is not null && Target.Hp.Amount == 0)
         {
-            return CanBeUsedResponse.WontBeUsable;
+            return new CannotBeUsedError(CanBeUsedResponse.WontBeUsable, new TargetDeadError());
         }
 
-        if (character is not null && character.Mp is not null && character.Mp.Amount is not null)
+        if (character is null)
+        {
+            return new CharacterNotInitializedError();
+        }
+
+        if (character.CantAttack)
+        {
+            return new CannotBeUsedError(CanBeUsedResponse.MustWait, new CharacterCannotAttackError());
+        }
+
+        if (character.Mp is not null && character.Mp.Amount is not null)
         {
             if (character.Mp.Amount < Skill.Info.MpCost)
             { // The character is in combat, mp won't restore.
-                return CanBeUsedResponse.WontBeUsable;
+                return new CannotBeUsedError
+                (
+                    CanBeUsedResponse.WontBeUsable,
+                    new NotEnoughManaError(character.Mp.Amount.Value, Skill.Info.MpCost)
+                );
             }
         }
 
-        return Skill.IsOnCooldown ? CanBeUsedResponse.MustWait : CanBeUsedResponse.CanBeUsed;
+        if (Skill.IsOnCooldown)
+        {
+            return new CannotBeUsedError(CanBeUsedResponse.MustWait, new SkillOnCooldownError(Skill));
+        }
+
+        return Result.FromSuccess();
     }
 
     private Result<IContract<SkillUsedEvent, UseSkillStates>> ContractSkill(ISkillInfo info)

@@ -5,6 +5,7 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics;
+using NosSmooth.Extensions.Combat.Techniques;
 using Remora.Results;
 
 namespace NosSmooth.Extensions.Combat.Operations;
@@ -15,6 +16,7 @@ namespace NosSmooth.Extensions.Combat.Operations;
 /// </summary>
 public class CompoundOperation : ICombatOperation
 {
+    private readonly ICombatTechnique _technique;
     private readonly ICombatOperation[] _operations;
     private readonly OperationQueueType _queueType;
     private Task<Result>? _compoundOperation;
@@ -22,16 +24,18 @@ public class CompoundOperation : ICombatOperation
     /// <summary>
     /// Initializes a new instance of the <see cref="CompoundOperation"/> class.
     /// </summary>
-    /// <param name="operations">The operations to execute.</param>
+    /// <param name="technique">The combat technique used for calling HandleWaiting.</param>
     /// <param name="queueType">The queue type.</param>
+    /// <param name="operations">The operations to execute.</param>
     public CompoundOperation
-        (OperationQueueType queueType = OperationQueueType.TotalControl, params ICombatOperation[] operations)
+        (ICombatTechnique technique, OperationQueueType queueType = OperationQueueType.TotalControl, params ICombatOperation[] operations)
     {
         if (operations.Length == 0)
         {
             throw new ArgumentNullException(nameof(operations), "The compound operation needs at least one operation.");
         }
 
+        _technique = technique;
         _operations = operations;
         _queueType = queueType;
     }
@@ -90,7 +94,7 @@ public class CompoundOperation : ICombatOperation
         => _compoundOperation?.IsCompleted ?? false;
 
     /// <inheritdoc />
-    public Result<CanBeUsedResponse> CanBeUsed(ICombatState combatState)
+    public Result CanBeUsed(ICombatState combatState)
         => _operations[0].CanBeUsed(combatState);
 
     private async Task<Result> UseAsync(ICombatState combatState, CancellationToken ct)
@@ -102,14 +106,17 @@ public class CompoundOperation : ICombatOperation
             while (canBeUsed != CanBeUsedResponse.CanBeUsed)
             {
                 var canBeUsedResult = operation.CanBeUsed(combatState);
-                if (!canBeUsedResult.IsDefined(out canBeUsed))
+                if (canBeUsedResult is { IsSuccess: false, Error: not CannotBeUsedError })
                 {
-                    return Result.FromError(canBeUsedResult);
+                    return canBeUsedResult;
                 }
 
-                if (canBeUsed == CanBeUsedResponse.WontBeUsable)
+                var error = canBeUsedResult.Error as CannotBeUsedError;
+                canBeUsed = error?.Response ?? CanBeUsedResponse.CanBeUsed;
+
+                if (canBeUsed != CanBeUsedResponse.CanBeUsed)
                 {
-                    return new GenericError("Won't be usable.");
+                    _technique.HandleWaiting(QueueType, combatState, this, error!);
                 }
 
                 await Task.Delay(10, ct);

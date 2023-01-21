@@ -66,8 +66,8 @@ public record UseItemOperation(InventoryItem Item) : ICombatOperation
         => _useItemOperation?.IsCompleted ?? false;
 
     /// <inheritdoc />
-    public Result<CanBeUsedResponse> CanBeUsed(ICombatState combatState)
-        => CanBeUsedResponse.CanBeUsed;
+    public Result CanBeUsed(ICombatState combatState)
+        => Result.FromSuccess();
 
     /// <inheritdoc />
     public void Dispose()

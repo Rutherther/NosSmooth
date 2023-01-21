@@ -4,7 +4,6 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Diagnostics;
 using NosSmooth.Data.Abstractions.Enums;
 using NosSmooth.Extensions.Combat.Errors;
 using NosSmooth.Extensions.Combat.Extensions;
@@ -12,9 +11,7 @@ using NosSmooth.Extensions.Combat.Operations;
 using NosSmooth.Extensions.Combat.Selectors;
 using NosSmooth.Extensions.Pathfinding;
 using NosSmooth.Game.Apis.Safe;
-using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Entities;
-using NosSmooth.Game.Data.Inventory;
 using NosSmooth.Game.Extensions;
 using Remora.Results;
 
@@ -83,8 +80,19 @@ public class SimpleAttackTechnique : ICombatTechnique
     }
 
     /// <inheritdoc />
-    public Result HandleWaiting(OperationQueueType queueType, ICombatState state, ICombatOperation operation)
-    { // does not do anything, just wait.
+    public Result HandleWaiting(OperationQueueType queueType, ICombatState state, ICombatOperation operation, CannotBeUsedError cannotBeUsedError)
+    {
+        if (cannotBeUsedError.UnderlyingError is TargetDeadError)
+        {
+            state.RemoveCurrentOperation(queueType, true);
+            return Result.FromSuccess();
+        }
+
+        if (cannotBeUsedError.Response == CanBeUsedResponse.WontBeUsable)
+        {
+            return cannotBeUsedError;
+        }
+
         return Result.FromSuccess();
     }
 
@@ -172,6 +180,7 @@ public class SimpleAttackTechnique : ICombatTechnique
         (
             new CompoundOperation
             (
+                this,
                 OperationQueueType.TotalControl,
                 new WalkInRangeOperation(_walkManager, _target, range),
                 new UseSkillOperation(_skillsApi, currentSkill, character, _target)

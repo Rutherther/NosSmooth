@@ -51,8 +51,9 @@ public interface ICombatTechnique
     /// <param name="queueType">The type of the operation.</param>
     /// <param name="state">The combat state.</param>
     /// <param name="operation">The operation that needs waiting.</param>
+    /// <param name="error">The error received from the operation.</param>
     /// <returns>A result that may or may not have succeeded. In case of an error, <see cref="HandleError"/> will be called with the error.</returns>
-    public Result HandleWaiting(OperationQueueType queueType, ICombatState state, ICombatOperation operation);
+    public Result HandleWaiting(OperationQueueType queueType, ICombatState state, ICombatOperation operation, CannotBeUsedError error);
 
     /// <summary>
     /// Handles an arbitrary error.

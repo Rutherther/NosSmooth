@@ -66,7 +66,7 @@ public record WalkOperation(WalkManager WalkManager, short X, short Y) : ICombat
         => _walkOperation?.IsCompleted ?? false;
 
     /// <inheritdoc />
-    public Result<CanBeUsedResponse> CanBeUsed(ICombatState combatState)
+    public Result CanBeUsed(ICombatState combatState)
     {
         var character = combatState.Game.Character;
         if (character is null)
@@ -74,7 +74,12 @@ public record WalkOperation(WalkManager WalkManager, short X, short Y) : ICombat
             return new CharacterNotInitializedError();
         }
 
-        return character.CantMove ? CanBeUsedResponse.MustWait : CanBeUsedResponse.CanBeUsed;
+        if (character.CantMove)
+        {
+            return new CannotBeUsedError(CanBeUsedResponse.MustWait, new CharacterCannotMoveError());
+        }
+
+        return Result.FromSuccess();
     }
 
     private Task<Result> UseAsync(ICombatState combatState, CancellationToken ct = default)
