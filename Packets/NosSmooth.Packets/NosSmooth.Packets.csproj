@@ -5,8 +5,6 @@
         <Nullable>enable</Nullable>
         <LangVersion>10</LangVersion>
         <Description>Contains default NosTale packets.</Description>
-        <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <VersionPrefix>3.5.1</VersionPrefix>
         <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
         <PackageReleaseNotes>Put correct (list) attribute to Pst packet Effects.</PackageReleaseNotes>

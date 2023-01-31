@@ -5,8 +5,6 @@
         <Nullable>enable</Nullable>
         <LangVersion>10</LangVersion>
         <Description>NosSmooth's packet serializer abstractions that hold all interfaces, classes, errors needed for creating assemblies with packets that can have generated serializers.</Description>
-        <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <VersionPrefix>1.3.1</VersionPrefix>
         <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
         <PackageReleaseNotes>Add IsOnSeparator method to PacketStringEnumerator.</PackageReleaseNotes>

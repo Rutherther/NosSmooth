@@ -5,8 +5,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Description>NosSmooth extension for finding paths and walking found paths.</Description>
-        <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Description>NosSmooth extension allowing for finding paths on maps.</Description>
         <VersionPrefix>1.2.0</VersionPrefix>
         <PackageReleaseNotes>React to su and tp packet by changing character position.</PackageReleaseNotes>

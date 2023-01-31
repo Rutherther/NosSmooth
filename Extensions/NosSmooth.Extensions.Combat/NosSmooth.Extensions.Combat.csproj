@@ -7,8 +7,6 @@
         <TargetFramework>net7.0</TargetFramework>
         <VersionPrefix>1.2.0</VersionPrefix>
         <Description>Manages NosSmooth combat state, currently exposing a simple technique to kill one enemy at a time.</Description>
-        <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReleaseNotes></PackageReleaseNotes>
     </PropertyGroup>
     

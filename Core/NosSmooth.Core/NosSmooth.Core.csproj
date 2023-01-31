@@ -6,8 +6,6 @@
         <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
         <Authors>Rutherther</Authors>
         <Description>NosSmooth Core library allowing implementing nostale client, handling packets and commands.</Description>
-        <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <VersionPrefix>3.3.1</VersionPrefix>
         <PackageReleaseNotes>Add contract reached state.
 Avoid deadlocks.</PackageReleaseNotes>

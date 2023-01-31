@@ -5,8 +5,6 @@
         <Nullable>enable</Nullable>
         <Description>Nos smooth's abstractions for information from NosTale data files.</Description>
         <LangVersion>10</LangVersion>
-        <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <VersionPrefix>2.2.1</VersionPrefix>
         <TargetFramework>net7.0</TargetFramework>
         <PackageReleaseNotes>Add skill morph, special cost, upgrade, dash speed, item vnum.</PackageReleaseNotes>

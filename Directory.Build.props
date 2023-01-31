@@ -11,6 +11,12 @@
         <CodeAnalysisRuleSet>$(StyleCopRuleset)</CodeAnalysisRuleSet>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <RepositoryUrl>https://github.com/Rutherther/NosSmooth</RepositoryUrl>
+        <RepositoryBranch>main</RepositoryBranch>
+        <PackageProjectUrl>https://github.com/Rutherther/NosSmooth</PackageProjectUrl>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.261">
             <PrivateAssets>all</PrivateAssets>

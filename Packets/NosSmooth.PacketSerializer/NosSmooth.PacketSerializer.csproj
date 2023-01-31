@@ -6,8 +6,6 @@
         <RootNamespace>NosSmooth.PacketSerializer</RootNamespace>
         <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
         <Description>NosSmooth's packet string serializer implementation.</Description>
-        <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <VersionPrefix>2.2.6</VersionPrefix>
         <PackageReleaseNotes>Fix parsing upgrade rare sub packet -1.</PackageReleaseNotes>
     </PropertyGroup>

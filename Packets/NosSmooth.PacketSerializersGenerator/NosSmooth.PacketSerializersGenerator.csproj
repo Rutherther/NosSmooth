@@ -10,8 +10,6 @@
         <Description>NosSmooth's source code generator that generates serializers for packets.</Description>
         <IncludeBuildOutput>false</IncludeBuildOutput>
         <VersionPrefix>1.1.1</VersionPrefix>
-        <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReleaseNotes>Add support for multiple separators.</PackageReleaseNotes>
     </PropertyGroup>
 

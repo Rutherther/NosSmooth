@@ -6,8 +6,6 @@
         <LangVersion>10</LangVersion>
         <TargetFramework>net7.0</TargetFramework>
         <Description>NosSmooth Game library handling the current game state by responding to packets.</Description>
-        <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <VersionPrefix>2.4.2</VersionPrefix>
         <PackageReleaseNotes>Remove passives from player skills.
         Change position of caster when receiving su packet.</PackageReleaseNotes>
