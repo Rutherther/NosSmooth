@@ -53,6 +53,6 @@ public record PstPacket
     SexType? PlayerSex,
     [PacketIndex(10)]
     int? PlayerMorphVNum,
-    [PacketIndex(11, IsOptional = true)]
-    IReadOnlyList<EffectsSubPacket>? Effects
+    [PacketListIndex(11, InnerSeparator = '.', ListSeparator = ' ')]
+    IReadOnlyList<EffectsSubPacket> Effects
 ) : IPacket;

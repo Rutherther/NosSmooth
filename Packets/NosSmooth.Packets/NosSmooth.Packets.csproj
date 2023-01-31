@@ -7,9 +7,9 @@
         <Description>Contains default NosTale packets.</Description>
         <RepositoryUrl>https://github.com/Rutherther/NosSmooth/</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <VersionPrefix>3.5.0</VersionPrefix>
+        <VersionPrefix>3.5.1</VersionPrefix>
         <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
-        <PackageReleaseNotes>Make su packet position nullable.</PackageReleaseNotes>
+        <PackageReleaseNotes>Put correct (list) attribute to Pst packet Effects.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
