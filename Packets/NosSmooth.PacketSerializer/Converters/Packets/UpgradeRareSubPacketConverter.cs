@@ -55,6 +55,11 @@ public class UpgradeRareSubPacketConverter : BaseStringConverter<UpgradeRareSubP
             return Result<UpgradeRareSubPacket?>.FromSuccess(new UpgradeRareSubPacket(10, 0));
         }
 
+        if (token.Length == 2 && token.StartsWith("-1"))
+        {
+            return Result<UpgradeRareSubPacket?>.FromSuccess(null);
+        }
+
         var upgradeString = token.Slice(0, Math.Max(1, token.Length - 1));
         var rareString = token.Slice(token.Length - 1);
 
