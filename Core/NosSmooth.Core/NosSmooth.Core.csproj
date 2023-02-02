@@ -6,7 +6,7 @@
         <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
         <Authors>Rutherther</Authors>
         <Description>NosSmooth Core library allowing implementing nostale client, handling packets and commands.</Description>
-        <VersionPrefix>3.4.1</VersionPrefix>
+        <VersionPrefix>3.4.2</VersionPrefix>
         <PackageReleaseNotes>Fix StatefulInjector returning Func instead of the object.</PackageReleaseNotes>
     </PropertyGroup>
 

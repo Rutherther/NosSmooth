@@ -76,7 +76,12 @@ public class StatefulRepository
             },
             (_, objectDictionary) =>
             {
-                objectDictionary.TryAdd(statefulEntityType, ActivatorUtilities.CreateInstance(services, statefulEntityType));
+                if (!objectDictionary.ContainsKey(statefulEntityType))
+                {
+                    objectDictionary.TryAdd
+                        (statefulEntityType, ActivatorUtilities.CreateInstance(services, statefulEntityType));
+                }
+
                 return objectDictionary;
             }
         );
