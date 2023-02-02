@@ -5,6 +5,7 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,16 +16,43 @@ namespace NosSmooth.Core.Stateful;
 /// <summary>
 /// Repository holding all the stateful entities for various NosTale clients.
 /// </summary>
-internal class StatefulRepository
+public class StatefulRepository
 {
-    private readonly Dictionary<INostaleClient, Dictionary<Type, object>> _statefulEntities;
+    private readonly ConcurrentDictionary<INostaleClient, ConcurrentDictionary<Type, object>> _statefulEntities;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StatefulRepository"/> class.
     /// </summary>
     public StatefulRepository()
     {
-        _statefulEntities = new Dictionary<INostaleClient, Dictionary<Type, object>>();
+        _statefulEntities = new ConcurrentDictionary<INostaleClient, ConcurrentDictionary<Type, object>>();
+    }
+
+    /// <summary>
+    /// Remove items of the given client.
+    /// </summary>
+    /// <param name="client">The client to remove.</param>
+    public void Remove(INostaleClient client)
+    {
+        _statefulEntities.Remove(client, out _);
+    }
+
+    /// <summary>
+    /// Set entity of the given type to the given client.
+    /// </summary>
+    /// <remarks>
+    /// If the entity is not set manually, there will be an attempt to create an instance.
+    /// </remarks>
+    /// <param name="client">The nostale client.</param>
+    /// <param name="entity">The entity.</param>
+    /// <typeparam name="TEntity">The type of the entity.</typeparam>
+    public void SetEntity<TEntity>(INostaleClient client, TEntity entity)
+        where TEntity : notnull
+    {
+        _statefulEntities.TryAdd(client, new ConcurrentDictionary<Type, object>());
+        var values = _statefulEntities[client];
+
+        values.AddOrUpdate(typeof(TEntity), (k) => entity, (k, v) => entity);
     }
 
     /// <summary>
@@ -36,17 +64,23 @@ internal class StatefulRepository
     /// <returns>The obtained entity.</returns>
     public object GetEntity(IServiceProvider services, INostaleClient client, Type statefulEntityType)
     {
-        if (!_statefulEntities.ContainsKey(client))
-        {
-            _statefulEntities.Add(client, new Dictionary<Type, object>());
-        }
+        var dict = _statefulEntities.AddOrUpdate
+        (
+            client,
+            _ =>
+            {
+                var objectDictionary = new ConcurrentDictionary<Type, object>();
+                objectDictionary.TryAdd
+                    (statefulEntityType, () => ActivatorUtilities.CreateInstance(services, statefulEntityType));
+                return objectDictionary;
+            },
+            (_, objectDictionary) =>
+            {
+                objectDictionary.TryAdd(statefulEntityType, ActivatorUtilities.CreateInstance(services, statefulEntityType));
+                return objectDictionary;
+            }
+        );
 
-        var value = _statefulEntities[client];
-        if (!value.ContainsKey(statefulEntityType))
-        {
-            value.Add(statefulEntityType, ActivatorUtilities.CreateInstance(services, statefulEntityType));
-        }
-
-        return value[statefulEntityType];
+        return dict[statefulEntityType];
     }
 }
