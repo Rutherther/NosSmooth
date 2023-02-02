@@ -71,7 +71,7 @@ public class StatefulRepository
             {
                 var objectDictionary = new ConcurrentDictionary<Type, object>();
                 objectDictionary.TryAdd
-                    (statefulEntityType, () => ActivatorUtilities.CreateInstance(services, statefulEntityType));
+                    (statefulEntityType, ActivatorUtilities.CreateInstance(services, statefulEntityType));
                 return objectDictionary;
             },
             (_, objectDictionary) =>
