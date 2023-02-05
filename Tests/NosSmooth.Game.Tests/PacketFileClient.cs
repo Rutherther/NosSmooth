@@ -37,8 +37,7 @@ public class PacketFileClient : BaseNostaleClient, IDisposable
 
     private readonly FileStream _stream;
     private readonly StreamReader _reader;
-    private readonly IPacketSerializer _packetSerializer;
-    private readonly PacketHandler _packetHandler;
+    private readonly IPacketHandler _packetHandler;
     private readonly ILogger<PacketFileClient> _logger;
     private string? _nextLabel;
     private bool _skip;
@@ -123,16 +122,14 @@ public class PacketFileClient : BaseNostaleClient, IDisposable
     public PacketFileClient
     (
         FileStream stream,
-        IPacketSerializer packetSerializer,
         CommandProcessor commandProcessor,
-        PacketHandler packetHandler,
+        IPacketHandler packetHandler,
         ILogger<PacketFileClient> logger
     )
-        : base(commandProcessor, packetSerializer)
+        : base(commandProcessor)
     {
         _stream = stream;
         _reader = new StreamReader(_stream);
-        _packetSerializer = packetSerializer;
         _packetHandler = packetHandler;
         _logger = logger;
     }
@@ -232,12 +229,10 @@ public class PacketFileClient : BaseNostaleClient, IDisposable
             var packetStr = packetMatch.Groups[2].Value;
 
             var source = type == "Recv" ? PacketSource.Server : PacketSource.Client;
-            var packet = CreatePacket(packetStr, source);
             Result result = await _packetHandler.HandlePacketAsync
             (
                 this,
                 source,
-                packet,
                 packetStr,
                 stopRequested
             );
@@ -257,7 +252,6 @@ public class PacketFileClient : BaseNostaleClient, IDisposable
         (
             this,
             PacketSource.Client,
-            CreatePacket(packetString, PacketSource.Client),
             packetString,
             ct
         );
@@ -270,26 +264,9 @@ public class PacketFileClient : BaseNostaleClient, IDisposable
         (
             this,
             PacketSource.Server,
-            CreatePacket(packetString, PacketSource.Server),
             packetString,
             ct
         );
-    }
-
-    private IPacket CreatePacket(string packetStr, PacketSource source)
-    {
-        var packetResult = _packetSerializer.Deserialize(packetStr, source);
-        if (!packetResult.IsSuccess)
-        {
-            if (packetResult.Error is PacketConverterNotFoundError err)
-            {
-                return new UnresolvedPacket(err.Header, packetStr);
-            }
-
-            return new ParsingFailedPacket(packetResult, packetStr);
-        }
-
-        return packetResult.Entity;
     }
 
     /// <inheritdoc />

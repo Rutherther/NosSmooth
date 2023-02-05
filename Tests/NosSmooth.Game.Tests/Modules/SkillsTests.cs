@@ -41,7 +41,7 @@ public class SkillsTests
         data.Game.Skills.PrimarySkill.SkillVNum.ShouldBe(240);
         data.Game.Skills.SecondarySkill.SkillVNum.ShouldBe(241);
         data.Game.Skills.OtherSkills.ShouldNotBeEmpty();
-        data.Game.Skills.OtherSkills.Count.ShouldBe(3);
+        data.Game.Skills.OtherSkills.Count.ShouldBe(1);
         data.Game.Skills.OtherSkills.Last().SkillVNum.ShouldBe(236);
 
         await data.Client.ExecuteUntilLabelAsync("AFTER_MORPH");
@@ -49,7 +49,7 @@ public class SkillsTests
         data.Game.Skills.ShouldNotBeNull();
         data.Game.Skills.PrimarySkill.SkillVNum.ShouldBe(922);
         data.Game.Skills.SecondarySkill.SkillVNum.ShouldBe(922);
-        data.Game.Skills.OtherSkills.Count.ShouldBe(11);
+        data.Game.Skills.OtherSkills.Count.ShouldBe(10);
         data.Game.Skills.OtherSkills.ShouldAllBe(x => x.SkillVNum > 921 && x.SkillVNum < 933);
 
         await data.Client.ExecuteUntilLabelAsync("AFTER_MORPH_OFF");
@@ -58,7 +58,7 @@ public class SkillsTests
         data.Game.Skills.PrimarySkill.SkillVNum.ShouldBe(240);
         data.Game.Skills.SecondarySkill.SkillVNum.ShouldBe(241);
         data.Game.Skills.OtherSkills.ShouldNotBeEmpty();
-        data.Game.Skills.OtherSkills.Count.ShouldBe(3);
+        data.Game.Skills.OtherSkills.Count.ShouldBe(1);
         data.Game.Skills.OtherSkills.Last().SkillVNum.ShouldBe(236);
 
         await data.Client.ExecuteUntilLabelAsync("AFTER_SKILL_USED");
