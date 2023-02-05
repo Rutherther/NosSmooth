@@ -156,7 +156,7 @@ public class PacketTypesRepository : IPacketTypesRepository
     /// <returns>Info that stores the packet's info. Or an error, if not found.</returns>
     public Result<PacketInfo> FindPacketInfo(string header, PacketSource preferredSource)
     {
-        if (_headerToPacket[preferredSource].ContainsKey(header))
+        if (_headerToPacket.ContainsKey(preferredSource) && _headerToPacket[preferredSource].ContainsKey(header))
         {
             return _headerToPacket[preferredSource][header];
         }
