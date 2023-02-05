@@ -26,7 +26,7 @@ namespace NosSmooth.Core.Extensions;
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Adds base packet and command handling for nostale client.
+    /// Adds base packet (raw packets) and command handling for nostale client.
     /// </summary>
     /// <param name="serviceCollection">The service collection to register the responder to.</param>
     /// <returns>The collection.</returns>
@@ -36,10 +36,30 @@ public static class ServiceCollectionExtensions
     )
     {
         serviceCollection
-            .TryAddSingleton<PacketHandler>();
-
-        serviceCollection.AddPacketSerialization();
+            .TryAddSingleton<IPacketHandler, RawPacketHandler>();
         serviceCollection.AddSingleton<CommandProcessor>();
+
+        return serviceCollection;
+    }
+
+    /// <summary>
+    /// Add managed packet handling for nostale client.
+    /// </summary>
+    /// <remarks>
+    /// Adds a managed packet handler that calls managed packet responders.
+    /// Adds contractor and contract packet responder.
+    /// </remarks>
+    /// <param name="serviceCollection">The service collection to register the responder to.</param>
+    /// <returns>The collection.</returns>
+    public static IServiceCollection AddManagedNostaleCore
+    (
+        this IServiceCollection serviceCollection
+    )
+    {
+        serviceCollection.AddNostaleCore();
+        serviceCollection.Replace(ServiceDescriptor.Singleton<IPacketHandler, ManagedPacketHandler>());
+        serviceCollection.AddPacketSerialization();
+        serviceCollection.AddTransient<ManagedNostaleClient>();
 
         serviceCollection
             .AddSingleton<Contractor>()

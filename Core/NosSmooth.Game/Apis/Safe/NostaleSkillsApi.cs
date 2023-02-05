@@ -25,7 +25,7 @@ namespace NosSmooth.Game.Apis.Safe;
 public class NostaleSkillsApi
 {
     private readonly Game _game;
-    private readonly INostaleClient _client;
+    private readonly ManagedNostaleClient _client;
     private readonly Contractor _contractor;
 
     /// <summary>
@@ -34,7 +34,7 @@ public class NostaleSkillsApi
     /// <param name="game">The game.</param>
     /// <param name="client">The NosTale client.</param>
     /// <param name="contractor">The contractor.</param>
-    public NostaleSkillsApi(Game game, INostaleClient client, Contractor contractor)
+    public NostaleSkillsApi(Game game, ManagedNostaleClient client, Contractor contractor)
     {
         _game = game;
         _client = client;

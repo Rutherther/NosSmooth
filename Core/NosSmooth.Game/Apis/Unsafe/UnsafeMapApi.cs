@@ -19,14 +19,14 @@ namespace NosSmooth.Game.Apis.Unsafe;
 public class UnsafeMapApi
 {
     private readonly Game _game;
-    private readonly INostaleClient _client;
+    private readonly ManagedNostaleClient _client;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UnsafeMapApi"/> class.
     /// </summary>
     /// <param name="game">The game.</param>
     /// <param name="client">The client.</param>
-    public UnsafeMapApi(Game game, INostaleClient client)
+    public UnsafeMapApi(Game game, ManagedNostaleClient client)
     {
         _game = game;
         _client = client;

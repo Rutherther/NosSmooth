@@ -47,6 +47,11 @@ public class PacketEvent : IPreExecutionEvent, IPostExecutionEvent
         => Task.FromResult(_preHandler(client, packetArgs.Source, packetArgs.Packet, packetArgs.PacketString));
 
     /// <inheritdoc />
+    public Task<Result> ExecuteBeforeExecutionAsync
+        (INostaleClient client, PacketEventArgs packetArgs, CancellationToken ct = default)
+        => Task.FromResult(Result.FromSuccess());
+
+    /// <inheritdoc />
     public Task<Result> ExecuteAfterExecutionAsync<TPacket>
     (
         INostaleClient client,
@@ -66,4 +71,14 @@ public class PacketEvent : IPreExecutionEvent, IPostExecutionEvent
                 executionResults
             )
         );
+
+    /// <inheritdoc />
+    public Task<Result> ExecuteAfterExecutionAsync
+    (
+        INostaleClient client,
+        PacketEventArgs packetArgs,
+        IReadOnlyList<Result> executionResults,
+        CancellationToken ct = default
+    )
+        => Task.FromResult(Result.FromSuccess());
 }

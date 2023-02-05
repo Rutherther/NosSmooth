@@ -5,8 +5,10 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NosSmooth.Core.Commands;
 using NosSmooth.Core.Packets;
 using NosSmooth.Core.Tests.Fakes;
@@ -14,6 +16,8 @@ using NosSmooth.Core.Tests.Fakes.Commands;
 using NosSmooth.Core.Tests.Fakes.Packets;
 using NosSmooth.Core.Tests.Fakes.Packets.Events;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
+using NosSmooth.PacketSerializer.Extensions;
+using NosSmooth.PacketSerializer.Packets;
 using Remora.Results;
 using Xunit;
 
@@ -34,7 +38,10 @@ public class PacketHandlerTestsEvents
         var called = false;
         var client = new FakeEmptyNostaleClient();
         var provider = new ServiceCollection()
-            .AddSingleton<PacketHandler>()
+            .AddPacketSerialization()
+            .AddGeneratedSerializers(Assembly.GetExecutingAssembly())
+            .AddSingleton(typeof(ILogger<>), typeof(FakeLogger<>))
+            .AddSingleton<IPacketHandler, ManagedPacketHandler>()
             .AddScoped<IPreExecutionEvent>
             (
                 _ => new PacketEvent
@@ -59,8 +66,9 @@ public class PacketHandlerTestsEvents
             )
             .BuildServiceProvider();
 
-        var result = await provider.GetRequiredService<PacketHandler>().HandlePacketAsync
-            (client, PacketSource.Client, new FakePacket("a"), "fake a");
+        provider.GetRequiredService<IPacketTypesRepository>().AddPacketType(typeof(FakePacket));
+        var result = await provider.GetRequiredService<IPacketHandler>().HandlePacketAsync
+            (client, PacketSource.Client, "fake a");
         Assert.True(result.IsSuccess);
         Assert.True(called);
     }

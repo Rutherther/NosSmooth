@@ -4,8 +4,10 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands;
 using NosSmooth.Core.Extensions;
@@ -17,6 +19,8 @@ using NosSmooth.Core.Tests.Fakes.Packets;
 using NosSmooth.Core.Tests.Packets;
 using NosSmooth.Packets.Server.Maps;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
+using NosSmooth.PacketSerializer.Extensions;
+using NosSmooth.PacketSerializer.Packets;
 using Remora.Results;
 using Xunit;
 
@@ -135,7 +139,10 @@ public class StatefulInjectorTests
                 .AddStatefulInjector()
                 .AddStatefulEntity<FakeEntity>()
                 .AddSingleton<CommandProcessor>()
-                .AddSingleton<PacketHandler>()
+                .AddSingleton(typeof(ILogger<>), typeof(FakeLogger<>))
+                .AddPacketSerialization()
+                .AddGeneratedSerializers(Assembly.GetExecutingAssembly())
+                .AddSingleton<IPacketHandler, ManagedPacketHandler>()
                 .AddScoped<IPacketResponder<FakePacket>>
                 (p =>
                     {
@@ -161,10 +168,11 @@ public class StatefulInjectorTests
                 )
                 .BuildServiceProvider();
 
-        var handler = services.GetRequiredService<PacketHandler>();
+        var handler = services.GetRequiredService<IPacketHandler>();
 
-        Assert.True((await handler.HandlePacketAsync(client1, PacketSource.Server, new FakePacket("1"), "fake 1")).IsSuccess);
-        Assert.True((await handler.HandlePacketAsync(client2, PacketSource.Server, new FakePacket("2"), "fake 2")).IsSuccess);
+        services.GetRequiredService<IPacketTypesRepository>().AddPacketType(typeof(FakePacket));
+        Assert.True((await handler.HandlePacketAsync(client1, PacketSource.Server, "fake 1")).IsSuccess);
+        Assert.True((await handler.HandlePacketAsync(client2, PacketSource.Server, "fake 2")).IsSuccess);
         Assert.NotNull(entity1);
         Assert.NotNull(entity2);
         Assert.NotEqual(entity1, entity2);

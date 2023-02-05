@@ -25,14 +25,6 @@ public interface INostaleClient
     public Task<Result> RunAsync(CancellationToken stopRequested = default);
 
     /// <summary>
-    /// Sends the given packet to the server.
-    /// </summary>
-    /// <param name="packet">The packet to send.</param>
-    /// <param name="ct">The cancellation token for cancelling the operation.</param>
-    /// <returns>A result that may or may not have succeeded.</returns>
-    public Task<Result> SendPacketAsync(IPacket packet, CancellationToken ct = default);
-
-    /// <summary>
     /// Sends the given raw packet string.
     /// </summary>
     /// <param name="packetString">The packed string to send in plain text.</param>
@@ -47,14 +39,6 @@ public interface INostaleClient
     /// <param name="ct">The cancellation token for cancelling the operation.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
     public Task<Result> ReceivePacketAsync(string packetString, CancellationToken ct = default);
-
-    /// <summary>
-    /// Receives the given packet.
-    /// </summary>
-    /// <param name="packet">The packet to receive.</param>
-    /// <param name="ct">The cancellation token for cancelling the operation.</param>
-    /// <returns>A result that may or may not have succeeded.</returns>
-    public Task<Result> ReceivePacketAsync(IPacket packet, CancellationToken ct = default);
 
     /// <summary>
     /// Sends the given command to the client.

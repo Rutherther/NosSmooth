@@ -37,12 +37,6 @@ public class FakeNostaleClient : INostaleClient
     }
 
     /// <inheritdoc />
-    public Task<Result> SendPacketAsync(IPacket packet, CancellationToken ct = default)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    /// <inheritdoc />
     public Task<Result> SendPacketAsync(string packetString, CancellationToken ct = default)
     {
         throw new System.NotImplementedException();
@@ -50,12 +44,6 @@ public class FakeNostaleClient : INostaleClient
 
     /// <inheritdoc />
     public Task<Result> ReceivePacketAsync(string packetString, CancellationToken ct = default)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    /// <inheritdoc />
-    public Task<Result> ReceivePacketAsync(IPacket packet, CancellationToken ct = default)
     {
         throw new System.NotImplementedException();
     }

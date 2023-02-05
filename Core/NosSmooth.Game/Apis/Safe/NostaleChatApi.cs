@@ -18,13 +18,13 @@ namespace NosSmooth.Game.Apis.Safe;
 public class NostaleChatApi
 {
     // TODO: check length of the messages
-    private readonly INostaleClient _client;
+    private readonly ManagedNostaleClient _client;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NostaleChatApi"/> class.
     /// </summary>
     /// <param name="client">The nostale client.</param>
-    public NostaleChatApi(INostaleClient client)
+    public NostaleChatApi(ManagedNostaleClient client)
     {
         _client = client;
     }

@@ -20,7 +20,7 @@ namespace NosSmooth.Extensions.Combat;
 /// </summary>
 public class CombatManager : IStatefulEntity
 {
-    private readonly INostaleClient _client;
+    private readonly ManagedNostaleClient _client;
     private readonly Game.Game _game;
 
     /// <summary>
@@ -28,7 +28,7 @@ public class CombatManager : IStatefulEntity
     /// </summary>
     /// <param name="client">The NosTale client.</param>
     /// <param name="game">The game.</param>
-    public CombatManager(INostaleClient client, Game.Game game)
+    public CombatManager(ManagedNostaleClient client, Game.Game game)
     {
         _client = client;
         _game = game;

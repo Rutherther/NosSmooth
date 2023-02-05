@@ -9,6 +9,13 @@ using NosSmooth.PacketSerializer.Abstractions.Attributes;
 namespace NosSmooth.Core.Packets;
 
 /// <summary>
+/// Arguments for <see cref="IPacketResponder{TPacket}"/>, <see cref="IRawPacketResponder"/>.
+/// </summary>
+/// <param name="Source">The source of the packet.</param>
+/// <param name="PacketString">The packet string.</param>
+public record PacketEventArgs(PacketSource Source, string PacketString);
+
+/// <summary>
 /// Arguments for <see cref="IPacketResponder{TPacket}"/>
 /// </summary>
 /// <param name="Source">The source of the packet.</param>

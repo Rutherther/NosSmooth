@@ -24,8 +24,7 @@ namespace FileClient;
 public class Client : BaseNostaleClient
 {
     private const string LineRegex = ".*\\[(Recv|Send)\\]\t(.*)";
-    private readonly PacketHandler _packetHandler;
-    private readonly IPacketSerializer _packetSerializer;
+    private readonly IPacketHandler _packetHandler;
     private readonly ILogger<Client> _logger;
     private readonly Stream _stream;
 
@@ -35,21 +34,18 @@ public class Client : BaseNostaleClient
     /// <param name="stream">The stream with packets.</param>
     /// <param name="packetHandler">The packet handler.</param>
     /// <param name="commandProcessor">The command processor.</param>
-    /// <param name="packetSerializer">The packet serializer.</param>
     /// <param name="logger">The logger.</param>
     public Client
     (
         Stream stream,
-        PacketHandler packetHandler,
+        IPacketHandler packetHandler,
         CommandProcessor commandProcessor,
-        IPacketSerializer packetSerializer,
         ILogger<Client> logger
     )
-        : base(commandProcessor, packetSerializer)
+        : base(commandProcessor)
     {
         _stream = stream;
         _packetHandler = packetHandler;
-        _packetSerializer = packetSerializer;
         _logger = logger;
     }
 
@@ -78,12 +74,10 @@ public class Client : BaseNostaleClient
             var packetStr = match.Groups[2].Value;
 
             var source = type == "Recv" ? PacketSource.Server : PacketSource.Client;
-            var packet = CreatePacket(packetStr, source);
             Result result = await _packetHandler.HandlePacketAsync
             (
                 this,
                 source,
-                packet,
                 packetStr,
                 stopRequested
             );
@@ -103,7 +97,6 @@ public class Client : BaseNostaleClient
         (
             this,
             PacketSource.Client,
-            CreatePacket(packetString, PacketSource.Client),
             packetString,
             ct
         );
@@ -116,25 +109,8 @@ public class Client : BaseNostaleClient
         (
             this,
             PacketSource.Server,
-            CreatePacket(packetString, PacketSource.Server),
             packetString,
             ct
         );
-    }
-
-    private IPacket CreatePacket(string packetStr, PacketSource source)
-    {
-        var packetResult = _packetSerializer.Deserialize(packetStr, source);
-        if (!packetResult.IsSuccess)
-        {
-            if (packetResult.Error is PacketConverterNotFoundError err)
-            {
-                return new UnresolvedPacket(err.Header, packetStr);
-            }
-
-            return new ParsingFailedPacket(packetResult, packetStr);
-        }
-
-        return packetResult.Entity;
     }
 }

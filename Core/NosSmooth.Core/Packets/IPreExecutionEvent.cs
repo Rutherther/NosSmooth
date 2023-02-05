@@ -35,4 +35,21 @@ public interface IPreExecutionEvent
         CancellationToken ct = default
     )
         where TPacket : IPacket;
+
+    /// <summary>
+    /// Execute the pre execution event.
+    /// </summary>
+    /// <remarks>
+    /// If an error is retuned, the packet responders won't be called.
+    /// </remarks>
+    /// <param name="client">The NosTale client.</param>
+    /// <param name="packetArgs">The packet arguments.</param>
+    /// <param name="ct">The cancellation token for cancelling the operation.</param>
+    /// <returns>A result that may or may not succeed.</returns>
+    public Task<Result> ExecuteBeforeExecutionAsync
+    (
+        INostaleClient client,
+        PacketEventArgs packetArgs,
+        CancellationToken ct = default
+    );
 }

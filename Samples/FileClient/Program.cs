@@ -46,7 +46,7 @@ public static class Program
             {
                 coll.AddHostedService<App>();
 
-                coll.AddNostaleCore()
+                coll.AddManagedNostaleCore()
                     .AddNostaleGame()
                     .AddNostaleDataFiles()
                     .AddPacketResponder<PacketNotFoundResponder>()
@@ -57,9 +57,8 @@ public static class Program
                     });
                 coll.AddSingleton<INostaleClient>(p => new Client(
                     fileStream,
-                    p.GetRequiredService<PacketHandler>(),
+                    p.GetRequiredService<IPacketHandler>(),
                     p.GetRequiredService<CommandProcessor>(),
-                    p.GetRequiredService<IPacketSerializer>(),
                     p.GetRequiredService<ILogger<Client>>()
                 ));
             })

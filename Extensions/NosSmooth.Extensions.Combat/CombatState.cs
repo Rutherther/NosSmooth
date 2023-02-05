@@ -22,7 +22,7 @@ internal class CombatState : ICombatState
     /// <param name="client">The NosTale client.</param>
     /// <param name="game">The game.</param>
     /// <param name="combatManager">The combat manager.</param>
-    public CombatState(INostaleClient client, Game.Game game, CombatManager combatManager)
+    public CombatState(ManagedNostaleClient client, Game.Game game, CombatManager combatManager)
     {
         Client = client;
         Game = game;
@@ -43,7 +43,7 @@ internal class CombatState : ICombatState
     public Game.Game Game { get; }
 
     /// <inheritdoc/>
-    public INostaleClient Client { get; }
+    public ManagedNostaleClient Client { get; }
 
     /// <summary>
     /// Gets whether the manager may currently quit.

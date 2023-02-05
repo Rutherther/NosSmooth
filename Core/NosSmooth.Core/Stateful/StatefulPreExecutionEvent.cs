@@ -41,8 +41,17 @@ internal class StatefulPreExecutionEvent : IPreExecutionEvent, IPreCommandExecut
         return Task.FromResult(Result.FromSuccess());
     }
 
+    /// <inheritdoc/>
+    public Task<Result> ExecuteBeforeExecutionAsync
+        (INostaleClient client, PacketEventArgs packetArgs, CancellationToken ct = default)
+    {
+        _injector.Client = client;
+        return Task.FromResult(Result.FromSuccess());
+    }
+
     /// <inheritdoc />
-    public Task<Result> ExecuteBeforeCommandAsync<TCommand>(INostaleClient client, TCommand command, CancellationToken ct = default)
+    public Task<Result> ExecuteBeforeCommandAsync<TCommand>
+        (INostaleClient client, TCommand command, CancellationToken ct = default)
         where TCommand : ICommand
     {
         _injector.Client = client;

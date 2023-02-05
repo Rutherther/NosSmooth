@@ -22,51 +22,27 @@ namespace NosSmooth.Core.Client;
 public abstract class BaseNostaleClient : INostaleClient
 {
     private readonly CommandProcessor _commandProcessor;
-    private readonly IPacketSerializer _packetSerializer;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BaseNostaleClient"/> class.
     /// </summary>
     /// <param name="commandProcessor">The command processor.</param>
-    /// <param name="packetSerializer">The packet serializer.</param>
     protected BaseNostaleClient
     (
-        CommandProcessor commandProcessor,
-        IPacketSerializer packetSerializer
+        CommandProcessor commandProcessor
     )
     {
         _commandProcessor = commandProcessor;
-        _packetSerializer = packetSerializer;
     }
 
     /// <inheritdoc />
     public abstract Task<Result> RunAsync(CancellationToken stopRequested = default);
 
     /// <inheritdoc />
-    public virtual Task<Result> SendPacketAsync(IPacket packet, CancellationToken ct = default)
-    {
-        var serialized = _packetSerializer.Serialize(packet);
-
-        return serialized.IsSuccess
-            ? SendPacketAsync(serialized.Entity, ct)
-            : Task.FromResult(Result.FromError(serialized));
-    }
-
-    /// <inheritdoc />
     public abstract Task<Result> SendPacketAsync(string packetString, CancellationToken ct = default);
 
     /// <inheritdoc />
     public abstract Task<Result> ReceivePacketAsync(string packetString, CancellationToken ct = default);
-
-    /// <inheritdoc />
-    public virtual Task<Result> ReceivePacketAsync(IPacket packet, CancellationToken ct = default)
-    {
-        var serialized = _packetSerializer.Serialize(packet);
-
-        return serialized.IsSuccess
-            ? ReceivePacketAsync(serialized.Entity, ct)
-            : Task.FromResult(Result.FromError(serialized));
-    }
 
     /// <inheritdoc />
     public Task<Result> SendCommandAsync(ICommand command, CancellationToken ct = default)

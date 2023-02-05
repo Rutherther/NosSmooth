@@ -16,13 +16,13 @@ namespace NosSmooth.Game.Apis.Unsafe;
 /// </summary>
 public class UnsafeMateSkillsApi
 {
-    private readonly INostaleClient _client;
+    private readonly ManagedNostaleClient _client;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UnsafeMateSkillsApi"/> class.
     /// </summary>
     /// <param name="client">The client.</param>
-    public UnsafeMateSkillsApi(INostaleClient client)
+    public UnsafeMateSkillsApi(ManagedNostaleClient client)
     {
         _client = client;
     }

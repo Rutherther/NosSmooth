@@ -35,4 +35,20 @@ public interface IPostExecutionEvent
         CancellationToken ct = default
     )
         where TPacket : IPacket;
+
+    /// <summary>
+    /// Execute the post execution event.
+    /// </summary>
+    /// <param name="client">The NosTale client.</param>
+    /// <param name="packetArgs">The packet arguments.</param>
+    /// <param name="executionResults">The results from the packet responders.</param>
+    /// <param name="ct">The cancellation token for cancelling the operation.</param>
+    /// <returns>A result that may or may not succeed.</returns>
+    public Task<Result> ExecuteAfterExecutionAsync
+    (
+        INostaleClient client,
+        PacketEventArgs packetArgs,
+        IReadOnlyList<Result> executionResults,
+        CancellationToken ct = default
+    );
 }

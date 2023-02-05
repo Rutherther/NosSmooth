@@ -29,7 +29,7 @@ public interface ICombatState
     /// <summary>
     /// Gets the NosTale client.
     /// </summary>
-    public INostaleClient Client { get; }
+    public ManagedNostaleClient Client { get; }
 
     /// <summary>
     /// Gets whether there is an operation that cannot be used

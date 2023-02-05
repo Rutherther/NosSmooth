@@ -23,7 +23,7 @@ namespace NosSmooth.Game.Apis.Unsafe;
 /// </summary>
 public class UnsafeSkillsApi
 {
-    private readonly INostaleClient _client;
+    private readonly ManagedNostaleClient _client;
     private readonly Game _game;
     private readonly Contractor _contractor;
 
@@ -33,7 +33,7 @@ public class UnsafeSkillsApi
     /// <param name="client">The nostale client.</param>
     /// <param name="game">The game.</param>
     /// <param name="contractor">The contractor.</param>
-    public UnsafeSkillsApi(INostaleClient client, Game game, Contractor contractor)
+    public UnsafeSkillsApi(ManagedNostaleClient client, Game game, Contractor contractor)
     {
         _client = client;
         _game = game;
