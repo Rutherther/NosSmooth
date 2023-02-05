@@ -116,6 +116,11 @@ public static class ServiceCollectionExtensions
             return serviceCollection;
         }
 
+        if (responderType.GetInterfaces().Any(i => i == typeof(IRawPacketResponder)))
+        {
+            return serviceCollection.AddScoped(typeof(IRawPacketResponder), responderType);
+        }
+
         if (responderType.GetInterfaces().Any(i => i == typeof(IEveryPacketResponder)))
         {
             return serviceCollection.AddScoped(typeof(IEveryPacketResponder), responderType);
