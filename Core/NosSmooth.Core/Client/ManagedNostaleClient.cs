@@ -26,7 +26,7 @@ public class ManagedNostaleClient : INostaleClient
     /// </summary>
     /// <param name="rawClient">The raw nostale client.</param>
     /// <param name="packetSerializer">The packet serializer.</param>
-    protected ManagedNostaleClient
+    public ManagedNostaleClient
     (
         INostaleClient rawClient,
         IPacketSerializer packetSerializer

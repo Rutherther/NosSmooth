@@ -6,7 +6,7 @@
         <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
         <Authors>Rutherther</Authors>
         <Description>NosSmooth Core library allowing implementing nostale client, handling packets and commands.</Description>
-        <VersionPrefix>4.0.1</VersionPrefix>
+        <VersionPrefix>4.0.2</VersionPrefix>
         <PackageReleaseNotes>Support raw packet resopnder inside of AddPacketResponder.</PackageReleaseNotes>
     </PropertyGroup>
 
