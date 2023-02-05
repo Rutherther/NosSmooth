@@ -6,9 +6,8 @@
         <LangVersion>10</LangVersion>
         <TargetFramework>net7.0</TargetFramework>
         <Description>NosSmooth Game library handling the current game state by responding to packets.</Description>
-        <VersionPrefix>2.4.2</VersionPrefix>
-        <PackageReleaseNotes>Remove passives from player skills.
-        Change position of caster when receiving su packet.</PackageReleaseNotes>
+        <VersionPrefix>2.5.0</VersionPrefix>
+        <PackageReleaseNotes>Use new managed client.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
