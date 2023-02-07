@@ -25,7 +25,7 @@ namespace NosSmooth.Packets.Server.Maps;
 /// <param name="IsSitting">Whether the entity is sitting.</param>
 /// <param name="MorphVNum">The id of the morph (for special cards an such).</param>
 /// <param name="Name">The name of the entity, if any.</param>
-/// <param name="Unknown">Unknown.</param>
+/// <param name="IsPartner">Whether the entity is a partner.</param>
 /// <param name="Unknown2">Unknown.</param>
 /// <param name="Unknown3">Unknown.</param>
 /// <param name="Skill1">The first skill VNum of the entity.</param>
