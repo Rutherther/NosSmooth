@@ -199,7 +199,9 @@ public class InResponder : IPacketResponder<InPacket>
             Position = new Position(packet.PositionX, packet.PositionY),
             IsInvisible = nonPlayerSubPacket.IsInvisible,
             Level = monsterInfo?.Level ?? null,
-            IsSitting = nonPlayerSubPacket.IsSitting
+            IsSitting = nonPlayerSubPacket.IsSitting,
+            OwnerId = nonPlayerSubPacket.OwnerId,
+            IsPartner = nonPlayerSubPacket.IsPartner
         };
     }
 

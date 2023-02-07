@@ -28,6 +28,11 @@ public class Npc : ILivingEntity
     /// <inheritdoc/>
     public long Id { get; set; }
 
+    /// <summary>
+    /// Gets or sets the id of the owner, if any.
+    /// </summary>
+    public long? OwnerId { get; set; }
+
     /// <inheritdoc/>
     public string? Name { get; set; }
 
@@ -39,6 +44,11 @@ public class Npc : ILivingEntity
 
     /// <inheritdoc />
     public bool CantAttack { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the entity is a partner.
+    /// </summary>
+    public bool? IsPartner { get; set; }
 
     /// <inheritdoc/>
     public Position? Position { get; set; }

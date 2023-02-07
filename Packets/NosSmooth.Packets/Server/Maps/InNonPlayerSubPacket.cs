@@ -62,7 +62,7 @@ public record InNonPlayerSubPacket
     [PacketIndex(9)]
     NameString? Name,
     [PacketIndex(10)]
-    string? Unknown,
+    bool? IsPartner,
     [PacketIndex(11)]
     string? Unknown2,
     [PacketIndex(12)]
