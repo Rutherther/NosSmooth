@@ -65,7 +65,7 @@ public class DropResponder : IPacketResponder<DropPacket>
             Id = packet.DropId,
             IsQuestRelated = packet.IsQuestRelated,
             ItemInfo = itemInfo,
-            OwnerId = null,
+            OwnerId = packet.OwnerId,
             Position = new Position
             (
                 packet.X,
