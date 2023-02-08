@@ -24,6 +24,11 @@ You can find the samples in `Samples` folder in this repository,
 [NosSmooth.Remote](https://github.com/Rutherther/NosSmooth.Remote) repository.~~
 
 ## Projects that use NosSmooth
+- [Rutherther/NosSmooth.Local](https://github.com/Rutherther/NosSmooth.Local) A set of libraries used for injecting into a running NosTale instance, hooking some functions and reading memory
+- [Rutherther/NosSmooth.Comms](https://github.com/Rutherther/NosSmooth.Comms) A set of libraries used for communicating with a NosTale project using named pipes or tcp. Uses NosSmooth.Local
+- [Rutherther/NosTale-PacketLogger](https://github.com/Rutherther/NosTale-PacketLogger) A standalone packet logger that may open and filter packet files or connect to a running NosTale instance using named pipes
+- [Rutherther/NosTale-Anonymizer](https://github.com/Rutherther/NosTale-Anonymizer) A CLI used for changing names and ids inside of logged packets to make the contents anonymous, untraceable, but keep them consistent
+
 
 ## Features
 
