@@ -9,6 +9,9 @@ using NosSmooth.Core.Extensions;
 using NosSmooth.Core.Packets;
 using NosSmooth.Data.Abstractions;
 using NosSmooth.Game.Data.Maps;
+using NosSmooth.Game.Events.Characters;
+using NosSmooth.Game.Events.Core;
+using NosSmooth.Game.Events.Map;
 using NosSmooth.Packets.Server.Maps;
 using Remora.Results;
 
@@ -20,6 +23,7 @@ namespace NosSmooth.Game.PacketHandlers.Map;
 public class CMapResponder : IPacketResponder<CMapPacket>
 {
     private readonly Game _game;
+    private readonly EventDispatcher _eventDispatcher;
     private readonly IInfoService _infoService;
     private readonly ILogger<CMapResponder> _logger;
 
@@ -27,11 +31,19 @@ public class CMapResponder : IPacketResponder<CMapPacket>
     /// Initializes a new instance of the <see cref="CMapResponder"/> class.
     /// </summary>
     /// <param name="game">The nostale game.</param>
+    /// <param name="eventDispatcher">The event dispatcher.</param>
     /// <param name="infoService">The info service.</param>
     /// <param name="logger">The logger.</param>
-    public CMapResponder(Game game, IInfoService infoService, ILogger<CMapResponder> logger)
+    public CMapResponder
+    (
+        Game game,
+        EventDispatcher eventDispatcher,
+        IInfoService infoService,
+        ILogger<CMapResponder> logger
+    )
     {
         _game = game;
+        _eventDispatcher = eventDispatcher;
         _infoService = infoService;
         _logger = logger;
     }
@@ -51,7 +63,8 @@ public class CMapResponder : IPacketResponder<CMapPacket>
             );
         }
 
-        await _game.CreateMapAsync
+        var previousMap = _game.CurrentMap;
+        var currentMap = await _game.CreateMapAsync
         (
             () =>
             {
@@ -84,6 +97,6 @@ public class CMapResponder : IPacketResponder<CMapPacket>
             ct: ct
         );
 
-        return Result.FromSuccess();
+        return await _eventDispatcher.DispatchEvent(new MapChangedEvent(previousMap, _game.CurrentMap), ct);
     }
 }
