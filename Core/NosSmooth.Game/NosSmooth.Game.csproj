@@ -6,8 +6,8 @@
         <LangVersion>10</LangVersion>
         <TargetFramework>net7.0</TargetFramework>
         <Description>NosSmooth Game library handling the current game state by responding to packets.</Description>
-        <VersionPrefix>2.5.0</VersionPrefix>
-        <PackageReleaseNotes>Use new managed client.</PackageReleaseNotes>
+        <VersionPrefix>2.5.1</VersionPrefix>
+        <PackageReleaseNotes>Pass OwnerId from DropPacket to GroundItem.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
