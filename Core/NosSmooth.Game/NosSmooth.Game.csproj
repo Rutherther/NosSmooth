@@ -6,8 +6,9 @@
         <LangVersion>10</LangVersion>
         <TargetFramework>net7.0</TargetFramework>
         <Description>NosSmooth Game library handling the current game state by responding to packets.</Description>
-        <VersionPrefix>2.5.1</VersionPrefix>
-        <PackageReleaseNotes>Pass OwnerId from DropPacket to GroundItem.</PackageReleaseNotes>
+        <VersionPrefix>2.5.2</VersionPrefix>
+        <PackageReleaseNotes>Dispatch MapChangedEvent upon CMap received.
+Pass OwnerId of npc, detect if npc is a partner from in packet.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
