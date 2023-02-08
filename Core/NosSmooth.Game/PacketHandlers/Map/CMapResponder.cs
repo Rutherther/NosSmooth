@@ -97,6 +97,11 @@ public class CMapResponder : IPacketResponder<CMapPacket>
             ct: ct
         );
 
-        return await _eventDispatcher.DispatchEvent(new MapChangedEvent(previousMap, _game.CurrentMap), ct);
+        if (currentMap is not null)
+        {
+            return await _eventDispatcher.DispatchEvent(new MapChangedEvent(previousMap, currentMap), ct);
+        }
+
+        return Result.FromSuccess();
     }
 }

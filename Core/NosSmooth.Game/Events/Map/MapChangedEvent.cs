@@ -14,5 +14,5 @@ namespace NosSmooth.Game.Events.Map;
 public record MapChangedEvent
 (
     Data.Maps.Map? PreviousMap,
-    Data.Maps.Map? CurrentMap
+    Data.Maps.Map CurrentMap
 ) : IGameEvent;
