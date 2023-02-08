@@ -201,7 +201,7 @@ public class InResponder : IPacketResponder<InPacket>
             Level = monsterInfo?.Level ?? null,
             IsSitting = nonPlayerSubPacket.IsSitting,
             OwnerId = nonPlayerSubPacket.OwnerId,
-            IsPartner = nonPlayerSubPacket.IsPartner
+            IsPartner = nonPlayerSubPacket.PartnerMask == 1
         };
     }
 
