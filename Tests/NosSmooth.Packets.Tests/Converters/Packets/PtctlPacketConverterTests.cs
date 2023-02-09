@@ -61,7 +61,9 @@ public class PtctlPacketConverterTests
                     {
                         new PtctlSubPacket(123, 26, 21)
                     }
-                )
+                ),
+                123,
+                13
             )
         );
     }
