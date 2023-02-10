@@ -5,6 +5,7 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using NosSmooth.Data.Abstractions.Infos;
+using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Info;
 using NosSmooth.Packets.Enums.Entities;
 
@@ -82,4 +83,9 @@ public class Npc : ILivingEntity
 
     /// <inheritdoc/>
     public IReadOnlyList<short>? EffectsVNums { get; set; }
+
+    /// <summary>
+    /// Gets or sets the skills.
+    /// </summary>
+    public IReadOnlyList<Skill>? Skills { get; set; }
 }
