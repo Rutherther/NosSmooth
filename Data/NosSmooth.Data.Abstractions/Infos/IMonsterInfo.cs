@@ -22,4 +22,24 @@ public interface IMonsterInfo : IVNumInfo
     /// Gets the default level of the monster.
     /// </summary>
     ushort Level { get; }
+
+    /// <summary>
+    /// Gets the default Range of the monster.
+    /// </summary>
+    short Range { get; }
+
+    /// <summary>
+    /// Gets the default NoticeRange of the monster.
+    /// </summary>
+    short NoticeRange { get; }
+
+    /// <summary>
+    /// Gets the default castTime of the monster.
+    /// </summary>
+    int CastTime { get; }
+
+    /// <summary>
+    /// Gets if the monster is Hostile.
+    /// </summary>
+    bool Hostile { get; }
 }
