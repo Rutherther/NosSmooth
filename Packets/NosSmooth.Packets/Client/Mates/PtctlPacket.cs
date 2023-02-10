@@ -14,8 +14,8 @@ namespace NosSmooth.Packets.Client.Mates;
 /// <param name="MapId">The current map id.</param>
 /// <param name="ControlsCount">The count of controls in array.</param>
 /// <param name="Controls">The array containing the mates to move and positions to move them to.</param>
-/// <param name="Unknown">Seems to always be euqal to first EntityId in Controls.</param>
-/// <param name="Unknown1">Seems to always be 9.</param>
+/// <param name="EntityId">Seems to always be euqal to first EntityId in Controls.</param>
+/// <param name="Speed">The movement speed.</param>
 [PacketHeader("ptctl", PacketSource.Server)]
 [GenerateSerializer(true)]
 public record PtctlPacket
@@ -27,7 +27,7 @@ public record PtctlPacket
     [PacketContextList(2, "ControlsCount", ListSeparator = ' ', InnerSeparator = ' ')]
     IReadOnlyList<PtctlSubPacket> Controls,
     [PacketIndex(3)]
-    long Unknown,
+    long EntityId,
     [PacketIndex(4)]
-    short Unknown1
+    short Speed
 ) : IPacket;
