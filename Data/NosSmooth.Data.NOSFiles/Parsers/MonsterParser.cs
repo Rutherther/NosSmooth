@@ -4,7 +4,6 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using NosSmooth.Data.Abstractions.Enums;
 using NosSmooth.Data.Abstractions.Infos;
 using NosSmooth.Data.Abstractions.Language;
 using NosSmooth.Data.NOSFiles.Parsers.Dat;
@@ -32,6 +31,9 @@ public class MonsterParser : IInfoParser<IMonsterInfo>
 
             var vnum = item.GetEntry("VNUM").Read<int>(1);
             var nameKey = item.GetEntry("NAME").Read<string>(1);
+            var zSkill = item.GetEntry("ZSKILL");
+            var preatt = item.GetEntry("PREATT");
+
             result.Add
             (
                 vnum,
@@ -39,7 +41,11 @@ public class MonsterParser : IInfoParser<IMonsterInfo>
                 (
                     vnum,
                     new TranslatableString(TranslationRoot.Monster, nameKey),
-                    item.GetEntry("LEVEL").Read<ushort>(1)
+                    item.GetEntry("LEVEL").Read<ushort>(1),
+                    zSkill.Read<short>(2),
+                    preatt.Read<short>(2),
+                    zSkill.Read<int>(3),
+                    preatt.Read<int>(1) == 0
                 )
             );
         }
@@ -47,5 +53,5 @@ public class MonsterParser : IInfoParser<IMonsterInfo>
         return result;
     }
 
-    private record MonsterInfo(int VNum, TranslatableString Name, ushort Level) : IMonsterInfo;
+    private record MonsterInfo(int VNum, TranslatableString Name, ushort Level, short Range, short NoticeRange, int CastTime, bool Hostile) : IMonsterInfo;
 }

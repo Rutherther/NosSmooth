@@ -166,7 +166,11 @@ public class DatabaseMigrator
             {
                 VNum = monster.VNum,
                 NameKey = monster.Name.Key,
-                Level = monster.Level
+                Level = monster.Level,
+                Range = monster.Range,
+                NoticeRange = monster.NoticeRange,
+                CastTime = monster.CastTime,
+                Hostile = monster.Hostile,
             };
             dbContext.Add(monsterInfo);
         }

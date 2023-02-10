@@ -39,4 +39,16 @@ public class MonsterInfo : IMonsterInfo
 
     /// <inheritdoc />
     public ushort Level { get; set; }
+
+    /// <inheritdoc />
+    public short Range { get; set; }
+
+    /// <inheritdoc />
+    public short NoticeRange { get; set; }
+
+    /// <inheritdoc />
+    public int CastTime { get; set; }
+
+    /// <inheritdoc />
+    public bool Hostile { get; set; }
 }
