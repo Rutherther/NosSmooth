@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using NosSmooth.Core.Extensions;
 using NosSmooth.Core.Packets;
 using NosSmooth.Data.Abstractions;
+using NosSmooth.Game.Data.Characters;
 using NosSmooth.Game.Data.Entities;
 using NosSmooth.Game.Data.Info;
 using NosSmooth.Game.Data.Social;
@@ -201,7 +202,13 @@ public class InResponder : IPacketResponder<InPacket>
             Level = monsterInfo?.Level ?? null,
             IsSitting = nonPlayerSubPacket.IsSitting,
             OwnerId = nonPlayerSubPacket.OwnerId,
-            IsPartner = nonPlayerSubPacket.PartnerMask == 1
+            IsPartner = nonPlayerSubPacket.PartnerMask == 1,
+            Skills = new Skill[]
+            {
+                await CreateSkill(nonPlayerSubPacket.Skill1, nonPlayerSubPacket.SkillRank1, ct),
+                await CreateSkill(nonPlayerSubPacket.Skill2, nonPlayerSubPacket.SkillRank2, ct),
+                await CreateSkill(nonPlayerSubPacket.Skill3, nonPlayerSubPacket.SkillRank3, ct),
+            }
         };
     }
 
@@ -237,7 +244,29 @@ public class InResponder : IPacketResponder<InPacket>
             Position = new Position(packet.PositionX, packet.PositionY),
             IsInvisible = nonPlayerSubPacket.IsInvisible,
             Level = monsterInfo?.Level ?? null,
-            IsSitting = nonPlayerSubPacket.IsSitting
+            IsSitting = nonPlayerSubPacket.IsSitting,
+            Skills = new Skill[]
+            {
+                await CreateSkill(nonPlayerSubPacket.Skill1, nonPlayerSubPacket.SkillRank1, ct),
+                await CreateSkill(nonPlayerSubPacket.Skill2, nonPlayerSubPacket.SkillRank2, ct),
+                await CreateSkill(nonPlayerSubPacket.Skill3, nonPlayerSubPacket.SkillRank3, ct),
+            }
         };
+    }
+
+    private async Task<Skill> CreateSkill(int vnum, int? level, CancellationToken ct = default)
+    {
+        var skillInfoResult = await _infoService.GetSkillInfoAsync(vnum, ct);
+        if (!skillInfoResult.IsSuccess)
+        {
+            _logger.LogWarning
+            (
+                "Could not obtain a skill info for vnum {vnum}: {error}",
+                vnum,
+                skillInfoResult.ToFullString()
+            );
+        }
+
+        return new Skill(vnum, level, skillInfoResult.Entity);
     }
 }
