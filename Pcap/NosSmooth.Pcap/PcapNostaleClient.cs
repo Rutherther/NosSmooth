@@ -122,7 +122,7 @@ public class PcapNostaleClient : BaseNostaleClient
                     }
                 }
 
-                await Task.Delay(TimeSpan.FromMilliseconds(1), stopRequested);
+                await Task.Delay(TimeSpan.FromMilliseconds(10), stopRequested);
             }
         }
         catch (OperationCanceledException)

@@ -14,7 +14,7 @@ namespace NosSmooth.Pcap;
 /// </summary>
 public class ProcessTcpManager
 {
-    private static TimeSpan RefreshInterval = TimeSpan.FromMilliseconds(0.99);
+    private static TimeSpan RefreshInterval = TimeSpan.FromMilliseconds(9.99);
 
     private readonly SemaphoreSlim _semaphore;
     private readonly List<int> _processes;
