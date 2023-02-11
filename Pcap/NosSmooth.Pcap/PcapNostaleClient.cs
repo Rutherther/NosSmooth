@@ -31,6 +31,7 @@ namespace NosSmooth.Pcap;
 public class PcapNostaleClient : BaseNostaleClient
 {
     private readonly Process _process;
+    private readonly Encoding _encoding;
     private readonly PcapNostaleManager _pcapManager;
     private readonly ProcessTcpManager _processTcpManager;
     private readonly IPacketHandler _handler;
@@ -44,6 +45,7 @@ public class PcapNostaleClient : BaseNostaleClient
     /// </summary>
     /// <param name="process">The process to look for.</param>
     /// <param name="encryptionKey">The current encryption key of the world connection, if known. Zero if unknown.</param>
+    /// <param name="encoding">The encoding.</param>
     /// <param name="pcapManager">The pcap manager.</param>
     /// <param name="processTcpManager">The process manager.</param>
     /// <param name="handler">The packet handler.</param>
@@ -52,6 +54,7 @@ public class PcapNostaleClient : BaseNostaleClient
     (
         Process process,
         int encryptionKey,
+        Encoding encoding,
         PcapNostaleManager pcapManager,
         ProcessTcpManager processTcpManager,
         IPacketHandler handler,
@@ -60,6 +63,7 @@ public class PcapNostaleClient : BaseNostaleClient
         : base(commandProcessor)
     {
         _process = process;
+        _encoding = encoding;
         _pcapManager = pcapManager;
         _processTcpManager = processTcpManager;
         _handler = handler;
@@ -179,7 +183,7 @@ public class PcapNostaleClient : BaseNostaleClient
             source = PacketSource.Client;
             if (_crypto.EncryptionKey == 0)
             {
-                var worldDecrypted = _crypto.ServerWorld.Decrypt(payloadData, Encoding.Default);
+                var worldDecrypted = _crypto.ServerWorld.Decrypt(payloadData, _encoding).Trim();
 
                 var splitted = worldDecrypted.Split(' ');
                 if (splitted.Length == 2 && int.TryParse(splitted[1], out var encryptionKey))
@@ -190,12 +194,12 @@ public class PcapNostaleClient : BaseNostaleClient
                 }
                 else
                 { // doesn't look like first packet from world, so assume login.
-                    data = _crypto.ServerLogin.Decrypt(payloadData, Encoding.Default);
+                    data = _crypto.ServerLogin.Decrypt(payloadData, _encoding);
                 }
             }
             else
             {
-                data = _crypto.ServerWorld.Decrypt(payloadData, Encoding.Default);
+                data = _crypto.ServerWorld.Decrypt(payloadData, _encoding);
                 containsPacketId = true;
             }
         }
@@ -204,11 +208,11 @@ public class PcapNostaleClient : BaseNostaleClient
             source = PacketSource.Server;
             if (_crypto.EncryptionKey == 0)
             { // probably login
-                data = _crypto.ClientLogin.Decrypt(payloadData, Encoding.Default);
+                data = _crypto.ClientLogin.Decrypt(payloadData, _encoding);
             }
             else
             {
-                data = _crypto.ClientWorld.Decrypt(payloadData, Encoding.Default);
+                data = _crypto.ClientWorld.Decrypt(payloadData, _encoding);
             }
         }
 
@@ -222,9 +226,7 @@ public class PcapNostaleClient : BaseNostaleClient
                     linePacket = line.Substring(line.IndexOf(' ') + 1);
                 }
 
-                Console.WriteLine(linePacket);
-
-                // _handler.HandlePacketAsync(this, source, linePacket, _stoppingToken ?? default);
+                _handler.HandlePacketAsync(this, source, linePacket.Trim(), _stoppingToken ?? default);
             }
 
         }
