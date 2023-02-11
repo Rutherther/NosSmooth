@@ -33,7 +33,7 @@ public class ClientWorldCryptography : ICryptography
     public string Decrypt(in ReadOnlySpan<byte> bytes, Encoding encoding)
     {
         int index = 0;
-        var currentPacket = new StringBuilder();
+        var currentPacket = new List<byte>();
 
         while (index < bytes.Length)
         {
@@ -41,7 +41,7 @@ public class ClientWorldCryptography : ICryptography
 
             if (currentByte == 0xFF)
             {
-                currentPacket.Append('\n');
+                currentPacket.Add((byte)'\n');
                 continue;
             }
 
@@ -64,7 +64,7 @@ public class ClientWorldCryptography : ICryptography
 
                         if (first != 0x6E)
                         {
-                            currentPacket.Append(first);
+                            currentPacket.Add((byte)first);
                         }
 
                         if (length <= 1)
@@ -82,7 +82,7 @@ public class ClientWorldCryptography : ICryptography
 
                         if (second != 0x6E)
                         {
-                            currentPacket.Append(second);
+                            currentPacket.Add((byte)second);
                         }
 
                         length -= 2;
@@ -99,12 +99,12 @@ public class ClientWorldCryptography : ICryptography
                 {
                     if (index < bytes.Length)
                     {
-                        currentPacket.Append((char)(bytes[index] ^ 0xFF));
+                        currentPacket.Add((byte)(bytes[index] ^ 0xFF));
                         index++;
                     }
                     else if (index == bytes.Length)
                     {
-                        currentPacket.Append((char)0xFF);
+                        currentPacket.Add((byte)'\n');
                         index++;
                     }
 
@@ -113,7 +113,8 @@ public class ClientWorldCryptography : ICryptography
             }
         }
 
-        return currentPacket.ToString();
+        byte[] tmp = Encoding.Convert(encoding, Encoding.UTF8, currentPacket.ToArray());
+        return Encoding.UTF8.GetString(tmp);
     }
 
     /// <inheritdoc />
