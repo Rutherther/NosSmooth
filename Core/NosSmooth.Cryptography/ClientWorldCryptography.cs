@@ -113,7 +113,7 @@ public class ClientWorldCryptography : ICryptography
             }
         }
 
-        return string.Concat(currentPacket.Cast<char>());
+        return string.Concat(currentPacket.Select(x => (char)x));
 
         // byte[] tmp = Encoding.Convert(encoding, Encoding.UTF8, currentPacket.ToArray());
         // return Encoding.UTF8.GetString(tmp);
