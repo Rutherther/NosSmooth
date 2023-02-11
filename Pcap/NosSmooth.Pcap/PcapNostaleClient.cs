@@ -39,6 +39,7 @@ public class PcapNostaleClient : BaseNostaleClient
     private int _localPort;
     private long _localAddr;
     private CancellationToken? _stoppingToken;
+    private bool _running;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PcapNostaleClient"/> class.
@@ -74,6 +75,13 @@ public class PcapNostaleClient : BaseNostaleClient
     /// <inheritdoc />
     public override async Task<Result> RunAsync(CancellationToken stopRequested = default)
     {
+        if (_running)
+        {
+            return Result.FromSuccess();
+        }
+
+        _running = true;
+
         _stoppingToken = stopRequested;
         TcpConnection? lastConnection = null;
         TcpConnection? reverseLastConnection = null;
@@ -150,6 +158,8 @@ public class PcapNostaleClient : BaseNostaleClient
             {
                 _pcapManager.UnregisterConnection(reverseLastConnection.Value);
             }
+
+            _running = false;
         }
 
         return Result.FromSuccess();
