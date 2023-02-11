@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="SharpPcap" Version="6.2.5" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Core\NosSmooth.Core\NosSmooth.Core.csproj" />
+      <ProjectReference Include="..\..\Core\NosSmooth.Cryptography\NosSmooth.Cryptography.csproj" />
+    </ItemGroup>
+
+</Project>
