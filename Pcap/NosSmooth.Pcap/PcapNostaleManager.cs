@@ -7,6 +7,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net;
+using Microsoft.Extensions.Logging;
 using SharpPcap;
 using SharpPcap.LibPcap;
 
@@ -17,16 +18,21 @@ namespace NosSmooth.Pcap;
 /// </summary>
 public class PcapNostaleManager
 {
+    private readonly ILogger<PcapNostaleManager> _logger;
     private readonly ConcurrentDictionary<TcpConnection, ConnectionData> _connections;
     private readonly ConcurrentDictionary<TcpConnection, PcapNostaleClient> _clients;
+    private Task? _deletionTask;
+    private CancellationTokenSource? _deletionTaskCancellationSource;
     private int _clientsCount;
     private bool _started;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PcapNostaleManager"/> class.
     /// </summary>
-    public PcapNostaleManager()
+    /// <param name="logger">The logger.</param>
+    public PcapNostaleManager(ILogger<PcapNostaleManager> logger)
     {
+        _logger = logger;
         _connections = new ConcurrentDictionary<TcpConnection, ConnectionData>();
         _clients = new ConcurrentDictionary<TcpConnection, PcapNostaleClient>();
     }
@@ -99,6 +105,16 @@ public class PcapNostaleManager
         {
             device.StopCapture();
         }
+
+        var task = _deletionTask;
+        _deletionTask = null;
+
+        _deletionTaskCancellationSource?.Cancel();
+        _deletionTaskCancellationSource?.Dispose();
+        _deletionTaskCancellationSource = null;
+
+        task?.GetAwaiter().GetResult();
+        task?.Dispose();
     }
 
     /// <summary>
@@ -112,6 +128,8 @@ public class PcapNostaleManager
         }
 
         _started = true;
+        _deletionTaskCancellationSource = new CancellationTokenSource();
+        _deletionTask = Task.Run(() => DeletionTask(_deletionTaskCancellationSource.Token));
 
         foreach (var device in LibPcapLiveDeviceList.Instance)
         {
@@ -169,14 +187,47 @@ public class PcapNostaleManager
         }
 
         var data = _connections[tcpConnection];
-        if (data.SniffedData.Count < 5)
+        if (data.SniffedData.Count < 5 && data.FirstObservedAt.AddSeconds(10) > DateTimeOffset.Now)
         {
             data.SniffedData.Add(tcpPacket.PayloadData);
-        } // TODO: clean up the sniffed data in case they are not needed.
+        }
 
         if (_clients.TryGetValue(tcpConnection, out var client))
         {
             client.OnPacketArrival(tcpConnection, tcpPacket.PayloadData);
+        }
+    }
+
+    private async Task DeletionTask(CancellationToken ct)
+    {
+        while (!ct.IsCancellationRequested)
+        {
+            try
+            {
+                foreach (var connectionData in _connections)
+                {
+                    if (connectionData.Value.FirstObservedAt.AddMinutes(10) < DateTimeOffset.Now)
+                    {
+                        _connections.TryRemove(connectionData);
+                    }
+
+                    if (connectionData.Value.SniffedData.Count > 0 && connectionData.Value.FirstObservedAt.AddSeconds
+                            (10) < DateTimeOffset.Now)
+                    {
+                        connectionData.Value.SniffedData.Clear();
+                    }
+                }
+
+                await Task.Delay(TimeSpan.FromSeconds(30), ct);
+            }
+            catch (OperationCanceledException)
+            {
+                // ignored
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "The pcap manager deletion task has thrown an exception");
+            }
         }
     }
 }
