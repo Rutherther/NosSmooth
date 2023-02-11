@@ -156,7 +156,7 @@ public class PcapNostaleManager
             return;
         }
 
-        if (!tcpPacket.HasPayloadData || tcpPacket.PayloadData.Length == 0 || tcpPacket.PayloadData.Length > 500)
+        if (!tcpPacket.HasPayloadData || tcpPacket.PayloadData.Length == 0)
         {
             return;
         }
@@ -187,7 +187,8 @@ public class PcapNostaleManager
         }
 
         var data = _connections[tcpConnection];
-        if (data.SniffedData.Count < 5 && data.FirstObservedAt.AddSeconds(10) > DateTimeOffset.Now)
+        if (data.SniffedData.Count < 5 && tcpPacket.PayloadData.Length < 500
+            && data.FirstObservedAt.AddSeconds(10) > DateTimeOffset.Now)
         {
             data.SniffedData.Add(tcpPacket.PayloadData);
         }
