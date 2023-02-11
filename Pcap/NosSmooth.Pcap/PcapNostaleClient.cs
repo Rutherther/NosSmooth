@@ -40,7 +40,9 @@ public class PcapNostaleClient : BaseNostaleClient
     private CryptographyManager _crypto;
     private CancellationToken? _stoppingToken;
     private bool _running;
+    private LibPcapLiveDevice? _lastDevice;
     private TcpConnection _connection;
+    private long _lastPacketIndex;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PcapNostaleClient"/> class.
@@ -183,15 +185,18 @@ public class PcapNostaleClient : BaseNostaleClient
     /// <summary>
     /// Called when an associated packet has been obtained.
     /// </summary>
+    /// <param name="device">The device the packet was received at.</param>
     /// <param name="connection">The connection that obtained the packet.</param>
     /// <param name="payloadData">The raw payload data of the packet.</param>
-    internal void OnPacketArrival(TcpConnection connection, byte[] payloadData)
+    internal void OnPacketArrival(LibPcapLiveDevice? device, TcpConnection connection, byte[] payloadData)
     {
+        _lastDevice = device;
+
         string data;
         PacketSource source;
         bool containsPacketId = false;
 
-        if (connection.LocalAddr == _localAddr && connection.LocalPort == _localPort)
+        if (connection.LocalAddr == _connection.LocalAddr && connection.LocalPort == _connection.LocalPort)
         { // sent packet
             source = PacketSource.Client;
             if (_crypto.EncryptionKey == 0)
@@ -236,6 +241,7 @@ public class PcapNostaleClient : BaseNostaleClient
                 var linePacket = line;
                 if (containsPacketId)
                 {
+                    _lastPacketIndex = int.Parse(line.Substring(0, line.IndexOf(' ')));
                     linePacket = line.Substring(line.IndexOf(' ') + 1);
                 }
 
