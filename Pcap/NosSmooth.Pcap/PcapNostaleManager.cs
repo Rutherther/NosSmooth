@@ -8,6 +8,8 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using PacketDotNet;
 using SharpPcap;
 using SharpPcap.LibPcap;
 
@@ -19,6 +21,7 @@ namespace NosSmooth.Pcap;
 public class PcapNostaleManager
 {
     private readonly ILogger<PcapNostaleManager> _logger;
+    private readonly PcapNostaleOptions _options;
     private readonly ConcurrentDictionary<TcpConnection, ConnectionData> _connections;
     private readonly ConcurrentDictionary<TcpConnection, PcapNostaleClient> _clients;
     private Task? _deletionTask;
@@ -30,9 +33,11 @@ public class PcapNostaleManager
     /// Initializes a new instance of the <see cref="PcapNostaleManager"/> class.
     /// </summary>
     /// <param name="logger">The logger.</param>
-    public PcapNostaleManager(ILogger<PcapNostaleManager> logger)
+    /// <param name="options">The options.</param>
+    public PcapNostaleManager(ILogger<PcapNostaleManager> logger, IOptions<PcapNostaleOptions> options)
     {
         _logger = logger;
+        _options = options.Value;
         _connections = new ConcurrentDictionary<TcpConnection, ConnectionData>();
         _clients = new ConcurrentDictionary<TcpConnection, PcapNostaleClient>();
     }
@@ -79,7 +84,7 @@ public class PcapNostaleManager
         {
             foreach (var sniffedPacket in data.SniffedData)
             {
-                client.OnPacketArrival(connection, sniffedPacket);
+                client.OnPacketArrival(null, connection, sniffedPacket);
             }
         }
     }
@@ -147,7 +152,6 @@ public class PcapNostaleManager
     private void DeviceOnOnPacketArrival(object sender, PacketCapture e)
     {
         var rawPacket = e.GetPacket();
-
         var packet = PacketDotNet.Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
 
         var tcpPacket = packet.Extract<PacketDotNet.TcpPacket>();
@@ -188,14 +192,14 @@ public class PcapNostaleManager
 
         var data = _connections[tcpConnection];
         if (data.SniffedData.Count < 5 && tcpPacket.PayloadData.Length < 500
-            && data.FirstObservedAt.AddSeconds(10) > DateTimeOffset.Now)
+            && data.FirstObservedAt.AddMilliseconds(_options.CleanSniffedDataInterval) > DateTimeOffset.Now)
         {
             data.SniffedData.Add(tcpPacket.PayloadData);
         }
 
         if (_clients.TryGetValue(tcpConnection, out var client))
         {
-            client.OnPacketArrival(tcpConnection, tcpPacket.PayloadData);
+            client.OnPacketArrival((LibPcapLiveDevice)e.Device, tcpConnection, tcpPacket.PayloadData);
         }
     }
 
@@ -207,19 +211,19 @@ public class PcapNostaleManager
             {
                 foreach (var connectionData in _connections)
                 {
-                    if (connectionData.Value.FirstObservedAt.AddMinutes(10) < DateTimeOffset.Now)
+                    if (connectionData.Value.FirstObservedAt.AddMilliseconds(_options.ForgetConnectionInterval) < DateTimeOffset.Now)
                     {
                         _connections.TryRemove(connectionData);
                     }
 
-                    if (connectionData.Value.SniffedData.Count > 0 && connectionData.Value.FirstObservedAt.AddSeconds
-                            (10) < DateTimeOffset.Now)
+                    if (connectionData.Value.SniffedData.Count > 0 && connectionData.Value.FirstObservedAt.AddMilliseconds
+                            (_options.CleanSniffedDataInterval) < DateTimeOffset.Now)
                     {
                         connectionData.Value.SniffedData.Clear();
                     }
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(30), ct);
+                await Task.Delay(TimeSpan.FromSeconds(_options.CleanSniffedDataInterval * 3), ct);
             }
             catch (OperationCanceledException)
             {

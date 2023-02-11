@@ -5,6 +5,7 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics;
+using Microsoft.Extensions.Options;
 
 namespace NosSmooth.Pcap;
 
@@ -14,7 +15,7 @@ namespace NosSmooth.Pcap;
 /// </summary>
 public class ProcessTcpManager
 {
-    private static TimeSpan RefreshInterval = TimeSpan.FromMilliseconds(9.99);
+    private readonly PcapNostaleOptions _options;
 
     private readonly SemaphoreSlim _semaphore;
     private readonly List<int> _processes;
@@ -24,8 +25,10 @@ public class ProcessTcpManager
     /// <summary>
     /// Initializes a new instance of the <see cref="ProcessTcpManager"/> class.
     /// </summary>
-    public ProcessTcpManager()
+    /// <param name="options">The options.</param>
+    public ProcessTcpManager(IOptions<PcapNostaleOptions> options)
     {
+        _options = options.Value;
         _lastRefresh = DateTimeOffset.MinValue;
         _semaphore = new SemaphoreSlim(1, 1);
         _processes = new List<int>();
@@ -92,7 +95,7 @@ public class ProcessTcpManager
 
     private async Task Refresh()
     {
-        if (_lastRefresh.Add(RefreshInterval) >= DateTimeOffset.Now)
+        if (_lastRefresh.AddMilliseconds(_options.ProcessRefreshInterval) >= DateTimeOffset.Now)
         {
             return;
         }

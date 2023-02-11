@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Microsoft.Extensions.Options;
 using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands;
 using NosSmooth.Core.Packets;
@@ -35,11 +36,11 @@ public class PcapNostaleClient : BaseNostaleClient
     private readonly PcapNostaleManager _pcapManager;
     private readonly ProcessTcpManager _processTcpManager;
     private readonly IPacketHandler _handler;
+    private readonly PcapNostaleOptions _options;
     private CryptographyManager _crypto;
-    private int _localPort;
-    private long _localAddr;
     private CancellationToken? _stoppingToken;
     private bool _running;
+    private TcpConnection _connection;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PcapNostaleClient"/> class.
@@ -51,6 +52,7 @@ public class PcapNostaleClient : BaseNostaleClient
     /// <param name="processTcpManager">The process manager.</param>
     /// <param name="handler">The packet handler.</param>
     /// <param name="commandProcessor">The command processor.</param>
+    /// <param name="options">The options.</param>
     public PcapNostaleClient
     (
         Process process,
@@ -59,7 +61,8 @@ public class PcapNostaleClient : BaseNostaleClient
         PcapNostaleManager pcapManager,
         ProcessTcpManager processTcpManager,
         IPacketHandler handler,
-        CommandProcessor commandProcessor
+        CommandProcessor commandProcessor,
+        IOptions<PcapNostaleOptions> options
     )
         : base(commandProcessor)
     {
@@ -68,6 +71,7 @@ public class PcapNostaleClient : BaseNostaleClient
         _pcapManager = pcapManager;
         _processTcpManager = processTcpManager;
         _handler = handler;
+        _options = options.Value;
         _crypto = new CryptographyManager();
         _crypto.EncryptionKey = encryptionKey;
     }
@@ -118,8 +122,7 @@ public class PcapNostaleClient : BaseNostaleClient
                         var reverseConn = new TcpConnection
                             (conn.RemoteAddr, conn.RemotePort, conn.LocalAddr, conn.LocalPort);
 
-                        _localAddr = conn.LocalAddr;
-                        _localPort = conn.LocalPort;
+                        _connection = conn;
 
                         _pcapManager.RegisterConnection(conn, this);
                         _pcapManager.RegisterConnection(reverseConn, this);
@@ -134,7 +137,7 @@ public class PcapNostaleClient : BaseNostaleClient
                     }
                 }
 
-                await Task.Delay(TimeSpan.FromMilliseconds(10), stopRequested);
+                await Task.Delay(TimeSpan.FromMilliseconds(_options.ProcessRefreshInterval), stopRequested);
             }
         }
         catch (OperationCanceledException)
