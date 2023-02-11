@@ -228,7 +228,7 @@ public class PcapNostaleClient : BaseNostaleClient
 
         if (data.Length > 0)
         {
-            foreach (var line in data.Split('\n'))
+            foreach (var line in data.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
             {
                 var linePacket = line;
                 if (containsPacketId)
