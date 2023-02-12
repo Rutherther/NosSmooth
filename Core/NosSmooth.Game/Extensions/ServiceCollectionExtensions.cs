@@ -72,6 +72,7 @@ public static class ServiceCollectionExtensions
 
             // mates
             .AddPacketResponder<MatesInitResponder>()
+            .AddPacketResponder<PtctlResponder>()
 
             // map
             .AddPacketResponder<AtResponder>()
