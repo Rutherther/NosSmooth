@@ -5,9 +5,9 @@
         <Nullable>enable</Nullable>
         <LangVersion>10</LangVersion>
         <Description>Contains default NosTale packets.</Description>
-        <VersionPrefix>3.5.1</VersionPrefix>
+        <VersionPrefix>3.6.0</VersionPrefix>
         <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
-        <PackageReleaseNotes>Put correct (list) attribute to Pst packet Effects.</PackageReleaseNotes>
+        <PackageReleaseNotes>Add missing ptctl fields.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>

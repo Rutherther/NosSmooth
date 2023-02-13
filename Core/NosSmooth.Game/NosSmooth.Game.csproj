@@ -6,9 +6,9 @@
         <LangVersion>10</LangVersion>
         <TargetFramework>net7.0</TargetFramework>
         <Description>NosSmooth Game library handling the current game state by responding to packets.</Description>
-        <VersionPrefix>2.5.2</VersionPrefix>
-        <PackageReleaseNotes>Dispatch MapChangedEvent upon CMap received.
-Pass OwnerId of npc, detect if npc is a partner from in packet.</PackageReleaseNotes>
+        <VersionPrefix>2.6.0</VersionPrefix>
+        <PackageReleaseNotes>Fix some events not getting called.
+Add Ptctl handling for updating mates positions.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>

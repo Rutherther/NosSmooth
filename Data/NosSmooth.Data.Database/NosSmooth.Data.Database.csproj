@@ -5,9 +5,9 @@
         <Nullable>enable</Nullable>
         <Description>Nos smooth's database implementation of NosTale data using EF core.</Description>
         <LangVersion>10</LangVersion>
-        <VersionPrefix>2.1.1</VersionPrefix>
+        <VersionPrefix>2.3.0</VersionPrefix>
         <TargetFramework>net7.0</TargetFramework>
-        <PackageReleaseNotes>Add skill morph, special cost, upgrade, dash speed, item vnum.</PackageReleaseNotes>
+        <PackageReleaseNotes>Add range, notice range, cast time and whether monster is hostile.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
