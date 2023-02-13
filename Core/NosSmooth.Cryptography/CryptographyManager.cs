@@ -119,18 +119,24 @@ public class CryptographyManager
             }
         }
 
-        var encryptionKey = EncryptionKey;
-        var decrypted = ServerWorld.Decrypt(data, encoding);
+        var decryptedString = ServerWorld.Decrypt(data, encoding);
 
         if (EncryptionKey == 0)
         { // we are not in a session, so the packet may be the session id.
           // or we are in an initialized session and won't know the encryption key...
-          if (int.TryParse(decrypted, out var obtainedEncryptionKey))
+          var decryptedSpan = (ReadOnlySpan<char>)decryptedString;
+
+          var firstSpaceIndex = decryptedSpan.IndexOf(' ');
+          if (firstSpaceIndex != -1)
           {
-              EncryptionKey = obtainedEncryptionKey;
+              if (int.TryParse(decryptedSpan.Slice(firstSpaceIndex + 1), out var obtainedEncryptionKey))
+              {
+                  EncryptionKey = obtainedEncryptionKey;
+              }
           }
+
         }
 
-        return decrypted;
+        return decryptedString;
     }
 }
