@@ -28,10 +28,10 @@ public ref struct PacketStringEnumerator
     /// </summary>
     /// <param name="data">The packet string data.</param>
     /// <param name="separator">The separator to use on the highest level.</param>
-    public PacketStringEnumerator(string data, char separator = ' ')
+    public PacketStringEnumerator(ReadOnlySpan<char> data, char separator = ' ')
     {
         _currentLevel = new EnumeratorLevel(null, separator);
-        _data = new ReadOnlySpan<char>(data.ToCharArray());
+        _data = data;
         _cursor = 0;
         _numberOfSeparators = new Dictionary<char, ushort>();
         _numberOfSeparators.Add(separator, 1);
