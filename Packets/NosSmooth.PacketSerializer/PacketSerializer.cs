@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using NosSmooth.Packets;
 using NosSmooth.PacketSerializer.Abstractions;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
@@ -57,7 +58,7 @@ public class PacketSerializer : IPacketSerializer
     }
 
     /// <inheritdoc/>
-    public Result<IPacket> Deserialize(string packetString, PacketSource preferredSource)
+    public Result<IPacket> Deserialize(ReadOnlySpan<char> packetString, PacketSource preferredSource)
     {
         var packetStringEnumerator = new PacketStringEnumerator(packetString);
         var headerTokenResult = packetStringEnumerator.GetNextToken(out var packetToken);

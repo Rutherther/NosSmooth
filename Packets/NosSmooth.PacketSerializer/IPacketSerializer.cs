@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using NosSmooth.Packets;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
 using Remora.Results;
@@ -28,5 +29,5 @@ public interface IPacketSerializer
     /// <param name="packetString">The packet string to deserialize.</param>
     /// <param name="preferredSource">The preferred source to check first. If packet with the given header is not found there, other sources will be checked as well.</param>
     /// <returns>The parsed object or an error.</returns>
-    public Result<IPacket> Deserialize(string packetString, PacketSource preferredSource);
+    public Result<IPacket> Deserialize(ReadOnlySpan<char> packetString, PacketSource preferredSource);
 }
