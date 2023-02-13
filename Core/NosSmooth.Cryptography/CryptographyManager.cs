@@ -4,6 +4,9 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Buffers;
+using System.Text;
+
 namespace NosSmooth.Cryptography;
 
 /// <summary>
@@ -53,5 +56,81 @@ public class CryptographyManager
             ((ServerWorldCryptography)ServerWorld).EncryptionKey = value;
             ((ClientWorldCryptography)ClientWorld).EncryptionKey = value;
         }
+    }
+
+    /// <summary>
+    /// Attempts to decrypt a packet that was received by the client. May be login or world packet.
+    /// Encryption key is not needed.
+    /// </summary>
+    /// <remarks>
+    /// Expects only failc or NsTeST for login packets.
+    /// </remarks>
+    /// <param name="data">The received data.</param>
+    /// <param name="encoding">The encoding.</param>
+    /// <returns>Decrypted packet or empty string in case of fail.</returns>
+    public string DecryptUnknownClientPacket(in ReadOnlySpan<byte> data, Encoding encoding)
+    {
+        if (data.Length < 6)
+        {
+            return ClientWorld.Decrypt(data, encoding);
+        }
+
+        var firstCharDecrypted = ClientLogin.Decrypt(data.Slice(0, 1), encoding);
+
+        if (firstCharDecrypted.StartsWith("f") ||
+                firstCharDecrypted.StartsWith("N"))
+        {
+            var beginning = data.Slice(0, 6);
+            var beginningLoginDecrypted = ClientLogin.Decrypt(beginning, encoding);
+
+            if (beginningLoginDecrypted.StartsWith("failc") ||
+                beginningLoginDecrypted.StartsWith("NsTeST"))
+            {
+                return ClientLogin.Decrypt(data, encoding);
+            }
+        }
+
+        return ClientWorld.Decrypt(data, encoding);
+    }
+
+    /// <summary>
+    /// Attempts to decrypt a packet that was received by the server. May be login or world packet.
+    /// Encryption key is needed for world packets. If the packet contains session id,
+    /// it will be saved to <see cref="EncryptionKey"/>.
+    /// </summary>
+    /// <remarks>
+    /// Expects only failc or NsTeST for login packets.
+    /// </remarks>
+    /// <param name="data">The received data.</param>
+    /// <param name="encoding">The encoding.</param>
+    /// <returns>Decrypted packet or empty string in case of fail.</returns>
+    public string DecryptUnknownServerPacket(in ReadOnlySpan<byte> data, Encoding encoding)
+    {
+        var firstCharDecrypted = ClientLogin.Decrypt(data.Slice(0, 1), encoding);
+
+        if (firstCharDecrypted.StartsWith("N"))
+        {
+            var beginning = data.Slice(0, 4);
+            var beginningLoginDecrypted = ClientLogin.Decrypt(beginning, encoding);
+
+            if (beginningLoginDecrypted.StartsWith("NoS "))
+            {
+                return ServerLogin.Decrypt(data, encoding);
+            }
+        }
+
+        var encryptionKey = EncryptionKey;
+        var decrypted = ServerWorld.Decrypt(data, encoding);
+
+        if (EncryptionKey == 0)
+        { // we are not in a session, so the packet may be the session id.
+          // or we are in an initialized session and won't know the encryption key...
+          if (int.TryParse(decrypted, out var obtainedEncryptionKey))
+          {
+              EncryptionKey = obtainedEncryptionKey;
+          }
+        }
+
+        return decrypted;
     }
 }
