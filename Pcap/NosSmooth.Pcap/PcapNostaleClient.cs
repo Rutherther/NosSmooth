@@ -190,6 +190,9 @@ public class PcapNostaleClient : BaseNostaleClient
     /// <param name="payloadData">The raw payload data of the packet.</param>
     internal void OnPacketArrival(LibPcapLiveDevice? device, TcpConnection connection, byte[] payloadData)
     {
+        // TODO: cleanup this method, split it into multiple methods
+        // TODO: make it more effective, currently it uses expensive operations such as Split on strings
+
         _lastDevice = device;
 
         string data;
@@ -227,6 +230,23 @@ public class PcapNostaleClient : BaseNostaleClient
             if (_crypto.EncryptionKey == 0)
             { // probably login
                 data = _crypto.ClientLogin.Decrypt(payloadData, _encoding);
+
+                var splitted = data.Split(' ');
+                var header = splitted.Length > 0 ? splitted[0] : string.Empty;
+                bool isPacket = true;
+                foreach (var c in header)
+                {
+                    if (!char.IsAsciiLetterOrDigit(c) && c != '#')
+                    {
+                        isPacket = false;
+                        break;
+                    }
+                }
+
+                if (!isPacket)
+                { // try world crypto?
+                    data = _crypto.ClientWorld.Decrypt(payloadData, _encoding);
+                }
             }
             else
             {
@@ -247,7 +267,6 @@ public class PcapNostaleClient : BaseNostaleClient
 
                 _handler.HandlePacketAsync(this, source, linePacket.Trim(), _stoppingToken ?? default);
             }
-
         }
     }
 }
