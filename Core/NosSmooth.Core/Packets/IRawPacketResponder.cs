@@ -14,7 +14,7 @@ namespace NosSmooth.Core.Packets;
 /// Represents interface for classes that respond to packets.
 /// Responds to a raw packet string.
 /// </summary>
-public interface IRawPacketResponder
+public interface IRawPacketResponder : IPacketResponder
 {
     /// <summary>
     /// Respond to the given packet.
