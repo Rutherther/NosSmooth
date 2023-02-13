@@ -120,6 +120,8 @@ public class PcapNostaleManager
 
         task?.GetAwaiter().GetResult();
         task?.Dispose();
+        _connections.Clear();
+        _clients.Clear();
     }
 
     /// <summary>
