@@ -23,6 +23,75 @@ public static class StringExtensions
     }
 
     /// <summary>
+    /// Split a string without any allocation.
+    /// </summary>
+    /// <param name="str">The string to split.</param>
+    /// <param name="split">The char to split with.</param>
+    /// <returns>The split enumerator.</returns>
+    public static SplitEnumerator SplitAllocationless(this string str, char split)
+    {
+        return new SplitEnumerator(str.AsSpan(), split);
+    }
+
+    /// <summary>
+    /// An enumerator of a string split.
+    /// </summary>
+    public ref struct SplitEnumerator
+    {
+        private readonly char _split;
+        private ReadOnlySpan<char> _str;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SplitEnumerator"/> struct.
+        /// </summary>
+        /// <param name="str">The string.</param>
+        /// <param name="split">The split char.</param>
+        public SplitEnumerator(ReadOnlySpan<char> str, char split)
+        {
+            _str = str;
+            _split = split;
+            Current = default;
+        }
+
+        /// <summary>
+        /// Gets this enumerator.
+        /// </summary>
+        /// <returns>This.</returns>
+        public SplitEnumerator GetEnumerator()
+            => this;
+
+        /// <summary>
+        /// Move to next line.
+        /// </summary>
+        /// <returns>Whether move was successful.</returns>
+        public bool MoveNext()
+        {
+            var span = _str;
+            if (span.Length == 0)
+            {
+                return false;
+            }
+
+            var index = span.IndexOf(_split);
+            if (index == -1)
+            {
+                _str = ReadOnlySpan<char>.Empty;
+                Current = span;
+                return true;
+            }
+
+            Current = span.Slice(0, index);
+            _str = span.Slice(index + 1);
+            return true;
+        }
+
+        /// <summary>
+        /// Current line.
+        /// </summary>
+        public ReadOnlySpan<char> Current { get; private set; }
+    }
+
+    /// <summary>
     /// An enumerator of a string lines.
     /// </summary>
     public ref struct LineSplitEnumerator

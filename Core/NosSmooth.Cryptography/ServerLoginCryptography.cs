@@ -18,21 +18,21 @@ public class ServerLoginCryptography : ICryptography
     {
         try
         {
-            string decryptedPacket = string.Empty;
+            StringBuilder decryptedPacket = new StringBuilder(str.Length);
 
             foreach (byte character in str)
             {
                 if (character > 14)
                 {
-                    decryptedPacket += Convert.ToChar((character - 15) ^ 195);
+                    decryptedPacket.Append(Convert.ToChar((character - 15) ^ 195));
                 }
                 else
                 {
-                    decryptedPacket += Convert.ToChar((256 - (15 - character)) ^ 195);
+                    decryptedPacket.Append(Convert.ToChar((256 - (15 - character)) ^ 195));
                 }
             }
 
-            return decryptedPacket;
+            return decryptedPacket.ToString();
         }
         catch
         {
@@ -46,7 +46,7 @@ public class ServerLoginCryptography : ICryptography
         try
         {
             packet += " ";
-            byte[] tmp = Encoding.Default.GetBytes(packet);
+            byte[] tmp = encoding.GetBytes(packet);
             for (int i = 0; i < packet.Length; i++)
             {
                 tmp[i] = Convert.ToByte(tmp[i] + 15);

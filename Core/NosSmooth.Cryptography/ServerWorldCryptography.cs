@@ -5,6 +5,7 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Text;
+using NosSmooth.Cryptography.Extensions;
 
 namespace NosSmooth.Cryptography;
 
@@ -63,71 +64,47 @@ public class ServerWorldCryptography : ICryptography
 
     private static string DecryptAuthed(in ReadOnlySpan<byte> str, int encryptionKey, Encoding encoding)
     {
-        var encryptedString = new StringBuilder();
+        var encryptedString = new StringBuilder(str.Length);
 
         int sessionKey = encryptionKey & 0xFF;
         byte sessionNumber = unchecked((byte)(encryptionKey >> 6));
         sessionNumber &= 0xFF;
         sessionNumber &= 3;
 
+        byte firstbyte = unchecked((byte)(sessionKey + 0x40));
+
         switch (sessionNumber)
         {
             case 0:
-                foreach (byte character in str)
-                {
-                    byte firstbyte = unchecked((byte)(sessionKey + 0x40));
-                    byte highbyte = unchecked((byte)(character - firstbyte));
-                    encryptedString.Append((char)highbyte);
-                }
-
-                break;
-
             case 1:
                 foreach (byte character in str)
                 {
-                    byte firstbyte = unchecked((byte)(sessionKey + 0x40));
                     byte highbyte = unchecked((byte)(character + firstbyte));
                     encryptedString.Append((char)highbyte);
                 }
 
                 break;
-
             case 2:
-                foreach (byte character in str)
-                {
-                    byte firstbyte = unchecked((byte)(sessionKey + 0x40));
-                    byte highbyte = unchecked((byte)(character - firstbyte ^ 0xC3));
-                    encryptedString.Append((char)highbyte);
-                }
-
-                break;
-
             case 3:
                 foreach (byte character in str)
                 {
-                    byte firstbyte = unchecked((byte)(sessionKey + 0x40));
                     byte highbyte = unchecked((byte)(character + firstbyte ^ 0xC3));
                     encryptedString.Append((char)highbyte);
                 }
 
                 break;
-
             default:
                 encryptedString.Append((char)0xF);
                 break;
         }
 
-        string[] temp = encryptedString.ToString().Split((char)0xFF);
+        var temp = encryptedString.ToString().SplitAllocationless((char)0xFF);
+        var save = new StringBuilder(encryptedString.Length);
 
-        var save = new StringBuilder();
-
-        for (int i = 0; i < temp.Length; i++)
+        foreach (var packet in temp)
         {
-            save.Append(DecryptPrivate(temp[i].AsSpan(), encoding));
-            if (i < temp.Length - 2)
-            {
-                save.Append((char)'\n');
-            }
+            save.Append(DecryptPrivate(packet, encoding));
+            save.Append((char)'\n');
         }
 
         return save.ToString();
@@ -212,7 +189,7 @@ public class ServerWorldCryptography : ICryptography
     {
         try
         {
-            var encryptedStringBuilder = new StringBuilder();
+            var encryptedStringBuilder = new StringBuilder(str.Length);
             for (int i = 1; i < str.Length; i++)
             {
                 if (Convert.ToChar(str[i]) == 0xE)
@@ -250,9 +227,6 @@ public class ServerWorldCryptography : ICryptography
                 switch (firstbyte)
                 {
                     case 0:
-                        encryptedStringBuilder.Append(' ');
-                        break;
-
                     case 1:
                         encryptedStringBuilder.Append(' ');
                         break;

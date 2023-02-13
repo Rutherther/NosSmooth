@@ -20,7 +20,7 @@ public class ClientLoginCryptography : ICryptography
     {
         try
         {
-            var output = new StringBuilder();
+            var output = new StringBuilder(bytes.Length);
             foreach (var c in bytes)
             {
                 output.Append(Convert.ToChar(c - 0xF));
