@@ -151,6 +151,18 @@ public class PcapNostaleManager
 
     private void DeviceOnOnPacketArrival(object sender, PacketCapture e)
     {
+        try
+        {
+            DeviceOnPacketArrivalInner(e);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "OnPacketArrival has produced an exception");
+        }
+    }
+
+    private void DeviceOnPacketArrivalInner(PacketCapture e)
+    {
         var rawPacket = e.GetPacket();
         var packet = PacketDotNet.Packet.ParsePacket(rawPacket.LinkLayerType, rawPacket.Data);
 
@@ -209,21 +221,8 @@ public class PcapNostaleManager
         {
             try
             {
-                foreach (var connectionData in _connections)
-                {
-                    if (connectionData.Value.FirstObservedAt.AddMilliseconds(_options.ForgetConnectionInterval) < DateTimeOffset.Now)
-                    {
-                        _connections.TryRemove(connectionData);
-                    }
-
-                    if (connectionData.Value.SniffedData.Count > 0 && connectionData.Value.FirstObservedAt.AddMilliseconds
-                            (_options.CleanSniffedDataInterval) < DateTimeOffset.Now)
-                    {
-                        connectionData.Value.SniffedData.Clear();
-                    }
-                }
-
-                await Task.Delay(TimeSpan.FromSeconds(_options.CleanSniffedDataInterval * 3), ct);
+                DeleteData();
+                await Task.Delay(TimeSpan.FromMilliseconds(_options.CleanSniffedDataInterval * 3), ct);
             }
             catch (OperationCanceledException)
             {
@@ -232,6 +231,24 @@ public class PcapNostaleManager
             catch (Exception e)
             {
                 _logger.LogError(e, "The pcap manager deletion task has thrown an exception");
+            }
+        }
+    }
+
+    private void DeleteData()
+    {
+        foreach (var connectionData in _connections)
+        {
+            if (connectionData.Value.FirstObservedAt.AddMilliseconds
+                    (_options.ForgetConnectionInterval) < DateTimeOffset.Now)
+            {
+                _connections.TryRemove(connectionData);
+            }
+
+            if (connectionData.Value.SniffedData.Count > 0 && connectionData.Value.FirstObservedAt.AddMilliseconds
+                    (_options.CleanSniffedDataInterval) < DateTimeOffset.Now)
+            {
+                connectionData.Value.SniffedData.Clear();
             }
         }
     }
