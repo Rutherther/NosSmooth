@@ -274,7 +274,7 @@ public class ClientWorldCryptography : ICryptography
 
             byte sessionKey = (byte)(EncryptionKey & 0xFF);
 
-            if (EncryptionKey != 0)
+            if (EncryptionKey == 0)
             {
                 sessionNumber = -1;
             }
