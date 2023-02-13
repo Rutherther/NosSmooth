@@ -32,139 +32,186 @@ public class ClientWorldCryptography : ICryptography
     /// <inheritdoc />
     public string Decrypt(in ReadOnlySpan<byte> bytes, Encoding encoding)
     {
-        int index = 0;
-        var currentPacket = new List<byte>();
-
-        while (index < bytes.Length)
+        try
         {
-            byte currentByte = bytes[index++];
+            int index = 0;
+            var currentPacket = new List<byte>();
 
-            if (currentByte == 0xFF)
+            while (index < bytes.Length)
             {
-                currentPacket.Add((byte)'\n');
-                continue;
-            }
+                byte currentByte = bytes[index++];
 
-            int length = currentByte & 0x7F;
-
-            if ((currentByte & 0x80) != 0)
-            {
-                while (length != 0)
+                if (currentByte == 0xFF)
                 {
-                    if (index < bytes.Length)
+                    currentPacket.Add((byte)'\n');
+                    continue;
+                }
+
+                int length = currentByte & 0x7F;
+
+                if ((currentByte & 0x80) != 0)
+                {
+                    while (length != 0)
                     {
-                        currentByte = bytes[index++];
-                        int firstIndex = (currentByte & 0xF0) >> 4;
-                        char first = '?';
-                        if (firstIndex != 0)
+                        if (index < bytes.Length)
                         {
-                            firstIndex--;
-                            first = firstIndex != 14 ? Keys[firstIndex] : '\u0000';
-                        }
+                            currentByte = bytes[index++];
+                            int firstIndex = (currentByte & 0xF0) >> 4;
+                            char first = '?';
+                            if (firstIndex != 0)
+                            {
+                                firstIndex--;
+                                first = firstIndex != 14 ? Keys[firstIndex] : '\u0000';
+                            }
 
-                        if (first != 0x6E)
+                            if (first != 0x6E)
+                            {
+                                currentPacket.Add((byte)first);
+                            }
+
+                            if (length <= 1)
+                            {
+                                break;
+                            }
+
+                            int secondIndex = currentByte & 0xF;
+                            char second = '?';
+                            if (secondIndex != 0)
+                            {
+                                secondIndex--;
+                                second = secondIndex != 14 ? Keys[secondIndex] : '\u0000';
+                            }
+
+                            if (second != 0x6E)
+                            {
+                                currentPacket.Add((byte)second);
+                            }
+
+                            length -= 2;
+                        }
+                        else
                         {
-                            currentPacket.Add((byte)first);
+                            length--;
                         }
-
-                        if (length <= 1)
-                        {
-                            break;
-                        }
-
-                        int secondIndex = currentByte & 0xF;
-                        char second = '?';
-                        if (secondIndex != 0)
-                        {
-                            secondIndex--;
-                            second = secondIndex != 14 ? Keys[secondIndex] : '\u0000';
-                        }
-
-                        if (second != 0x6E)
-                        {
-                            currentPacket.Add((byte)second);
-                        }
-
-                        length -= 2;
                     }
-                    else
+                }
+                else
+                {
+                    while (length != 0)
                     {
+                        if (index < bytes.Length)
+                        {
+                            currentPacket.Add((byte)(bytes[index] ^ 0xFF));
+                            index++;
+                        }
+                        else if (index == bytes.Length)
+                        {
+                            currentPacket.Add((byte)'\n');
+                            index++;
+                        }
+
                         length--;
                     }
                 }
             }
-            else
-            {
-                while (length != 0)
-                {
-                    if (index < bytes.Length)
-                    {
-                        currentPacket.Add((byte)(bytes[index] ^ 0xFF));
-                        index++;
-                    }
-                    else if (index == bytes.Length)
-                    {
-                        currentPacket.Add((byte)'\n');
-                        index++;
-                    }
 
-                    length--;
-                }
-            }
+            return string.Concat(currentPacket.Select(x => (char)x));
+
+            // byte[] tmp = Encoding.Convert(encoding, Encoding.UTF8, currentPacket.ToArray());
+            // return Encoding.UTF8.GetString(tmp);
         }
-
-        return string.Concat(currentPacket.Select(x => (char)x));
-
-        // byte[] tmp = Encoding.Convert(encoding, Encoding.UTF8, currentPacket.ToArray());
-        // return Encoding.UTF8.GetString(tmp);
+        catch
+        {
+            return string.Empty;
+        }
     }
 
     /// <inheritdoc />
     public byte[] Encrypt(string value, Encoding encoding)
     {
-        var output = new List<byte>();
+        try
+        {
+            var output = new List<byte>();
 
-        string mask = new string
-        (
-            value.Select
+            string mask = new string
             (
-                c =>
-                {
-                    sbyte b = (sbyte)c;
-                    if (c == '#' || c == '/' || c == '%')
+                value.Select
+                (
+                    c =>
                     {
+                        sbyte b = (sbyte)c;
+                        if (c == '#' || c == '/' || c == '%')
+                        {
+                            return '0';
+                        }
+
+                        if ((b -= 0x20) == 0 || (b += unchecked((sbyte)0xF1)) < 0 || (b -= 0xB) < 0 ||
+                            b - unchecked((sbyte)0xC5) == 0)
+                        {
+                            return '1';
+                        }
+
                         return '0';
                     }
+                ).ToArray()
+            );
 
-                    if ((b -= 0x20) == 0 || (b += unchecked((sbyte)0xF1)) < 0 || (b -= 0xB) < 0 ||
-                        b - unchecked((sbyte)0xC5) == 0)
-                    {
-                        return '1';
-                    }
+            int packetLength = value.Length;
 
-                    return '0';
+            int sequenceCounter = 0;
+            int currentPosition = 0;
+
+            while (currentPosition <= packetLength)
+            {
+                int lastPosition = currentPosition;
+                while (currentPosition < packetLength && mask[currentPosition] == '0')
+                {
+                    currentPosition++;
                 }
-            ).ToArray()
-        );
 
-        int packetLength = value.Length;
+                int sequences;
+                int length;
 
-        int sequenceCounter = 0;
-        int currentPosition = 0;
+                if (currentPosition != 0)
+                {
+                    length = currentPosition - lastPosition;
+                    sequences = length / 0x7E;
+                    for (int i = 0; i < length; i++, lastPosition++)
+                    {
+                        if (i == sequenceCounter * 0x7E)
+                        {
+                            if (sequences == 0)
+                            {
+                                output.Add((byte)(length - i));
+                            }
+                            else
+                            {
+                                output.Add(0x7E);
+                                sequences--;
+                                sequenceCounter++;
+                            }
+                        }
 
-        while (currentPosition <= packetLength)
-        {
-            int lastPosition = currentPosition;
-            while (currentPosition < packetLength && mask[currentPosition] == '0')
-            {
-                currentPosition++;
-            }
+                        output.Add((byte)((byte)value[lastPosition] ^ 0xFF));
+                    }
+                }
 
-            int sequences;
-            int length;
+                if (currentPosition >= packetLength)
+                {
+                    break;
+                }
 
-            if (currentPosition != 0)
-            {
+                lastPosition = currentPosition;
+                while (currentPosition < packetLength && mask[currentPosition] == '1')
+                {
+                    currentPosition++;
+                }
+
+                if (currentPosition == 0)
+                {
+                    continue;
+                }
+
                 length = currentPosition - lastPosition;
                 sequences = length / 0x7E;
                 for (int i = 0; i < length; i++, lastPosition++)
@@ -173,142 +220,109 @@ public class ClientWorldCryptography : ICryptography
                     {
                         if (sequences == 0)
                         {
-                            output.Add((byte)(length - i));
+                            output.Add((byte)((length - i) | 0x80));
                         }
                         else
                         {
-                            output.Add(0x7E);
+                            output.Add(0x7E | 0x80);
                             sequences--;
                             sequenceCounter++;
                         }
                     }
 
-                    output.Add((byte)((byte)value[lastPosition] ^ 0xFF));
-                }
-            }
-
-            if (currentPosition >= packetLength)
-            {
-                break;
-            }
-
-            lastPosition = currentPosition;
-            while (currentPosition < packetLength && mask[currentPosition] == '1')
-            {
-                currentPosition++;
-            }
-
-            if (currentPosition == 0)
-            {
-                continue;
-            }
-
-            length = currentPosition - lastPosition;
-            sequences = length / 0x7E;
-            for (int i = 0; i < length; i++, lastPosition++)
-            {
-                if (i == sequenceCounter * 0x7E)
-                {
-                    if (sequences == 0)
+                    byte currentByte = (byte)value[lastPosition];
+                    switch (currentByte)
                     {
-                        output.Add((byte)((length - i) | 0x80));
+                        case 0x20:
+                            currentByte = 1;
+                            break;
+                        case 0x2D:
+                            currentByte = 2;
+                            break;
+                        case 0xFF:
+                            currentByte = 0xE;
+                            break;
+                        default:
+                            currentByte -= 0x2C;
+                            break;
+                    }
+
+                    if (currentByte == 0x00)
+                    {
+                        continue;
+                    }
+
+                    if (i % 2 == 0)
+                    {
+                        output.Add((byte)(currentByte << 4));
                     }
                     else
                     {
-                        output.Add(0x7E | 0x80);
-                        sequences--;
-                        sequenceCounter++;
+                        output[output.Count - 1] = (byte)(output.Last() | currentByte);
                     }
                 }
-
-                byte currentByte = (byte)value[lastPosition];
-                switch (currentByte)
-                {
-                    case 0x20:
-                        currentByte = 1;
-                        break;
-                    case 0x2D:
-                        currentByte = 2;
-                        break;
-                    case 0xFF:
-                        currentByte = 0xE;
-                        break;
-                    default:
-                        currentByte -= 0x2C;
-                        break;
-                }
-
-                if (currentByte == 0x00)
-                {
-                    continue;
-                }
-
-                if (i % 2 == 0)
-                {
-                    output.Add((byte)(currentByte << 4));
-                }
-                else
-                {
-                    output[output.Count - 1] = (byte)(output.Last() | currentByte);
-                }
             }
+
+            output.Add(0xFF);
+
+            sbyte sessionNumber = (sbyte)((EncryptionKey >> 6) & 0xFF & 0x80000003);
+
+            if (sessionNumber < 0)
+            {
+                sessionNumber = (sbyte)(((sessionNumber - 1) | 0xFFFFFFFC) + 1);
+            }
+
+            byte sessionKey = (byte)(EncryptionKey & 0xFF);
+
+            if (EncryptionKey != 0)
+            {
+                sessionNumber = -1;
+            }
+
+            switch (sessionNumber)
+            {
+                case 0:
+                    for (int i = 0; i < output.Count; i++)
+                    {
+                        output[i] = (byte)(output[i] + sessionKey + 0x40);
+                    }
+
+                    break;
+                case 1:
+                    for (int i = 0; i < output.Count; i++)
+                    {
+                        output[i] = (byte)(output[i] - (sessionKey + 0x40));
+                    }
+
+                    break;
+                case 2:
+                    for (int i = 0; i < output.Count; i++)
+                    {
+                        output[i] = (byte)((output[i] ^ 0xC3) + sessionKey + 0x40);
+                    }
+
+                    break;
+                case 3:
+                    for (int i = 0; i < output.Count; i++)
+                    {
+                        output[i] = (byte)((output[i] ^ 0xC3) - (sessionKey + 0x40));
+                    }
+
+                    break;
+                default:
+                    for (int i = 0; i < output.Count; i++)
+                    {
+                        output[i] = (byte)(output[i] + 0x0F);
+                    }
+
+                    break;
+            }
+
+            return output.ToArray();
         }
-
-        output.Add(0xFF);
-
-        sbyte sessionNumber = (sbyte)((EncryptionKey >> 6) & 0xFF & 0x80000003);
-
-        if (sessionNumber < 0)
+        catch
         {
-            sessionNumber = (sbyte)(((sessionNumber - 1) | 0xFFFFFFFC) + 1);
+            return Array.Empty<byte>();
         }
-
-        byte sessionKey = (byte)(EncryptionKey & 0xFF);
-
-        if (EncryptionKey != 0)
-        {
-            sessionNumber = -1;
-        }
-
-        switch (sessionNumber)
-        {
-            case 0:
-                for (int i = 0; i < output.Count; i++)
-                {
-                    output[i] = (byte)(output[i] + sessionKey + 0x40);
-                }
-
-                break;
-            case 1:
-                for (int i = 0; i < output.Count; i++)
-                {
-                    output[i] = (byte)(output[i] - (sessionKey + 0x40));
-                }
-
-                break;
-            case 2:
-                for (int i = 0; i < output.Count; i++)
-                {
-                    output[i] = (byte)((output[i] ^ 0xC3) + sessionKey + 0x40);
-                }
-
-                break;
-            case 3:
-                for (int i = 0; i < output.Count; i++)
-                {
-                    output[i] = (byte)((output[i] ^ 0xC3) - (sessionKey + 0x40));
-                }
-
-                break;
-            default:
-                for (int i = 0; i < output.Count; i++)
-                {
-                    output[i] = (byte)(output[i] + 0x0F);
-                }
-
-                break;
-        }
-
-        return output.ToArray();
     }
 }
