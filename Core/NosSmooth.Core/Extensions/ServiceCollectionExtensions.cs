@@ -116,24 +116,28 @@ public static class ServiceCollectionExtensions
             return serviceCollection;
         }
 
+        bool addedResponder = false;
+
         if (responderType.GetInterfaces().Any(i => i == typeof(IRawPacketResponder)))
         {
-            return serviceCollection.AddScoped(typeof(IRawPacketResponder), responderType);
+            addedResponder = true;
+            serviceCollection.AddScoped(typeof(IRawPacketResponder), responderType);
         }
 
         if (responderType.GetInterfaces().Any(i => i == typeof(IEveryPacketResponder)))
         {
-            return serviceCollection.AddScoped(typeof(IEveryPacketResponder), responderType);
+            addedResponder = true;
+            serviceCollection.AddScoped(typeof(IEveryPacketResponder), responderType);
         }
 
-        if (!responderType.GetInterfaces().Any
+        if (!addedResponder && !responderType.GetInterfaces().Any
             (
                 i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IPacketResponder<>)
             ))
         {
             throw new ArgumentException
             (
-                $"{nameof(responderType)} should implement IPacketResponder.",
+                $"{nameof(responderType)} should implement IPacketResponder<T> or IRawPacketResponder or IEveryPacketResponder.",
                 nameof(responderType)
             );
         }
