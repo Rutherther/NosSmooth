@@ -5,18 +5,17 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics;
-using System.Net;
-using System.Net.Sockets;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands;
+using NosSmooth.Core.Extensions;
 using NosSmooth.Core.Packets;
 using NosSmooth.Cryptography;
+using NosSmooth.Cryptography.Extensions;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
-using PacketDotNet;
 using Remora.Results;
-using SharpPcap;
 using SharpPcap.LibPcap;
 
 namespace NosSmooth.Pcap;
@@ -36,6 +35,7 @@ public class PcapNostaleClient : BaseNostaleClient
     private readonly PcapNostaleManager _pcapManager;
     private readonly ProcessTcpManager _processTcpManager;
     private readonly IPacketHandler _handler;
+    private readonly ILogger<PcapNostaleClient> _logger;
     private readonly PcapNostaleOptions _options;
     private CryptographyManager _crypto;
     private CancellationToken? _stoppingToken;
@@ -48,23 +48,25 @@ public class PcapNostaleClient : BaseNostaleClient
     /// Initializes a new instance of the <see cref="PcapNostaleClient"/> class.
     /// </summary>
     /// <param name="process">The process to look for.</param>
-    /// <param name="encryptionKey">The current encryption key of the world connection, if known. Zero if unknown.</param>
+    /// <param name="initialEncryptionKey">The current encryption key of the world connection, if known. Zero if unknown.</param>
     /// <param name="encoding">The encoding.</param>
     /// <param name="pcapManager">The pcap manager.</param>
     /// <param name="processTcpManager">The process manager.</param>
     /// <param name="handler">The packet handler.</param>
     /// <param name="commandProcessor">The command processor.</param>
     /// <param name="options">The options.</param>
+    /// <param name="logger">The logger.</param>
     public PcapNostaleClient
     (
         Process process,
-        int encryptionKey,
+        int initialEncryptionKey,
         Encoding encoding,
         PcapNostaleManager pcapManager,
         ProcessTcpManager processTcpManager,
         IPacketHandler handler,
         CommandProcessor commandProcessor,
-        IOptions<PcapNostaleOptions> options
+        IOptions<PcapNostaleOptions> options,
+        ILogger<PcapNostaleClient> logger
     )
         : base(commandProcessor)
     {
@@ -73,9 +75,10 @@ public class PcapNostaleClient : BaseNostaleClient
         _pcapManager = pcapManager;
         _processTcpManager = processTcpManager;
         _handler = handler;
+        _logger = logger;
         _options = options.Value;
         _crypto = new CryptographyManager();
-        _crypto.EncryptionKey = encryptionKey;
+        _crypto.EncryptionKey = initialEncryptionKey;
     }
 
     /// <inheritdoc />
@@ -103,8 +106,8 @@ public class PcapNostaleClient : BaseNostaleClient
                     break;
                 }
 
-                var connection = (await _processTcpManager.GetConnectionsAsync(_process.Id)).Cast<TcpConnection?>()
-                    .FirstOrDefault();
+                var connections = await _processTcpManager.GetConnectionsAsync(_process.Id);
+                TcpConnection? connection = connections.Count > 0 ? connections[0] : null;
 
                 if (lastConnection != connection)
                 {
@@ -190,83 +193,65 @@ public class PcapNostaleClient : BaseNostaleClient
     /// <param name="payloadData">The raw payload data of the packet.</param>
     internal void OnPacketArrival(LibPcapLiveDevice? device, TcpConnection connection, byte[] payloadData)
     {
-        // TODO: cleanup this method, split it into multiple methods
-        // TODO: make it more effective, currently it uses expensive operations such as Split on strings
-
         _lastDevice = device;
 
         string data;
         PacketSource source;
-        bool containsPacketId = false;
+        bool mayContainPacketId = false;
 
         if (connection.LocalAddr == _connection.LocalAddr && connection.LocalPort == _connection.LocalPort)
         { // sent packet
             source = PacketSource.Client;
-            if (_crypto.EncryptionKey == 0)
-            {
-                var worldDecrypted = _crypto.ServerWorld.Decrypt(payloadData, _encoding).Trim();
-
-                var splitted = worldDecrypted.Split(' ');
-                if (splitted.Length == 2 && int.TryParse(splitted[1], out var encryptionKey))
-                { // possibly first packet from world
-                    _crypto.EncryptionKey = encryptionKey;
-                    data = worldDecrypted;
-                    containsPacketId = true;
-                }
-                else
-                { // doesn't look like first packet from world, so assume login.
-                    data = _crypto.ServerLogin.Decrypt(payloadData, _encoding);
-                }
-            }
-            else
-            {
-                data = _crypto.ServerWorld.Decrypt(payloadData, _encoding);
-                containsPacketId = true;
-            }
+            mayContainPacketId = true;
+            data = _crypto.DecryptUnknownServerPacket(payloadData, _encoding);
         }
         else
         { // received packet
             source = PacketSource.Server;
-            if (_crypto.EncryptionKey == 0)
-            { // probably login
-                data = _crypto.ClientLogin.Decrypt(payloadData, _encoding);
-
-                var splitted = data.Split(' ');
-                var header = splitted.Length > 0 ? splitted[0] : string.Empty;
-                bool isPacket = true;
-                foreach (var c in header)
-                {
-                    if (!char.IsAsciiLetterOrDigit(c) && c != '#')
-                    {
-                        isPacket = false;
-                        break;
-                    }
-                }
-
-                if (!isPacket)
-                { // try world crypto?
-                    data = _crypto.ClientWorld.Decrypt(payloadData, _encoding);
-                }
-            }
-            else
-            {
-                data = _crypto.ClientWorld.Decrypt(payloadData, _encoding);
-            }
+            data = _crypto.DecryptUnknownClientPacket(payloadData, _encoding);
         }
 
         if (data.Length > 0)
         {
-            foreach (var line in data.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            foreach (ReadOnlySpan<char> line in data.SplitLines())
             {
                 var linePacket = line;
-                if (containsPacketId)
+                if (mayContainPacketId)
                 {
-                    _lastPacketIndex = int.Parse(line.Substring(0, line.IndexOf(' ')));
-                    linePacket = line.Substring(line.IndexOf(' ') + 1);
+                    var spaceIndex = linePacket.IndexOf(' ');
+                    if (spaceIndex != -1)
+                    {
+                        var beginning = linePacket.Slice(0, spaceIndex);
+
+                        if (int.TryParse(beginning, out var packetIndex))
+                        {
+                            _lastPacketIndex = packetIndex;
+                            linePacket = linePacket.Slice(spaceIndex + 1);
+                        }
+                    }
                 }
 
-                _handler.HandlePacketAsync(this, source, linePacket.Trim(), _stoppingToken ?? default);
+                var lineString = linePacket.ToString();
+                Task.Run(() => ProcessPacketAsync(source, lineString));
             }
+        }
+    }
+
+    private async Task ProcessPacketAsync(PacketSource type, string packetString)
+    {
+        try
+        {
+            var result = await _handler.HandlePacketAsync(this, type, packetString);
+
+            if (!result.IsSuccess)
+            {
+                _logger.LogError("There was an error whilst handling packet {packetString}", packetString);
+                _logger.LogResultError(result);
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "The process packet threw an exception");
         }
     }
 }
