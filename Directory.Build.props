@@ -17,6 +17,8 @@
         <PackageProjectUrl>https://github.com/Rutherther/NosSmooth</PackageProjectUrl>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
+
+        <PackageOutputPath>$(MSBuildThisFileDirectory)/nuget</PackageOutputPath>
     </PropertyGroup>
 
     <ItemGroup>

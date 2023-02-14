@@ -22,7 +22,7 @@ jobs:
         dotnet-version: '7.0.x'
         
     - name: Pack app
-      run: dotnet pack NosSmooth.sln --configuration Release -o nuget
+      run: dotnet pack NosSmooth.sln --configuration Release
       
     - name: Publish NuGet
       working-directory: nuget
