@@ -4,6 +4,8 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <VersionPrefix>1.0.1</VersionPrefix>
+        <PackageReleaseNotes>Add support for f_stash_end, c_close packets in unknown deserialization.</PackageReleaseNotes>
     </PropertyGroup>
 
 </Project>
