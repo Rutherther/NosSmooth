@@ -78,7 +78,7 @@ public class CryptographyManager
         var firstCharDecrypted = ClientLogin.Decrypt(data.Slice(0, 1), encoding);
 
         if (firstCharDecrypted.StartsWith("f") ||
-                firstCharDecrypted.StartsWith("N"))
+            firstCharDecrypted.StartsWith("N"))
         {
             var beginning = data.Slice(0, 6);
             var beginningLoginDecrypted = ClientLogin.Decrypt(beginning, encoding);
@@ -108,12 +108,16 @@ public class CryptographyManager
     {
         var firstCharDecrypted = ClientLogin.Decrypt(data.Slice(0, 1), encoding);
 
-        if (firstCharDecrypted.StartsWith("N"))
+        if (firstCharDecrypted.StartsWith("N") ||
+            firstCharDecrypted.StartsWith("f") ||
+            firstCharDecrypted.StartsWith("c"))
         {
             var beginning = data.Slice(0, 4);
             var beginningLoginDecrypted = ClientLogin.Decrypt(beginning, encoding);
 
-            if (beginningLoginDecrypted.StartsWith("NoS "))
+            if (beginningLoginDecrypted.StartsWith("NoS0") ||
+                beginningLoginDecrypted.StartsWith("f_st") ||
+                beginningLoginDecrypted.StartsWith("c_cl"))
             {
                 return ServerLogin.Decrypt(data, encoding);
             }
