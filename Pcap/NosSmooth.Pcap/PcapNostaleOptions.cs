@@ -22,7 +22,7 @@ public class PcapNostaleOptions
     public long CleanSniffedDataInterval { get; set; } = 10 * 1000;
 
     /// <summary>
-    /// Gets or sets the time tcp connection should be forgotten in milliseconds. Default 10 minutes.
+    /// Gets or sets the time tcp connection should be forgotten in milliseconds. Default 1 minute.
     /// </summary>
-    public long ForgetConnectionInterval { get; set; } = 10 * 60 * 1000;
+    public long ForgetConnectionInterval { get; set; } = 60 * 1000;
 }

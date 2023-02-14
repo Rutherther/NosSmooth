@@ -25,4 +25,10 @@ public record ConnectionData
     int DestinationPort,
     List<byte[]> SniffedData,
     DateTimeOffset FirstObservedAt
-);
+)
+{
+    /// <summary>
+    /// Gets or sets the date time offset at which last data were sniffed.
+    /// </summary>
+    public DateTimeOffset LastReceivedAt { get; set; }
+}

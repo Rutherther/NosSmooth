@@ -205,6 +205,7 @@ public class PcapNostaleManager
         }
 
         var data = _connections[tcpConnection];
+        data.LastReceivedAt = DateTimeOffset.Now;
         if (data.SniffedData.Count < 5 && tcpPacket.PayloadData.Length < 500
             && data.FirstObservedAt.AddMilliseconds(_options.CleanSniffedDataInterval) > DateTimeOffset.Now)
         {
@@ -247,7 +248,7 @@ public class PcapNostaleManager
                 _connections.TryRemove(connectionData);
             }
 
-            if (connectionData.Value.SniffedData.Count > 0 && connectionData.Value.FirstObservedAt.AddMilliseconds
+            if (connectionData.Value.SniffedData.Count > 0 && connectionData.Value.LastReceivedAt.AddMilliseconds
                     (_options.CleanSniffedDataInterval) < DateTimeOffset.Now)
             {
                 connectionData.Value.SniffedData.Clear();
