@@ -5,9 +5,9 @@
         <Nullable>enable</Nullable>
         <LangVersion>10</LangVersion>
         <TargetFramework>net7.0</TargetFramework>
-        <VersionPrefix>1.3.0</VersionPrefix>
+        <VersionPrefix>1.3.1</VersionPrefix>
         <Description>Manages NosSmooth combat state, currently exposing a simple technique to kill one enemy at a time.</Description>
-        <PackageReleaseNotes>Update to new managed client.</PackageReleaseNotes>
+        <PackageReleaseNotes>Update Pathfinding.</PackageReleaseNotes>
     </PropertyGroup>
     
     <ItemGroup>

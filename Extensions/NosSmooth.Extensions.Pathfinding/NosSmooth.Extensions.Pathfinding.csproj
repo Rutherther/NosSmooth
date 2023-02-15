@@ -6,8 +6,8 @@
         <Nullable>enable</Nullable>
         <Description>NosSmooth extension for finding paths and walking found paths.</Description>
         <Description>NosSmooth extension allowing for finding paths on maps.</Description>
-        <VersionPrefix>1.2.0</VersionPrefix>
-        <PackageReleaseNotes>React to su and tp packet by changing character position.</PackageReleaseNotes>
+        <VersionPrefix>2.0.0</VersionPrefix>
+        <PackageReleaseNotes>Add mates support.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>

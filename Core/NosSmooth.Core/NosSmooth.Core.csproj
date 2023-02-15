@@ -6,8 +6,8 @@
         <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
         <Authors>Rutherther</Authors>
         <Description>NosSmooth Core library allowing implementing nostale client, handling packets and commands.</Description>
-        <VersionPrefix>4.0.3</VersionPrefix>
-        <PackageReleaseNotes>Add support for adding packet responder with both IRawPacketResponder and other packet responder types.</PackageReleaseNotes>
+        <VersionPrefix>5.0.0</VersionPrefix>
+        <PackageReleaseNotes>Move PetWalkCommand to MateWalkCommand.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
