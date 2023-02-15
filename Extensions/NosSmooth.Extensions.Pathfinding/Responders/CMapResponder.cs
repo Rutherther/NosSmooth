@@ -31,6 +31,7 @@ internal class CMapResponder : IPacketResponder<CMapPacket>
     /// <inheritdoc />
     public async Task<Result> Respond(PacketEventArgs<CMapPacket> packetArgs, CancellationToken ct = default)
     {
+        _state.ClearEntities();
         var packet = packetArgs.Packet;
 
         _state.MapId = packet.Id;
