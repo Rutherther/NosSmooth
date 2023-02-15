@@ -113,12 +113,12 @@ public class PcapNostaleClient : BaseNostaleClient
                 {
                     if (lastConnection is not null)
                     {
-                        _pcapManager.UnregisterConnection(lastConnection.Value);
+                        _pcapManager.UnregisterConnection(lastConnection.Value, this);
                         _crypto.EncryptionKey = 0;
                     }
                     if (reverseLastConnection is not null)
                     {
-                        _pcapManager.UnregisterConnection(reverseLastConnection.Value);
+                        _pcapManager.UnregisterConnection(reverseLastConnection.Value, this);
                     }
 
                     if (connection is not null)
@@ -159,12 +159,12 @@ public class PcapNostaleClient : BaseNostaleClient
             _pcapManager.RemoveClient();
             if (lastConnection is not null)
             {
-                _pcapManager.UnregisterConnection(lastConnection.Value);
+                _pcapManager.UnregisterConnection(lastConnection.Value, this);
             }
 
             if (reverseLastConnection is not null)
             {
-                _pcapManager.UnregisterConnection(reverseLastConnection.Value);
+                _pcapManager.UnregisterConnection(reverseLastConnection.Value, this);
             }
 
             _running = false;

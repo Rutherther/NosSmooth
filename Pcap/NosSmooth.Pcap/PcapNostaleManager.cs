@@ -23,7 +23,7 @@ public class PcapNostaleManager
     private readonly ILogger<PcapNostaleManager> _logger;
     private readonly PcapNostaleOptions _options;
     private readonly ConcurrentDictionary<TcpConnection, ConnectionData> _connections;
-    private readonly ConcurrentDictionary<TcpConnection, PcapNostaleClient> _clients;
+    private readonly ConcurrentDictionary<TcpConnection, List<PcapNostaleClient>> _clients;
     private Task? _deletionTask;
     private CancellationTokenSource? _deletionTaskCancellationSource;
     private int _clientsCount;
@@ -39,7 +39,7 @@ public class PcapNostaleManager
         _logger = logger;
         _options = options.Value;
         _connections = new ConcurrentDictionary<TcpConnection, ConnectionData>();
-        _clients = new ConcurrentDictionary<TcpConnection, PcapNostaleClient>();
+        _clients = new ConcurrentDictionary<TcpConnection, List<PcapNostaleClient>>();
     }
 
     /// <summary>
@@ -78,7 +78,22 @@ public class PcapNostaleManager
     /// <param name="client">The client to associate the connection with.</param>
     internal void RegisterConnection(TcpConnection connection, PcapNostaleClient client)
     {
-        _clients.AddOrUpdate(connection, (c) => client, (c1, c2) => client);
+        _clients.AddOrUpdate
+        (
+            connection,
+            _ =>
+            {
+                var clients = new List<PcapNostaleClient>();
+                clients.Add(client);
+                return clients;
+            },
+            (_, currentClients) =>
+            {
+                var clients = new List<PcapNostaleClient>(currentClients);
+                clients.Add(client);
+                return clients;
+            }
+        );
 
         if (_connections.TryGetValue(connection, out var data))
         {
@@ -93,9 +108,20 @@ public class PcapNostaleManager
     /// Disassociate the given connection.
     /// </summary>
     /// <param name="connection">The connection to disassociate.</param>
-    internal void UnregisterConnection(TcpConnection connection)
+    /// <param name="client">The client to unregister.</param>
+    internal void UnregisterConnection(TcpConnection connection, PcapNostaleClient client)
     {
-        _clients.TryRemove(connection, out _);
+        _clients.AddOrUpdate
+        (
+            connection,
+            (c) => new List<PcapNostaleClient>(),
+            (c1, c2) =>
+            {
+                var clients = new List<PcapNostaleClient>(c2);
+                clients.Remove(client);
+                return clients;
+            }
+        );
     }
 
     private void Stop()
@@ -212,9 +238,12 @@ public class PcapNostaleManager
             data.SniffedData.Add(tcpPacket.PayloadData);
         }
 
-        if (_clients.TryGetValue(tcpConnection, out var client))
+        if (_clients.TryGetValue(tcpConnection, out var clients))
         {
-            client.OnPacketArrival((LibPcapLiveDevice)e.Device, tcpConnection, tcpPacket.PayloadData);
+            foreach (var client in clients)
+            {
+                client.OnPacketArrival((LibPcapLiveDevice)e.Device, tcpConnection, tcpPacket.PayloadData);
+            }
         }
     }
 
