@@ -29,8 +29,8 @@ internal class WalkResponder : IPacketResponder<WalkPacket>
     {
         var packet = packetArgs.Packet;
 
-        _state.X = packet.PositionX;
-        _state.Y = packet.PositionY;
+        _state.Character.X = packet.PositionX;
+        _state.Character.Y = packet.PositionY;
 
         return Task.FromResult(Result.FromSuccess());
     }

@@ -29,7 +29,7 @@ public class Pathfinder
     }
 
     /// <summary>
-    /// Attempts to find a path between the current position and the target.
+    /// Attempts to find a path between the current character position and the target.
     /// </summary>
     /// <param name="targetX">The target x coordinate.</param>
     /// <param name="targetY">The target y coordinate.</param>
@@ -39,7 +39,33 @@ public class Pathfinder
         short targetX,
         short targetY
     )
-        => FindPathFrom(_state.X, _state.Y, targetX, targetY);
+        => FindPathFrom(_state.Character.X, _state.Character.Y, targetX, targetY);
+
+    /// <summary>
+    /// Attempts to find a path between the current position of the entity and the target.
+    /// </summary>
+    /// <remarks>
+    /// Works only for entities that are stored in state,
+    /// that means only the character and mates owned by the character.
+    /// </remarks>
+    /// <param name="entityId">The id of the entity to find path from.</param>
+    /// <param name="targetX">The target x coordinate.</param>
+    /// <param name="targetY">The target y coordinate.</param>
+    /// <returns>A path or an error.</returns>
+    public Result<Path> FindPathFromEntity
+    (
+        long entityId,
+        short targetX,
+        short targetY
+    )
+    {
+        if (!_state.Entities.TryGetValue(entityId, out var entityState))
+        {
+            return new EntityStateNotFoundError(entityId);
+        }
+
+        return FindPathFrom(entityState.X, entityState.Y, targetX, targetY);
+    }
 
     /// <summary>
     /// Attempts to find a path between the given positions on the current map.

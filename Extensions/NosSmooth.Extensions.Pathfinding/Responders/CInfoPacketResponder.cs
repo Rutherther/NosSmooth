@@ -28,7 +28,7 @@ public class CInfoPacketResponder : IPacketResponder<CInfoPacket>
     /// <inheritdoc />
     public Task<Result> Respond(PacketEventArgs<CInfoPacket> packetArgs, CancellationToken ct = default)
     {
-        _state.CharacterId = packetArgs.Packet.CharacterId;
+        _state.SetCharacterId(packetArgs.Packet.CharacterId);
         return Task.FromResult(Result.FromSuccess());
     }
 }

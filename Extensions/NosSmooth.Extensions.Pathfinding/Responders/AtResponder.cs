@@ -30,8 +30,8 @@ internal class AtResponder : IPacketResponder<AtPacket>
     {
         var packet = packetArgs.Packet;
 
-        _state.X = packet.X;
-        _state.Y = packet.Y;
+        _state.Character.X = packet.X;
+        _state.Character.Y = packet.Y;
 
         return Task.FromResult(Result.FromSuccess());
     }

@@ -29,7 +29,8 @@ public class SuPacketResponder : IPacketResponder<SuPacket>
     public Task<Result> Respond(PacketEventArgs<SuPacket> packetArgs, CancellationToken ct = default)
     {
         var packet = packetArgs.Packet;
-        if (packet.CasterEntityId == _state.CharacterId)
+
+        if (_state.Entities.TryGetValue(packet.CasterEntityId, out var entityState))
         {
             if (packet.PositionX is null || packet.PositionY is null)
             {
@@ -41,8 +42,8 @@ public class SuPacketResponder : IPacketResponder<SuPacket>
                 return Task.FromResult(Result.FromSuccess());
             }
 
-            _state.X = packet.PositionX.Value;
-            _state.Y = packet.PositionY.Value;
+            entityState.X = packet.PositionX.Value;
+            entityState.Y = packet.PositionY.Value;
         }
 
         return Task.FromResult(Result.FromSuccess());

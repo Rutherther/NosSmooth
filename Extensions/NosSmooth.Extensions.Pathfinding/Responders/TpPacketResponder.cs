@@ -28,10 +28,10 @@ public class TpPacketResponder : IPacketResponder<TpPacket>
     public Task<Result> Respond(PacketEventArgs<TpPacket> packetArgs, CancellationToken ct = default)
     {
         var packet = packetArgs.Packet;
-        if (packet.EntityId == _state.CharacterId)
+        if (_state.Entities.TryGetValue(packet.EntityId, out var entityState))
         {
-            _state.X = packet.PositionX;
-            _state.Y = packet.PositionY;
+            entityState.X = packet.PositionX;
+            entityState.Y = packet.PositionY;
         }
 
         return Task.FromResult(Result.FromSuccess());

@@ -34,6 +34,8 @@ public static class ServiceCollectionExtensions
             .AddPacketResponder<SuPacketResponder>()
             .AddPacketResponder<TpPacketResponder>()
             .AddPacketResponder<CInfoPacketResponder>()
+            .AddPacketResponder<InResponder>()
+            .AddPacketResponder<PtctlResponder>()
             .AddSingleton<WalkManager>()
             .AddSingleton<Pathfinder>()
             .AddSingleton<PathfinderState>();

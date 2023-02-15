@@ -23,8 +23,8 @@ public record WalkCommand
 (
     short TargetX,
     short TargetY,
-    IReadOnlyList<(int PetSelector, short TargetX, short TargetY)>? Pets,
     ushort ReturnDistanceTolerance,
+    IReadOnlyList<(long MateId, short TargetX, short TargetY)>? Pets = default,
     bool CanBeCancelledByAnother = true,
     bool WaitForCancellation = true,
     bool AllowUserCancel = true

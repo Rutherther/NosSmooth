@@ -34,12 +34,12 @@ public class WalkCommandHandlerTests
         (
             0,
             0,
-            new (int, short, short)[]
+            0,
+            new (long, short, short)[]
             {
                 (1, 0, 0),
                 (2, 0, 0)
-            },
-            0
+            }
         );
         var walkHandler = new WalkCommandHandler
         (
@@ -51,7 +51,7 @@ public class WalkCommandHandlerTests
                     {
                         calledPlayerWalk = true;
                     }
-                    if (c is PetWalkCommand)
+                    if (c is MateWalkCommand)
                     {
                         calledPetWalk = true;
                     }
@@ -76,14 +76,14 @@ public class WalkCommandHandlerTests
         (
             0,
             0,
-            new (int, short, short)[]
+            0,
+            new (long, short, short)[]
             {
                 (2, 0, 0),
                 (5, 0, 0),
                 (7, 0, 0),
                 (9, 0, 0),
             },
-            0,
             true,
             false,
             false
@@ -120,8 +120,8 @@ public class WalkCommandHandlerTests
         (
             10,
             15,
-            null,
             0,
+            null,
             true,
             false,
             false
@@ -158,7 +158,8 @@ public class WalkCommandHandlerTests
         (
             10,
             15,
-            new (int, short, short)[]
+            0,
+            new (long, short, short)[]
             {
                 (1, 0, 0),
                 (2, 0, 0),
@@ -166,7 +167,6 @@ public class WalkCommandHandlerTests
                 (7, 0, 0),
                 (8, 0, 0),
             },
-            0,
             true,
             false,
             false
@@ -177,9 +177,9 @@ public class WalkCommandHandlerTests
             (
                 (c, _) =>
                 {
-                    if (c is PetWalkCommand petWalkCommand)
+                    if (c is MateWalkCommand petWalkCommand)
                     {
-                        if (command.Pets?.Select(x => x.PetSelector).Contains(petWalkCommand.PetSelector) ?? false)
+                        if (command.Pets?.Select(x => x.MateId).Contains(petWalkCommand.MateId) ?? false)
                         {
                             calledCount++;
                         }
@@ -208,7 +208,8 @@ public class WalkCommandHandlerTests
         (
             10,
             15,
-            new (int, short, short)[]
+            0,
+            new (long, short, short)[]
             {
                 (1, 0, 1),
                 (2, 1, 0),
@@ -216,7 +217,6 @@ public class WalkCommandHandlerTests
                 (7, 1, 0),
                 (8, 0, 1),
             },
-            0,
             true,
             false,
             false
@@ -227,7 +227,7 @@ public class WalkCommandHandlerTests
             (
                 (c, _) =>
                 {
-                    if (c is PetWalkCommand petWalkCommand)
+                    if (c is MateWalkCommand petWalkCommand)
                     {
                         Assert.True
                         (

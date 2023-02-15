@@ -106,7 +106,7 @@ public record WalkOperation(WalkManager WalkManager, short X, short Y) : ICombat
     }
 
     private Task<Result> UseAsync(ICombatState combatState, CancellationToken ct = default)
-        => WalkManager.GoToAsync(X, Y, true, ct);
+        => WalkManager.PlayerGoToAsync(X, Y, true, ct);
 
     /// <inheritdoc />
     public void Dispose()
