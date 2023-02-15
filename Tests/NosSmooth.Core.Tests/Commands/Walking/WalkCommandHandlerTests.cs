@@ -34,12 +34,12 @@ public class WalkCommandHandlerTests
         (
             0,
             0,
+            0,
             new (long, short, short)[]
             {
                 (1, 0, 0),
                 (2, 0, 0)
-            },
-            0
+            }
         );
         var walkHandler = new WalkCommandHandler
         (
@@ -76,6 +76,7 @@ public class WalkCommandHandlerTests
         (
             0,
             0,
+            0,
             new (long, short, short)[]
             {
                 (2, 0, 0),
@@ -83,7 +84,6 @@ public class WalkCommandHandlerTests
                 (7, 0, 0),
                 (9, 0, 0),
             },
-            0,
             true,
             false,
             false
@@ -120,8 +120,8 @@ public class WalkCommandHandlerTests
         (
             10,
             15,
-            null,
             0,
+            null,
             true,
             false,
             false
@@ -158,6 +158,7 @@ public class WalkCommandHandlerTests
         (
             10,
             15,
+            0,
             new (long, short, short)[]
             {
                 (1, 0, 0),
@@ -166,7 +167,6 @@ public class WalkCommandHandlerTests
                 (7, 0, 0),
                 (8, 0, 0),
             },
-            0,
             true,
             false,
             false
@@ -208,6 +208,7 @@ public class WalkCommandHandlerTests
         (
             10,
             15,
+            0,
             new (long, short, short)[]
             {
                 (1, 0, 1),
@@ -216,7 +217,6 @@ public class WalkCommandHandlerTests
                 (7, 1, 0),
                 (8, 0, 1),
             },
-            0,
             true,
             false,
             false
