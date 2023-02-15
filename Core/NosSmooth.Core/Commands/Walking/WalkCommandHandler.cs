@@ -36,7 +36,7 @@ internal class WalkCommandHandler : ICommandHandler<WalkCommand>
     public async Task<Result> HandleCommand(WalkCommand command, CancellationToken ct = default)
     {
         var tasks = new List<Task<Result>>();
-        foreach (var pet in command.Pets ?? Array.Empty<(int, short, short)>())
+        foreach (var pet in command.Pets ?? Array.Empty<(long, short, short)>())
         {
             int x = pet.TargetX;
             int y = pet.TargetY;
@@ -45,9 +45,9 @@ internal class WalkCommandHandler : ICommandHandler<WalkCommand>
             (
                 _nostaleClient.SendCommandAsync
                 (
-                    new PetWalkCommand
+                    new MateWalkCommand
                     (
-                        pet.PetSelector,
+                        pet.MateId,
                         (short)x,
                         (short)y,
                         command.ReturnDistanceTolerance,
