@@ -15,6 +15,11 @@ namespace NosSmooth.Game.Data.Entities;
 public interface ILivingEntity : IEntity
 {
     /// <summary>
+    /// Gets the VNum of the entity.
+    /// </summary>
+    public int VNum { get; internal set; }
+
+    /// <summary>
     /// Gets the speed of the entity. May be null if unknown.
     /// </summary>
     public int? Speed { get; set; }

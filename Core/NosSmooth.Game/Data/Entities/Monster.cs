@@ -21,9 +21,7 @@ public class Monster : ILivingEntity
     /// </summary>
     public IMonsterInfo? MonsterInfo { get; set; }
 
-    /// <summary>
-    /// Gets the VNum of the monster.
-    /// </summary>
+    /// <inheritdoc/>
     public int VNum { get; set; }
 
     /// <inheritdoc/>
