@@ -21,10 +21,8 @@ public class Npc : ILivingEntity
     /// </summary>
     public IMonsterInfo? NpcInfo { get; set; }
 
-    /// <summary>
-    /// Gets the VNum of the npc.
-    /// </summary>
-    public int VNum { get; internal set; }
+    /// <inheritdoc/>
+    public int VNum { get; set; }
 
     /// <inheritdoc/>
     public long Id { get; set; }

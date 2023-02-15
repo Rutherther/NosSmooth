@@ -77,9 +77,7 @@ public class Player : ILivingEntity
     /// </summary>
     public Family? Family { get; set; }
 
-    /// <summary>
-    /// Gets the VNum of the npc.
-    /// </summary>
+    /// <inheritdoc/>
     public int VNum { get; set; }
 
     /// <inheritdoc/>
