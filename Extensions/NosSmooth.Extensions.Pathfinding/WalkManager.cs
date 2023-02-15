@@ -7,6 +7,7 @@
 using NosSmooth.Core.Client;
 using NosSmooth.Core.Commands.Walking;
 using NosSmooth.Core.Errors;
+using NosSmooth.Extensions.Pathfinding.Errors;
 using Remora.Results;
 
 namespace NosSmooth.Extensions.Pathfinding;
@@ -34,7 +35,7 @@ public class WalkManager
     }
 
     /// <summary>
-    /// Go to the given position.
+    /// Move character to the given position.
     /// </summary>
     /// <remarks>
     /// Expect <see cref="WalkNotFinishedError"/> if the destination could not be reached.
@@ -44,31 +45,109 @@ public class WalkManager
     /// <param name="y">The target y coordinate.</param>
     /// <param name="allowUserActions">Whether to allow user actions during the walk operation.</param>
     /// <param name="ct">The cancellation token used for cancelling the operation.</param>
-    /// <param name="pets">The positions to walk pets to.</param>
     /// <returns>A result that may not succeed.</returns>
-    public async Task<Result> GoToAsync(short x, short y, bool allowUserActions = true, CancellationToken ct = default, params (int Selector, short TargetX, short TargetY)[] pets)
+    public async Task<Result> PlayerGoToAsync
+    (
+        short x,
+        short y,
+        bool allowUserActions = true,
+        CancellationToken ct = default
+    )
     {
         var pathResult = _pathfinder.FindPathFromCurrent(x, y);
-        if (!pathResult.IsSuccess)
+        if (!pathResult.IsDefined(out var path))
         {
             return Result.FromError(pathResult);
         }
 
-        if (pathResult.Entity.Parts.Count == 0)
+        return await TakePath
+        (
+            path,
+            _state.Character,
+            (x, y) => _client.SendCommandAsync
+            (
+                new WalkCommand
+                (
+                    x,
+                    y,
+                    2,
+                    AllowUserCancel: allowUserActions
+                ),
+                ct
+            )
+        );
+    }
+
+    /// <summary>
+    /// Move pet to the given position.
+    /// </summary>
+    /// <remarks>
+    /// Expect <see cref="WalkNotFinishedError"/> if the destination could not be reached.
+    /// Expect <see cref="NotFoundError"/> if the path could not be found.
+    /// </remarks>
+    /// <param name="mateId">The id of the mate to move.</param>
+    /// <param name="x">The target x coordinate.</param>
+    /// <param name="y">The target y coordinate.</param>
+    /// <param name="allowUserActions">Whether to allow user actions during the walk operation.</param>
+    /// <param name="ct">The cancellation token used for cancelling the operation.</param>
+    /// <returns>A result that may not succeed.</returns>
+    public async Task<Result> MateWalkToAsync
+    (
+        long mateId,
+        short x,
+        short y,
+        bool allowUserActions = true,
+        CancellationToken ct = default
+    )
+    {
+        if (!_state.Entities.TryGetValue(mateId, out var entityState) || entityState == _state.Character)
+        {
+            return new EntityStateNotFoundError(mateId);
+        }
+
+        var pathResult = _pathfinder.FindPathFromEntity(mateId, x, y);
+
+        if (!pathResult.IsDefined(out var path))
+        {
+            return Result.FromError(pathResult);
+        }
+
+        return await TakePath
+        (
+            path,
+            entityState,
+            (x, y) => _client.SendCommandAsync
+            (
+                new MateWalkCommand
+                (
+                    mateId,
+                    x,
+                    y,
+                    2,
+                    AllowUserCancel: allowUserActions
+                ),
+                ct
+            )
+        );
+    }
+
+    private async Task<Result> TakePath(Path path, EntityState state, Func<short, short, Task<Result>> walkFunc)
+    {
+        if (path.Parts.Count == 0)
         {
             return Result.FromSuccess();
         }
+        var target = path.Parts.Last();
 
-        var path = pathResult.Entity;
         while (!path.ReachedEnd)
         {
             if (path.MapId != _state.MapId)
             {
-                return new WalkNotFinishedError(_state.X, _state.Y, WalkUnfinishedReason.MapChanged);
+                return new WalkNotFinishedError(state.X, state.Y, WalkUnfinishedReason.MapChanged);
             }
 
             var next = path.TakeForwardPath();
-            var walkResult = await _client.SendCommandAsync(new WalkCommand(next.X, next.Y, pets, 2, AllowUserCancel: allowUserActions), ct);
+            var walkResult = await walkFunc(next.X, next.Y);
             if (!walkResult.IsSuccess)
             {
                 if (path.ReachedEnd && walkResult.Error is WalkNotFinishedError walkNotFinishedError
@@ -77,7 +156,7 @@ public class WalkManager
                     return Result.FromSuccess();
                 }
 
-                if (_state.X == x && _state.Y == y)
+                if (state.X == target.X && state.Y == target.Y)
                 {
                     return Result.FromSuccess();
                 }
