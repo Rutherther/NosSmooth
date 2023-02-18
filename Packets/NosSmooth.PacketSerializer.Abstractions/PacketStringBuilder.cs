@@ -16,6 +16,7 @@ namespace NosSmooth.PacketSerializer.Abstractions;
 public ref struct PacketStringBuilder
 {
     private Span<char> _buffer;
+    private char[]? _bufferArray;
     private int _position;
     private StringBuilderLevel _currentLevel;
     private char? _insertSeparator;
@@ -31,6 +32,7 @@ public ref struct PacketStringBuilder
         _insertSeparator = null;
         _buffer = initialBuffer;
         _position = 0;
+        _bufferArray = null;
     }
 
     /// <summary>
@@ -226,6 +228,17 @@ public ref struct PacketStringBuilder
     public void Append(decimal value)
         => AppendSpanFormattable(value);
 
+    /// <summary>
+    /// Returns buffer to ArrayPool if it has been used.
+    /// </summary>
+    public void Dispose()
+    {
+        if (_bufferArray is not null)
+        {
+            ArrayPool<char>.Shared.Return(_bufferArray);
+        }
+    }
+
     private void AppendSpanFormattable<T>(T value)
         where T : ISpanFormattable
     {
@@ -248,6 +261,12 @@ public ref struct PacketStringBuilder
 
         _buffer.CopyTo(newBuffer);
         _buffer = newBuffer;
+
+        if (_bufferArray is not null)
+        {
+            ArrayPool<char>.Shared.Return(_bufferArray);
+        }
+        _bufferArray = newBuffer;
     }
 
     private void BeforeAppend()
