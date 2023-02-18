@@ -136,7 +136,7 @@ public ref struct PacketStringBuilder
     public void Append(ReadOnlySpan<char> value)
     {
         BeforeAppend();
-        if (!value.TryCopyTo(_buffer.Slice(_position)))
+        while (!value.TryCopyTo(_buffer.Slice(_position)))
         {
             GrowBuffer(value.Length);
         }
