@@ -13,7 +13,7 @@ namespace NosSmooth.PacketSerializer.Converters.Basic;
 /// <summary>
 /// Converter of <see cref="ushort"/>.
 /// </summary>
-public class UShortStringConverter : BasicTypeConverter<ushort>
+public class UShortStringConverter : SpanFormattableTypeConverter<ushort>
 {
     /// <inheritdoc />
     protected override Result<ushort> Deserialize(ReadOnlySpan<char> value)

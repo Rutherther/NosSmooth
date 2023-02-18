@@ -75,7 +75,7 @@ public {_packetInfo.Name}Converter(IStringSerializer stringSerializer)
 }}
 
 /// <inheritdoc />
-public override Result Serialize({_packetInfo.Name}? obj, PacketStringBuilder builder)
+public override Result Serialize({_packetInfo.Name}? obj, ref PacketStringBuilder builder)
 {{
     if (obj is null)
     {{

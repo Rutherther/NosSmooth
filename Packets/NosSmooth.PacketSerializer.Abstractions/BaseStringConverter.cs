@@ -16,7 +16,7 @@ namespace NosSmooth.PacketSerializer.Abstractions;
 public abstract class BaseStringConverter<TParseType> : IStringConverter<TParseType>
 {
     /// <inheritdoc />
-    public abstract Result Serialize(TParseType? obj, PacketStringBuilder builder);
+    public abstract Result Serialize(TParseType? obj, ref PacketStringBuilder builder);
 
     /// <inheritdoc />
     public abstract Result<TParseType?> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options);
@@ -34,13 +34,13 @@ public abstract class BaseStringConverter<TParseType> : IStringConverter<TParseT
     }
 
     /// <inheritdoc/>
-    Result IStringConverter.Serialize(object? obj, PacketStringBuilder builder)
+    Result IStringConverter.Serialize(object? obj, ref PacketStringBuilder builder)
     {
         if (!(obj is TParseType parseType))
         {
             return new WrongTypeError(this, typeof(TParseType), obj);
         }
 
-        return Serialize(parseType, builder);
+        return Serialize(parseType, ref builder);
     }
 }

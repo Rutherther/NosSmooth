@@ -29,7 +29,7 @@ public interface IStringSerializer
     /// <param name="obj">The object to serialize.</param>
     /// <param name="builder">The string builder to append to.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Result Serialize(Type parseType, object? obj, PacketStringBuilder builder);
+    public Result Serialize(Type parseType, object? obj, ref PacketStringBuilder builder);
 
     /// <summary>
     /// Convert the data from the enumerator to the given type.
@@ -47,5 +47,5 @@ public interface IStringSerializer
     /// <param name="builder">The string builder to append to.</param>
     /// <typeparam name="TParseType">The type of the object to deserialize.</typeparam>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Result Serialize<TParseType>(TParseType? obj, PacketStringBuilder builder);
+    public Result Serialize<TParseType>(TParseType? obj, ref PacketStringBuilder builder);
 }

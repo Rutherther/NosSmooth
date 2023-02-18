@@ -28,7 +28,7 @@ public class NullableWrapperConverter<T> : BaseStringConverter<NullableWrapper<T
     }
 
     /// <inheritdoc />
-    public override Result Serialize(NullableWrapper<T> obj, PacketStringBuilder builder)
+    public override Result Serialize(NullableWrapper<T> obj, ref PacketStringBuilder builder)
     {
         if (obj.Value is null)
         {
@@ -42,7 +42,7 @@ public class NullableWrapperConverter<T> : BaseStringConverter<NullableWrapper<T
                 return Result.FromError(converterResult);
             }
 
-            return converter.Serialize(obj.Value, builder);
+            return converter.Serialize(obj.Value, ref builder);
         }
 
         return Result.FromSuccess();

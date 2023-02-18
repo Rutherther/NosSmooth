@@ -28,7 +28,7 @@ public class EnumStringConverter<TEnum, TUnderlyingType> : BaseStringConverter<T
     }
 
     /// <inheritdoc />
-    public override Result Serialize(TEnum? obj, PacketStringBuilder builder)
+    public override Result Serialize(TEnum? obj, ref PacketStringBuilder builder)
     {
         builder.Append(((TUnderlyingType?)(object?)obj)?.ToString() ?? "-");
         return Result.FromSuccess();

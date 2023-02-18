@@ -13,7 +13,7 @@ namespace NosSmooth.PacketSerializer.Converters.Basic;
 /// <summary>
 /// Converter of <see cref="uint"/>.
 /// </summary>
-public class UIntStringConverter : BasicTypeConverter<uint>
+public class UIntStringConverter : SpanFormattableTypeConverter<uint>
 {
     /// <inheritdoc />
     protected override Result<uint> Deserialize(ReadOnlySpan<char> value)

@@ -43,7 +43,7 @@ public class StringSerializer : IStringSerializer
     }
 
     /// <inheritdoc />
-    public Result Serialize(Type parseType, object? obj, PacketStringBuilder builder)
+    public Result Serialize(Type parseType, object? obj, ref PacketStringBuilder builder)
     {
         var converterResult = _converterRepository.GetTypeConverter(parseType);
         if (!converterResult.IsSuccess)
@@ -51,7 +51,7 @@ public class StringSerializer : IStringSerializer
             return Result.FromError(converterResult);
         }
 
-        return converterResult.Entity.Serialize(obj, builder);
+        return converterResult.Entity.Serialize(obj, ref builder);
     }
 
     /// <inheritdoc />
@@ -67,7 +67,7 @@ public class StringSerializer : IStringSerializer
     }
 
     /// <inheritdoc />
-    public Result Serialize<TParseType>(TParseType? obj, PacketStringBuilder builder)
+    public Result Serialize<TParseType>(TParseType? obj, ref PacketStringBuilder builder)
     {
         var converterResult = _converterRepository.GetTypeConverter<TParseType>();
         if (!converterResult.IsSuccess)
@@ -75,6 +75,6 @@ public class StringSerializer : IStringSerializer
             return Result.FromError(converterResult);
         }
 
-        return converterResult.Entity.Serialize(obj, builder);
+        return converterResult.Entity.Serialize(obj, ref builder);
     }
 }

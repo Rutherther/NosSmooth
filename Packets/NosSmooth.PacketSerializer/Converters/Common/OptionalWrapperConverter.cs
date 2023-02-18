@@ -28,7 +28,7 @@ public class OptionalWrapperConverter<T> : BaseStringConverter<OptionalWrapper<T
     }
 
     /// <inheritdoc />
-    public override Result Serialize(OptionalWrapper<T> obj, PacketStringBuilder builder)
+    public override Result Serialize(OptionalWrapper<T> obj, ref PacketStringBuilder builder)
     {
         if (obj.Value is null)
         {
@@ -41,7 +41,7 @@ public class OptionalWrapperConverter<T> : BaseStringConverter<OptionalWrapper<T
             return Result.FromError(converterResult);
         }
 
-        return converter.Serialize(obj.Value, builder);
+        return converter.Serialize(obj.Value, ref builder);
 
     }
 

@@ -6,8 +6,8 @@
         <LangVersion>10</LangVersion>
         <Description>Contains default NosTale packets.</Description>
         <VersionPrefix>3.6.0</VersionPrefix>
-        <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
         <PackageReleaseNotes>Add missing ptctl fields.</PackageReleaseNotes>
+        <TargetFramework>net7.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>

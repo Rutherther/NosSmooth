@@ -16,7 +16,7 @@ namespace NosSmooth.PacketSerializer.Converters.Common;
 public class NameStringConverter : BaseStringConverter<NameString>
 {
     /// <inheritdoc />
-    public override Result Serialize(NameString? obj, PacketStringBuilder builder)
+    public override Result Serialize(NameString? obj, ref PacketStringBuilder builder)
     {
         if (obj is null)
         {

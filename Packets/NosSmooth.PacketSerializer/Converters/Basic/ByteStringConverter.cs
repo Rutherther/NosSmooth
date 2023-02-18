@@ -13,7 +13,7 @@ namespace NosSmooth.PacketSerializer.Converters.Basic;
 /// <summary>
 /// Converter of <see cref="byte"/>.
 /// </summary>
-public class ByteStringConverter : BasicTypeConverter<byte>
+public class ByteStringConverter : SpanFormattableTypeConverter<byte>
 {
     /// <inheritdoc />
     protected override Result<byte> Deserialize(ReadOnlySpan<char> value)

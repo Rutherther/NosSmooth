@@ -13,7 +13,7 @@ namespace NosSmooth.PacketSerializer.Converters.Basic;
 /// <summary>
 /// Converter of <see cref="ulong"/>.
 /// </summary>
-public class ULongStringConverter : BasicTypeConverter<ulong>
+public class ULongStringConverter : SpanFormattableTypeConverter<ulong>
 {
     /// <inheritdoc />
     protected override Result<ulong> Deserialize(ReadOnlySpan<char> value)

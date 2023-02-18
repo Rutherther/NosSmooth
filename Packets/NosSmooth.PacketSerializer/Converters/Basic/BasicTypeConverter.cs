@@ -17,7 +17,7 @@ namespace NosSmooth.PacketSerializer.Converters.Basic;
 public abstract class BasicTypeConverter<TBasicType> : BaseStringConverter<TBasicType>
 {
     /// <inheritdoc />
-    public override Result Serialize(TBasicType? obj, PacketStringBuilder builder)
+    public override Result Serialize(TBasicType? obj, ref PacketStringBuilder builder)
     {
         builder.Append(obj?.ToString() ?? GetNullSymbol());
         return Result.FromSuccess();
