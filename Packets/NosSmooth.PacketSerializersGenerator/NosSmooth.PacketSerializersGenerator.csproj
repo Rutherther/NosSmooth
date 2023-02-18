@@ -9,8 +9,8 @@
         <IncludeCopyLocalFilesOutputGroup>true</IncludeCopyLocalFilesOutputGroup>
         <Description>NosSmooth's source code generator that generates serializers for packets.</Description>
         <IncludeBuildOutput>false</IncludeBuildOutput>
-        <VersionPrefix>1.1.1</VersionPrefix>
-        <PackageReleaseNotes>Add support for multiple separators.</PackageReleaseNotes>
+        <VersionPrefix>1.2.0</VersionPrefix>
+        <PackageReleaseNotes>Use spans in serialization instead of StringBuilder.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>

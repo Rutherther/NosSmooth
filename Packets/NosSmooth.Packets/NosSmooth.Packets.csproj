@@ -5,8 +5,8 @@
         <Nullable>enable</Nullable>
         <LangVersion>10</LangVersion>
         <Description>Contains default NosTale packets.</Description>
-        <VersionPrefix>3.6.0</VersionPrefix>
-        <PackageReleaseNotes>Add missing ptctl fields.</PackageReleaseNotes>
+        <VersionPrefix>4.0.0</VersionPrefix>
+        <PackageReleaseNotes>Use spans in serialization instead of StringBuilder.</PackageReleaseNotes>
         <TargetFramework>net7.0</TargetFramework>
     </PropertyGroup>
 

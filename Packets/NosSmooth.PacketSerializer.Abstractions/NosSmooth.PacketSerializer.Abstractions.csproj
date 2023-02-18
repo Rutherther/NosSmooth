@@ -5,8 +5,8 @@
         <Nullable>enable</Nullable>
         <LangVersion>10</LangVersion>
         <Description>NosSmooth's packet serializer abstractions that hold all interfaces, classes, errors needed for creating assemblies with packets that can have generated serializers.</Description>
-        <VersionPrefix>1.3.2</VersionPrefix>
-        <PackageReleaseNotes>Accept ReadOnlySpan in PacketStringEnumerator.</PackageReleaseNotes>
+        <VersionPrefix>2.0.0</VersionPrefix>
+        <PackageReleaseNotes>Use spans in serialization instead of StringBuilder.</PackageReleaseNotes>
         <TargetFramework>net7.0</TargetFramework>
     </PropertyGroup>
 

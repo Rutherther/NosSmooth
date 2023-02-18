@@ -5,8 +5,8 @@
         <AssemblyName>NosSmooth.PacketSerializer</AssemblyName>
         <RootNamespace>NosSmooth.PacketSerializer</RootNamespace>
         <Description>NosSmooth's packet string serializer implementation.</Description>
-        <VersionPrefix>2.2.7</VersionPrefix>
-        <PackageReleaseNotes>Make IPacketSerializer work with ReadOnlySpan.</PackageReleaseNotes>
+        <VersionPrefix>3.0.0</VersionPrefix>
+        <PackageReleaseNotes>Use spans in serialization instead of StringBuilder.</PackageReleaseNotes>
         <TargetFramework>net7.0</TargetFramework>
     </PropertyGroup>
 
