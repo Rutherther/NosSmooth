@@ -31,7 +31,7 @@ public class NullableStringConverter<T> : BaseStringConverter<Nullable<T>>
     }
 
     /// <inheritdoc />
-    public override Result Serialize(T? obj, ref PacketStringBuilder builder)
+    public override Result Serialize(T? obj, in PacketStringBuilder builder)
     {
         if (obj is null)
         {
@@ -39,11 +39,11 @@ public class NullableStringConverter<T> : BaseStringConverter<Nullable<T>>
             return Result.FromSuccess();
         }
 
-        return _stringSerializer.Serialize<T>(obj.Value, ref builder);
+        return _stringSerializer.Serialize<T>(obj.Value, in builder);
     }
 
     /// <inheritdoc />
-    public override Result<T?> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
+    public override Result<T?> Deserialize(in PacketStringEnumerator stringEnumerator, DeserializeOptions options)
     {
         var nextToken = stringEnumerator.GetNextToken(out var packetToken, false);
         if (!nextToken.IsSuccess)
@@ -63,7 +63,7 @@ public class NullableStringConverter<T> : BaseStringConverter<Nullable<T>>
             }
         }
 
-        var result = _stringSerializer.Deserialize<T>(ref stringEnumerator, options);
+        var result = _stringSerializer.Deserialize<T>(in stringEnumerator, options);
         if (!result.IsSuccess)
         {
             return Result<T?>.FromError(result);

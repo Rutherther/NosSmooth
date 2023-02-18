@@ -32,7 +32,7 @@ public class FallbackInlineConverterGenerator : IInlineConverterGenerator
         var resultName = $"{variableName.Replace(".", string.Empty)}Result";
         textWriter.WriteLine
         (
-            $"var {resultName} = _stringSerializer.Serialize<{(typeSyntax?.ToString() ?? typeSymbol!.ToString()).TrimEnd('?')}?>({variableName}, ref builder);"
+            $"var {resultName} = _stringSerializer.Serialize<{(typeSyntax?.ToString() ?? typeSymbol!.ToString()).TrimEnd('?')}?>({variableName}, in builder);"
         );
         textWriter.WriteLine($"if (!{resultName}.IsSuccess)");
         textWriter.WriteLine("{");
@@ -49,7 +49,7 @@ public class FallbackInlineConverterGenerator : IInlineConverterGenerator
         var options = nullable ? "DeserializeOptions.Nullable" : "default";
         textWriter.WriteLine
         (
-            $"_stringSerializer.Deserialize<{(typeSyntax?.ToString() ?? typeSymbol!.ToString()).TrimEnd('?')}?>(ref stringEnumerator, {options});"
+            $"_stringSerializer.Deserialize<{(typeSyntax?.ToString() ?? typeSymbol!.ToString()).TrimEnd('?')}?>(in stringEnumerator, {options});"
         );
         return null;
     }

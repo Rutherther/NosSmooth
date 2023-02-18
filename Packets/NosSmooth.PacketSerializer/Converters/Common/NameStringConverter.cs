@@ -16,7 +16,7 @@ namespace NosSmooth.PacketSerializer.Converters.Common;
 public class NameStringConverter : BaseStringConverter<NameString>
 {
     /// <inheritdoc />
-    public override Result Serialize(NameString? obj, ref PacketStringBuilder builder)
+    public override Result Serialize(NameString? obj, in PacketStringBuilder builder)
     {
         if (obj is null)
         {
@@ -29,7 +29,7 @@ public class NameStringConverter : BaseStringConverter<NameString>
     }
 
     /// <inheritdoc />
-    public override Result<NameString?> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
+    public override Result<NameString?> Deserialize(in PacketStringEnumerator stringEnumerator, DeserializeOptions options)
     {
         var tokenResult = stringEnumerator.GetNextToken(out var packetToken);
         if (!tokenResult.IsSuccess)

@@ -19,7 +19,7 @@ public interface IStringConverter
     /// <param name="stringEnumerator">The packet string enumerator with the current position.</param>
     /// <param name="options">The deserialization options.</param>
     /// <returns>The parsed object or an error.</returns>
-    public Result<object?> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options);
+    public Result<object?> Deserialize(in PacketStringEnumerator stringEnumerator, DeserializeOptions options);
 
     /// <summary>
     /// Serializes the given object to string by appending to the packet string builder.
@@ -27,7 +27,7 @@ public interface IStringConverter
     /// <param name="obj">The object to serialize.</param>
     /// <param name="builder">The string builder to append to.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Result Serialize(object? obj, ref PacketStringBuilder builder);
+    public Result Serialize(object? obj, in PacketStringBuilder builder);
 }
 
 /// <summary>
@@ -45,7 +45,7 @@ public interface IStringConverter<TParseType> : IStringConverter
     /// <param name="stringEnumerator">The packet string enumerator with the current position.</param>
     /// <param name="options">The deserialization options.</param>
     /// <returns>The parsed object or an error.</returns>
-    public new Result<TParseType?> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options);
+    public new Result<TParseType?> Deserialize(in PacketStringEnumerator stringEnumerator, DeserializeOptions options);
 
     /// <summary>
     /// Serializes the given object to string by appending to the packet string builder.
@@ -53,5 +53,5 @@ public interface IStringConverter<TParseType> : IStringConverter
     /// <param name="obj">The object to serialize.</param>
     /// <param name="builder">The string builder to append to.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Result Serialize(TParseType? obj, ref PacketStringBuilder builder);
+    public Result Serialize(TParseType? obj, in PacketStringBuilder builder);
 }

@@ -39,7 +39,7 @@ public class StringConverterTests
     {
         string? test = null;
         var stringBuilder = new PacketStringBuilder(stackalloc char[500]);
-        var serializeResult = _stringSerializer.Serialize(test, ref stringBuilder);
+        var serializeResult = _stringSerializer.Serialize(test, in stringBuilder);
         Assert.True(serializeResult.IsSuccess, !serializeResult.IsSuccess ? serializeResult.Error.Message : string.Empty);
         Assert.Equal("-", stringBuilder.ToString());
     }
@@ -52,7 +52,7 @@ public class StringConverterTests
     {
         var deserialize = "-";
         var stringEnumerator = new PacketStringEnumerator(deserialize);
-        var deserializeResult = _stringSerializer.Deserialize<string?>(ref stringEnumerator, DeserializeOptions.Nullable);
+        var deserializeResult = _stringSerializer.Deserialize<string?>(in stringEnumerator, DeserializeOptions.Nullable);
         Assert.True(deserializeResult.IsSuccess, !deserializeResult.IsSuccess ? deserializeResult.Error.Message : string.Empty);
         Assert.Null(deserializeResult.Entity);
     }
@@ -65,7 +65,7 @@ public class StringConverterTests
     {
         var deserialize = "-";
         var stringEnumerator = new PacketStringEnumerator(deserialize);
-        var deserializeResult = _stringSerializer.Deserialize<string?>(ref stringEnumerator, default);
+        var deserializeResult = _stringSerializer.Deserialize<string?>(in stringEnumerator, default);
         Assert.True(deserializeResult.IsSuccess, !deserializeResult.IsSuccess ? deserializeResult.Error.Message : string.Empty);
         Assert.NotNull(deserializeResult.Entity);
         Assert.Equal("-", deserializeResult.Entity);

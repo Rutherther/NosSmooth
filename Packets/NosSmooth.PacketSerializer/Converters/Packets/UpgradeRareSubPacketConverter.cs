@@ -18,7 +18,7 @@ namespace NosSmooth.PacketSerializer.Converters.Packets;
 public class UpgradeRareSubPacketConverter : BaseStringConverter<UpgradeRareSubPacket>
 {
     /// <inheritdoc />
-    public override Result Serialize(UpgradeRareSubPacket? obj, ref PacketStringBuilder builder)
+    public override Result Serialize(UpgradeRareSubPacket? obj, in PacketStringBuilder builder)
     {
         if (obj is null)
         {
@@ -31,7 +31,7 @@ public class UpgradeRareSubPacketConverter : BaseStringConverter<UpgradeRareSubP
     }
 
     /// <inheritdoc />
-    public override Result<UpgradeRareSubPacket?> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
+    public override Result<UpgradeRareSubPacket?> Deserialize(in PacketStringEnumerator stringEnumerator, DeserializeOptions options)
     {
         var tokenResult = stringEnumerator.GetNextToken(out var packetToken);
         if (!tokenResult.IsSuccess)

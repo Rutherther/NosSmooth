@@ -17,14 +17,14 @@ namespace NosSmooth.PacketSerializer.Converters.Basic;
 public abstract class BasicTypeConverter<TBasicType> : BaseStringConverter<TBasicType>
 {
     /// <inheritdoc />
-    public override Result Serialize(TBasicType? obj, ref PacketStringBuilder builder)
+    public override Result Serialize(TBasicType? obj, in PacketStringBuilder builder)
     {
         builder.Append(obj?.ToString() ?? GetNullSymbol());
         return Result.FromSuccess();
     }
 
     /// <inheritdoc />
-    public override Result<TBasicType?> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
+    public override Result<TBasicType?> Deserialize(in PacketStringEnumerator stringEnumerator, DeserializeOptions options)
     {
         var nextTokenResult = stringEnumerator.GetNextToken(out var packetToken);
         if (!nextTokenResult.IsSuccess)

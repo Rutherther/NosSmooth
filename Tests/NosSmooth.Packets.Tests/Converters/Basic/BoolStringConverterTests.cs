@@ -39,7 +39,7 @@ public class BoolStringConverterTests
     {
         bool? test = null;
         var stringBuilder = new PacketStringBuilder(stackalloc char[500]);
-        var serializeResult = _stringSerializer.Serialize(test, ref stringBuilder);
+        var serializeResult = _stringSerializer.Serialize(test, in stringBuilder);
         Assert.True(serializeResult.IsSuccess, !serializeResult.IsSuccess ? serializeResult.Error.Message : string.Empty);
         Assert.Equal("-1", stringBuilder.ToString());
     }
@@ -52,7 +52,7 @@ public class BoolStringConverterTests
     {
         var deserialize = "-1";
         var stringEnumerator = new PacketStringEnumerator(deserialize);
-        var deserializeResult = _stringSerializer.Deserialize<bool?>(ref stringEnumerator, DeserializeOptions.Nullable);
+        var deserializeResult = _stringSerializer.Deserialize<bool?>(in stringEnumerator, DeserializeOptions.Nullable);
         Assert.True(deserializeResult.IsSuccess, !deserializeResult.IsSuccess ? deserializeResult.Error.Message : string.Empty);
         Assert.Null(deserializeResult.Entity);
     }
@@ -65,7 +65,7 @@ public class BoolStringConverterTests
     {
         var deserialize = "1";
         var stringEnumerator = new PacketStringEnumerator(deserialize);
-        var deserializeResult = _stringSerializer.Deserialize<bool?>(ref stringEnumerator, default);
+        var deserializeResult = _stringSerializer.Deserialize<bool?>(in stringEnumerator, default);
         Assert.True(deserializeResult.IsSuccess, !deserializeResult.IsSuccess ? deserializeResult.Error.Message : string.Empty);
         Assert.True(deserializeResult.Entity);
     }
@@ -78,7 +78,7 @@ public class BoolStringConverterTests
     {
         var deserialize = "0";
         var stringEnumerator = new PacketStringEnumerator(deserialize);
-        var deserializeResult = _stringSerializer.Deserialize<bool?>(ref stringEnumerator, default);
+        var deserializeResult = _stringSerializer.Deserialize<bool?>(in stringEnumerator, default);
         Assert.True(deserializeResult.IsSuccess, !deserializeResult.IsSuccess ? deserializeResult.Error.Message : string.Empty);
         Assert.False(deserializeResult.Entity);
     }
