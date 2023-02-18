@@ -75,7 +75,7 @@ public {_packetInfo.Name}Converter(IStringSerializer stringSerializer)
 }}
 
 /// <inheritdoc />
-public override Result Serialize({_packetInfo.Name}? obj, in PacketStringBuilder builder)
+public override Result Serialize({_packetInfo.Name}? obj, ref PacketStringBuilder builder)
 {{
     if (obj is null)
     {{
@@ -97,7 +97,7 @@ public override Result Serialize({_packetInfo.Name}? obj, in PacketStringBuilder
 }}
 
 /// <inheritdoc />
-public override Result<{_packetInfo.Name}?> Deserialize(in PacketStringEnumerator stringEnumerator, DeserializeOptions options)
+public override Result<{_packetInfo.Name}?> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
 {{
     var typeConverter = this;
 "

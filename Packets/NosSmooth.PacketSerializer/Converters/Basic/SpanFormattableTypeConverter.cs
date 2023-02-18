@@ -18,7 +18,7 @@ public abstract class SpanFormattableTypeConverter<T> : BasicTypeConverter<T>
     where T : ISpanFormattable
 {
     /// <inheritdoc />
-    public override Result Serialize(T? obj, in PacketStringBuilder builder)
+    public override Result Serialize(T? obj, ref PacketStringBuilder builder)
     {
         if (obj is not null)
         {

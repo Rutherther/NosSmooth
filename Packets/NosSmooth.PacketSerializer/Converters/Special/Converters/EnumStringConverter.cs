@@ -28,16 +28,16 @@ public class EnumStringConverter<TEnum, TUnderlyingType> : BaseStringConverter<T
     }
 
     /// <inheritdoc />
-    public override Result Serialize(TEnum? obj, in PacketStringBuilder builder)
+    public override Result Serialize(TEnum? obj, ref PacketStringBuilder builder)
     {
         builder.Append(((TUnderlyingType?)(object?)obj)?.ToString() ?? "-");
         return Result.FromSuccess();
     }
 
     /// <inheritdoc />
-    public override Result<TEnum?> Deserialize(in PacketStringEnumerator stringEnumerator, DeserializeOptions options)
+    public override Result<TEnum?> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
     {
-        var result = _serializer.Deserialize<TUnderlyingType>(in stringEnumerator, options);
+        var result = _serializer.Deserialize<TUnderlyingType>(ref stringEnumerator, options);
         if (!result.IsSuccess)
         {
             return Result<TEnum?>.FromError(result);

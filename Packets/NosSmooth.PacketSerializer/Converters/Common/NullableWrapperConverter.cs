@@ -28,7 +28,7 @@ public class NullableWrapperConverter<T> : BaseStringConverter<NullableWrapper<T
     }
 
     /// <inheritdoc />
-    public override Result Serialize(NullableWrapper<T> obj, in PacketStringBuilder builder)
+    public override Result Serialize(NullableWrapper<T> obj, ref PacketStringBuilder builder)
     {
         if (obj.Value is null)
         {
@@ -42,14 +42,14 @@ public class NullableWrapperConverter<T> : BaseStringConverter<NullableWrapper<T
                 return Result.FromError(converterResult);
             }
 
-            return converter.Serialize(obj.Value, in builder);
+            return converter.Serialize(obj.Value, ref builder);
         }
 
         return Result.FromSuccess();
     }
 
     /// <inheritdoc />
-    public override Result<NullableWrapper<T>> Deserialize(in PacketStringEnumerator stringEnumerator, DeserializeOptions options)
+    public override Result<NullableWrapper<T>> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
     {
         var tokenResult = stringEnumerator.GetNextToken(out var packetToken, false);
         if (!tokenResult.IsSuccess)
@@ -68,7 +68,7 @@ public class NullableWrapperConverter<T> : BaseStringConverter<NullableWrapper<T
             return Result<NullableWrapper<T>>.FromError(converterResult);
         }
 
-        var deserializationResult = converter.Deserialize(in stringEnumerator, new DeserializeOptions(true));
+        var deserializationResult = converter.Deserialize(ref stringEnumerator, new DeserializeOptions(true));
         if (!deserializationResult.IsDefined(out var deserialization))
         {
             return Result<NullableWrapper<T>>.FromError(deserializationResult);

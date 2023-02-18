@@ -89,7 +89,7 @@ public class ListInlineConverterGenerator : IInlineConverterGenerator
         }
 
         textWriter.WriteLine
-            ($"{Constants.HelperClass}.{GetMethodName(genericArgument, nullable)}(typeConverter, _stringSerializer, in stringEnumerator);");
+            ($"{Constants.HelperClass}.{GetMethodName(genericArgument, nullable)}(typeConverter, _stringSerializer, ref stringEnumerator);");
         return null;
     }
 
@@ -106,7 +106,7 @@ public class ListInlineConverterGenerator : IInlineConverterGenerator
             textWriter.WriteLine
             (
                 @$"
-public static Result<IReadOnlyList<{type.GetActualType()}>> {GetMethodName(type, nullable)}(IStringConverter typeConverter, IStringSerializer _stringSerializer, in PacketStringEnumerator stringEnumerator)
+public static Result<IReadOnlyList<{type.GetActualType()}>> {GetMethodName(type, nullable)}(IStringConverter typeConverter, IStringSerializer _stringSerializer, ref PacketStringEnumerator stringEnumerator)
 {{
     var data = new List<{type.GetActualType()}>();
 

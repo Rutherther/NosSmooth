@@ -57,7 +57,7 @@ public class BasicInlineConverterGenerator : IInlineConverterGenerator
             throw new Exception("TypeSyntax or TypeSymbol has to be non null.");
         }
 
-        textWriter.WriteLine($"{Constants.HelperClass}.ParseBasic{type}(typeConverter, in stringEnumerator, {nullable.ToString().ToLower()});");
+        textWriter.WriteLine($"{Constants.HelperClass}.ParseBasic{type}(typeConverter, ref stringEnumerator, {nullable.ToString().ToLower()});");
         return null;
     }
 
@@ -67,7 +67,7 @@ public class BasicInlineConverterGenerator : IInlineConverterGenerator
         foreach (var type in HandleTypes)
         {
             textWriter.WriteMultiline($@"
-public static Result<{type}?> ParseBasic{type}(IStringConverter typeConverter, in PacketStringEnumerator stringEnumerator, bool nullable)
+public static Result<{type}?> ParseBasic{type}(IStringConverter typeConverter, ref PacketStringEnumerator stringEnumerator, bool nullable)
 {{
     var tokenResult = stringEnumerator.GetNextToken(out var packetToken);
     if (!tokenResult.IsSuccess)

@@ -66,7 +66,7 @@ public class EnumInlineConverterGenerator : IInlineConverterGenerator
 
         textWriter.WriteLine
         (
-            $"{Constants.HelperClass}.ParseEnum{typeSymbol?.ToString().TrimEnd('?').Replace('.', '_')}(typeConverter, in stringEnumerator, {nullable.ToString().ToLower()});"
+            $"{Constants.HelperClass}.ParseEnum{typeSymbol?.ToString().TrimEnd('?').Replace('.', '_')}(typeConverter, ref stringEnumerator, {nullable.ToString().ToLower()});"
         );
         return null;
     }
@@ -80,7 +80,7 @@ public class EnumInlineConverterGenerator : IInlineConverterGenerator
             textWriter.WriteMultiline
             (
                 $@"
-public static Result<{type}?> ParseEnum{type.ToString().Replace('.', '_')}(IStringConverter typeConverter, in PacketStringEnumerator stringEnumerator, bool nullable)
+public static Result<{type}?> ParseEnum{type.ToString().Replace('.', '_')}(IStringConverter typeConverter, ref PacketStringEnumerator stringEnumerator, bool nullable)
 {{
     var tokenResult = stringEnumerator.GetNextToken(out var packetToken);
     if (!tokenResult.IsSuccess)

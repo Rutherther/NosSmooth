@@ -29,7 +29,7 @@ public class ListStringConverter<TGeneric> : BaseStringConverter<IReadOnlyList<T
     }
 
     /// <inheritdoc />
-    public override Result Serialize(IReadOnlyList<TGeneric>? obj, in PacketStringBuilder builder)
+    public override Result Serialize(IReadOnlyList<TGeneric>? obj, ref PacketStringBuilder builder)
     {
         if (obj is null)
         {
@@ -44,7 +44,7 @@ public class ListStringConverter<TGeneric> : BaseStringConverter<IReadOnlyList<T
                 return new ArgumentInvalidError(nameof(builder), "The string builder has to have a prepared level for all lists.");
             }
 
-            var serializeResult = _serializer.Serialize(item, in builder);
+            var serializeResult = _serializer.Serialize(item, ref builder);
             builder.PopLevel();
             if (!serializeResult.IsSuccess)
             {
@@ -56,7 +56,7 @@ public class ListStringConverter<TGeneric> : BaseStringConverter<IReadOnlyList<T
     }
 
     /// <inheritdoc />
-    public override Result<IReadOnlyList<TGeneric>?> Deserialize(in PacketStringEnumerator stringEnumerator, DeserializeOptions options)
+    public override Result<IReadOnlyList<TGeneric>?> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
     {
         var list = new List<TGeneric>();
 
@@ -68,7 +68,7 @@ public class ListStringConverter<TGeneric> : BaseStringConverter<IReadOnlyList<T
                 return new ArgumentInvalidError(nameof(stringEnumerator), "The string enumerator has to have a prepared level for all lists.");
             }
 
-            var result = _serializer.Deserialize<TGeneric>(in stringEnumerator, default);
+            var result = _serializer.Deserialize<TGeneric>(ref stringEnumerator, default);
 
             // If we know that we are not on the last token in the item level, just skip to the end of the item.
             // Note that if this is the case, then that means the converter is either corrupted

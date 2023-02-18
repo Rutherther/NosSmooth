@@ -28,7 +28,7 @@ public class OptionalWrapperConverter<T> : BaseStringConverter<OptionalWrapper<T
     }
 
     /// <inheritdoc />
-    public override Result Serialize(OptionalWrapper<T> obj, in PacketStringBuilder builder)
+    public override Result Serialize(OptionalWrapper<T> obj, ref PacketStringBuilder builder)
     {
         if (obj.Value is null)
         {
@@ -41,12 +41,12 @@ public class OptionalWrapperConverter<T> : BaseStringConverter<OptionalWrapper<T
             return Result.FromError(converterResult);
         }
 
-        return converter.Serialize(obj.Value, in builder);
+        return converter.Serialize(obj.Value, ref builder);
 
     }
 
     /// <inheritdoc />
-    public override Result<OptionalWrapper<T>> Deserialize(in PacketStringEnumerator stringEnumerator, DeserializeOptions options)
+    public override Result<OptionalWrapper<T>> Deserialize(ref PacketStringEnumerator stringEnumerator, DeserializeOptions options)
     {
         if (stringEnumerator.IsOnLastToken() ?? false)
         {
@@ -71,7 +71,7 @@ public class OptionalWrapperConverter<T> : BaseStringConverter<OptionalWrapper<T
             return Result<OptionalWrapper<T>>.FromError(converterResult);
         }
 
-        var deserializationResult = converter.Deserialize(in stringEnumerator, new DeserializeOptions(true));
+        var deserializationResult = converter.Deserialize(ref stringEnumerator, new DeserializeOptions(true));
         if (!deserializationResult.IsDefined(out var deserialization))
         {
             return Result<OptionalWrapper<T>>.FromError(deserializationResult);

@@ -48,7 +48,7 @@ public class PacketSerializer : IPacketSerializer
         }
 
         stringBuilder.Append(info.Header);
-        var serializeResult = info.PacketConverter.Serialize(obj, in stringBuilder);
+        var serializeResult = info.PacketConverter.Serialize(obj, ref stringBuilder);
         if (!serializeResult.IsSuccess)
         {
             return Result<string>.FromError(serializeResult);
@@ -74,7 +74,7 @@ public class PacketSerializer : IPacketSerializer
         }
 
         var packetInfo = packetInfoResult.Entity;
-        var deserializedResult = packetInfo.PacketConverter.Deserialize(in packetStringEnumerator, default);
+        var deserializedResult = packetInfo.PacketConverter.Deserialize(ref packetStringEnumerator, default);
         if (!deserializedResult.IsSuccess)
         {
             return Result<IPacket>.FromError(deserializedResult);
