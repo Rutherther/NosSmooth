@@ -32,7 +32,7 @@ public class FallbackInlineConverterGenerator : IInlineConverterGenerator
         var resultName = $"{variableName.Replace(".", string.Empty)}Result";
         textWriter.WriteLine
         (
-            $"var {resultName} = _stringSerializer.Serialize<{(typeSyntax?.ToString() ?? typeSymbol!.ToString()).TrimEnd('?')}?>({variableName}, builder);"
+            $"var {resultName} = _stringSerializer.Serialize<{(typeSyntax?.ToString() ?? typeSymbol!.ToString()).TrimEnd('?')}?>({variableName}, ref builder);"
         );
         textWriter.WriteLine($"if (!{resultName}.IsSuccess)");
         textWriter.WriteLine("{");

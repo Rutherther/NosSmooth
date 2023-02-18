@@ -29,7 +29,7 @@ public class ListStringConverter<TGeneric> : BaseStringConverter<IReadOnlyList<T
     }
 
     /// <inheritdoc />
-    public override Result Serialize(IReadOnlyList<TGeneric>? obj, PacketStringBuilder builder)
+    public override Result Serialize(IReadOnlyList<TGeneric>? obj, ref PacketStringBuilder builder)
     {
         if (obj is null)
         {
@@ -44,7 +44,7 @@ public class ListStringConverter<TGeneric> : BaseStringConverter<IReadOnlyList<T
                 return new ArgumentInvalidError(nameof(builder), "The string builder has to have a prepared level for all lists.");
             }
 
-            var serializeResult = _serializer.Serialize(item, builder);
+            var serializeResult = _serializer.Serialize(item, ref builder);
             builder.PopLevel();
             if (!serializeResult.IsSuccess)
             {

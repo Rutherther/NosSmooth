@@ -21,7 +21,7 @@ public class PacketStringBuilderTests
     public void BuilderCorrectlyBuildsComplexArray()
     {
         // in 1 11.12.13|14.15.16|17.18.19
-        var stringBuilder = new PacketStringBuilder();
+        var stringBuilder = new PacketStringBuilder(stackalloc char[500]);
         stringBuilder.Append("in");
         stringBuilder.Append("1");
 
@@ -48,7 +48,7 @@ public class PacketStringBuilderTests
     [Fact]
     public void BuilderCorrectlyUsesOnceSeparator()
     {
-        var stringBuilder = new PacketStringBuilder();
+        var stringBuilder = new PacketStringBuilder(stackalloc char[500]);
         stringBuilder.Append("in");
 
         stringBuilder.SetAfterSeparatorOnce('.');

@@ -31,7 +31,7 @@ public class NullableStringConverter<T> : BaseStringConverter<Nullable<T>>
     }
 
     /// <inheritdoc />
-    public override Result Serialize(T? obj, PacketStringBuilder builder)
+    public override Result Serialize(T? obj, ref PacketStringBuilder builder)
     {
         if (obj is null)
         {
@@ -39,7 +39,7 @@ public class NullableStringConverter<T> : BaseStringConverter<Nullable<T>>
             return Result.FromSuccess();
         }
 
-        return _stringSerializer.Serialize<T>(obj.Value, builder);
+        return _stringSerializer.Serialize<T>(obj.Value, ref builder);
     }
 
     /// <inheritdoc />

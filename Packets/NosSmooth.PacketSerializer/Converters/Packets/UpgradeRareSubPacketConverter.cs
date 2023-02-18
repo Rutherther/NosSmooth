@@ -18,7 +18,7 @@ namespace NosSmooth.PacketSerializer.Converters.Packets;
 public class UpgradeRareSubPacketConverter : BaseStringConverter<UpgradeRareSubPacket>
 {
     /// <inheritdoc />
-    public override Result Serialize(UpgradeRareSubPacket? obj, PacketStringBuilder builder)
+    public override Result Serialize(UpgradeRareSubPacket? obj, ref PacketStringBuilder builder)
     {
         if (obj is null)
         {

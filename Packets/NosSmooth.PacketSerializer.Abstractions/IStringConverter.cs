@@ -27,7 +27,7 @@ public interface IStringConverter
     /// <param name="obj">The object to serialize.</param>
     /// <param name="builder">The string builder to append to.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Result Serialize(object? obj, PacketStringBuilder builder);
+    public Result Serialize(object? obj, ref PacketStringBuilder builder);
 }
 
 /// <summary>
@@ -53,5 +53,5 @@ public interface IStringConverter<TParseType> : IStringConverter
     /// <param name="obj">The object to serialize.</param>
     /// <param name="builder">The string builder to append to.</param>
     /// <returns>A result that may or may not have succeeded.</returns>
-    public Result Serialize(TParseType? obj, PacketStringBuilder builder);
+    public Result Serialize(TParseType? obj, ref PacketStringBuilder builder);
 }

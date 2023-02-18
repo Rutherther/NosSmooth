@@ -34,7 +34,7 @@ public class PacketSerializer : IPacketSerializer
     /// <inheritdoc/>
     public Result<string> Serialize(IPacket obj)
     {
-        var stringBuilder = new PacketStringBuilder();
+        var stringBuilder = new PacketStringBuilder(stackalloc char[500]);
         var infoResult = _packetTypesRepository.FindPacketInfo(obj.GetType());
         if (!infoResult.IsSuccess)
         {
@@ -48,7 +48,7 @@ public class PacketSerializer : IPacketSerializer
         }
 
         stringBuilder.Append(info.Header);
-        var serializeResult = info.PacketConverter.Serialize(obj, stringBuilder);
+        var serializeResult = info.PacketConverter.Serialize(obj, ref stringBuilder);
         if (!serializeResult.IsSuccess)
         {
             return Result<string>.FromError(serializeResult);

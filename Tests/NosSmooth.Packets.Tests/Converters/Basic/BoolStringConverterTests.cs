@@ -38,8 +38,8 @@ public class BoolStringConverterTests
     public void TestsTreatsNullAsMinusOne()
     {
         bool? test = null;
-        var stringBuilder = new PacketStringBuilder();
-        var serializeResult = _stringSerializer.Serialize(test, stringBuilder);
+        var stringBuilder = new PacketStringBuilder(stackalloc char[500]);
+        var serializeResult = _stringSerializer.Serialize(test, ref stringBuilder);
         Assert.True(serializeResult.IsSuccess, !serializeResult.IsSuccess ? serializeResult.Error.Message : string.Empty);
         Assert.Equal("-1", stringBuilder.ToString());
     }

@@ -3,11 +3,11 @@
     <PropertyGroup>
         <Nullable>enable</Nullable>
         <LangVersion>10</LangVersion>
-        <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
         <Authors>Rutherther</Authors>
         <Description>NosSmooth Core library allowing implementing nostale client, handling packets and commands.</Description>
         <VersionPrefix>5.0.0</VersionPrefix>
         <PackageReleaseNotes>Move PetWalkCommand to MateWalkCommand.</PackageReleaseNotes>
+        <TargetFramework>net7.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>

@@ -4,6 +4,7 @@
 //  Copyright (c) František Boháček. All rights reserved.
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Buffers;
 using System.Text;
 using Remora.Results;
 
@@ -12,21 +13,24 @@ namespace NosSmooth.PacketSerializer.Abstractions;
 /// <summary>
 /// String builder for packets.
 /// </summary>
-public class PacketStringBuilder
+public ref struct PacketStringBuilder
 {
-    private readonly StringBuilder _builder;
+    private Span<char> _buffer;
+    private int _position;
     private StringBuilderLevel _currentLevel;
     private char? _insertSeparator;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PacketStringBuilder"/> class.
+    /// Initializes a new instance of the <see cref="PacketStringBuilder"/> struct.
     /// </summary>
+    /// <param name="initialBuffer">The initial buffer to store the packet to. Will grow in size if needed.</param>
     /// <param name="separator">The top level separator.</param>
-    public PacketStringBuilder(char separator = ' ')
+    public PacketStringBuilder(Span<char> initialBuffer, char separator = ' ')
     {
         _currentLevel = new StringBuilderLevel(null, separator);
         _insertSeparator = null;
-        _builder = new StringBuilder();
+        _buffer = initialBuffer;
+        _position = 0;
     }
 
     /// <summary>
@@ -113,13 +117,28 @@ public class PacketStringBuilder
     }
 
     /// <summary>
+    /// Appends a value that is span formattable.
+    /// </summary>
+    /// <param name="value">The value to append.</param>
+    /// <typeparam name="T">The span formattable type.</typeparam>
+    public void Append<T>(T value)
+        where T : ISpanFormattable
+    {
+        AppendSpanFormattable(value);
+    }
+
+    /// <summary>
     /// Appends the value to the string.
     /// </summary>
     /// <param name="value">The value to append.</param>
-    public void Append(string value)
+    public void Append(ReadOnlySpan<char> value)
     {
         BeforeAppend();
-        _builder.Append(value);
+        if (!value.TryCopyTo(_buffer.Slice(_position)))
+        {
+            GrowBuffer(value.Length);
+        }
+        _position += value.Length;
         AfterAppend();
     }
 
@@ -128,138 +147,120 @@ public class PacketStringBuilder
     /// </summary>
     /// <param name="value">The value to append.</param>
     public void Append(int value)
-    {
-        BeforeAppend();
-        _builder.Append(value);
-        AfterAppend();
-    }
+        => AppendSpanFormattable(value);
 
     /// <summary>
     /// Appends the value to the string.
     /// </summary>
     /// <param name="value">The value to append.</param>
     public void Append(uint value)
-    {
-        BeforeAppend();
-        _builder.Append(value);
-        AfterAppend();
-    }
+        => AppendSpanFormattable(value);
 
     /// <summary>
     /// Appends the value to the string.
     /// </summary>
     /// <param name="value">The value to append.</param>
     public void Append(short value)
-    {
-        BeforeAppend();
-        _builder.Append(value);
-        AfterAppend();
-    }
+        => AppendSpanFormattable(value);
 
     /// <summary>
     /// Appends the value to the string.
     /// </summary>
     /// <param name="value">The value to append.</param>
     public void Append(char value)
-    {
-        BeforeAppend();
-        _builder.Append(value);
-        AfterAppend();
-    }
+        => AppendSpanFormattable(value);
 
     /// <summary>
     /// Appends the value to the string.
     /// </summary>
     /// <param name="value">The value to append.</param>
     public void Append(ushort value)
-    {
-        BeforeAppend();
-        _builder.Append(value);
-        AfterAppend();
-    }
+        => AppendSpanFormattable(value);
 
     /// <summary>
     /// Appends the value to the string.
     /// </summary>
     /// <param name="value">The value to append.</param>
     public void Append(long value)
-    {
-        BeforeAppend();
-        _builder.Append(value);
-        AfterAppend();
-    }
+        => AppendSpanFormattable(value);
 
     /// <summary>
     /// Appends the value to the string.
     /// </summary>
     /// <param name="value">The value to append.</param>
     public void Append(ulong value)
-    {
-        BeforeAppend();
-        _builder.Append(value);
-        AfterAppend();
-    }
+        => AppendSpanFormattable(value);
 
     /// <summary>
     /// Appends the value to the string.
     /// </summary>
     /// <param name="value">The value to append.</param>
     public void Append(byte value)
-    {
-        BeforeAppend();
-        _builder.Append(value);
-        AfterAppend();
-    }
+        => AppendSpanFormattable(value);
 
     /// <summary>
     /// Appends the value to the string.
     /// </summary>
     /// <param name="value">The value to append.</param>
     public void Append(sbyte value)
-    {
-        BeforeAppend();
-        _builder.Append(value);
-        AfterAppend();
-    }
+        => AppendSpanFormattable(value);
 
     /// <summary>
     /// Appends the value to the string.
     /// </summary>
     /// <param name="value">The value to append.</param>
     public void Append(float value)
-    {
-        BeforeAppend();
-        _builder.Append(value);
-        AfterAppend();
-    }
+        => AppendSpanFormattable(value);
 
     /// <summary>
     /// Appends the value to the string.
     /// </summary>
     /// <param name="value">The value to append.</param>
     public void Append(double value)
-    {
-        BeforeAppend();
-        _builder.Append(value);
-        AfterAppend();
-    }
+        => AppendSpanFormattable(value);
 
     /// <summary>
     /// Appends the value to the string.
     /// </summary>
     /// <param name="value">The value to append.</param>
     public void Append(decimal value)
+        => AppendSpanFormattable(value);
+
+    private void AppendSpanFormattable<T>(T value)
+        where T : ISpanFormattable
     {
         BeforeAppend();
-        _builder.Append(value);
+        int charsWritten;
+        while (!value.TryFormat(_buffer.Slice(_position), out charsWritten, default, null))
+        {
+            GrowBuffer();
+        }
+        _position += charsWritten;
         AfterAppend();
+    }
+
+    private void GrowBuffer(int needed = 0)
+    {
+        var sizeNeeded = _buffer.Length + needed;
+        var doubleSize = _buffer.Length * 2;
+        var newSize = Math.Max(doubleSize, sizeNeeded);
+        var newBuffer = ArrayPool<char>.Shared.Rent(newSize);
+
+        _buffer.CopyTo(newBuffer);
+        _buffer = newBuffer;
     }
 
     private void BeforeAppend()
     {
         if (_insertSeparator is not null)
         {
-            _builder.Append(_insertSeparator);
+            if (_buffer.Length <= _position + 1)
+            {
+                GrowBuffer();
+            }
+
+            _buffer[_position] = _insertSeparator.Value;
+            _position += 1;
             _insertSeparator = null;
         }
     }
@@ -288,7 +289,7 @@ public class PacketStringBuilder
     /// <inheritdoc />
     public override string ToString()
     {
-        return _builder.ToString();
+        return _buffer.Slice(0, _position).ToString();
     }
 
     private class StringBuilderLevel

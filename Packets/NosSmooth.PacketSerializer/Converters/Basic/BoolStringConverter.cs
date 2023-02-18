@@ -16,7 +16,7 @@ namespace NosSmooth.PacketSerializer.Converters.Basic;
 public class BoolStringConverter : BasicTypeConverter<bool>
 {
     /// <inheritdoc />
-    public override Result Serialize(bool obj, PacketStringBuilder builder)
+    public override Result Serialize(bool obj, ref PacketStringBuilder builder)
     {
         builder.Append(obj ? '1' : '0');
         return Result.FromSuccess();
