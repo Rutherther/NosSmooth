@@ -39,8 +39,18 @@ public static class TcpConnectionHelper
 
         foreach (var connection in tcpv4Connections)
         {
-            var process = processIds.FirstOrDefault(x => x == connection.OwningPid, -1);
-            if (process != -1)
+            var process = (int)connection.OwningPid;
+            var matches = false;
+            foreach (var processId in processIds)
+            {
+                if (connection.OwningPid == processId)
+                {
+                    matches = true;
+                    break;
+                }
+            }
+
+            if (matches)
             {
                 if (!result.ContainsKey(process))
                 {
