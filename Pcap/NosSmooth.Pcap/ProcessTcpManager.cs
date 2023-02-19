@@ -109,8 +109,9 @@ public class ProcessTcpManager
             }
         }
 
-        await _semaphore.WaitAsync();
-        _connections = TcpConnectionHelper.GetConnections(_processes);
+        _semaphore.WaitAsync();
+        var processes = new List<int>(_processes);
         _semaphore.Release();
+        _connections = TcpConnectionHelper.GetConnections(processes);
     }
 }

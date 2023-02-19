@@ -5,6 +5,8 @@
 //  Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics;
+using System.Net;
+using System.Net.NetworkInformation;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -15,7 +17,9 @@ using NosSmooth.Core.Packets;
 using NosSmooth.Cryptography;
 using NosSmooth.Cryptography.Extensions;
 using NosSmooth.PacketSerializer.Abstractions.Attributes;
+using PacketDotNet;
 using Remora.Results;
+using SharpPcap;
 using SharpPcap.LibPcap;
 
 namespace NosSmooth.Pcap;
@@ -42,6 +46,8 @@ public class PcapNostaleClient : BaseNostaleClient
     private bool _running;
     private LibPcapLiveDevice? _lastDevice;
     private TcpConnection _connection;
+    private PhysicalAddress? _localAddress;
+    private PhysicalAddress? _remoteAddress;
     private long _lastPacketIndex;
 
     /// <summary>
@@ -174,15 +180,67 @@ public class PcapNostaleClient : BaseNostaleClient
     }
 
     /// <inheritdoc />
-    public override Task<Result> SendPacketAsync(string packetString, CancellationToken ct = default)
+    public override async Task<Result> SendPacketAsync(string packetString, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        if (_lastDevice is null)
+        {
+            return new NotSupportedError("The device was not captured yet, cannot send packet.");
+        }
+
+        if (_lastDevice?.Loopback ?? false)
+        {
+            return new NotSupportedError("Loopback devices cannot send or receive packets.");
+        }
+
+        var ethPacket = new EthernetPacket(_localAddress, _remoteAddress, EthernetType.IPv4);
+        var ipPacket = new IPv4Packet(new IPAddress(_connection.LocalAddr), new IPAddress(_connection.RemoteAddr));
+        var tcpPacket = new TcpPacket((ushort)_connection.LocalPort, (ushort)_connection.RemotePort);
+        tcpPacket.PayloadData = _crypto.ClientWorld.Encrypt(_lastPacketIndex + " " + packetString, _encoding);
+        ethPacket.PayloadPacket = ipPacket;
+        ipPacket.PayloadPacket = tcpPacket;
+
+        try
+        {
+            _lastDevice?.SendPacket(ethPacket);
+        }
+        catch (Exception e)
+        {
+            return e;
+        }
+
+        return Result.FromSuccess();
     }
 
     /// <inheritdoc />
-    public override Task<Result> ReceivePacketAsync(string packetString, CancellationToken ct = default)
+    public override async Task<Result> ReceivePacketAsync(string packetString, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        if (_lastDevice is null)
+        {
+            return new NotSupportedError("The device was not captured yet, cannot receive packet.");
+        }
+
+        if (_lastDevice?.Loopback ?? false)
+        {
+            return new NotSupportedError("Loopback devices cannot send or receive packets.");
+        }
+
+        var ethPacket = new EthernetPacket(_remoteAddress, _localAddress, EthernetType.IPv4);
+        var ipPacket = new IPv4Packet(new IPAddress(_connection.RemoteAddr), new IPAddress(_connection.LocalAddr));
+        var tcpPacket = new TcpPacket((ushort)_connection.RemotePort, (ushort)_connection.LocalPort);
+        tcpPacket.PayloadData = _crypto.ServerWorld.Encrypt(packetString, _encoding);
+        ipPacket.PayloadPacket = tcpPacket;
+        ethPacket.PayloadPacket = ipPacket;
+
+        try
+        {
+            _lastDevice?.SendPacket(ethPacket);
+        }
+        catch (Exception e)
+        {
+            return e;
+        }
+
+        return Result.FromSuccess();
     }
 
     /// <summary>
@@ -191,7 +249,14 @@ public class PcapNostaleClient : BaseNostaleClient
     /// <param name="device">The device the packet was received at.</param>
     /// <param name="connection">The connection that obtained the packet.</param>
     /// <param name="payloadData">The raw payload data of the packet.</param>
-    internal void OnPacketArrival(LibPcapLiveDevice? device, TcpConnection connection, byte[] payloadData)
+    /// <param name="ethernetPacket">The ethernet packet containing source and destination hardware addresses.</param>
+    internal void OnPacketArrival
+    (
+        LibPcapLiveDevice? device,
+        TcpConnection connection,
+        byte[] payloadData,
+        EthernetPacket? ethernetPacket
+    )
     {
         _lastDevice = device;
 
@@ -201,12 +266,18 @@ public class PcapNostaleClient : BaseNostaleClient
 
         if (connection.LocalAddr == _connection.LocalAddr && connection.LocalPort == _connection.LocalPort)
         { // sent packet
+            _localAddress = ethernetPacket?.SourceHardwareAddress;
+            _remoteAddress = ethernetPacket?.DestinationHardwareAddress;
+
             source = PacketSource.Client;
             mayContainPacketId = true;
             data = _crypto.DecryptUnknownServerPacket(payloadData, _encoding);
         }
         else
         { // received packet
+            _remoteAddress = ethernetPacket?.SourceHardwareAddress;
+            _localAddress = ethernetPacket?.DestinationHardwareAddress;
+
             source = PacketSource.Server;
             data = _crypto.DecryptUnknownClientPacket(payloadData, _encoding);
         }
