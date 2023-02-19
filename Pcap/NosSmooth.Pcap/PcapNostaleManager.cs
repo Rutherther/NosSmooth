@@ -99,7 +99,7 @@ public class PcapNostaleManager
         {
             foreach (var sniffedPacket in data.SniffedData)
             {
-                client.OnPacketArrival(null, connection, sniffedPacket);
+                client.OnPacketArrival(null, connection, sniffedPacket, null);
             }
         }
     }
@@ -240,9 +240,10 @@ public class PcapNostaleManager
 
         if (_clients.TryGetValue(tcpConnection, out var clients))
         {
+            var ethPacket = packet as PacketDotNet.EthernetPacket;
             foreach (var client in clients)
             {
-                client.OnPacketArrival((LibPcapLiveDevice)e.Device, tcpConnection, tcpPacket.PayloadData);
+                client.OnPacketArrival((LibPcapLiveDevice)e.Device, tcpConnection, tcpPacket.PayloadData, ethPacket);
             }
         }
     }
